@@ -18,4 +18,5 @@
 *.exe
 *.out
 *.app
-
+# Databases
+*.db
