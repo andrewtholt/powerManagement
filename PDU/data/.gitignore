@@ -1,0 +1,22 @@
+# Object files
+*.o
+*.ko
+
+# Libraries
+*.lib
+*.a
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+# Editor temp files
+#
+*~
+# Executables
+*.exe
+*.out
+*.app
+# Databases
+*.db
