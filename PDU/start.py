@@ -13,7 +13,7 @@ from string import strip
 from time import sleep
 
 def usage():
-    print "Usage"
+    print "Usage: start.py "
 
 def restore(db,pdir,verbose):
 
