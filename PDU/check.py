@@ -31,11 +31,12 @@ def main():
     cur = con.cursor()
     
     sql = """select 
-        hosts.name,outlets.name,outlets.state,hosts.ro_community,outlets.oid,hosts.on_value,hosts.off_value,hosts.rw_community
+        hosts.name,outlets.name,outlets.state,hosts.ro_community,outlets.oid,
+        hosts.on_value,hosts.off_value,hosts.rw_community,hosts.status
         from hosts,outlets where hosts.idx=outlets.hostidx;"""
     cur.execute(sql)
     for r in cur.fetchall():
-#        print r[0],r[1],r[2],r[3]
+        print r[0],r[1],r[2],r[3]
         
         pduName=r[0]
         outletName =r[1]
@@ -46,23 +47,27 @@ def main():
         onValue=r[5]
         offValue = r[6]
         rw=r[7]
-        
-        cmd = "snmpget -OvQ -t 10 -v1 -c %s %s %s 2> /dev/null" % ( ro,pduName,oid)
-        print cmd
-        
-        t = popen( cmd )
-        ret =  int( t.readline() )
-        
-        cState="UNKNOWN"
-        if ret == int(onValue):
-            cState="ON"
-        elif ret == int(offValue):
-            cState="OFF"
+        hostStatus = r[8]
 
-        sqlCmd = "update outlets set state='%s' where name='%s';" % ( cState, outletName )
+        print "Host %s Host status %s" % ( pduName, hostStatus )
+        
+        if hostStatus != "DOWN":
+            cmd = "snmpget -OvQ -t 10 -v1 -c %s %s %s 2> /dev/null" % ( ro,pduName,oid)
+            print cmd
+        
+            t = popen( cmd )
+            ret =  int( t.readline() )
+        
+            cState="UNKNOWN"
+            if ret == int(onValue):
+                cState="ON"
+            elif ret == int(offValue):
+                cState="OFF"
+
+            sqlCmd = "update outlets set state='%s' where name='%s';" % ( cState, outletName )
 #        print sqlCmd
 #        print "===================================================="
-        cur.execute(sqlCmd)
+            cur.execute(sqlCmd)
 
 #        if ret == int(onValue):
 #            cState="ON"
