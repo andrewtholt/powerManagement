@@ -3,6 +3,8 @@
 # POWER_DB  Database
 # PDIR      Base directory for utilities
 #
+# Read each defined port and set the actual state in the database.
+#
 import sys
 import getopt
 from pysqlite2 import dbapi2 as sqlite
@@ -51,24 +53,40 @@ def main():
         t = popen( cmd )
         ret =  int( t.readline() )
         
+        cState="UNKNOWN"
         if ret == int(onValue):
             cState="ON"
-            print "%s is ON should be %s" % (outletName, outletState)
         elif ret == int(offValue):
             cState="OFF"
-            print "%s is OFF should be %s" % (outletName,outletState)
-        
-        if( cState != outletState):
-            print "%s is %s should be %s" % (outletName, cState,outletState)
+
+        sqlCmd = "update outlets set state='%s' where name='%s';" % ( cState, outletName )
+#        print sqlCmd
+#        print "===================================================="
+        cur.execute(sqlCmd)
+
+#        if ret == int(onValue):
+#            cState="ON"
+#            print "%s is ON should be %s" % (outletName, outletState)
+#            sqlCmd = "update outlets set state='%s' where name='%s';" % ( cState, outletName )
+#            print sqlCmd
+#            print "===================================================="
+
+#        elif ret == int(offValue):
+#            cState="OFF"
+#            print "%s is OFF should be %s" % (outletName,outletState)
+#
+#        if( cState != outletState):
+#            print "%s is %s should be %s" % (outletName, cState,outletState)
+#
+#            if outletState == 'ON':
+#                reqState = onValue
+#            elif outletState == 'OFF':
+#                reqState = offValue
+##            cmd = "snmpset -t 10 -v1 -c %s %s %s i %d > /dev/null 2>&1" % (rw,pduName,oid,reqState)
+#            print cmd
+#            res =  os.system( cmd )
             
-            if outletState == 'ON':
-                reqState = onValue
-            elif outletState == 'OFF':
-                reqState = offValue
-#            cmd = "snmpset -t 10 -v1 -c %s %s %s i %d > /dev/null 2>&1" % (rw,pduName,oid,reqState)
-            print cmd
-            res =  os.system( cmd )
-            
+    con.commit()
     con.close()
 
 
