@@ -1,0 +1,8 @@
+
+Get the outlet name for all outlets not connected to 'apc'
+
+If the outlet has the same name as the host to which it is attached (where that makes sense) then this becomes a list of hosts to ping before cutting the main feed.
+
+SQL --
+select outlets.name from hosts,outlets where hosts.idx=outlets.hostidx and hosts.name<>'apc';
+
