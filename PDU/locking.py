@@ -32,14 +32,21 @@ def main():
     try:
         port =  sys.argv[1]
 
+        con = sqlite.connect( db )
+        cur = con.cursor()
+
+
         if port == "all":
             sql = "update outlets set locked='%s';" % locked
         else:
-            sql = "update outlets set locked='%s' where name='%s';" % (locked,port)
+            for name in sys.argv[1:]:
+                print name
 
-        con = sqlite.connect( db )
-        cur = con.cursor()
-        cur.execute( sql)
+                sql = "update outlets set locked='%s' where name='%s';" % (locked,name)
+#                print sql
+
+                cur.execute( sql)
+
         con.commit()
         con.close()
 
