@@ -59,7 +59,9 @@ def main():
         if  request == "STATUS":
             if verbose: print "status ..."
 
-            sql = """select hosts.name,outlets.name,outlets.state,outlets.requested_state,outlets.start_state,outlets.locked,outlets.pf_action 
+            sql = """select hosts.name,outlets.name,outlets.state,
+            outlets.requested_state,outlets.start_state,outlets.locked,
+            outlets.pf_action, outlets.pf_state
             from hosts,outlets
             where hosts.idx = outlets.hostidx"""
 
@@ -72,14 +74,14 @@ def main():
 
             cur.execute( sql )
         
-            print "+" + 8*'-' + "+" + 16*'-' + "+" + 8*'-' + "+" + 8*'-' + "+" + 7*"-" + "+" + 6*'-' + "+" + 6*'-' + '+' 
-            print "|%-8s|%-16s|%-8s|%-8s|%-7s|%-6s|%-6s|" % ("PDU", "Name","State","Pending","Start","Locked","PF Act")
-            print "+" + 8*'-' + "+" + 16*'-' + "+" + 8*'-' + "+" + 8*'-' + "+" + 7*"-" + "+" + 6*'-' + "+" + 6*'-' + '+' 
+            print "+" + 8*'-' + "+" + 16*'-' + "+" + 8*'-' + "+" + 8*'-' + "+" + 8*'-' + "+" + 7*"-" + "+" + 6*'-' + "+" + 6*'-' + '+'
+            print "|%-8s|%-16s|%-8s|%-8s|%-8s|%-7s|%-6s|%-6s|" % ("PDU", "Name","State","PF State","Pending","Start","Locked","PF Act")
+            print "+" + 8*'-' + "+" + 16*'-' + "+" + 8*'-' + "+" + 8*'-' + "+" + 8*'-' + "+" + 7*"-" + "+" + 6*'-' + "+" + 6*'-' + '+'
             
             for r in cur.fetchall():
-                print "|%-8s|%-16s|%-8s|%-8s|%-7s|%-6s|%-6s|" % ( r[0],r[1],r[2],r[3],r[4],r[5],r[6])
+                print "|%-8s|%-16s|%-8s|%-8s|%-8s|%-7s|%-6s|%-6s|" % ( r[0],r[1],r[2],r[7],r[3],r[4],r[5],r[6])
 
-            print "+" + 8*'-' + "+" + 16*'-' + "+" + 8*'-' + "+" + 8*'-' + "+" + 7*"-" + "+" + 6*'-' + "+" + 6*'-' + '+' 
+            print "+" + 8*'-' + "+" + 16*'-' + "+" + 8*'-' + "+" + 8*'-' + "+" + 8*'-' + "+" + 7*"-" + "+" + 6*'-' + "+" + 6*'-' + '+'
 
 
         elif request == "ON" or request == "OFF" or request == "REBOOT":

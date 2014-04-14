@@ -37,6 +37,7 @@ create table outlets
       locked varchar(4) default 'NO',
       shutdown_cmd varchar(64) default 'NONE',
       pf_action varchar(64) default 'NONE',
+      pf_state varchar(8) default 'UNKNOWN',
       touched date default CURRENT_TIMESTAMP
     );
 
