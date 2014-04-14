@@ -29,6 +29,10 @@ create table outlets
       state varchar(8) default 'UNKNOWN',
       requested_state varchar(8) default 'NA',
       initial_state varchar(8) default 'OFF',
+      -- start state
+      --
+      -- Valid values: RESTORE, ON, OFF
+      --
       start_state varchar(8) default 'RESTORE',
       locked varchar(4) default 'NO',
       shutdown_cmd varchar(64) default 'NONE',
