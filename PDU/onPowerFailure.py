@@ -7,7 +7,7 @@
 #
 import sys
 import sqlite3 as sqlite
-from os import getenv
+from os import getenv,path
 
 
 def main():
@@ -27,6 +27,16 @@ def main():
     sql = "update outlets set requested_state=pf_action,touched=datetime(\'NOW\') where pf_action <> 'NONE';"
     cur.execute( sql )
     con.commit()
+
+    # test for files existence.  If does not exist capture current state.
+
+    if not path.exists( '/var/tmp/powerfail.txt'):
+        sql = "update outlets set pf_state=state,touched=datetime(\'NOW\') where start_state = 'RESTORE';"
+        cur.execute( sql )
+        con.commit()
+    # and create file
+
+        open('/var/tmp/powerfail.txt','a').close()
     con.close()
 
 
