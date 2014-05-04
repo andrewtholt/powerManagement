@@ -12,7 +12,17 @@ from os import getenv,popen
 from string import strip
 
 def usage():
-    print "Usage: power"
+    print "Usage: power <cmd> <device>"
+    print "\tcmd is one of:"
+    print "\t\tstatus\tStatus of named device."
+    print "\t\ton\tSwitch named device on."
+    print "\t\toff\tSwitch named device off."
+    print "\tdevice is the name of a PDU port, or the special case 'all'\n"
+
+    print "\tExamples:"
+    print "\t\tpower status fred"
+    print "\t\tpower off fred"
+    print "\t\tpower status all\n"
 
 def main():
     cmd = ""
@@ -20,14 +30,12 @@ def main():
     verbose = False
     locked = "NO"
 
+    db = None
+    pdir = None
+
     db = getenv("POWER_DB")
 
-    if db == None:
-        db = "/etc/local/power/data/power.db"
-
     pdir = getenv("PDIR")
-    if pdir == None:
-        pdir = "/usr/local/apps/power"
 
     if db == None or pdir == None:
         print "FATAL ERROR: setup PDIR & POWER_DB env variables"
