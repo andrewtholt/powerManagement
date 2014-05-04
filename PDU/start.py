@@ -70,7 +70,9 @@ def restore(db,pdir,verbose):
 
 def main():
     cmd = ""
-    db = "/tmp/powerDB"
+    db = None
+    dbDir = None
+
     pdir = "."
     verbose = False
     clean = False
@@ -79,23 +81,17 @@ def main():
     suspend = 0;
 
     db = getenv("POWER_DB")
-    if db == None:
-        dbDir = "/etc/local/power/data"
-        db = dbDir + "/power.db"
-    else:
+    if db != None:
         dbDir = os.path.dirname(db)
 
     pdir = getenv("PDIR")
-    if pdir == None:
-        pdir = "/usr/local/apps/power"
 
+    if db == None or pdir == None or dbDir == None:
+        print "FATAL ERROR: setup PDIR & POWER_DB env variables"
+        sys.exit(1)
 
     initFile = dbDir + "/pdu.txt"
     upsFile = dbDir + "/ups.txt"
-
-    if db == None or pdir == None:
-        print "FATAL ERROR: setup PDIR & POWER_DB env variables"
-        sys.exit(1)
 
     try:
         opts,args = getopt.getopt(sys.argv[1:], "s:cd:hp:vi:",["suspend","clean","database","help","port","verbose","init"])
@@ -144,10 +140,10 @@ def main():
         except:
             pass
 
-        if os.path.exists( pdir + "/setup.sql"):
+        if os.path.exists( pdir + "/data/setup.sql"):
             if verbose:
                 print "SQL setup exists"
-            cmd = "sqlite3 %s < %s" % ( db,(pdir + "/setup.sql"))
+            cmd = "sqlite3 %s < %s" % ( db,(pdir + "/data/setup.sql"))
 
             if os.system( cmd ) != 0:
                 print "FATAL ERROR:%s failed" % cmd
