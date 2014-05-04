@@ -38,7 +38,8 @@ def main():
     
     sql = """select 
         hosts.name,outlets.name,outlets.state,hosts.ro_community,outlets.oid,
-        hosts.on_value,hosts.off_value,hosts.rw_community,hosts.status
+        hosts.on_value,hosts.off_value,hosts.rw_community,hosts.status,
+        hosts.ip
         from hosts,outlets where hosts.idx=outlets.hostidx;"""
     cur.execute(sql)
     for r in cur.fetchall():
