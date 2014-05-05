@@ -76,13 +76,16 @@ def main():
     con = sqlite.connect( db )
     cur = con.cursor()
 
-    sql = "select name from hosts;"
+    sql = "select name,ip from hosts;"
     cur.execute(sql)
 
     for node in  cur.fetchall():
+        name = node[0]
+        ip = node[1]
+
         if verbose: print "============================"
 
-        cmd = "ping -c 2 -W 5 %s > /dev/null 2>&1" % node[0]
+        cmd = "ping -c 2 -W 5 %s > /dev/null 2>&1" % ip
 
         res = os.system( cmd )
 
