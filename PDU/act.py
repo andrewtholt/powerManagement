@@ -89,7 +89,7 @@ def main():
 
         res = os.system( cmd )
 
-        sql = "select ping_count,ping_counter from hosts where name='%s';" % node
+        sql = "select ping_count,ping_counter from hosts where name='%s';" % name
 
         if verbose: print sql
 
@@ -103,19 +103,19 @@ def main():
         if res == 0:
             if counter > 0:
                 counter = counter -1
-                sql = "update hosts set status='DOWN',ping_counter=%d,touched=datetime(\'NOW\') where name='%s';" % (counter,node[0])
+                sql = "update hosts set status='DOWN',ping_counter=%d,touched=datetime(\'NOW\') where name='%s';" % (counter,name)
 
                 if verbose: print sql
 
                 cur.execute(sql)
                 con.commit()
             else:
-                sql = "update hosts set status='UP',ping_counter=-1,touched=datetime(\'NOW\') where name='%s';" % node
+                sql = "update hosts set status='UP',ping_counter=-1,touched=datetime(\'NOW\') where name='%s';" % name
         else:
             if counter < 0:
                 counter = count
 
-            sql = "update hosts set status='DOWN',ping_counter=%d,touched=datetime(\'NOW\') where name='%s';" % (counter,node[0])
+            sql = "update hosts set status='DOWN',ping_counter=%d,touched=datetime(\'NOW\') where name='%s';" % (counter,name)
 
         if verbose:
             print cmd
