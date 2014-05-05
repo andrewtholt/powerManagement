@@ -52,9 +52,9 @@ def main():
         hostStatus = r[8]
         ip=r[9]
         
-        print "IP %s" % ip
+        print "IP- %s" % ip
         if hostStatus != "DOWN":
-            cmd = "snmpget -OvQ -t 10 -v1 -c %s %s %s 2> /dev/null" % ( ro,pduName,oid)
+            cmd = "snmpget -OvQ -t 10 -v1 -c %s %s %s 2> /dev/null" % ( ro, ip,oid)
             if verbose:
                 print cmd
         
