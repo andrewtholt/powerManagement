@@ -82,6 +82,7 @@ cp ./check.py $APPS_DIR
 cp ./act.py $APPS_DIR
 cp ./locking.py $APPS_DIR
 cp ./cancel.py $APPS_DIR
+cp ./host.py $APPS_DIR
 
 cd $APPS_DIR
 ln -fs ./power.py ./power
@@ -90,6 +91,7 @@ ln -fs ./act.py ./act
 ln -fs ./locking.py ./lock
 ln -fs ./locking.py ./unlock
 ln -fs ./cancel.py ./cancel
+ln -fs ./host.py ./host
 cd $HERE
 echo "... done."
 
