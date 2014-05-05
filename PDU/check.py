@@ -21,13 +21,8 @@ def main():
         verbose=True
 
     db = getenv("POWER_DB")
-#    if db == None:
-#        db = "/etc/local/power/data/power.db"
 
     pdir = getenv("PDIR")
-#    if pdir == None:
-#        pdir = "/usr/local/apps/power"
-
 
     if db == None or pdir == None:
         print "FATAL ERROR: setup PDIR & POWER_DB env variables"
@@ -55,8 +50,9 @@ def main():
         offValue = r[6]
         rw=r[7]
         hostStatus = r[8]
-
+        ip=r[9]
         
+        print "IP %s" % ip
         if hostStatus != "DOWN":
             cmd = "snmpget -OvQ -t 10 -v1 -c %s %s %s 2> /dev/null" % ( ro,pduName,oid)
             if verbose:
