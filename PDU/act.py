@@ -124,7 +124,8 @@ def main():
 
     sql = """select hosts.name,
         hosts.on_value, hosts.off_value,hosts.reboot_value,
-        outlets.name,outlets.oid,requested_state,hosts.rw_community,hosts.ro_community
+        outlets.name,outlets.oid,requested_state,hosts.rw_community,hosts.ro_community,
+        hosts.ip
         from 
         hosts,outlets 
         where hosts.status='UP' and hosts.idx = outlets.hostidx and outlets.requested_state <> 'NA';"""
@@ -143,10 +144,12 @@ def main():
         requestedState = r[6]
         rw = r[7]
         ro = r[8]
+        ip = r[9]
 
         if verbose:
             print "================"
             print "PDU Name        : %s" % pduName
+            print "PDU Address     : %s" % ip
             print "Outlet Name     : %s" % outletName
             print "ON Value        : %s" % onValue
             print "OFF Value       : %s" % offValue
@@ -165,7 +168,7 @@ def main():
         #
         # Set output to requested state.
         #
-        cmd = "snmpset -t 10 -v1 -c %s %s %s i %d > /dev/null 2>&1" % (rw,pduName,oid,tmp)
+        cmd = "snmpset -t 10 -v1 -c %s %s %s i %d > /dev/null 2>&1" % (rw,ip,oid,tmp)
 
         if verbose: print cmd
 
@@ -181,7 +184,7 @@ def main():
             ret = rebootValue
             requestedState = "ON"
         else:
-            cmd = "snmpget -OvQ -t 10 -v1 -c %s %s %s 2> /dev/null" % ( ro,pduName,oid)
+            cmd = "snmpget -OvQ -t 10 -v1 -c %s %s %s 2> /dev/null" % ( ro,ip,oid)
 
             if verbose: print cmd
         
