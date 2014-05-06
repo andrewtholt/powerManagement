@@ -26,13 +26,7 @@ def main():
     lock = "/tmp/act_lock.txt"
 
     db = getenv("POWER_DB")
-    if db == None:
-        db = "/etc/local/power/data/power.db"
-
     pdir = getenv("PDIR")
-    if pdir == None:
-        pdir = "/usr/local/apps/power"
-
 
     if db == None or pdir == None:
         print "FATAL ERROR: setup PDIR & POWER_DB env variables"
@@ -215,9 +209,9 @@ def main():
 
     remove(lock)
     
-    if suspend == 0:
-        sys.exit(-1)
-    else:
-        sys.exit(0)
+#    if suspend == 0:
+#        sys.exit(-1)
+#    else:
+#        sys.exit(0)
         
 main()
