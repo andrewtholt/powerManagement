@@ -13,13 +13,8 @@ from os import getenv,path
 def main():
     
     db = getenv("POWER_DB")
-    if db == None:
-        db = "/etc/local/power/data/power.db"
 
     pdir = getenv("PDIR")
-    if pdir == None:
-        pdir = "/usr/local/apps/power"
-
 
     con = sqlite.connect( db )
     cur = con.cursor()
