@@ -7,17 +7,35 @@
 # 
 
 import redis
+import getopt
 from pysqlite2 import dbapi2 as sqlite
 
 import sys
 import os.path
 from os import getenv,popen,remove
 
+def usage():
+    print "Usage"
 
 def main():
-    verbose=True
+    verbose=False
 
     redisHost = "macbook"
+
+    try:
+        opts,args = getopt.getopt(sys.argv[1:],"hv",["help","verbose"])
+    except:
+        print "Argument Error"
+        usage()
+        sys.exit(2)
+
+    for o,a in opts:
+        if o in ("-h","--help"):
+            usage()
+            sys.exit(0)
+        elif o in ("-v","--verbose"):
+            verbose = True
+
 
     if verbose:
         print "Connect to", redisHost
