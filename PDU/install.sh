@@ -85,6 +85,7 @@ cp ./cancel.py $APPS_DIR
 cp ./host.py $APPS_DIR
 cp ./start.py $APPS_DIR
 cp ./eventAction.py $APPS_DIR
+cp ./fail.py $APPS_DIR
 
 cd $APPS_DIR
 ln -fs ./power.py ./power
@@ -96,6 +97,7 @@ ln -fs ./cancel.py ./cancel
 ln -fs ./host.py ./host
 ln -fs ./start.py ./start
 ln -fs ./eventAction.py ./eventAction
+ln -fs ./fail.py ./fail
 cd $HERE
 echo "... done."
 
