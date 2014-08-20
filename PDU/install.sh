@@ -84,6 +84,7 @@ cp ./locking.py $APPS_DIR
 cp ./cancel.py $APPS_DIR
 cp ./host.py $APPS_DIR
 cp ./start.py $APPS_DIR
+cp ./eventAction.py $APPS_DIR
 
 cd $APPS_DIR
 ln -fs ./power.py ./power
@@ -94,6 +95,7 @@ ln -fs ./locking.py ./unlock
 ln -fs ./cancel.py ./cancel
 ln -fs ./host.py ./host
 ln -fs ./start.py ./start
+ln -fs ./eventAction.py ./eventAction
 cd $HERE
 echo "... done."
 
