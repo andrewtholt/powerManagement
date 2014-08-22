@@ -93,7 +93,7 @@ def main():
 
 
         elif request == "ON" or request == "OFF" or request == "REBOOT":
-            sql = "update outlets set requested_state='%s',touched=datetime(\'NOW\') where locked='NO'" % request
+            sql = "update outlets set requested_state='%s',pf_state='%s',touched=datetime(\'NOW\') where locked='NO'" % (request,request)
 
             if out == "all":
                 sql = sql + ';'
