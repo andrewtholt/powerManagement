@@ -26,7 +26,8 @@ def main():
     # test for files existence.  If does not exist capture current state.
 
     if not path.exists( '/var/tmp/powerfail.txt'):
-        sql = "update outlets set pf_state=state,touched=datetime(\'NOW\') where start_state = 'RESTORE';"
+#        sql = "update outlets set pf_state=state,touched=datetime(\'NOW\') where start_state = 'RESTORE';"
+        sql = "update outlets set pf_state=state,touched=datetime(\'NOW\');"
         cur.execute( sql )
         con.commit()
     # and create file

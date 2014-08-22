@@ -22,9 +22,9 @@ def main():
     if path.exists( '/var/tmp/powerfail.txt'):
         print "Power Failed."
         remove('/var/tmp/powerfail.txt')
-        sql="update outlets set pf_state='UNKNOWN';"
-        cur.execute( sql )
-        con.commit()
+#        sql="update outlets set pf_state='UNKNOWN';"
+#        cur.execute( sql )
+#        con.commit()
 
 
     sql = "update outlets set requested_state=pf_action,touched=datetime(\'NOW\') where pf_action <> 'NONE';"
