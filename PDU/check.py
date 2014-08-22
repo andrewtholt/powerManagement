@@ -74,6 +74,14 @@ def main():
                 print "===================================================="
 
             cur.execute(sqlCmd)
+
+            sqlCmd = "update outlets set pf_state='%s' where name='%s' and start_state='RESTORE';" % ( cState, outletName )
+
+            if verbose:
+                print sqlCmd
+                print "===================================================="
+
+            cur.execute(sqlCmd)
             
     con.commit()
     con.close()
