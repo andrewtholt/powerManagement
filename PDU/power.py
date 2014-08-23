@@ -7,7 +7,8 @@ import sys
 import getopt
 import sqlite3 as sqlite
 import os.path
-from os import getenv,popen
+from os import getenv,popen,path
+
 
 from string import strip
 
@@ -93,7 +94,14 @@ def main():
 
 
         elif request == "ON" or request == "OFF" or request == "REBOOT":
-            sql = "update outlets set requested_state='%s',pf_state='%s',touched=datetime(\'NOW\') where locked='NO'" % (request,request)
+            # 
+            # Power has failed, so DON'T update pf_state
+            #
+            if path.exists( '/var/tmp/powerfail.txt'):
+                sql = "update outlets set requested_state='%s',touched=datetime(\'NOW\') where locked='NO'" % request
+            else:
+
+                sql = "update outlets set requested_state='%s',pf_state='%s',touched=datetime(\'NOW\') where locked='NO'" % (request,request)
 
             if out == "all":
                 sql = sql + ';'
