@@ -86,6 +86,9 @@ cp ./host.py $APPS_DIR
 cp ./start.py $APPS_DIR
 cp ./eventAction.py $APPS_DIR
 cp ./fail.py $APPS_DIR
+cp ./onPowerRestore.py $APPS_DIR
+cp ./onPowerFailure.py $APPS_DIR
+cp ./pending.py $APPS_DIR
 
 cd $APPS_DIR
 ln -fs ./power.py ./power
@@ -98,6 +101,9 @@ ln -fs ./host.py ./host
 ln -fs ./start.py ./start
 ln -fs ./eventAction.py ./eventAction
 ln -fs ./fail.py ./fail
+ln -fs ./onPowerRestore.py onPowerRestore
+ln -fs ./onPowerFailure.py onPowerFailure
+ln -fs ./pending.py ./pending
 cd $HERE
 echo "... done."
 
