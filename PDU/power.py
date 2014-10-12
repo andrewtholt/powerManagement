@@ -76,6 +76,15 @@ def main():
 
             if out == "all":
                 sql = sql + ";"
+            elif out == "on":
+                print "List outlets switched on."
+                sql = sql + " and outlets.state ='ON';"
+            elif out == "off":
+                print "List outlets switched off."
+                sql = sql + " and outlets.state ='OFF';"
+            elif out == "pending":
+                print "List outlets pending"
+                sql = sql + " and outlets.requested_state <> 'NA';"
             else:
                 sql = sql + " and outlets.name = '%s';" % sys.argv[2]
 
