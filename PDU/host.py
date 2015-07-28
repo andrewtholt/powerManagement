@@ -13,19 +13,26 @@ from time import sleep
 from string import strip
 
 def usage():
-    print "Usage: host"
+    print "Usage:\n"
+    print "\thost type=<pdu type> <hostname>"
+    print "\thost port=<port number> <hostname>"
+    print "\thost rw=<R/W SNMP community name> <hostname>"
+    print "\thost ro=<RO SNMP community name> <hostname>"
+    print "\thost counter=<ping counter> <hostname>"
+    print "\thost ip=<IP Address> <hostname>"
+    print "\n"
+    print "\thost add <hostname>"
+    print "\thost delete <hostname>"
+    print "\thost up <hostname>"
+    print "\thost down <hostname>"
+    print "\thost status <hostname>|all"
 
 def main():
     verbose = False
     
     db = getenv("POWER_DB")
 
-#    if db == None:
-#        db = "/etc/local/power/data/power.db"
-
     pdir = getenv("PDIR")
-#    if pdir == None:
-#        pdir = "/usr/local/apps/power"
 
     if db == None or pdir == None:
         print "FATAL ERROR: setup PDIR & POWER_DB env variables"
@@ -82,7 +89,7 @@ def main():
             if verbose:
                 print sql 
         elif tmp[0] == "ip":
-            sql = "update hosts set ip='%s' where name='%s',touched=datetime(\'NOW\');" % ( tmp[1], hostName )
+            sql = "update hosts set ip='%s',touched=datetime(\'NOW\') where name='%s';" % ( tmp[1], hostName )
             if verbose:
                 print sql
                 
