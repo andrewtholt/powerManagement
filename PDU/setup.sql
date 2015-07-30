@@ -6,7 +6,14 @@ create table hosts
     ( idx integer primary key autoincrement,
       name varchar(32) not null unique,
       ip varchar(32),
+      mac varchar(32),
+      --
+      -- type is used by the pdu processing,
+      -- Currently apc and cyc are used.
+      -- Could be used to hold model info.
+      --
       type varchar(8) default 'UNKNOWN',
+      -- snmp port
       port integer default 161,
       rw_community varchar(32) default 'private',
       ro_community varchar(32) default 'public',
