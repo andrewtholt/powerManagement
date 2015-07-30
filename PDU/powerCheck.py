@@ -35,7 +35,11 @@ def main():
         hosts.name,outlets.name,outlets.state,hosts.ro_community,outlets.oid,
         hosts.on_value,hosts.off_value,hosts.rw_community,hosts.status,
         hosts.ip
-        from hosts,outlets where hosts.idx=outlets.hostidx;"""
+        from hosts,outlets where hosts.idx=outlets.hostidx and hosts.status='UP';"""
+
+    if verbose:
+        print sql
+
     cur.execute(sql)
     for r in cur.fetchall():
 #        print r[0],r[1],r[2],r[3]

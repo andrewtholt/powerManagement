@@ -35,9 +35,10 @@ export PDIR
 DATA_DIR=${PDIR}/data
 APPS_DIR=${PDIR}/apps
 
-
 printf "Database    [%s]:" $DATA_DIR
 read TMP
+
+set -x
 
 if [ ! -z $TMP ]; then
     DATA_DIR=$TMP
@@ -78,7 +79,7 @@ echo "... done"
 
 echo "Copying apps ...."
 cp ./power.py $APPS_DIR
-cp ./check.py $APPS_DIR
+cp ./powerCheck.py $APPS_DIR
 cp ./act.py $APPS_DIR
 cp ./locking.py $APPS_DIR
 cp ./cancel.py $APPS_DIR
@@ -92,7 +93,7 @@ cp ./pending.py $APPS_DIR
 
 cd $APPS_DIR
 ln -fs ./power.py ./power
-ln -fs ./check.py ./check
+ln -fs ./powerCheck.py ./powerCheck
 ln -fs ./act.py ./act
 ln -fs ./locking.py ./lock
 ln -fs ./locking.py ./unlock

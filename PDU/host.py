@@ -7,7 +7,7 @@ import sys
 import getopt
 import sqlite3 as sqlite
 import os.path
-from os import getenv,popen,remove
+from os import getenv,popen,remove,system
 from time import sleep
 
 from string import strip
@@ -26,9 +26,10 @@ def usage():
     print "\thost up <hostname>"
     print "\thost down <hostname>"
     print "\thost status <hostname>|all"
+    print "\thost update <hostname>|all"
 
 def main():
-    verbose = False
+    verbose = True
     
     db = getenv("POWER_DB")
 
@@ -50,6 +51,15 @@ def main():
 
     tmp = request.split("=")
     sql = ""
+
+    if hostName != 'all':
+        sql = "select count(*) from hosts where name='%s';" % hostName
+
+        cur.execute( sql )
+        count = (cur.fetchone())[0]
+
+        if count == 0:
+            sys.exit(1)
     
     if len(tmp) == 2:
         if tmp[0] == "type":
@@ -114,6 +124,17 @@ def main():
             sql = "update hosts set status='%s' where name='%s';" % (request, hostName )
             cur.execute( sql )
             con.commit()
+        elif request == "UPDATE":
+            cmd = "fping %s > /dev/null" % hostName
+            res = os.system( cmd )
+            if res == 0:
+                sql = "update hosts set status='UP' where name='%s';" %  hostName
+            else:
+                sql = "update hosts set status='DOWN' where name='%s';" %  hostName
+
+            cur.execute( sql )
+            con.commit()
+
         elif request == "STATUS":
             sql = """select name,ip,type,port,rw_community,ro_community,on_value,off_value,reboot_value,status,ping_count
             from hosts"""
@@ -128,9 +149,8 @@ def main():
                 
             cur.execute( sql )
             
-            print "============================"
-            
             for r in cur.fetchall():
+                print "============================"
                 name   = r[0]
                 ip     = r[1]
                 type   = r[2]
@@ -154,7 +174,7 @@ def main():
                 print "REBOOT      : %s" % reboot
                 print "Status      : %s" % status
                 print "Ping Counter: %s" % counter
-                print "============================"
+#                print "============================"
                 
                     
                 
