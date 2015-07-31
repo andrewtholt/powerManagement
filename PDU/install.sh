@@ -139,6 +139,9 @@ printf "export POWER_DB\n\n" >> ${APPS_DIR}/penv.sh
 printf "PDIR=%s\n" $PDIR >> ${APPS_DIR}/penv.sh
 printf "export PDIR\n\n" >> ${APPS_DIR}/penv.sh
 
+printf "PATH=\${PATH}:%s\n" $APPS_DIR >> ${APPS_DIR}/penv.sh
+printf "export PATH\n\n" >> ${APPS_DIR}/penv.sh
+
 echo "Add the following to your environment."
 echo "Or source ${APPS_DIR}/penv.sh"
 
