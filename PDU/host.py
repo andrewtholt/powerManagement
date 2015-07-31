@@ -29,7 +29,7 @@ def usage():
     print "\thost update <hostname>|all"
 
 def main():
-    verbose = True
+    verbose = False
     
     db = getenv("POWER_DB")
 
@@ -136,7 +136,7 @@ def main():
             con.commit()
 
         elif request == "STATUS":
-            sql = """select name,ip,type,port,rw_community,ro_community,on_value,off_value,reboot_value,status,ping_count
+            sql = """select name,ip,type,port,rw_community,ro_community,on_value,off_value,reboot_value,status,ping_count,mac
             from hosts"""
             
             if hostName == "all":
@@ -162,9 +162,11 @@ def main():
                 reboot = r[8]
                 status = r[9]
                 counter= r[10]
+                mac    = r[11]
                 
                 print "Name        : %s" % name
                 print "IP Address  : %s" % ip
+                print "MAC Address : %s" % mac
                 print "Type        : %s" % type
                 print "Port        : %s" % port
                 print "RW Community: %s" % rw

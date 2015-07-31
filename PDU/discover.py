@@ -68,14 +68,10 @@ def main():
     while True:
         sql = "select count(*) from hosts where "
         line = (data.readline()).strip()
-#        print "==================="
-#        print ">%s<" % (line)
-#        print "==================="
 
         if line == '':
             break
 
-#        if line[0] in ('1','2','3','4','5','6','7','8','9','0'):
         if line[0].isdigit():
             name = False
             sql += " ip = '%s' ;" % line
@@ -93,14 +89,28 @@ def main():
             if row == 0:
                 print"Unknown host:%s" % line
         else:
+            mac='UNKNOWN'
             if row == 0:
+                if name:
+                    cmd = "arp -a %s" % line
+                else:
+                    cmd = "arp -a | grep '(%s)' " % line
+
+                print cmd
+                f=popen( cmd )
+                stuff = ((f.readline()).strip()).split()
+                print stuff
+
+                if len(stuff) >= 4:
+                    mac=stuff[3]
+
                 sql = "insert into hosts "
                 if name:
                     dns=socket.gethostbyaddr(line)
                     address=dns[2][0]
-                    sql += "( name,ip,status ) values ( '%s','%s','UP' );" % (line,address)
+                    sql += "( name,ip,mac,status ) values ( '%s','%s','%s','UP' );" % (line,address,mac)
                 else:
-                    sql += "( name, ip,status ) values ( '%s','%s','UP' );" % (line,line)
+                    sql += "( name, ip,mac,status ) values ( '%s','%s','%s','UP' );" % (line,line,mac)
 
             else:
                 sql = "update hosts set status = 'UP' where "
@@ -109,7 +119,6 @@ def main():
                 else:
                     sql += " ip = '%s' ;" % line
                     
-
 
             sqlList.append( sql )
             if verbose:

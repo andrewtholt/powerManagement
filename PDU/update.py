@@ -40,7 +40,7 @@ def main():
         ip=r[1]
         status = r[2]
 
-        cmd = "fping %s > /dev/null 2>&1" % name
+        cmd = "fping -c 3 %s > /dev/null 2>&1" % name
 
         if verbose:
             print cmd

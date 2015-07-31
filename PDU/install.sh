@@ -19,6 +19,14 @@ else
     exit -1
 fi
 
+if [ $(grep ^power: /etc/group ) ]; then
+    echo "Power group exists."
+else
+    echo "Power group DOES NOT exist, creating ..."
+    addgroup power
+    echo "... done."
+fi
+
 DESTDIR="/opt/power"
 echo "This defines the point below which, by default, software and data"
 echo "will be installed."
@@ -38,8 +46,6 @@ APPS_DIR=${PDIR}/apps
 printf "Database    [%s]:" $DATA_DIR
 read TMP
 
-set -x
-
 if [ ! -z $TMP ]; then
     DATA_DIR=$TMP
 fi
@@ -52,15 +58,24 @@ if [ ! -d $PDIR ]; then
     mkdir -p $PDIR
 fi
 
+chgrp power $PDIR
+chmod 775 $PDIR
+
 if [ ! -d $DATA_DIR ]; then
     echo "Creating $DATA_DIR"
     mkdir -p $DATA_DIR
 fi
 
+chgrp power $DATA_DIR
+chmod 775 $DATA_DIR
+
 if [ ! -d $APPS_DIR ]; then
     echo "Creating $APPS_DIR"
     mkdir -p $APPS_DIR
 fi
+
+chgrp power $APPS_DIR
+chmod 775 $APPS_DIR
 
 echo "Copying default data ..."
 cp ./data/*.txt $DATA_DIR
@@ -74,37 +89,46 @@ HERE=`pwd`
 
 ./start -c
 
+chgrp power $POWER_DB
+chmod 775 $POWER_DB
+
 cd $HERE
 echo "... done"
 
 echo "Copying apps ...."
+cp ./act.py $APPS_DIR
+cp ./cancel.py $APPS_DIR
+cp ./discover.py $APPS_DIR
+cp ./eventAction.py $APPS_DIR
+cp ./exists.py $APPS_DIR
+cp ./fail.py $APPS_DIR
+cp ./host.py $APPS_DIR
+cp ./locking.py $APPS_DIR
+cp ./onPowerFailure.py $APPS_DIR
+cp ./onPowerRestore.py $APPS_DIR
+cp ./pending.py $APPS_DIR
 cp ./power.py $APPS_DIR
 cp ./powerCheck.py $APPS_DIR
-cp ./act.py $APPS_DIR
-cp ./locking.py $APPS_DIR
-cp ./cancel.py $APPS_DIR
-cp ./host.py $APPS_DIR
 cp ./start.py $APPS_DIR
-cp ./eventAction.py $APPS_DIR
-cp ./fail.py $APPS_DIR
-cp ./onPowerRestore.py $APPS_DIR
-cp ./onPowerFailure.py $APPS_DIR
-cp ./pending.py $APPS_DIR
+cp ./update.py $APPS_DIR
 
 cd $APPS_DIR
-ln -fs ./power.py ./power
-ln -fs ./powerCheck.py ./powerCheck
 ln -fs ./act.py ./act
+ln -fs ./cancel.py ./cancel
+ln -fs ./discover.py ./discover
+ln -fs ./eventAction.py ./eventAction
+ln -fs ./exists.py ./exists
+ln -fs ./fail.py ./fail
+ln -fs ./host.py ./host
 ln -fs ./locking.py ./lock
 ln -fs ./locking.py ./unlock
-ln -fs ./cancel.py ./cancel
-ln -fs ./host.py ./host
-ln -fs ./start.py ./start
-ln -fs ./eventAction.py ./eventAction
-ln -fs ./fail.py ./fail
-ln -fs ./onPowerRestore.py onPowerRestore
 ln -fs ./onPowerFailure.py onPowerFailure
+ln -fs ./onPowerRestore.py onPowerRestore
 ln -fs ./pending.py ./pending
+ln -fs ./power.py ./power
+ln -fs ./powerCheck.py ./powerCheck
+ln -fs ./start.py ./start
+ln -fs ./update.py ./update
 cd $HERE
 echo "... done."
 
@@ -116,6 +140,7 @@ printf "PDIR=%s\n" $PDIR >> ${APPS_DIR}/penv.sh
 printf "export PDIR\n\n" >> ${APPS_DIR}/penv.sh
 
 echo "Add the following to your environment."
+echo "Or source ${APPS_DIR}/penv.sh"
 
 echo "========================================"
 printf "POWER_DB=%s\n" $POWER_DB
