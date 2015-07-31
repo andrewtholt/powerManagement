@@ -96,7 +96,7 @@ cd $HERE
 echo "... done"
 
 echo "Copying apps ...."
-cp ./act.py $APPS_DIR
+cp ./fastAct.py $APPS_DIR
 cp ./cancel.py $APPS_DIR
 cp ./discover.py $APPS_DIR
 cp ./eventAction.py $APPS_DIR
@@ -113,7 +113,7 @@ cp ./start.py $APPS_DIR
 cp ./update.py $APPS_DIR
 
 cd $APPS_DIR
-ln -fs ./act.py ./act
+ln -fs ./fastAct.py ./fastAct
 ln -fs ./cancel.py ./cancel
 ln -fs ./discover.py ./discover
 ln -fs ./eventAction.py ./eventAction
