@@ -11,7 +11,7 @@ import subprocess
 
 def usage():
     print "\nUsage: discover -a -s <subnet> -v -h\n"
-    print "\t-a\t\tAdd new machines to database."
+    print "\t-u <user>\tName to connect to spread with."
     print "\t-s <subnet>\tScan subnet, e.g. 10.0.1.0/24"
     print "\t-h\t\tHelp\n"
     print "\t-v\tVerbose\n"
@@ -21,6 +21,7 @@ def main():
     test =  False
     add = False
     sqlList = []
+    user='discover'
 
     db = getenv("POWER_DB")
     pdir = getenv("PDIR")
@@ -32,7 +33,7 @@ def main():
         sys.exit(1)
 
     try:
-        opts,args = getopt.getopt(sys.argv[1:], "as:hv",['subnet','help','verbose'])
+        opts,args = getopt.getopt(sys.argv[1:], "u:s:hv",['user','subnet','help','verbose'])
     except:
         print "Argument Error"
         usage()
@@ -46,8 +47,8 @@ def main():
             subnet = a
         elif o in ("-v","--verbose"):
             verbose = True
-        elif o in ("-a","--add"):
-            add = True
+        elif o in ("-u","--user"):
+            user = a
 
     if verbose:
         print"Subnet :",subnet
@@ -62,7 +63,7 @@ def main():
         print "toSpread not found."
         sys.exit(10)
 
-    cmd = "toSpread -c %s/data/.start.rc" % pdir
+    cmd = "toSpread -u %s -c %s/data/.start.rc" % (user, pdir )
 
     if verbose:
         print cmd
@@ -76,8 +77,8 @@ def main():
     line = child_stdout.readline()
     print line
 
-    child_stdin.write("^set USER discover\n")
-    child_stdin.flush()
+#    child_stdin.write("^set USER discover\n")
+#    child_stdin.flush()
 
     child_stdin.write("^connect\n")
     child_stdin.flush()
@@ -85,8 +86,8 @@ def main():
     line = child_stdout.readline()
     print line
 
-    con = sqlite.connect( db )
-    cur = con.cursor()
+#    con = sqlite.connect( db )
+#    cur = con.cursor()
 
     cmd = "fping -ad -g %s 2> /dev/null" % subnet
 
@@ -97,6 +98,7 @@ def main():
 
     while True:
         line = (data.readline()).strip()
+        print line
 #
         if line == '':
             break

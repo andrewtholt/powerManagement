@@ -12,6 +12,9 @@ from time import sleep
 
 from string import strip
 
+def printf(format, *args):
+    sys.stdout.write(format % args)
+
 def usage():
     print "Usage:\n"
     print "\thost type=<pdu type> <hostname>"
@@ -52,14 +55,14 @@ def main():
     tmp = request.split("=")
     sql = ""
 
-    if hostName != 'all':
-        sql = "select count(*) from hosts where name='%s';" % hostName
-
-        cur.execute( sql )
-        count = (cur.fetchone())[0]
-
-        if count == 0:
-            sys.exit(1)
+#    if hostName != 'all':
+#        sql = "select count(*) from hosts where name='%s';" % hostName
+#
+#        cur.execute( sql )
+#        count = (cur.fetchone())[0]
+#
+#        if count == 0:
+#            sys.exit(1)
     
     if len(tmp) == 2:
         if tmp[0] == "type":
@@ -114,6 +117,8 @@ def main():
             con.commit()
         elif request=="DELETE":
             sql = "delete from hosts where name='%s';" % hostName
+            if verbose:
+                print sql
             cur.execute( sql )
             con.commit()
         elif request == "UP":
@@ -149,8 +154,15 @@ def main():
                 
             cur.execute( sql )
             
+            print "+================+================+==================+==========+==========+"
+            printf("|%-16s", " Name")
+            printf("|%-16s", " IP" )
+            printf("|%-18s", " MAC" )
+            printf("|%-10s", " Type" )
+            printf("|%-10s|", " Status" )
+            print
+            print "+================+================+==================+==========+==========+"
             for r in cur.fetchall():
-                print "============================"
                 name   = r[0]
                 ip     = r[1]
                 type   = r[2]
@@ -164,19 +176,20 @@ def main():
                 counter= r[10]
                 mac    = r[11]
                 
-                print "Name        : %s" % name
-                print "IP Address  : %s" % ip
-                print "MAC Address : %s" % mac
-                print "Type        : %s" % type
-                print "Port        : %s" % port
-                print "RW Community: %s" % rw
-                print "RO Community: %s" % ro
-                print "ON          : %s" % on
-                print "OFF         : %s" % off
-                print "REBOOT      : %s" % reboot
-                print "Status      : %s" % status
-                print "Ping Counter: %s" % counter
-#                print "============================"
+                printf("|%-16s" , name)
+                printf("|%-16s" , ip)
+                printf( "|%-18s" , mac)
+                printf( "|%-10s" , type)
+
+#                printf("|%-5s" , port)
+#                print "RW Community: %s" % rw
+#                print "RO Community: %s" % ro
+#                print "ON          : %s" % on
+#                print "OFF         : %s" % off
+#                print "REBOOT      : %s" % reboot
+                printf( "|%-10s|\n" , status)
+#                print "Ping Counter: %s" % counter
+            print "+================+================+==================+==========+==========+"
                 
                     
                 
