@@ -10,7 +10,7 @@ import socket
 import subprocess
 
 def usage():
-    print "\nUsage: discover -a -s <subnet> -v -h\n"
+    print "\nUsage: spreadDiscover -u <user> -a -s <subnet> -v -h\n"
     print "\t-u <user>\tName to connect to spread with."
     print "\t-s <subnet>\tScan subnet, e.g. 10.0.1.0/24"
     print "\t-h\t\tHelp\n"
