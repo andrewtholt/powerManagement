@@ -112,6 +112,19 @@ def main():
             if verbose:
                 print sql
                 print "==============="
+        elif data[0] == 'listhost':
+            what = data[1]  # name or ip
+            selector = data[2] # name or IP pattern e.g. name www-% or ip 192.168.0.%
+
+            sql = "select name from hosts "
+
+            if what == 'name':
+                sql += sql + "name like '"
+            elif what == "ip":
+                sql += sql + "ip like '"
+
+            sql +="%s';" % selector
+
         elif data[0] == 'newhost':
             print "Report"
             print data
