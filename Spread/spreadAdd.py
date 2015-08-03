@@ -10,10 +10,15 @@ import socket
 import subprocess
 
 def usage():
-    print "\nUsage: discover -a -s <subnet> -v -h\n"
+    print "\nUsage: spreadAdd.py -u <user> -v -h\n"
     print "\t-u <user>\tName to connect top spread with."
-    print "\t-h\t\tHelp\n"
-    print "\t-v\tVerbose\n"
+    print "\t-h\t\tHelp"
+    print "\t-v\t\tVerbose\n"
+    print
+    print "\tdefault beahaviour:"
+    print "\t\tspreadAdd.py -u populate\n"
+
+    print "\tSee also toSpread -h\n"
 
 def main():
     verbose = False
