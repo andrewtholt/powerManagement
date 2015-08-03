@@ -4,7 +4,7 @@ import sys
 import getopt
 import sqlite3 as sqlite
 import os.path
-from os import getenv,popen,remove,path
+from os import getenv,popen,remove,path,system
 from time import sleep
 import socket
 import subprocess
@@ -75,13 +75,16 @@ def main():
     (child_stdin, child_stdout) = (p.stdin, p.stdout)
 
     line = child_stdout.readline()
-    print line
+#    print line
+
+    child_stdin.write("^set SHOW_SENDER true\n")
+    child_stdin.flush()
 
     child_stdin.write("^connect\n")
     child_stdin.flush()
 
     line = child_stdout.readline()
-    print line
+#    print line
 
 #    con = sqlite.connect( db )
 #    cur = con.cursor()
@@ -97,19 +100,35 @@ def main():
     child_stdin.flush()
 
     while True:
-
         line = (child_stdout.readline()).strip()
+
+        if verbose:
+            print "RX:",line
 
         tmp = line.split()
 
-        if tmp[1] != "ip":
-            print tmp
-            cmd = "fping -ad -c 2 " + tmp[1]
-            print cmd
-            data = popen( cmd )
+        sender=tmp[0]
+        name=tmp[2]
 
-            line = (data.readline()).strip()
-            print line
+        if name == "-END-":
+            break
+
+        cmd = "fping -ad -c 2 " + name + " 2> /dev/null"
+
+        if verbose:
+            print cmd
+        rc = system( cmd )
+#        print rc
+
+        if rc == 0:
+            reply = "update " + name + " UP\n"
+
+            if verbose:
+                print reply
+
+            child_stdin.write( reply )
+            child_stdin.flush()
+
 #
 #
 

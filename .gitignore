@@ -18,3 +18,4 @@
 *.app
 # Databases
 *.db
+.gdb_history
