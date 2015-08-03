@@ -66,6 +66,9 @@ def main():
     line = child_stdout.readline()
 #    print line
 
+    child_stdin.write("^set SHOW_SENDER true\n")
+    child_stdin.flush()
+
     child_stdin.write("^connect\n")
     child_stdin.flush()
 
@@ -84,15 +87,22 @@ def main():
         l = len(data)
 
         name = ""
-        if data[0] == "addhost":
-            if l == 4:
-                name=data[1]
-                ip=data[2]
-                mac=data[3]
-            elif len == 3:
-                name = data[1]
-                ip = data[1]
-                mac = data[2]
+        sender = data[0]
+        request = data [1]
+
+        if verbose:
+            print "Sender : " + sender
+            print "Request: " + request
+
+        if request == "addhost":
+            if l == 5:
+                name=data[2]
+                ip=data[3]
+                mac=data[4]
+            elif len == 4:
+                name = data[2]
+                ip = data[3]
+                mac = data[4]
 
             sql = "select count(*) from hosts where name = '%s';" % name
             cur.execute( sql )
@@ -112,22 +122,34 @@ def main():
             if verbose:
                 print sql
                 print "==============="
-        elif data[0] == 'listhost':
-            what = data[1]  # name or ip
-            selector = data[2] # name or IP pattern e.g. name www-% or ip 192.168.0.%
+        elif request == 'listhost':
+            what = data[2]  # name or ip
+            selector = data[3] # name or IP pattern e.g. name www-% or ip 192.168.0.%
 
-            sql = "select name from hosts "
+            sql = "select name from hosts where "
 
             if what == 'name':
-                sql += sql + "name like '"
+                sql += "name like "
             elif what == "ip":
-                sql += sql + "ip like '"
+                sql += "ip like "
 
-            sql +="%s';" % selector
+            sql +="'%s';" % selector
+
+
+            print sql
+            cur.execute( sql )
+            res = cur.fetchall()
+            for r in res:
+                response = '^send ' + sender + " " + request + " "
+                response += (' ' + r[0] ) 
+
+                print response
+                child_stdin.write("%s\n" % response )
+                child_stdin.flush()
 
         elif data[0] == 'newhost':
             print "Report"
-            print data
+            print data[0]
 
 
 #        sql = "select count(*) from hosts where "
