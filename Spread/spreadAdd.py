@@ -83,7 +83,7 @@ def main():
         tmp = line.strip()
         data = tmp.split()
 
-#         print data
+#        print data
         l = len(data)
 
         name = ""
@@ -111,7 +111,7 @@ def main():
 
             if count == 0:
                 print "INSERT"
-                sql = "insert into hosts (name,ip,mac) values ('%s','%s','%s');" % (name,ip,mac) 
+                sql = "insert into hosts (name,ip,mac,status) values ('%s','%s','%s','UP');" % (name,ip,mac) 
             else:
                 print "UPDATE"
                 sql = "update hosts set status='UP' where name='%s';" % name
@@ -136,18 +136,36 @@ def main():
             sql +="'%s';" % selector
 
 
-            print sql
+            if verbose:
+                print sql
+
             cur.execute( sql )
             res = cur.fetchall()
             for r in res:
                 response = '^send ' + sender + " " + request + " "
                 response += (' ' + r[0] ) 
 
-                print response
+                if verbose:
+                    print response
                 child_stdin.write("%s\n" % response )
                 child_stdin.flush()
 
-        elif data[0] == 'newhost':
+            child_stdin.write("^send " + sender + " " + request + " -END-\n")
+            child_stdin.flush()
+
+        elif request == 'update':
+            name = data[2]
+            state = data[3]
+            sql = "update hosts set status='%s' where name='%s';" % (state,name)
+
+            if verbose:
+                print "Update"
+                print "Name  :" + name
+                print "State :" + state
+                print sql
+                print "=========================="
+
+        elif request == 'newhost':
             print "Report"
             print data[0]
 
