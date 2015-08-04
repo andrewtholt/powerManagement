@@ -122,12 +122,15 @@ def main():
 
         if rc == 0:
             reply = "update " + name + " UP\n"
+        else:
+            reply = "update " + name + " DOWN\n"
 
-            if verbose:
-                print reply
 
-            child_stdin.write( reply )
-            child_stdin.flush()
+        if verbose:
+            print reply
+
+        child_stdin.write( reply )
+        child_stdin.flush()
 
 #
 #
