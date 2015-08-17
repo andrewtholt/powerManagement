@@ -4,6 +4,17 @@ require 'inifile'
 require 'pp'
 require 'open-uri'
 
+def readConfig rl
+  path = "../Data/"
+  for name in rl
+    fileName = name + '.ini'
+    filePath = path + fileName
+    puts filePath
+    download = open('http://192.168.0.15:8080/manage/Data/' + fileName )
+    IO.copy_stream(download, filePath )
+  end
+end
+
 def main
   roles = [ "base"]
   
@@ -22,16 +33,15 @@ def main
   r = cfg['roles']
   
   addThese = r.split(',')
-  pp addThese
-  
   roles = roles + addThese
+  
+  readConfig roles
   
   for file in roles
     fileName='../Data/' + file + '.ini'
     
     if File.file?( fileName )
       file = IniFile.load('../Data/' + file + '.ini')
-      puts file
       
       for section in file
 	data = file[section] 
@@ -49,7 +59,14 @@ def main
 	if installed
 	  puts "Done"
 	else
-	  puts "apt-get -y install " + section
+	  cmd = "apt-get -y install " + section
+	  puts cmd
+	  res = system( cmd )
+	  if res
+	    puts "Success"
+	  else
+	    puts "Failed"
+	  end
 	end
 	
 	if data["action"] != "NONE"
