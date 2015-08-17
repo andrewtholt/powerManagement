@@ -63,11 +63,16 @@ mkfolder "$scripts"
 send "cd $data\r\n"
 expect "# "
 
-send "wget http://192.168.0.15:8080/manage/Data/whatAmI.ini -O ./whatAmI.ini\r\n"
+log_user 1
+set cmd [ format "wget http://192.168.0.15:8080/manage/Data/%s/whatAmI.ini -O ./whatAmI.ini\r\n" $hostname ]
+# send "wget http://192.168.0.15:8080/manage/Data/whatAmI.ini -O ./whatAmI.ini\r\n"
+send $cmd
+
 expect "# "
 
 send "cd $scripts\r\n"
 expect "#"
+
 
 send "wget http://192.168.0.15:8080/manage/Scripts/node.rb -O ./node.rb\r\n"
 expect "# "

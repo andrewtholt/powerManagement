@@ -29,9 +29,14 @@ def main
   
   whatAmI = IniFile.load('../Data/whatAmI.ini')
   cfg = whatAmI['config']
+  network = whatAmI['network']
   
   r = cfg['roles']
+  webs = network['server']
   
+  puts n
+  
+  exit
   addThese = r.split(',')
   roles = roles + addThese
   
@@ -75,7 +80,10 @@ def main
       end
     else
       puts "File " + fileName + " not found."
-      download = open('http://192.168.0.15:8080/manage/Data/' + file + '.ini' )
+      url = 'http://' + webs + '/manage/Data/' + file + '.ini' )
+      puts url
+      download = open( url )
+#      download = open('http://192.168.0.15:8080/manage/Data/' + file + '.ini' )
       IO.copy_stream(download, fileName )
     end
     
