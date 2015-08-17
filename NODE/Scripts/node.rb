@@ -34,8 +34,23 @@ def main
       puts file
       
       for section in file
-	data = file[section]
-	puts "apt-get -y install " + section
+	data = file[section] 
+	
+	installed=FALSE
+	if data["test"]
+	  puts "Test " + data["test"]
+	  if data['test'] == 'NONE' 
+	    installed=FALSE
+	  else
+	    installed=system("which " + data["test"])
+	  end
+	end
+	
+	if installed
+	  puts "Done"
+	else
+	  puts "apt-get -y install " + section
+	end
 	
 	if data["action"] != "NONE"
 	  puts data["action"]
