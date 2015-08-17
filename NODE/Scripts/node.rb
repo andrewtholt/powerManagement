@@ -36,7 +36,6 @@ def main
   
   puts n
   
-  exit
   addThese = r.split(',')
   roles = roles + addThese
   
