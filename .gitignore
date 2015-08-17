@@ -19,3 +19,6 @@
 # Databases
 *.db
 .gdb_history
+#
+# Dross
+*swp
