@@ -1,17 +1,19 @@
 #!/usr/bin/expect
 
-log_user 0
+log_user 1
 
 proc install { cmd pkg } {
   puts "Install $pkg"
   send "which $cmd ; echo $?\r\n"
  
+ set timeout -1
   expect {
     "1" { 
 	  send "apt-get install $pkg\r\n"
 	}
     "0" { }
     }
+ set timeout 60
   expect "# "
 }
 
