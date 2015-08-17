@@ -4,7 +4,7 @@ require 'inifile'
 require 'pp'
 require 'open-uri'
 
-def readConfig rl ws
+def readConfig(rl,ws)
   path = "../Data/"
   for name in rl
     fileName = name + '.ini'
@@ -40,7 +40,7 @@ def main
   addThese = r.split(',')
   roles = roles + addThese
   
-  readConfig roles webs
+  readConfig(roles,webs)
   
   for file in roles
     fileName='../Data/' + file + '.ini'

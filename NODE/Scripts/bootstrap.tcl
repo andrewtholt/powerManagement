@@ -85,5 +85,7 @@ log_user 1
 send "gem install inifile\r\n"
 expect "# "
 
+send "./node.rb `hostname`\r\n"
+expect "# "
 
 interact
