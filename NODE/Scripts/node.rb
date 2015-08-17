@@ -34,7 +34,7 @@ def main
   r = cfg['roles']
   webs = network['server']
   
-  puts n
+  puts webs
   
   addThese = r.split(',')
   roles = roles + addThese
@@ -79,7 +79,7 @@ def main
       end
     else
       puts "File " + fileName + " not found."
-      url = 'http://' + webs + '/manage/Data/' + file + '.ini' )
+      url = 'http://' + webs + '/manage/Data/' + file + '.ini' 
       puts url
       download = open( url )
 #      download = open('http://192.168.0.15:8080/manage/Data/' + file + '.ini' )
