@@ -2,6 +2,7 @@
 
 require 'inifile'
 require 'pp'
+require 'open-uri'
 
 def main
   roles = [ "base"]
@@ -28,19 +29,16 @@ def main
 	
 	if data["action"] != "NONE"
 	  puts data["action"]
-	  
-	  #     pkgList = file[section]
-	  #     p = pkgList["PKGS"]
-	  #     
-	  #     for n in p.split(",")
-	  #       puts "apt-get -y install " + n
 	end
       end
     else
       puts "File " + fileName + " not found."
+      download = open('http://192.168.0.15:8080/manage/Data/' + fileName )
+      IO.copy_stream(download, '../Data/' + fileName )
     end
     
   end
 end
 
 main
+

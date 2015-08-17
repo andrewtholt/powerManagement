@@ -55,7 +55,10 @@ install "ruby" "ruby"
 install "wget" "wget"
 
 set data "/var/manage/Data"
+set scripts "/var/manage/Scripts"
+
 mkfolder "$data"
+mkfolder "$scripts"
 
 send "cd $data\r\n"
 expect "# "
@@ -63,6 +66,19 @@ expect "# "
 send "wget http://192.168.0.15:8080/manage/Data/whatAmI.ini -O ./whatAmI.ini\r\n"
 expect "# "
 
+send "cd $scripts\r\n"
+expect "#"
+
+send "wget http://192.168.0.15:8080/manage/Scripts/node.rb -O ./node.rb\r\n"
+expect "# "
+
+send "chmod +x ./node.rb\r\n"
+expect "# "
+
+log_user 1
+
+send "gem install inifile\r\n"
+expect "# "
 
 
 interact
