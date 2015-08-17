@@ -33,8 +33,8 @@ def main
       end
     else
       puts "File " + fileName + " not found."
-      download = open('http://192.168.0.15:8080/manage/Data/' + fileName )
-      IO.copy_stream(download, '../Data/' + fileName )
+      download = open('http://192.168.0.15:8080/manage/Data/' + file + '.ini' )
+      IO.copy_stream(download, fileName )
     end
     
   end
