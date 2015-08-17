@@ -4,7 +4,7 @@ require 'inifile'
 require 'pp'
 
 def main
-  roles = [ "base", "dev" ]
+  roles = [ "base"]
   
   puts ARGV[0]
   

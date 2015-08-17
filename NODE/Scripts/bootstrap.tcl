@@ -1,5 +1,7 @@
 #!/usr/bin/expect
 
+log_user 0
+
 proc install { cmd pkg } {
   puts "Install $pkg"
   send "which $cmd ; echo $?\r\n"
@@ -19,8 +21,6 @@ proc mkfolder { name } {
   expect "# "
 }
 
-puts $argc
-
 if { $argc != 2 } {
   puts "Need a host name"
   exit 1
@@ -30,7 +30,6 @@ set hostname [ lindex $::argv 0 ]
 set password [ lindex $::argv 1 ]
 
 puts $hostname
-puts $password
 
 spawn ssh $hostname
 
