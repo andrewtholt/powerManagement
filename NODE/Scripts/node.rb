@@ -11,10 +11,20 @@ def main
   
   if ARGV[0] == nil
     puts "Usage node.rb <hostname>"
-    exit
+    exit 
   end
   
   hostName=ARGV[0]
+  
+  whatAmI = IniFile.load('../Data/whatAmI.ini')
+  cfg = whatAmI['config']
+  
+  r = cfg['roles']
+  
+  addThese = r.split(',')
+  pp addThese
+  
+  roles = roles + addThese
   
   for file in roles
     fileName='../Data/' + file + '.ini'
