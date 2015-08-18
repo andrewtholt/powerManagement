@@ -1,8 +1,24 @@
 #!/usr/bin/lua
 -- 
--- Need to 'pull' this somehow.
 --
 require 'inifile'
+
+
+function getInstalledPkgs()
+    cmd = "dpkg -l | grep ^ii | awk  '{ print $2 }'"
+
+    f = io.popen( cmd )
+
+    pkgList = {}
+
+    for pkg in f:lines() do
+        tmp=pkg:split(":")
+
+        pkgList[tmp[1]] = "INSTALLED"
+    end
+
+    return pkgList
+end
 
 function string:split( inSplitPattern, outResults )
     if not outResults then
@@ -18,6 +34,8 @@ function string:split( inSplitPattern, outResults )
     table.insert( outResults, string.sub( self, theStart ) )
     return outResults
 end
+
+installed=getInstalledPkgs()
 
 function hostname()
     io.input("/etc/hostname")
@@ -39,6 +57,12 @@ end
 
 
 function tspInstalled() 
+
+    if installed["task-spooler"] then 
+        print("Task Spooler installed.")
+        return
+    end
+
     if fileExists("/usr/bin/tsp") then
         print("Task Spooler installed.")
     else
@@ -50,6 +74,11 @@ end
 
 function installPkg(name,queue)
 
+    if installed[name] then
+        print(name .. ":Installed.")
+        return
+    end
+
     if queue then
         cmd = ("tsp -n sudo apt-get -y install " .. name)
     else
@@ -59,8 +88,10 @@ function installPkg(name,queue)
     rc = os.execute( cmd )
 end
 
+
 tspInstalled()
 installPkg("lua-socket",false)
+
 http=require'socket.http'
 iam = hostname()
 
@@ -93,6 +124,8 @@ end
 server = config["network"]['server']
 
 print(server)
+print("=======================")
+
 
 table.insert( roles,1,"base" )
 
@@ -123,19 +156,20 @@ for k,v in pairs(roles) do
 --        print(file)
 --        print(act)
 
-        if file == "NONE" then
-            installPkg(pkg,true)
-        else
-            if fileExists(file) then
-                print("File ",file," exists, Package ",pkg," Installed.")
-            else
-                print("Installing Package ",pkg)
-                installPkg(pkg,true)
-            end
+        installPkg(pkg,true)
+--        if file == "NONE" then
+--            installPkg(pkg,true)
+--        else
+--            if fileExists(file) then
+--                print("File ",file," exists, Package ",pkg," Installed.")
+--            else
+--                print("Installing Package ",pkg)
+--                installPkg(pkg,true)
+--            end
         end
 
         if act ~= "NONE" then
-            cmd = "tsb -n sudo " .. act
+            cmd = "tsp -n sudo " .. act
             print(cmd)
             local rc = os.execute( cmd )
         end
@@ -143,7 +177,7 @@ for k,v in pairs(roles) do
 
     end
 
-end
+-- end
 
 -- body,c,l,h = http.request('http://w3.impa.br/~diego/software/luasocket/http.html')
 -- print('status line',l)
