@@ -51,9 +51,9 @@ end
 function installPkg(name,queue)
 
     if queue then
-        cmd = ("tsp -n sudo apt-get install " .. name)
+        cmd = ("tsp -n sudo apt-get -y install " .. name)
     else
-        cmd = ("sudo apt-get install " .. name)
+        cmd = ("sudo apt-get -y install " .. name)
     end
     print( cmd )
     rc = os.execute( cmd )
