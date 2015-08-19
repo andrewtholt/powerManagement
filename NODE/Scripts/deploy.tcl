@@ -6,7 +6,7 @@ proc install { cmd pkg } {
   puts "Install $pkg"
   send "which $cmd ; echo $?\r\n"
  
-# set timeout -1
+ set timeout -1
  expect {
     "1" { 
 	  send "apt-get install $pkg\r\n"
@@ -55,11 +55,12 @@ expect {
 }
 
 
-# install "lua" "lua5.2"
+install "tsp" "task-spooler"
+install "lua" "lua5.2"
 #
-set timeout 120
-send "apt-get -y install lua5.2\r\n"
-expect "# "
+# set timeout 120
+# send "apt-get -y install lua5.2\r\n"
+# expect "# "
 
 set timeout 10
 
@@ -85,6 +86,16 @@ send "cd $hostname\r\n"
 expect "# "
 
 send "wget -N http://192.168.0.15:8080/manage/Data/whatAmI.ini\r\n"
+expect "# "
+
+send "cd /var/manage/Scripts\r\n"
+expect "# "
+
+set timeout -1
+send "./node.lua\r\n"
+expect "++"
+set timeout 10
+send "tsp\r\n"
 expect "# "
 
 # interact
