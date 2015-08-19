@@ -86,6 +86,7 @@ function tspInstalled()
 
     if installed["task-spooler"] then 
         print("Task Spooler installed.")
+        os.execute("tsp -C")
         return
     end
 
