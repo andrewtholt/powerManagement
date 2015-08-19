@@ -3,15 +3,31 @@
 --
 require 'inifile'
 
+function debianSpecific()
+    print("Need ZRAM script")
+end
+
+function ubuntuSpecific()
+end
+
 function idSystem()
     cmd = "uname -s -m"
 
     f = io.popen( cmd )
-    data=f:read()
+    local data=f:read()
 
     tmp=data:split(" ")
 
-    return tmp[1], tmp[2]
+    info = {}
+
+    info['CLASS'] = tmp[1]
+    info['CPU'] = tmp[2]
+
+    dofile("/etc/os-release")
+
+    info['NAME']=NAME
+
+    return info
 end
 
 function getInstalledPkgs()
@@ -98,9 +114,11 @@ function installPkg(name,queue)
     rc = os.execute( cmd )
 end
 
-opSys,cpu=idSystem()
+info=idSystem()
 
-if opSys ~= "Linux" then
+print(info['CLASS'])
+
+if info['CLASS'] ~= "Linux" then
     print("Can't deal with " .. opSys .. " yet.")
     os.exit(3)
 end
@@ -110,6 +128,10 @@ installPkg("lua-socket",false)
 
 http=require'socket.http'
 iam = hostname()
+
+if string.find(info['NAME'],"^Debian") then
+    debianSpecific()
+end
 
 if iam == "raspberrypi" then
     print("Not safe to run any further on manager node.")
