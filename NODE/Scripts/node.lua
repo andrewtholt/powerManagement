@@ -3,6 +3,16 @@
 --
 require 'inifile'
 
+function idSystem()
+    cmd = "uname -s -m"
+
+    f = io.popen( cmd )
+    data=f:read()
+
+    tmp=data:split(" ")
+
+    return tmp[1], tmp[2]
+end
 
 function getInstalledPkgs()
     cmd = "dpkg -l | grep ^ii | awk  '{ print $2 }'"
@@ -88,6 +98,12 @@ function installPkg(name,queue)
     rc = os.execute( cmd )
 end
 
+opSys,cpu=idSystem()
+
+if opSys ~= "Linux" then
+    print("Can't deal with " .. opSys .. " yet.")
+    os.exit(3)
+end
 
 tspInstalled()
 installPkg("lua-socket",false)
@@ -110,7 +126,6 @@ if not fileExists( cfgName ) then
     os.exit(2)
 end
 
--- config = inifile.parse( base .. "Data/whatAmI.ini")
 config = inifile.parse( cfgName )
 
 if (config['config']['roles']) == nil then
@@ -147,35 +162,21 @@ for k,v in pairs(roles) do
     tmp = inifile.parse( path )
 
     for pkg,y in pairs(tmp) do
---        print("=======================")
---        print(pkg)
 
         file=y["test"]
         act=y["action"]
 
---        print(file)
---        print(act)
-
         installPkg(pkg,true)
---        if file == "NONE" then
---            installPkg(pkg,true)
---        else
---            if fileExists(file) then
---                print("File ",file," exists, Package ",pkg," Installed.")
---            else
---                print("Installing Package ",pkg)
---                installPkg(pkg,true)
---            end
-        end
-
-        if act ~= "NONE" then
-            cmd = "tsp -n sudo " .. act
-            print(cmd)
-            local rc = os.execute( cmd )
-        end
-        print("=======================")
-
     end
+
+    if act ~= "NONE" then
+        cmd = "tsp -n sudo " .. act
+        print(cmd)
+        local rc = os.execute( cmd )
+    end
+    print("=======================")
+
+end
 
 -- end
 
