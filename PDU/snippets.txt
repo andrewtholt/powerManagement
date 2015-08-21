@@ -1,0 +1,17 @@
+How to do transactions with python sqlite
+
+
+import sqlite3
+
+sql = sqlite3.connect("/tmp/test.db")
+sql.isolation_level = None
+try:
+    c = sql.cursor()
+    c.execute("begin")
+    c.execute("update test set i = 1")
+    c.execute("fnord")
+    c.execute("update test set i = 0")
+    c.execute("commit")
+except sql.Error:
+    print("failed!")
+    c.execute("rollback")
