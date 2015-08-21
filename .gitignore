@@ -11,7 +11,8 @@
 *.so
 *.so.*
 *.dylib
-
+# Build products
+*.pyc
 # Executables
 *.exe
 *.out
