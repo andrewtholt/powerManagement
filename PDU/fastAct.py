@@ -16,7 +16,7 @@ from time import sleep
 
 def main():
 
-    verbose=False
+    verbose=True
     test=False
 
     if len(sys.argv) > 1:
@@ -38,7 +38,10 @@ def main():
             outlets.name,outlets.oid,requested_state,hosts.rw_community,hosts.ro_community,
             hosts.ip from 
             hosts,outlets 
-            where hosts.status='UP' and hosts.idx = outlets.hostidx and outlets.requested_state <> 'NA';"""
+            where hosts.status='UP' and 
+            hosts.idx = outlets.hostidx and 
+            act_when < datetime('now') and 
+            outlets.requested_state <> 'NA';"""
 
 
 #    sql = """select 
