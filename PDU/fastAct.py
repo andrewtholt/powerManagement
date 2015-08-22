@@ -16,7 +16,7 @@ from time import sleep
 
 def main():
 
-    verbose=True
+    verbose=False
     test=False
 
     if len(sys.argv) > 1:

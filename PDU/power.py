@@ -33,7 +33,7 @@ def usage():
 def main():
     cmd = ""
     
-    verbose = True
+    verbose = False
     locked = "NO"
 
     db = None
