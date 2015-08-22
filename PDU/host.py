@@ -163,23 +163,23 @@ def main():
             print
             print "+================+================+==================+==========+==========+"
             for r in cur.fetchall():
-                name   = r[0]
-                ip     = r[1]
-                type   = r[2]
-                port   = r[3]
-                rw     = r[4]
-                ro     = r[5]
-                on     = r[6]
-                off    = r[7]
-                reboot = r[8]
-                status = r[9]
-                counter= r[10]
-                mac    = r[11]
+                name    = r[0]
+                ip      = r[1]
+                hostType= r[2]
+                port    = r[3]
+                rw      = r[4]
+                ro      = r[5]
+                on      = r[6]
+                off     = r[7]
+                reboot  = r[8]
+                status  = r[9]
+                counter = r[10]
+                mac     = r[11]
                 
                 printf("|%-16s" , name)
                 printf("|%-16s" , ip)
                 printf( "|%-18s" , mac)
-                printf( "|%-10s" , type)
+                printf( "|%-10s" , hostType)
 
 #                printf("|%-5s" , port)
 #                print "RW Community: %s" % rw
