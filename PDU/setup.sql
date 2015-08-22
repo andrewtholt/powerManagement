@@ -45,7 +45,8 @@ create table outlets
       shutdown_cmd varchar(64) default 'NONE',
       pf_action varchar(64) default 'NONE',
       pf_state varchar(8) default 'UNKNOWN',
-      touched date default CURRENT_TIMESTAMP
+      touched date default CURRENT_TIMESTAMP,
+      when data
     );
 
 create table ups
