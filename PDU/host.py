@@ -101,6 +101,8 @@ def main():
             sql = "update hosts set ping_count=%s where name='%s',touched=datetime(\'NOW\');" % ( tmp[1], hostName )
             if verbose:
                 print sql 
+        elif tmp[0] == "mac":
+            sql = "update hosts set mac='%s',touched=datetime(\'NOW\') where name='%s';" % ( tmp[1], hostName )
         elif tmp[0] == "ip":
             sql = "update hosts set ip='%s',touched=datetime(\'NOW\') where name='%s';" % ( tmp[1], hostName )
             if verbose:
