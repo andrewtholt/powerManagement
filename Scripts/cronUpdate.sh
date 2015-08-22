@@ -6,4 +6,6 @@ export PATH
 
 . /opt/power/apps/penv.sh
 
-tsp -n update
+if [ ! -f "/var/tmp/NOPOWER" ]; then
+    tsp -n update
+fi

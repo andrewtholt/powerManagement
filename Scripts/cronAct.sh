@@ -6,5 +6,7 @@ export PATH
 
 . /opt/power/apps/penv.sh
 
-sleep 40
-tsp -n fastAct
+if [ ! -f "/var/tmp/NOPOWER" ]; then
+    sleep 40
+    tsp -n fastAct
+fi
