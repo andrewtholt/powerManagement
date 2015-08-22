@@ -1,39 +1,19 @@
-#!/usr/bin/env python
-#
-# POWER_DB  Database
-# PDIR      Base directory for utilities
-#
-# Cancel all pending power state changes.
-#
-import sys
-import getopt
-from pysqlite2 import dbapi2 as sqlite
+#!/usr/bin/python
 
-import os.path
-from os import getenv,popen,remove
-from time import sleep
+import sys
+
+from powerClass import powerClass as power
 
 def main():
-    db = getenv("POWER_DB")
-    if db == None:
-        db = "/etc/local/power/data/power.db"
+    if len(sys.argv) == 1:
+        host='all'
+    else:
+        host=sys.argv[1]
 
-    pdir = getenv("PDIR")
-    if pdir == None:
-        pdir = "/usr/local/apps/power"
-
-
-    if db == None or pdir == None:
-        print "FATAL ERROR: setup PDIR & POWER_DB env variables"
-        sys.exit(1)
-
-    con = sqlite.connect( db )
-    cur = con.cursor()
-
-    sql="update outlets set requested_state='NA';"
-    print sql
-    cur.execute(sql)
-    con.commit()
-    con.close()
+    print host
+    control=power()
+    control.cancel( host )
 
 main()
+
+

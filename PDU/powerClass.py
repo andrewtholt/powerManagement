@@ -7,7 +7,7 @@ class powerClass:
     pdir = ""
 
     def __init__(self):
-        print "Power Class"
+#        print "Power Class"
         self.db=getenv("POWER_DB")
         self.pdir=getenv("PDIR")
 
@@ -73,8 +73,13 @@ class powerClass:
         return
 
     def cancel(self,host):
-        sql="update outlets set requested_state='NA' where name = '%s';" % host
-#        print sql
+
+        if host == 'all':
+            sql="update outlets set requested_state='NA'";
+        else:
+            sql="update outlets set requested_state='NA' where name = '%s';" % host
+
+        print sql
         self.executeSql( sql )
         return
 
