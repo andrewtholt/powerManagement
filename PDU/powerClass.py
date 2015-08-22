@@ -30,39 +30,51 @@ class powerClass:
 
         return
 
-    def on(self,host):
+    def on(self,host,delay):
         print "On",host
         request = 'ON'
         #
         # Need a way to test if running on UPS.
         #
-        sql = "update outlets set requested_state='%s',touched=datetime(\'NOW\'    ) where locked='NO' and name ='%s';" % (request, host)
+        sql = """update outlets 
+                set requested_state='%s',touched=datetime(\'NOW\'),
+                act_when=datetime(\'NOW\','+%d minutes')
+                where locked='NO' and name ='%s';""" % (request,delay, host)
+
 #        print sql
 
         self.executeSql( sql )
         return
 
-    def off(self,host):
+    def off(self,host,delay):
         print "Off",host
         request = 'OFF'
 
-        sql = "update outlets set requested_state='%s',touched=datetime(\'NOW\'    ) where locked='NO' and name ='%s';" % (request, host)
-        print sql
+        sql = """update outlets 
+                set requested_state='%s',touched=datetime(\'NOW\'),
+                act_when=datetime(\'NOW\','+%d minutes')
+                where locked='NO' and name ='%s';""" % (request,delay, host)
+
+#        print sql
         self.executeSql( sql )
         return
 
-    def reboot(self,host):
+    def reboot(self,host,delay):
         print "Reboot",host
         request = 'REBOOT'
 
-        sql = "update outlets set requested_state='%s',touched=datetime(\'NOW\'    ) where locked='NO' and name ='%s';" % (request, host)
-        print sql
+        sql = """update outlets 
+                set requested_state='%s',touched=datetime(\'NOW\'),
+                act_when=datetime(\'NOW\','+%d minutes')
+                where locked='NO' and name ='%s';""" % (request,delay, host)
+
+#        print sql
         self.executeSql( sql )
         return
 
     def cancel(self,host):
         sql="update outlets set requested_state='NA' where name = '%s';" % host
-        print sql
+#        print sql
         self.executeSql( sql )
         return
 

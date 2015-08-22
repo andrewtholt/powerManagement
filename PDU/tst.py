@@ -11,6 +11,6 @@ state=control.status( host )
 
 print host,state
 
-control.cancel( host )
+control.on( host,2 )
 
 
