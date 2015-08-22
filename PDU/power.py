@@ -27,16 +27,18 @@ def usage():
     print "\tExamples:"
     print "\t\tpower status fred"
     print "\t\tpower off fred"
-    print "\t\tpower status all\n"
+    print "\t\tpower status all"
+    print "\t\tpower off fred in 5 minutes\n"
 
 def main():
     cmd = ""
     
-    verbose = False
+    verbose = True
     locked = "NO"
 
     db = None
     pdir = None
+    now = True # Update act_when with current time if this is true.
 
     db = getenv("POWER_DB")
 
@@ -47,7 +49,7 @@ def main():
         sys.exit(1)
 
 
-    if len(sys.argv) != 3:
+    if len(sys.argv) < 3:
         usage()
         sys.exit(0)
     con = sqlite.connect( db )
@@ -55,6 +57,20 @@ def main():
 
     request = sys.argv[1]
     out = sys.argv[2]
+
+    if len(sys.argv) >= 5:
+        now=False
+        delay= sys.argv[4]
+
+    if len(sys.argv) == 6:
+        units= sys.argv[5]
+    else:
+        units = 'minutes'
+
+    if now == False:
+        print "Delay", delay
+        print "Units", units
+
 
     tmp = request.split("=")
     
@@ -114,7 +130,15 @@ def main():
                 sql = "update outlets set requested_state='%s',touched=datetime(\'NOW\') where locked='NO'" % request
             else:
 
-                sql = "update outlets set requested_state='%s',pf_state='%s',touched=datetime(\'NOW\') where locked='NO'" % (request,request)
+                sql = "update outlets set requested_state='%s',pf_state='%s',touched=datetime(\'NOW\') " % (request,request)
+
+                if now:
+                    sql = sql +",act_when=datetime(\'NOW\') "
+                else:
+                    sql = sql +",act_when=datetime(\'NOW\','+%s %s') " % (delay,units)
+
+
+                sql = sql + "where locked='NO'" 
 
             if out == "all":
                 sql = sql + ';'

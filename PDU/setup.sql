@@ -46,7 +46,7 @@ create table outlets
       pf_action varchar(64) default 'NONE',
       pf_state varchar(8) default 'UNKNOWN',
       touched date default CURRENT_TIMESTAMP,
-      when data
+      act_when date
     );
 
 create table ups
