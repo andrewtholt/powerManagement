@@ -10,8 +10,8 @@ def main():
     else:
         host=sys.argv[1]
 
-    print host
     control=power()
+
     control.cancel( host )
 
 main()

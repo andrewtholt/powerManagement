@@ -5,6 +5,7 @@ from time import sleep
 class powerClass:
     db = ""
     pdir = ""
+    verbose=False
 
     def __init__(self):
 #        print "Power Class"
@@ -13,7 +14,15 @@ class powerClass:
 
         self.con = sqlite.connect( self.db )
         self.cur = self.con.cursor()
+        self.verbose=False
         return
+
+    def setVerbose(self,flag):
+        self.verbose=flag
+
+        if self.verbose:
+            print "set Verbose"
+
 
     def executeSql(self,sql):
         failed=True
@@ -31,7 +40,6 @@ class powerClass:
         return
 
     def on(self,host,delay):
-        print "On",host
         request = 'ON'
         #
         # Need a way to test if running on UPS.
@@ -41,13 +49,14 @@ class powerClass:
                 act_when=datetime(\'NOW\','+%d minutes')
                 where locked='NO' and name ='%s';""" % (request,delay, host)
 
-#        print sql
+        if self.verbose:
+            print "On",host
+            print sql
 
         self.executeSql( sql )
         return
 
     def off(self,host,delay):
-        print "Off",host
         request = 'OFF'
 
         sql = """update outlets 
@@ -55,12 +64,14 @@ class powerClass:
                 act_when=datetime(\'NOW\','+%d minutes')
                 where locked='NO' and name ='%s';""" % (request,delay, host)
 
-#        print sql
+        if self.verbose:
+            print "Off",host
+            print sql
+
         self.executeSql( sql )
         return
 
     def reboot(self,host,delay):
-        print "Reboot",host
         request = 'REBOOT'
 
         sql = """update outlets 
@@ -68,7 +79,10 @@ class powerClass:
                 act_when=datetime(\'NOW\','+%d minutes')
                 where locked='NO' and name ='%s';""" % (request,delay, host)
 
-#        print sql
+        if self.verbose:
+            print "Reboot",host
+            print sql
+
         self.executeSql( sql )
         return
 
@@ -79,18 +93,25 @@ class powerClass:
         else:
             sql="update outlets set requested_state='NA' where name = '%s';" % host
 
-        print sql
+        if self.verbose:
+            print "Cancel"
+            print sql
+
         self.executeSql( sql )
         return
 
     def status(self,host):
         sql ="select hosts.name,outlets.name,outlets.state from hosts,outlets where hosts.idx = outlets.hostidx and outlets.name = '%s';" % host
         print "Status",host
-#        print sql
+
+        if self.verbose:
+            print "Status"
+            print sql
+
         self.cur.execute( sql )
 
         res=self.cur.fetchone()
-#        print res[2]
+
         return res[2]
 
     def dump(self):
