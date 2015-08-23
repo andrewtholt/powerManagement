@@ -5,22 +5,24 @@ from time import sleep
 class powerClass:
     db = ""
     pdir = ""
-    verbose=False
+    verb=False
+    hostName = ""
 
-    def __init__(self):
+    def __init__(self,host):
 #        print "Power Class"
         self.db=getenv("POWER_DB")
         self.pdir=getenv("PDIR")
 
         self.con = sqlite.connect( self.db )
         self.cur = self.con.cursor()
-        self.verbose=False
+        self.verb=False
+        self.hostName=host
         return
 
-    def setVerbose(self,flag):
-        self.verbose=flag
+    def verbose(self,flag):
+        self.verb=flag
 
-        if self.verbose:
+        if self.verb:
             print "set Verbose"
 
 
@@ -39,7 +41,7 @@ class powerClass:
 
         return
 
-    def on(self,host,delay):
+    def on(self,delay):
         request = 'ON'
         #
         # Need a way to test if running on UPS.
@@ -47,64 +49,64 @@ class powerClass:
         sql = """update outlets 
                 set requested_state='%s',touched=datetime(\'NOW\'),
                 act_when=datetime(\'NOW\','+%d minutes')
-                where locked='NO' and name ='%s';""" % (request,delay, host)
+                where locked='NO' and name ='%s';""" % (request,delay, self.hostName)
 
-        if self.verbose:
-            print "On",host
+        if self.verb:
+            print "On",self.hostName
             print sql
 
         self.executeSql( sql )
         return
 
-    def off(self,host,delay):
+    def off(self,delay):
         request = 'OFF'
 
         sql = """update outlets 
                 set requested_state='%s',touched=datetime(\'NOW\'),
                 act_when=datetime(\'NOW\','+%d minutes')
-                where locked='NO' and name ='%s';""" % (request,delay, host)
+                where locked='NO' and name ='%s';""" % (request,delay, self.hostName)
 
-        if self.verbose:
-            print "Off",host
+        if self.verb:
+            print "Off",self.hostName
             print sql
 
         self.executeSql( sql )
         return
 
-    def reboot(self,host,delay):
+    def reboot(self,delay):
         request = 'REBOOT'
 
         sql = """update outlets 
                 set requested_state='%s',touched=datetime(\'NOW\'),
                 act_when=datetime(\'NOW\','+%d minutes')
-                where locked='NO' and name ='%s';""" % (request,delay, host)
+                where locked='NO' and name ='%s';""" % (request,delay, self.hostName)
 
-        if self.verbose:
-            print "Reboot",host
+        if self.verb:
+            print "Reboot",self.hostName
             print sql
 
         self.executeSql( sql )
         return
 
-    def cancel(self,host):
-
-        if host == 'all':
+    def cancel(self):
+        if self.hostName == 'all':
             sql="update outlets set requested_state='NA'";
         else:
-            sql="update outlets set requested_state='NA' where name = '%s';" % host
+            sql="update outlets set requested_state='NA' where name = '%s';" % self.hostName
 
-        if self.verbose:
+        if self.verb:
             print "Cancel"
             print sql
 
         self.executeSql( sql )
         return
 
-    def status(self,host):
-        sql ="select hosts.name,outlets.name,outlets.state from hosts,outlets where hosts.idx = outlets.hostidx and outlets.name = '%s';" % host
-        print "Status",host
+    def status(self):
+        sql ="select hosts.name,outlets.name,outlets.state from hosts,outlets where hosts.idx = outlets.hostidx and outlets.name = '%s';" % self.hostName
+        print "Status",self.hostName
 
-        if self.verbose:
+
+        if self.verb:
             print "Status"
             print sql
 

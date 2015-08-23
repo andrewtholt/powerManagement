@@ -10,9 +10,10 @@ def main():
     else:
         host=sys.argv[1]
 
-    control=power()
+    control=power(host)
+    control.verbose(True)
 
-    control.cancel( host )
+    control.cancel()
 
 main()
 
