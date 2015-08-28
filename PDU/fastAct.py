@@ -41,7 +41,9 @@ def main():
             where hosts.status='UP' and 
             hosts.idx = outlets.hostidx and 
             act_when < datetime('now') and 
-            outlets.requested_state <> 'NA';"""
+            outlets.requested_state <> 'NA' and
+            (hosts.type='apc' or hosts.type='cyc')
+            ;"""
 # Add select on hosts.type='apc' or hosts.type='cyc'
 
 #    sql = """select 
@@ -49,6 +51,9 @@ def main():
 #        hosts.on_value,hosts.off_value,hosts.rw_community,hosts.status,
 #        hosts.ip
 #        from hosts,outlets where hosts.idx=outlets.hostidx;"""
+
+    if verbose:
+        print(sql)
 
     cur.execute(sql)
     for r in cur.fetchall():
