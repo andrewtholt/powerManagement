@@ -31,9 +31,22 @@ def usage():
     print "\thost status <hostname>|all"
     print "\thost update <hostname>|all"
 
+def executeSql(cur,sql):
+    failed=True
+
+    while failed:
+        try:
+            cur.execute( sql )
+            failed=False
+        except sqlite.OperationalError:
+            print "Database Locked."
+            failed=True
+            sleep(1)
+    return
+
 def main():
     verbose = False
-    
+
     db = getenv("POWER_DB")
 
     pdir = getenv("PDIR")
@@ -45,10 +58,10 @@ def main():
     if len(sys.argv) != 3:
         usage()
         sys.exit(0)
- 
+
     con = sqlite.connect( db )
     cur = con.cursor()
-               
+
     request = sys.argv[1]
     hostName = sys.argv[2]
 
@@ -63,7 +76,7 @@ def main():
 #
 #        if count == 0:
 #            sys.exit(1)
-    
+
     if len(tmp) == 2:
         if tmp[0] == "type":
             if tmp[1] == "cyc":
@@ -78,11 +91,11 @@ def main():
                 on = 0
                 off = 0
                 reboot = 0
-                
+
             sql = """update hosts 
             set type='%s',on_value=%d,off_value=%d,reboot_value=%d,touched=datetime(\'NOW\') 
             where name='%s';""" % ( tmp[1], on,off,reboot, hostName )
-            
+
             if verbose:
                 print sql
         elif tmp[0] == "port":
@@ -107,29 +120,38 @@ def main():
             sql = "update hosts set ip='%s',touched=datetime(\'NOW\') where name='%s';" % ( tmp[1], hostName )
             if verbose:
                 print sql
-                
-        cur.execute( sql )
+
+        executeSql(cur,sql)
+#        cur.execute( sql )
         con.commit()
     else:    
         request = sys.argv[1].upper()
-        
+
         if request == "ADD":
             sql = "insert into hosts (name) values ('%s');" % hostName
-            cur.execute( sql )
+
+            executeSql(cur,sql)
+#            cur.execute( sql )
             con.commit()
         elif request=="DELETE":
             sql = "delete from hosts where name='%s';" % hostName
             if verbose:
                 print sql
-            cur.execute( sql )
+
+            executeSql(cur,sql)
+            # cur.execute( sql )
             con.commit()
         elif request == "UP":
             sql = "update hosts set status='%s' where name='%s';" % ( request, hostName )
-            cur.execute( sql )
+
+            executeSql(cur,sql)
+#            cur.execute( sql )
             con.commit()
         elif request == "DOWN":
             sql = "update hosts set status='%s' where name='%s';" % (request, hostName )
-            cur.execute( sql )
+
+            executeSql(cur,sql)
+#            cur.execute( sql )
             con.commit()
         elif request == "UPDATE":
             cmd = "fping %s > /dev/null" % hostName
@@ -139,23 +161,27 @@ def main():
             else:
                 sql = "update hosts set status='DOWN' where name='%s';" %  hostName
 
-            cur.execute( sql )
+
+            executeSql(cur,sql)
+#            cur.execute( sql )
             con.commit()
 
         elif request == "STATUS":
             sql = """select name,ip,type,port,rw_community,ro_community,on_value,off_value,reboot_value,status,ping_count,mac
             from hosts"""
-            
+
             if hostName == "all":
                 sql = sql +';'
             else:
                 sql = sql + " where name = '%s';" % hostName
-                
+
             if verbose:
                 print sql
-                
-            cur.execute( sql )
-            
+
+
+            executeSql(cur,sql)
+#            cur.execute( sql )
+
             print "+================+================+==================+==========+==========+"
             printf("|%-16s", " Name")
             printf("|%-16s", " IP" )
@@ -177,7 +203,7 @@ def main():
                 status  = r[9]
                 counter = r[10]
                 mac     = r[11]
-                
+
                 printf("|%-16s" , name)
                 printf("|%-16s" , ip)
                 printf( "|%-18s" , mac)
@@ -192,8 +218,8 @@ def main():
                 printf( "|%-10s|\n" , status)
 #                print "Ping Counter: %s" % counter
             print "+================+================+==================+==========+==========+"
-                
-                    
-                
-                
+
+
+
+
 main()

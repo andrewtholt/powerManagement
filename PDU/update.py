@@ -23,7 +23,7 @@ def executeSql(cur,sql):
             cur.execute( sql )
 #            self.con.commit()
             failed=False
-        except:
+        except sqlite.OperationalError:
             print "Database Locked."
             failed=True
             sleep(01)
@@ -51,19 +51,21 @@ def main():
     cur.execute(sql)
 
     dnsFailed=True
+    try:
+        getaddrinfo(name,22)
+        dnsFailed=False
+    except:
+        dnsFailed=True
 
     for r in cur.fetchall():
         name=r[0]
         ip=r[1]
         status = r[2]
 
-        try:
-            getaddrinfo(name,22)
-            dnsFailed=False
-            cmd = "fping -c 2 %s > /dev/null 2>&1" % name
-        except gaierror:
-            dnsFailed=True
+        if dnsFailed:
             cmd = "fping -c 2 %s > /dev/null 2>&1" % ip
+        else:
+            cmd = "fping -c 2 %s > /dev/null 2>&1" % name
 
         if verbose:
             print cmd

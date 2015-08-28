@@ -14,6 +14,18 @@ import os.path
 from os import getenv,popen,remove
 from time import sleep
 
+def executeSql(cur,sql):
+    failed = True
+    while failed:
+        try:
+            cur.execute( sql )
+            failed=False
+        except sqlite.OperationalError:
+            print "Database Locked."
+            failed=True
+            sleep(1)
+    return
+
 def main():
 
     verbose=False
@@ -40,7 +52,8 @@ def main():
     if verbose:
         print sql
 
-    cur.execute(sql)
+#    cur.execute(sql)
+    executeSql(cur,sql)
     for r in cur.fetchall():
 #        print r[0],r[1],r[2],r[3]
         
@@ -70,14 +83,19 @@ def main():
             elif ret == int(offValue):
                 cState="OFF"
 
-            print "Host %s Host status %s" % ( cState, outletName )
+#            print "Ret value ",ret
+#            print "On Value  ",int(onValue)
+#            print "Off Value ",int(offValue)
+
+            print "Host %s Host status %s" % ( outletName,cState )
             sqlCmd = "update outlets set state='%s' where name='%s';" % ( cState, outletName )
 
             if verbose:
                 print sqlCmd
                 print "===================================================="
 
-            cur.execute(sqlCmd)
+            executeSql(cur,sql)
+#            cur.execute(sqlCmd)
 
             sqlCmd = "update outlets set pf_state='%s' where name='%s' and start_state='RESTORE';" % ( cState, outletName )
 
@@ -85,7 +103,8 @@ def main():
                 print sqlCmd
                 print "===================================================="
 
-            cur.execute(sqlCmd)
+            executeSql(cur,sql)
+#            cur.execute(sqlCmd)
             
     con.commit()
     con.close()

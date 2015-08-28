@@ -8,6 +8,7 @@ import getopt
 import sqlite3 as sqlite
 import os.path
 from os import getenv,popen,path
+from time import sleep
 
 
 from string import strip
@@ -29,6 +30,18 @@ def usage():
     print "\t\tpower off fred"
     print "\t\tpower status all"
     print "\t\tpower off fred in 5 minutes\n"
+
+def executeSql(cur,sql):
+    failed = True
+    while failed:
+        try:
+            cur.execute( sql )
+            failed=False
+        except sqlite.OperationalError:
+            print "Database Locked."
+            failed=True
+            sleep(1)
+    return
 
 def main():
     cmd = ""
@@ -52,6 +65,7 @@ def main():
     if len(sys.argv) < 3:
         usage()
         sys.exit(0)
+    
     con = sqlite.connect( db )
     cur = con.cursor()
 
@@ -80,7 +94,8 @@ def main():
         elif tmp[0] == "start":
             sql = "update outlets set start_state='%s',touched=datetime(\'NOW\') where name='%s';" % (tmp[1].upper(), out )
             
-        cur.execute( sql )
+        executeSql(cur,sql)
+#        cur.execute( sql )
         con.commit()
     else:
         request = sys.argv[1].upper()
@@ -110,7 +125,8 @@ def main():
 
             if verbose: print sql
 
-            cur.execute( sql )
+            executeSql(cur,sql)
+#            cur.execute( sql )
         
             print "+" + 8*'-' + "+" + 16*'-' + "+" + 8*'-' + "+" + 8*'-' + "+" + 8*'-' + "+" + 7*"-" + "+" + 6*'-' + "+" + 6*'-' + '+'
             print "|%-8s|%-16s|%-8s|%-8s|%-8s|%-7s|%-6s|%-6s|" % ("PDU", "Name","State","PF State","Pending","Start","Locked","PF Act")
@@ -147,7 +163,8 @@ def main():
 
             if verbose: print sql
 
-        cur.execute(sql)
+        executeSql(cur,sql)
+#        cur.execute(sql)
         con.commit()
 
     con.close()

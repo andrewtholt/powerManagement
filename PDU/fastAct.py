@@ -42,7 +42,7 @@ def main():
             hosts.idx = outlets.hostidx and 
             act_when < datetime('now') and 
             outlets.requested_state <> 'NA';"""
-
+# Add select on hosts.type='apc' or hosts.type='cyc'
 
 #    sql = """select 
 #        hosts.name,outlets.name,outlets.state,hosts.ro_community,outlets.oid,

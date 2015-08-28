@@ -58,7 +58,14 @@ def main():
     con = sqlite.connect( db )
     cur = con.cursor()
 
-    cmd = "fping -ad -g %s 2> /dev/null" % subnet
+    # Are we on the internet ?
+    # Try pinging Googles public DNS
+
+    rc=os.system("fping 8.8.8.8")
+    if rc == 0: # Internet available
+        cmd = "fping -ad -g %s 2> /dev/null" % subnet
+    else:
+        cmd = "fping -a -g %s 2> /dev/null" % subnet
 
     if verbose:
         print cmd
