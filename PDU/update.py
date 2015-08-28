@@ -9,10 +9,25 @@ import sys
 import getopt
 from pysqlite2 import dbapi2 as sqlite
 from os import getenv
+from socket import getaddrinfo,gaierror
 
 import os.path
 from os import getenv,popen,remove,system
 from time import sleep
+
+def executeSql(cur,sql):
+    failed=True
+
+    while failed:
+        try:
+            cur.execute( sql )
+#            self.con.commit()
+            failed=False
+        except:
+            print "Database Locked."
+            failed=True
+            sleep(01)
+    return
 
 def main():
 
@@ -35,12 +50,20 @@ def main():
 
     cur.execute(sql)
 
+    dnsFailed=True
+
     for r in cur.fetchall():
         name=r[0]
         ip=r[1]
         status = r[2]
 
-        cmd = "fping -c 2 %s > /dev/null 2>&1" % name
+        try:
+            getaddrinfo(name,22)
+            dnsFailed=False
+            cmd = "fping -c 2 %s > /dev/null 2>&1" % name
+        except gaierror:
+            dnsFailed=True
+            cmd = "fping -c 2 %s > /dev/null 2>&1" % ip
 
         if verbose:
             print cmd
@@ -52,12 +75,16 @@ def main():
         else:
             state = 'DOWN'
 
-        sqlCmd = "update hosts set status='%s' where name='%s';" % ( state, name )
+        if dnsFailed:
+            sqlCmd = "update hosts set status='%s' where ip='%s';" % ( state, ip )
+        else:
+            sqlCmd = "update hosts set status='%s' where name='%s';" % ( state, name )
 
         if verbose:
             print sqlCmd
         
-        cur.execute(sqlCmd)
+        executeSql(cur, sqlCmd)
+#        cur.execute(sqlCmd)
             
     con.commit()
     con.close()
