@@ -20,14 +20,18 @@ def executeSql(cur,sql):
 
     while failed:
         try:
+            print sql
             cur.execute( sql )
 #            self.con.commit()
             failed=False
         except sqlite.OperationalError:
+#        except :
             print "Database Locked."
+            print "Unexpected error:", sys.exc_info()[0]
             failed=True
             sleep(01)
     return
+# print "I/O error({0}): {1}".format(e.errno, e.strerror)
 
 def main():
 
@@ -44,23 +48,33 @@ def main():
         sys.exit(1)
 
     con = sqlite.connect( db )
+    sqlite.isolation_level = None
+
     cur = con.cursor()
     
     sql = "select name, ip, status from hosts; "
 
+    if verbose:
+        print sql
+#    executeSql(cur,sql)
     cur.execute(sql)
 
     dnsFailed=True
+
     try:
         getaddrinfo(name,22)
         dnsFailed=False
     except:
         dnsFailed=True
 
+    firstTime = True
+
     for r in cur.fetchall():
         name=r[0]
         ip=r[1]
         status = r[2]
+
+        print name
 
         if dnsFailed:
             cmd = "fping -c 2 %s > /dev/null 2>&1" % ip
@@ -77,6 +91,11 @@ def main():
         else:
             state = 'DOWN'
 
+        if firstTime:
+            firstTime=False
+            print "Begine"
+            cur.execute("begin")
+        
         if dnsFailed:
             sqlCmd = "update hosts set status='%s' where ip='%s';" % ( state, ip )
         else:
@@ -88,6 +107,7 @@ def main():
         executeSql(cur, sqlCmd)
 #        cur.execute(sqlCmd)
             
+#    executeSql(cur,"commit")
     con.commit()
     con.close()
 
