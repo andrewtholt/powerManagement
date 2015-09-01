@@ -3,7 +3,6 @@
 # POWER_DB  Database
 # PDIR      Base directory for utilities
 #
-# Basic template to modify for a new command.
 #
 import sys
 import getopt
