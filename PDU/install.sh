@@ -111,6 +111,7 @@ cp ./power.py $APPS_DIR
 cp ./powerCheck.py $APPS_DIR
 cp ./start.py $APPS_DIR
 cp ./update.py $APPS_DIR
+cp ./backupPowerDB.sh $APPS_DIR
 
 cd $APPS_DIR
 ln -fs ./fastAct.py ./fastAct
