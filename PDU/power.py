@@ -17,6 +17,8 @@ def usage():
     print "Usage: power <cmd> <device>"
     print "\tcmd is one of:"
     print "\t\tstatus\tStatus of named device."
+    print "\t\tqstatus\tStatus of named device."
+    print "\t\t\tReturns exit code of 0, if off, and 1 if on." 
     print "\t\ton\tSwitch named device on."
     print "\t\toff\tSwitch named device off.\n"
     print "\tdevice is the name of a PDU port, or the special cases\n"
@@ -100,7 +102,17 @@ def main():
     else:
         request = sys.argv[1].upper()
         
-        if  request == "STATUS":
+        if request == "QSTATUS":
+            sql = "select state from outlets where name ='%s';" % sys.argv[2]
+            print sql
+            executeSql(cur,sql)
+
+            if  cur.fetchone()[0] == "ON":
+                sys.exit(1)
+            else:
+                sys.exit(0)
+
+        elif  request == "STATUS":
             if verbose: print "status ..."
 
             sql = """select hosts.name,outlets.name,outlets.state,
