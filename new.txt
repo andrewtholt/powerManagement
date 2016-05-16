@@ -1,0 +1,9 @@
+
+1. Daemon that reads from UPS and publishes data.
+
+2. Each outlet on a PDU or on board power control has an agent running running on the same machine.
+
+3.
+
+
+
