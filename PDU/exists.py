@@ -25,7 +25,7 @@ def main():
         sys.exit(1)
 
     try:
-        opts,args = getopt.getopt(sys.argv[1:], "s:hv",['address','name','help','verbose'])
+        opts,args = getopt.getopt(sys.argv[1:], "a:n:hv",['address','name','help','verbose'])
     except:
         print "Argument Error"
         usage()
@@ -82,8 +82,6 @@ def main():
         if verbose:
             print "In database."
         sys.exit(0);
-
-
 
 
 main()

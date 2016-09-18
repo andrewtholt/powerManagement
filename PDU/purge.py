@@ -13,11 +13,25 @@ import os.path
 from os import getenv,popen,remove
 from time import sleep
 
+def usage():
+
+    print "\nUsage:purge <host|all>"
+    print "\tRemove the named host, or all, marked as down in the database.\n"
+
 def main():
 
     verbose=False
     if len(sys.argv) > 1:
-        verbose=True
+        sql = "delete from hosts where status='DOWN'"
+        host = sys.argv[1]
+        if host == "all":
+            sql += ";"
+        else:
+            sql += " and name=%s;" % host
+    else:
+        usage()
+        sys.exit(0)
+
 
     db = getenv("POWER_DB")
 
@@ -29,15 +43,9 @@ def main():
 
     con = sqlite.connect( db )
     cur = con.cursor()
-    # 
-    # Restore power state to that which existed prior to power
-    # outage.
-    # 
-    # update outlets set requested_state=pf_state
-    #       where start_state='RESTORE'
-    #
-    sql = "update outlets set pf_state='UNKNOWN';"
+    
     cur.execute(sql)
+
     con.commit()
     con.close()
 
@@ -46,8 +54,7 @@ def main():
 main()
 
 
-# On power failure copy current state to pf_state
-# update outlets set pf_state=state where start_state='RESTORE';
-# 
-# Set the requested state to the state required on power fail
-# update outlets set requested_state=pf_action where pf_action <> 'NONE';
+
+
+
+
