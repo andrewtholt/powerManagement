@@ -85,6 +85,8 @@ def main():
         rw=r[7]
         hostStatus = r[8]
         ip=r[9]
+
+        print(ip+" Status is "+ hostStatus)
         
         if hostStatus != "DOWN":
             cmd = "snmpget -OvQ -t 10 -v1 -c %s %s %s 2> /dev/null" % ( ro, ip,oid)

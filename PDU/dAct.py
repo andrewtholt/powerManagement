@@ -27,13 +27,15 @@ def on_message(client, userdata, msg):
     act=(str(msg.payload)).split("'")[1]
 
     outlet=path[3]
-    print( outlet )
-    print( act)
+#    print( outlet )
+#    print( act)
 
 
-    print(db)
+#    print(db)
 
-    sql="select hosts.name,hosts.on_value,hosts.off_value,outlets.name,outlets.oid from hosts,outlets where hosts.name='apc' and outlets.name='%s';" % ( outlet)
+#    sql="select hosts.name,hosts.on_value,hosts.off_value,outlets.name,outlets.oid from hosts,outlets where hosts.name='apc' and outlets.name='%s';" % ( outlet)
+
+    sql="select hosts.name,hosts.on_value,hosts.off_value,outlets.name,outlets.oid from hosts,outlets where outlets.name='%s';" % ( outlet)
 
     con=sqlite.connect(db)
     cur=con.cursor()
@@ -59,7 +61,7 @@ def on_message(client, userdata, msg):
 
     cmd = "snmpset -t 10 -v1 -c %s %s %s i %d > /dev/null 2>&1" % (rw,pdu,oid,state)
     print(cmd)
-    system(cmd)
+#    system(cmd)
 
     con.close
 
@@ -70,22 +72,7 @@ def main():
     client.on_message = on_message
 
     client.connect("127.0.0.1", 1883, 60)
-
-#    db=getenv("POWER_DB")
-#    con=sqlite.connect(db)
-#    cur=con.cursor()
 #
-#    sql = "select outlets.name from hosts,outlets where hosts.name='apc' and hosts.idx=outlets.hostidx;"
-#    cur.execute(sql)
-#
-#    for r in cur.fetchall():
-#        outletName=r[0]
-#
-#        topic = "/home/office/%s/power" % (outletName)
-#
-#        client.subscribe( topic )
-
-
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.
 # Other loop*() functions are available that give a threaded interface and a
