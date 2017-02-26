@@ -12,6 +12,9 @@ create table hosts
       -- Currently apc and cyc are used.
       -- Could be used to hold model info.
       --
+      -- 26 Feb 2017: Continue as above but these are effectively
+      -- aliases for snmp.  Add types: snmp and mqtt
+      --
       type varchar(8) default 'UNKNOWN',
       -- snmp port
       port integer default 161,
@@ -31,6 +34,11 @@ create table outlets
       hostidx int not null,
       name varchar(32) unique,
       delay integer default 10,
+      -- 
+      -- 26 Feb: if the outlet is 'hosted' by a none
+      -- snmp type, suchas MQTT the oid is reused as (say)
+      -- 'topic'
+      --
       oid varchar(128),
       number int,
       state varchar(8) default 'UNKNOWN',
