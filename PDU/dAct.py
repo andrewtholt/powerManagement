@@ -61,7 +61,7 @@ def on_message(client, userdata, msg):
 
     cmd = "snmpset -t 10 -v1 -c %s %s %s i %d > /dev/null 2>&1" % (rw,pdu,oid,state)
     print(cmd)
-#    system(cmd)
+    system(cmd)
 
     con.close
 
