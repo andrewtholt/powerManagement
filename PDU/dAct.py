@@ -32,7 +32,7 @@ def on_message(client, userdata, msg):
 
     outlet=path[3]
 
-    sql="select hosts.name,hosts.on_value,hosts.off_value,outlets.name,outlets.oid, hosts.type from hosts,outlets where outlets.name='%s';" % ( outlet)
+    sql="select hosts.name,hosts.on_value,hosts.off_value,outlets.name,outlets.oid, hosts.type from hosts,outlets where outlets.name='%s' and hosts.idx=outlets.hostidx;" % ( outlet)
 
     con=sqlite.connect(db)
     cur=con.cursor()
@@ -40,6 +40,8 @@ def on_message(client, userdata, msg):
     cur.execute(sql)
 
     data=cur.fetchone()
+
+    print(data)
 
     pdu=data[0]
 
@@ -49,11 +51,14 @@ def on_message(client, userdata, msg):
     oid=data[4]
     deviceType = data[5]
 
+    print("onValue:",onValue)
+    print("offValue:",offValue)
+
 #    print("Device Type:" + deviceType)
 
     localType='unknown'
 
-    if deviceType in ['apc','acs','snmp']:
+    if deviceType in ['apc','cyc','snmp']:
         localType='snmp'
     elif deviceType in ['mqtt']:
         localType='mqtt'
