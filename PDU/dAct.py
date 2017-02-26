@@ -5,6 +5,10 @@ import sqlite3 as sqlite
 from os import getenv,system
 import sys
 
+# pdu is the ip address 
+# oid is the oid
+# state is the value to be written.
+
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
@@ -27,15 +31,8 @@ def on_message(client, userdata, msg):
     act=(str(msg.payload)).split("'")[1]
 
     outlet=path[3]
-#    print( outlet )
-#    print( act)
 
-
-#    print(db)
-
-#    sql="select hosts.name,hosts.on_value,hosts.off_value,outlets.name,outlets.oid from hosts,outlets where hosts.name='apc' and outlets.name='%s';" % ( outlet)
-
-    sql="select hosts.name,hosts.on_value,hosts.off_value,outlets.name,outlets.oid from hosts,outlets where outlets.name='%s';" % ( outlet)
+    sql="select hosts.name,hosts.on_value,hosts.off_value,outlets.name,outlets.oid, hosts.type from hosts,outlets where outlets.name='%s';" % ( outlet)
 
     con=sqlite.connect(db)
     cur=con.cursor()
@@ -50,6 +47,16 @@ def on_message(client, userdata, msg):
     offValue=data[2]
     name=data[3]
     oid=data[4]
+    deviceType = data[5]
+
+#    print("Device Type:" + deviceType)
+
+    localType='unknown'
+
+    if deviceType in ['apc','acs','snmp']:
+        localType='snmp'
+    elif deviceType in ['mqtt']:
+        localType='mqtt'
 
     rw='private'
 
@@ -59,9 +66,10 @@ def on_message(client, userdata, msg):
     elif act=='OFF':
         state=offValue
 
-    cmd = "snmpset -t 10 -v1 -c %s %s %s i %d > /dev/null 2>&1" % (rw,pdu,oid,state)
-    print(cmd)
-    system(cmd)
+    if localType == 'snmp':
+        cmd = "snmpset -t 10 -v1 -c %s %s %s i %d > /dev/null 2>&1" % (rw,pdu,oid,state)
+        print(cmd)
+        system(cmd)
 
     con.close
 
