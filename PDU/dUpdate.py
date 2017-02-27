@@ -86,7 +86,8 @@ def main():
         hostStatus = r[8]
         ip=r[9]
 
-        print(ip+" Status is "+ hostStatus)
+        if verbose:
+            print(ip+" Status is "+ hostStatus)
         
         if hostStatus != "DOWN":
             cmd = "snmpget -OvQ -t 10 -v1 -c %s %s %s 2> /dev/null" % ( ro, ip,oid)
@@ -106,7 +107,8 @@ def main():
 #            print ("On Value  ",int(onValue))
 #            print ("Off Value ",int(offValue))
 
-            print ("Host %s Host status %s" % ( outletName,cState ))
+            if verbose:
+                print ("Host %s Host status %s" % ( outletName,cState ))
 
             topic="/home/office/%s/power" % ( outletName )
 
@@ -141,9 +143,4 @@ def main():
 
 
 main()
-
-
-
-
-
 
