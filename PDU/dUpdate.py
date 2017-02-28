@@ -8,6 +8,7 @@
 import sys
 import getopt
 import sqlite3 as sqlite
+import redis
 
 # from pysqlite2 import dbapi2 as sqlite
 from os import getenv
@@ -59,6 +60,8 @@ def main():
 
     con = sqlite.connect( db )
     cur = con.cursor()
+
+    red = redis.StrictRedis(host='localhost', port=6379, db=0)
     
     sql = """select 
         hosts.name,outlets.name,outlets.state,hosts.ro_community,outlets.oid,
@@ -115,7 +118,10 @@ def main():
             print(topic)
             print(payload)
 
+            red.set(topic, payload)
+
             client.publish(topic, payload, qos=0, retain=True)
+
 
 #            sqlCmd = "update outlets set state='%s' where name='%s';" % ( cState, outletName )
 
