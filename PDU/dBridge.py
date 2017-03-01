@@ -57,18 +57,16 @@ def main():
     cfg = cp.ConfigParser()
     cfg.read( configFile )
 
-    localBrokerHost=""
-    localBrokerPort = 6379
+    redisHost="fred"
+    redisPort = 6379
 
-    if localBroker:
-        localBrokerHost = cfg.get('local','name')
-        localBrokerPort = cfg.get('local','port')
+    redisHost = cfg.get('common','redis-host')
+    redisPort = cfg.get('common','redis-port')
 
-    print( localBrokerHost )
-    print( localBrokerPort )
+    print( redisHost )
+    print( redisPort )
 
-#    rc = redis.StrictRedis(host=localBrokerHost, port=localBrokerPort, db=0)
-    rc = redis.StrictRedis(localBrokerHost, port=6379, db=0)
+    rc = redis.StrictRedis(redisHost, port=redisPort, db=0)
 
     for k in rc.scan_iter("/*"):
         print(str(k))
