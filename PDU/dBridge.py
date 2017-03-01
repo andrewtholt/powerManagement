@@ -69,7 +69,8 @@ def main():
     rc = redis.StrictRedis(redisHost, port=redisPort, db=0)
 
     for k in rc.scan_iter("/*"):
-        print(str(k))
+        key= k.decode()
+        print( key )
 #        print(str(k), rc.get(k))
 
     return
