@@ -72,7 +72,6 @@ def main():
     if verbose:
         print (sql)
 
-#    cur.execute(sql)
     executeSql(cur,sql)
     for r in cur.fetchall():
 #        print (r[0],r[1],r[2],r[3])
@@ -124,26 +123,6 @@ def main():
 
             client.publish(topic, payload, qos=0, retain=True)
 
-
-#            sqlCmd = "update outlets set state='%s' where name='%s';" % ( cState, outletName )
-
-#            if verbose:
-#                print (sqlCmd)
-#                print ("====================================================")
-#
-#            executeSql(cur,sql)
-#            cur.execute(sqlCmd)
-
-#            sqlCmd = "update outlets set pf_state='%s' where name='%s' and start_state='RESTORE';" % ( cState, outletName )
-#
-#            if verbose:
-#                print (sqlCmd)
-#                print ("====================================================")
-#
-#            executeSql(cur,sql)
-#            cur.execute(sqlCmd)
-            
-#    con.commit()
     con.close()
 
 
