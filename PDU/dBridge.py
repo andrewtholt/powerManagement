@@ -20,7 +20,8 @@ def main():
     localBroker  = True
     remoteBroker = False
     verbose = False
-    configFile="/etc/mqtt/bridge.ini"
+#    configFile="/etc/mqtt/bridge.ini"
+    configFile="./bridge.ini"
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "c:hlrv", ["config=","help","local","remote","verbose"])
@@ -69,9 +70,7 @@ def main():
     rc = redis.StrictRedis(redisHost, port=redisPort, db=0)
 
     for k in rc.scan_iter("/*"):
-        key= k.decode()
-        print( key )
-#        print(str(k), rc.get(k))
+        print(k.decode(), (rc.get(k)).decode())
 
     return
 
