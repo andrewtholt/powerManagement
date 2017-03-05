@@ -4,6 +4,9 @@ import configparser as cp
 import getopt
 import sys
 import redis
+import paho.mqtt.client as mqtt
+
+
 
 def usage():
     print()
@@ -17,13 +20,43 @@ def usage():
     print("\t./dBridge.py -l ")
     print()
 
-def main():
+def on_connect(client, userdata, flags, rc):
+    print("Connected with result code "+str(rc))
 
+    client.subscribe("/home/office/+/power")
+
+
+
+def on_message(client, userdata, msg):
+
+    changed=False
+
+    m=(msg.payload).decode()
+#    print(msg.topic+" "+ m)
+    d=rc.get(msg.topic)
+
+    if d == None:
+#        print("Not found")
+        rc.set(msg.topic, m)
+        changed=True
+    else:
+#        print("Found")
+        d=d.decode()
+
+        if m != d :
+            print("Changed")
+# Publish to remote broker
+            rc.set(msg.topic, m)
+
+
+
+def main():
     localBroker  = True
     remoteBroker = False
     verbose = False
 #    configFile="/etc/mqtt/bridge.ini"
     configFile="./bridge.ini"
+    global rc
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "c:hlrv", ["config=","help","local","remote","verbose"])
@@ -71,8 +104,16 @@ def main():
 
     rc = redis.StrictRedis(redisHost, port=redisPort, db=0)
 
-    for k in rc.scan_iter("/*"):
+    for k in rc.scan_iter("/home/office/*"):
         print(k.decode(), (rc.get(k)).decode())
+
+    client = mqtt.Client()
+    client.on_connect = on_connect
+    client.on_message = on_message
+
+    client.connect("127.0.0.1", 1883, 60)
+
+    client.loop_forever()
 
     return
 

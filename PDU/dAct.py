@@ -19,7 +19,7 @@ def on_connect(client, userdata, flags, rc):
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-    print(msg.topic+" "+str(msg.payload))
+    print(msg.topic+" "+(msg.payload).decode() )
 
     db=getenv("POWER_DB")
 
@@ -43,38 +43,39 @@ def on_message(client, userdata, msg):
 
     print(data)
 
-    pdu=data[0]
-
-    onValue=data[1]
-    offValue=data[2]
-    name=data[3]
-    oid=data[4]
-    deviceType = data[5]
-
-    print("onValue:",onValue)
-    print("offValue:",offValue)
-
-#    print("Device Type:" + deviceType)
-
-    localType='unknown'
-
-    if deviceType in ['apc','cyc','snmp']:
-        localType='snmp'
-    elif deviceType in ['mqtt']:
-        localType='mqtt'
-
-    rw='private'
-
-    state=-1
-    if act=='ON':
-        state=onValue
-    elif act=='OFF':
-        state=offValue
-
-    if localType == 'snmp':
-        cmd = "snmpset -t 10 -v1 -c %s %s %s i %d > /dev/null 2>&1" % (rw,pdu,oid,state)
-        print(cmd)
-        system(cmd)
+    if data != None:
+        pdu=data[0]
+    
+        onValue=data[1]
+        offValue=data[2]
+        name=data[3]
+        oid=data[4]
+        deviceType = data[5]
+    
+        print("onValue:",onValue)
+        print("offValue:",offValue)
+    
+    #    print("Device Type:" + deviceType)
+    
+        localType='unknown'
+    
+        if deviceType in ['apc','cyc','snmp']:
+            localType='snmp'
+        elif deviceType in ['mqtt']:
+            localType='mqtt'
+    
+        rw='private'
+    
+        state=-1
+        if act=='ON':
+            state=onValue
+        elif act=='OFF':
+            state=offValue
+    
+        if localType == 'snmp':
+            cmd = "snmpset -t 10 -v1 -c %s %s %s i %d > /dev/null 2>&1" % (rw,pdu,oid,state)
+            print(cmd)
+            system(cmd)
 
     con.close
 
