@@ -13,6 +13,8 @@ def usage():
     print("\t-h\t\tHelp.")
     print("\t-l\t\tLocal.")
     print("\t-r\t\tRemote.")
+    print("Note: Default is:")
+    print("\t./dBridge.py -l ")
     print()
 
 def main():
