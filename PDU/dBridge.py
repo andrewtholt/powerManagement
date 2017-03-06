@@ -80,6 +80,15 @@ def main():
         print(err)
         sys.exit(2)
 
+    localMqttHost="localhost"
+    localMqttPort=1883
+
+    remoteMqttHost="broken"
+    remoteMqttPort=1883
+
+    cfg = cp.ConfigParser()
+    cfg.read( configFile )
+
     if verbose:
         print()
         if localBroker:
@@ -90,8 +99,6 @@ def main():
         print("Config File:"+configFile)
         print()
 
-    cfg = cp.ConfigParser()
-    cfg.read( configFile )
 
     redisHost="fred"
     redisPort = 6379
@@ -107,13 +114,17 @@ def main():
     for k in rc.scan_iter("/home/office/*"):
         print(k.decode(), (rc.get(k)).decode())
 
-    client = mqtt.Client()
-    client.on_connect = on_connect
-    client.on_message = on_message
+    localMqttHost = cfg.get('local','name')
+    localMqttPort = int(cfg.get('local','port'))
 
-    client.connect("127.0.0.1", 1883, 60)
+    localClient = mqtt.Client()
+    localClient.on_connect = on_connect
+    localClient.on_message = on_message
 
-    client.loop_forever()
+#    client.connect("127.0.0.1", 1883, 60)
+    localClient.connect(localMqttHost, localMqttPort, 60)
+
+    localClient.loop_forever()
 
     return
 
