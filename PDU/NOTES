@@ -6,3 +6,6 @@ If the outlet has the same name as the host to which it is attached (where that 
 SQL --
 select outlets.name from hosts,outlets where hosts.idx=outlets.hostidx and hosts.name<>'apc';
 
+Run dUpdate.py to get status directly from the SNMP and other devices.
+
+

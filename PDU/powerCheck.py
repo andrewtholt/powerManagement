@@ -40,6 +40,7 @@ def main():
         print "FATAL ERROR: setup PDIR & POWER_DB env variables"
         sys.exit(1)
 
+    print "Connecting to ", db
     con = sqlite.connect( db )
     cur = con.cursor()
     
@@ -103,8 +104,8 @@ def main():
                 print sqlCmd
                 print "===================================================="
 
-            executeSql(cur,sql)
-#            cur.execute(sqlCmd)
+#            executeSql(cur,sql)
+            cur.execute(sqlCmd)
             
     con.commit()
     con.close()

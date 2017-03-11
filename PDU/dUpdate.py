@@ -47,11 +47,18 @@ def main():
 
     pdir = getenv("PDIR")
 
+    home = getenv("HOME");
+
+    certFile = home + "/.certs/dioty_ca.crt"
+
     if db == None or pdir == None:
         print ("FATAL ERROR: setup PDIR & POWER_DB env variables")
         sys.exit(1)
 
     client = mqtt.Client()
+
+    client.tls_set(certFile)
+
     client.on_connect = on_connect
     client.on_message = on_message
     client.connect("127.0.0.1", 1883, 60)

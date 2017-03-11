@@ -5,6 +5,9 @@ import getopt
 import sys
 import redis
 import paho.mqtt.client as mqtt
+import time
+
+from os import getenv
 
 
 
@@ -20,14 +23,19 @@ def usage():
     print("\t./dBridge.py -l ")
     print()
 
-def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
+def localOnConnect(client, userdata, flags, rc):
+    print("Local Connected with result code "+str(rc))
+
+    client.subscribe("/home/office/+/power")
+
+def remoteOnConnect(client, userdata, flags, rc):
+    print("Remote Connected with result code "+str(rc))
 
     client.subscribe("/home/office/+/power")
 
 
 
-def on_message(client, userdata, msg):
+def localOnMessage(client, userdata, msg):
 
     changed=False
 
@@ -48,6 +56,14 @@ def on_message(client, userdata, msg):
 # Publish to remote broker
             rc.set(msg.topic, m)
 
+            topic = "/" + remoteMqttPrefix + msg.topic
+            print(topic)
+            print( remoteMqttPrefix )
+            print( m )
+            remoteClient.publish(topic, m, qos=0, retain=True)
+
+def remoteOnMessage(client, userdata, msg):
+    print("Remote message")
 
 
 def main():
@@ -83,8 +99,11 @@ def main():
     localMqttHost="localhost"
     localMqttPort=1883
 
-    remoteMqttHost="broken"
+    remoteMqttHost="fred"
     remoteMqttPort=1883
+
+    home=getenv("HOME")
+
 
     cfg = cp.ConfigParser()
     cfg.read( configFile )
@@ -117,14 +136,57 @@ def main():
     localMqttHost = cfg.get('local','name')
     localMqttPort = int(cfg.get('local','port'))
 
+    global localMqttPrefix
+    localMqttPrefix = cfg.get('local','prefix')
+
+    global remoteMqttPrefix
+    remoteMqttHost = cfg.get('remote','name')
+    remoteMqttPort = int(cfg.get('remote','port'))
+    remoteMqttPrefix = cfg.get('remote','prefix')
+    remoteMqttPassword = cfg.get('remote','password')
+
+    if verbose:
+        print()
+        print("Local  MQTT Broker  : " + localMqttHost)
+        print("            Port    : " , localMqttPort)
+        print("            Prefix  : " + localMqttPrefix)
+        print("Remote MQTT Broker  : " + remoteMqttHost)
+        print("            Port    : " , remoteMqttPort)
+        print("            Prefix  : " + remoteMqttPrefix)
+        print("            Password: " + remoteMqttPassword)
+
+
+    global localClient
     localClient = mqtt.Client()
-    localClient.on_connect = on_connect
-    localClient.on_message = on_message
+    localClient.on_connect = localOnConnect
+    localClient.on_message = localOnMessage
+
+    certFile= home + "/.certs/dioty_ca.crt"
+    global remoteClient
+    remoteClient = mqtt.Client()
+    remoteClient.on_connect = remoteOnConnect
+    remoteClient.on_message = remoteOnMessage
+    print("Remote",remoteMqttPrefix,remoteMqttPassword)
+    remoteClient.username_pw_set(remoteMqttPrefix,remoteMqttPassword)
+    remoteClient.tls_set(certFile)
+
 
 #    client.connect("127.0.0.1", 1883, 60)
+    remoteClient.connect(remoteMqttHost, remoteMqttPort)
     localClient.connect(localMqttHost, localMqttPort, 60)
 
-    localClient.loop_forever()
+    remoteClient.publish("/andrewtholt60@gmail.com/home/office/relay1/power", "UNKNOWN", qos=0, retain=True)
+
+
+    lrc=localClient.loop_start()
+    rrc=remoteClient.loop_start()
+
+    print(lrc)
+    print(rrc)
+
+
+    time.sleep(3000)
+#    localClient.loop_forever()
 
     return
 

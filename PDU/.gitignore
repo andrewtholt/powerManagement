@@ -21,3 +21,5 @@
 # Databases
 *.db
 tst.sh
+bridge.ini
+rt.py
