@@ -31,7 +31,10 @@ def localOnConnect(client, userdata, flags, rc):
 def remoteOnConnect(client, userdata, flags, rc):
     print("Remote Connected with result code "+str(rc))
 
-    client.subscribe("/home/office/+/power")
+    pfix="/" + remoteMqttPrefix
+
+    print("Subscribe to " + pfix+"/home/office/+/power" )
+    client.subscribe(pfix+"/home/office/+/power")
 
 
 
@@ -40,20 +43,16 @@ def localOnMessage(client, userdata, msg):
     changed=False
 
     m=(msg.payload).decode()
-#    print(msg.topic+" "+ m)
     d=rc.get(msg.topic)
 
     if d == None:
-#        print("Not found")
         rc.set(msg.topic, m)
         changed=True
     else:
-#        print("Found")
         d=d.decode()
 
         if m != d :
             print("Changed")
-# Publish to remote broker
             rc.set(msg.topic, m)
 
             topic = "/" + remoteMqttPrefix + msg.topic
@@ -64,6 +63,27 @@ def localOnMessage(client, userdata, msg):
 
 def remoteOnMessage(client, userdata, msg):
     print("Remote message")
+    pfix="/" + remoteMqttPrefix
+
+    payload=(msg.payload).decode()
+
+    print(msg.topic)
+    print(payload)
+    print((msg.topic).split("/",2))
+    tmp=(msg.topic).split("/",2)
+
+    key="/" + tmp[2]
+    print( key )
+    d=rc.get(key)
+
+    if d != None:
+        val=d.decode()
+        if val != payload:
+            print("Remote change")
+            localClient.publish(key, payload, qos=0, retain=True)
+        else:
+            print("Remote NO change")
+
 
 
 def main():
@@ -175,7 +195,7 @@ def main():
     remoteClient.connect(remoteMqttHost, remoteMqttPort)
     localClient.connect(localMqttHost, localMqttPort, 60)
 
-    remoteClient.publish("/andrewtholt60@gmail.com/home/office/relay1/power", "UNKNOWN", qos=0, retain=True)
+#    remoteClient.publish("/andrewtholt60@gmail.com/home/office/relay1/power", "UNKNOWN", qos=0, retain=True)
 
 
     lrc=localClient.loop_start()
