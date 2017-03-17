@@ -52,7 +52,7 @@ def localOnMessage(client, userdata, msg):
         d=d.decode()
 
         if m != d :
-            print("Changed")
+            print("Local: Change")
             rc.set(msg.topic, m)
 
             topic = "/" + remoteMqttPrefix + msg.topic
@@ -60,6 +60,8 @@ def localOnMessage(client, userdata, msg):
             print( remoteMqttPrefix )
             print( m )
             remoteClient.publish(topic, m, qos=0, retain=True)
+        else:
+            print("Local: NO Change")
 
 def remoteOnMessage(client, userdata, msg):
     print("Remote message")
@@ -67,22 +69,22 @@ def remoteOnMessage(client, userdata, msg):
 
     payload=(msg.payload).decode()
 
-    print(msg.topic)
-    print(payload)
-    print((msg.topic).split("/",2))
+#    print(msg.topic)
+#    print(payload)
+#    print((msg.topic).split("/",2))
     tmp=(msg.topic).split("/",2)
 
     key="/" + tmp[2]
-    print( key )
+#    print( key )
     d=rc.get(key)
 
     if d != None:
         val=d.decode()
         if val != payload:
-            print("Remote change")
+            print("Remote: Change")
             localClient.publish(key, payload, qos=0, retain=True)
         else:
-            print("Remote NO change")
+            print("Remote: NO change")
 
 
 
