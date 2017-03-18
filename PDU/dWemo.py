@@ -10,10 +10,7 @@ class wemo:
     verbose=False
 
     def __init__(self,name):
-        print("Name:",name)
         self.name=name
-
-#        conn = httplib.HTTPConnection(name)
 
     def setVerbose(self,v):
         self.verbose=v

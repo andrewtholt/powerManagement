@@ -4,7 +4,8 @@ import configparser as cp
 from  dWemo import wemo
 import getopt
 import paho.mqtt.client as mqtt
-from sys import exit, argv
+import sys
+import os
 
 
 def on_connect(client, userdata, flags, rc):
@@ -23,11 +24,20 @@ def on_message(client, userdata, msg):
     wd.setStatus( m )
 
 def usage():
-    print("Help\n")
+    print()
+    print("Usage: dPubWemo.py -h|-c <config file>|-v|-d <WeMo name>\n")
+    print("\t-c <file>|--config=<file>\tConfig file")
+    print("\t-h|--help\t\t\tHelp.")
+    print("\t-v|--verbose\t\t\tverbose.")
+    print("\t-d <name>|--device=<name>\tWeMo device name.")
+
+    print("Default Action:")
+    print("\tdPubWemo.py -c ./bridge.ini\n")
 
 def main():
 
-    configFile="./bridge.ini"
+#    configFile="./bridge.ini"
+    configFile="/etc/mqtt/bridge.ini"
     device = "UNKNOWN"
     verbose=False
 
@@ -40,12 +50,12 @@ def main():
 
 
     try:
-        opts,args = getopt.getopt(argv[1:],"c:d:hv", ["config=","device=""help","verbose"])
+        opts,args = getopt.getopt(sys.argv[1:],"c:d:hv", ["config=","device=","help","verbose"])
 
         for o,a in opts:
             if o in ["-h","--help"]:
                 usage()
-                exit()
+                sys.exit()
             elif o in ["-v","--verbose"]:
                 verbose=True
             elif o in ["-c","--config"]:
@@ -56,16 +66,21 @@ def main():
 
 
     except getopt.GetoptError as err:
-        print(err)
-        exit(1)
+        usage()
+        sys.exit(1)
 
     if verbose:
         print("Config : " + configFile)
         print("Device : " + device)
         print("Topic  : " + topic)
 
-    cfg = cp.ConfigParser()
-    cfg.read( configFile )
+    if os.path.exists(configFile):
+        cfg = cp.ConfigParser()
+        cfg.read( configFile )
+    else:
+        print('No such file as ' + configFile, file=sys.stderr)
+        usage()
+        sys.exit(2)
 
     mqttBroker=cfg.get('local','name')
     mqttPort=int(cfg.get('local','port'))
@@ -81,6 +96,11 @@ def main():
     client.on_message = on_message
 
     client.connect(mqttBroker, mqttPort, 60)
+
+    iam=os.getpid()
+
+    if not verbose:
+        print(iam)
 
     client.loop_forever()
 
