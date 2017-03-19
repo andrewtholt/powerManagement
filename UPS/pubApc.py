@@ -77,7 +77,7 @@ def main():
 
     client.loop_start ()
 
-    pubList = [ 'STATUS','LINEV', 'BATTV','OUTPUTV','MAXLINEV','MINLINEV' ]
+    pubList = [ 'STATUS','LINEV', 'BATTV','OUTPUTV','MAXLINEV','MINLINEV','LOADPCT' ]
     # pubList = [ 'OUTPUTV' ]
     pfix="/home/office/ups/"
 
