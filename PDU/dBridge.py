@@ -27,6 +27,7 @@ def localOnConnect(client, userdata, flags, rc):
     print("Local Connected with result code "+str(rc))
 
     client.subscribe("/home/office/+/power")
+    client.subscribe("/home/outside/+/power")
 
 def remoteOnConnect(client, userdata, flags, rc):
     print("Remote Connected with result code "+str(rc))
