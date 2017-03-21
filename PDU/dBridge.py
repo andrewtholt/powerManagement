@@ -47,7 +47,6 @@ def remoteOnConnect(client, userdata, flags, rc):
     
     
     client.subscribe(pfix+"/home/office/+/power")
-
     client.subscribe(pfix+"/home/outside/+/power")
 
 
