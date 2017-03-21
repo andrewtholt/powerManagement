@@ -24,23 +24,37 @@ def usage():
     print()
 
 def localOnConnect(client, userdata, flags, rc):
-    print("Local Connected with result code "+str(rc))
+    global verbose
+    
+    if verbose:
+        print("Local Connected with result code "+str(rc))
+        print("Subscribe to /home/office/+/power" )
+        print("Subscribe to /home/outside/+/power" )
 
     client.subscribe("/home/office/+/power")
     client.subscribe("/home/outside/+/power")
 
 def remoteOnConnect(client, userdata, flags, rc):
-    print("Remote Connected with result code "+str(rc))
+    global verbose
+    
 
     pfix="/" + remoteMqttPrefix
 
-    print("Subscribe to " + pfix+"/home/office/+/power" )
+    if verbose:
+        print("Remote Connected with result code "+str(rc))
+        print("Subscribe to " + pfix+"/home/office/+/power" )
+        print("Subscribe to " + pfix+"/home/outside/+/power" )
+    
+    
     client.subscribe(pfix+"/home/office/+/power")
+
+    client.subscribe(pfix+"/home/outside/+/power")
 
 
 
 def localOnMessage(client, userdata, msg):
 
+    global verbose
     changed=False
 
     m=(msg.payload).decode()
@@ -65,6 +79,7 @@ def localOnMessage(client, userdata, msg):
             print("Local: NO Change")
 
 def remoteOnMessage(client, userdata, msg):
+    global verbose
     print("Remote message")
     pfix="/" + remoteMqttPrefix
 
@@ -90,6 +105,8 @@ def remoteOnMessage(client, userdata, msg):
 
 
 def main():
+    global verbose
+    
     localBroker  = True
     remoteBroker = False
     verbose = False
@@ -142,7 +159,7 @@ def main():
         print()
 
 
-    redisHost="fred"
+    redisHost='localhost'
     redisPort = 6379
 
     redisHost = cfg.get('common','redis-host')
