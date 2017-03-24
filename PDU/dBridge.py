@@ -109,8 +109,8 @@ def main():
     localBroker  = True
     remoteBroker = False
     verbose = False
-#    configFile="/etc/mqtt/bridge.ini"
-    configFile="./bridge.ini"
+    configFile="/etc/mqtt/bridge.ini"
+#    configFile="./bridge.ini"
     global rc
 
     try:
