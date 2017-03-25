@@ -5,6 +5,7 @@ import sys
 import time
 import paho.mqtt.client as mqtt
 import configparser as cp
+import sqlite3 as sqlite  # datalogger
 
 
 def on_connect(client, userdata, flags, rc):
@@ -76,6 +77,8 @@ def main():
     client.connect(mqttBroker, mqttPort, 60)
 
     client.loop_start ()
+
+    pdir = os.getenv("PDIR")
 
     pubList = [ 'STATUS','LINEV', 'BATTV','OUTPUTV','MAXLINEV','MINLINEV','LOADPCT' ]
     # pubList = [ 'OUTPUTV' ]
