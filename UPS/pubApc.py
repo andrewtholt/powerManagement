@@ -80,6 +80,13 @@ def main():
 
     pdir = os.getenv("PDIR")
 
+    db = pdir + "/data/supplyLog.db"
+    con = sqlite.connect( db )
+    cur = con.cursor()
+
+
+    sqlTemplate = "insert into line_voltage_log (VAC) values (%s);"
+
     pubList = [ 'STATUS','LINEV', 'BATTV','OUTPUTV','MAXLINEV','MINLINEV','LOADPCT' ]
     # pubList = [ 'OUTPUTV' ]
     pfix="/home/office/ups/"
@@ -93,7 +100,16 @@ def main():
 
         client.publish(topic, payload,qos=0,retain=True )
 
+        if t == 'LINEV':
+            sql = sqlTemplate %( payload )
+            if verbose:
+                print(sql)
 
+            cur.execute( sql )
+            con.commit()
+
+
+    con.close()
     time.sleep(1)
     return
 
