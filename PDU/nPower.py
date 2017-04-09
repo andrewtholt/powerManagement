@@ -17,7 +17,7 @@ def usage():
 
 def main():
     cmd=""
-    verbose=True
+    verbose=False
 
     configFile="/etc/mqtt/bridge.ini"
     cfg = cp.ConfigParser()
@@ -46,11 +46,22 @@ def main():
     request = sys.argv[1].upper()
     out = sys.argv[2]
 
-    if request in ("ON", "OFF") :
+    if request == "STATUS":
+        print("Status")
+        topics=rc.keys( "*/" + out + "/power" )
+
+        for t in topics:
+            k=t.decode(encoding='UTF-8')
+            v=rc.get( k )
+            print( k + " " + v.decode(encoding='UTF-8'))
+            
+        print()
+
+    elif request in ("ON", "OFF") :
         if verbose:
             print(request)
 
-        topics=rc.keys( "*/" + out + "/*" )
+        topics=rc.keys( "*/" + out + "/power" )
 
         if( len(topics) == 1):
 
