@@ -14,18 +14,52 @@ def onConnect(client, userdata, flags, rc):
 
 def usage():
     print()
-    print("Usage: dPower.py <on|off|statsus> <outlet name>")
-    print()
-    print("e.g. dPower.py on garden")
-    print('     dPower.py status "ga*"')
-    print()
+    print("Usage:dPower.py -h|-c <cfg> -t <device> -o <status|on|off>")
 
+    print("\t-c <cfg>\tConfig file.")
+    print("\t-h\t\tHelp.")
+    print("\t-t <device>\tDevice to access, wildcards allowed.")
+    print("\t-v\t\tVerbose")
+    print("\t-o <operation>\tOperation to perform (on|off|status).")
+    print("Note: Default is:")
+    print('\tdPower.py -t "*" -o status')
+    print()
 
 def main():
     cmd=""
     verbose=False
 
     configFile="/etc/mqtt/bridge.ini"
+
+    target="*"
+    operation="STATUS"
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "c:ht:o:v", ["config=","help","target=","operation=","verbose"])
+
+        for o,a in opts:
+            if o in ["-h","--help"]:
+                usage()
+                sys.exit()
+            elif o in ["-c","--config"]:
+                configFile = a
+            elif o in ["-t","--target"]:
+                target=a
+            elif o in ["-o","--operation="]:
+                operation=a
+            elif o in ["-v","--verbose"]:
+                verbose=True
+
+
+    except getopt.GetoptError as err:
+        print(err)
+        sys.exit(2)
+
+    if verbose:
+        print("Config   : " + configFile)
+        print("Target   : " + target )
+        print("Operation:" + operation)
+
     cfg = cp.ConfigParser()
     cfg.read( configFile )
 
@@ -45,12 +79,9 @@ def main():
 
     rc = redis.StrictRedis(redisHost, port=redisPort, db=0)
 
-    if len(sys.argv) < 3:
-        usage()
-        sys.exit(0)
 
-    request = sys.argv[1].upper()
-    out = sys.argv[2]
+    request = operation.upper()
+    out = target
 
     if request == "STATUS":
         print("Status")
