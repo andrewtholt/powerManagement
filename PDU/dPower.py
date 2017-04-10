@@ -13,7 +13,13 @@ def onConnect(client, userdata, flags, rc):
     print("Connected")
 
 def usage():
-    print("Help ...")
+    print()
+    print("Usage: dPower.py <on|off|statsus> <outlet name>")
+    print()
+    print("e.g. dPower.py on garden")
+    print('     dPower.py status "ga*"')
+    print()
+
 
 def main():
     cmd=""
@@ -61,26 +67,21 @@ def main():
         if verbose:
             print(request)
 
+        localClient = mqtt.Client()
+        localClient.on_connect = onConnect
+
+        localMqttHost = cfg.get('local','name')
+        localMqttPort = int(cfg.get('local','port'))
+
+        localClient.connect(localMqttHost, localMqttPort, 60)
+
         topics=rc.keys( "*/" + out + "/power" )
+        for t in topics:
+            k=t.decode(encoding='UTF-8')
+            print( k +" " + request )
+            localClient.publish(k, request, qos=0, retain=True)
 
-        if( len(topics) == 1):
-
-            topic=topics[0].decode(encoding='UTF-8')
-
-            if verbose:
-                print("topic   : " + topic)
-                print("message : " + request)
-
-            localClient = mqtt.Client()
-            localClient.on_connect = onConnect
-
-            localMqttHost = cfg.get('local','name')
-            localMqttPort = int(cfg.get('local','port'))
-
-            localClient.connect(localMqttHost, localMqttPort, 60)
-            localClient.publish(topic, request, qos=0, retain=True)
-
-
+            time.sleep(0.05)
 
 
 main()
