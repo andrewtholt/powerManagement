@@ -21,6 +21,7 @@ def usage():
     print("\t-t <device>\tDevice to access, wildcards allowed.")
     print("\t-v\t\tVerbose")
     print("\t-o <operation>\tOperation to perform (on|off|status).")
+    print("\t-z <zone>\tSpecify zone in whiche operation will act, e.g. 'office'")
     print("Note: Default is:")
     print('\tdPower.py -t "*" -o status')
     print()
