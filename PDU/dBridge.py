@@ -217,15 +217,14 @@ def main():
 #    remoteClient.publish("/andrewtholt60@gmail.com/home/office/relay1/power", "UNKNOWN", qos=0, retain=True)
 
 
-    lrc=localClient.loop_start()
-    rrc=remoteClient.loop_start()
+    while True:
+        lrc=localClient.loop_start()
+        rrc=remoteClient.loop_start()
+    
+#        print(lrc)
+#        print(rrc)
 
-    print(lrc)
-    print(rrc)
-
-
-    time.sleep(3000)
-#    localClient.loop_forever()
+        time.sleep(3000)
 
     return
 
