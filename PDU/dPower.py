@@ -23,7 +23,7 @@ def usage():
     print("\t-o <operation>\tOperation to perform (on|off|status).")
     print("\t-z <zone>\tSpecify zone in whiche operation will act, e.g. 'office'")
     print("Note: Default is:")
-    print('\tdPower.py -t "*" -o status')
+    print('\tdPower.py -c /etc/mqtt/bridge.ini -t "*" -o status')
     print()
 
 def main():
