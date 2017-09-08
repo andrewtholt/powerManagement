@@ -87,7 +87,7 @@ def main():
 
     sqlTemplate = "insert into line_voltage_log (VAC) values (%s);"
 
-    pubList = [ 'STATUS','LINEV', 'BATTV','OUTPUTV','MAXLINEV','MINLINEV','LOADPCT','TIMELEFT','BCHARGE' ]
+    pubList = [ 'STATUS','LINEV', 'BATTV','OUTPUTV','MAXLINEV','MINLINEV','LOADPCT','TIMELEFT','BCHARGE','LOADPCT' ]
     # pubList = [ 'OUTPUTV' ]
     pfix="/home/office/ups/"
 
