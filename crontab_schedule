@@ -22,12 +22,13 @@
 # m h  dom mon dow   command
 # On or after 05:30 and 1 hour before sunrise
 15 05 * * * /usr/local/bin/mosquitto_pub -t "/home/outside/PorchLight/power" -m ON
-30 06 * * * /usr/bin/sunwait wait rise offset -1:00:00 ; /usr/local/bin/mosquitto_pub -t "/home/outside/PorchLight/power" -m OFF
+03 06 * * * /usr/bin/sunwait wait rise offset 0:45 ; /usr/local/bin/mosquitto_pub -t "/home/outside/PorchLight/power" -m OFF
 
 # Just in case:
 30 09 * * * /usr/local/bin/mosquitto_pub -t "/home/outside/PorchLight/power" -m OFF 
 # On after 16:30 and 1 hour before sunset
-30 16 * * * /usr/bin/sunwait wait set offset 1:00:00 ; /usr/local/bin/mosquitto_pub -t "/home/outside/PorchLight/power" -m ON
+# 30 16 * * * /usr/bin/sunwait wait set offset 1:00:00 ; /usr/local/bin/mosquitto_pub -t "/home/outside/PorchLight/power" -m ON
+30 16 * * * /usr/bin/sunwait wait set offset 1:00:00  ; /usr/local/bin/mosquitto_pub -t "/home/outside/PorchLight/power" -m ON
 # Off after 23:00
-00 23 * * * /usr/local/bin/mosquitto_pub -t "/home/outside/PorchLight/power" -m OFF
+30 23 * * * /usr/local/bin/mosquitto_pub -t "/home/outside/PorchLight/power" -m OFF
 
