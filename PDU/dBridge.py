@@ -29,10 +29,13 @@ def localOnConnect(client, userdata, flags, rc):
     if verbose:
         print("Local Connected with result code "+str(rc))
         print("Subscribe to /home/office/+/power" )
-        print("Subscribe to /home/outside/+/power" )
+        print("             /home/outside/+/power" )
+        print("             /home/outside/+/cmnd/power")
 
     client.subscribe("/home/office/+/power")
     client.subscribe("/home/outside/+/power")
+    client.subscribe("/home/outside/+/cmnd/power")
+
 
 def remoteOnConnect(client, userdata, flags, rc):
     global verbose
@@ -42,12 +45,14 @@ def remoteOnConnect(client, userdata, flags, rc):
 
     if verbose:
         print("Remote Connected with result code "+str(rc))
-        print("Subscribe to " + pfix+"/home/office/+/power" )
-        print("Subscribe to " + pfix+"/home/outside/+/power" )
+        print("Subscribe to " + pfix + "/home/office/+/power" )
+        print("             " + pfix + "/home/outside/+/power" )
+        print("             " + pfix + "/home/outside/+/cmnd/power")
     
     
-    client.subscribe(pfix+"/home/office/+/power")
-    client.subscribe(pfix+"/home/outside/+/power")
+    client.subscribe(pfix + "/home/office/+/power")
+    client.subscribe(pfix + "/home/outside/+/power")
+    client.subscribe(pfix + "/home/outside/+/cmnd/power")
 
 
 
