@@ -1,8 +1,6 @@
 #!/bin/bash
 
-set -x
-
-echo $#
+# set -x
 
 if [ $# -ne 2 ]; then
     echo "Usage: $0 <topic> <message>"
