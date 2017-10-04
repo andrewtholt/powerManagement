@@ -7,6 +7,6 @@ if [ $# -ne 2 ]; then
     exit 1
 fi
 
-/usr/local/bin/mosquitto_pub -t "$1" -m "$2"
+/usr/local/bin/mosquitto_pub -r -t "$1" -m "$2"
 exit 0
 
