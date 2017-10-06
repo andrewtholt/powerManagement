@@ -14,7 +14,7 @@ from os import getenv
 
 def usage():
     print()
-    print("Usage:./dBridge.py -h|-c <cfg> -l|-r -v ")
+    print("Usage:./dBridge.py -h|-c <cfg folder> -l|-r -v ")
 
     print("\t-c <cfg>\tConfig directory.")
     print("\t-d\t\tTest.")
