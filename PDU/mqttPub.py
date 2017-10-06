@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# #!/data/data/com.termux/files/usr/bin/env python3
 
 import configparser as cp
 import getopt
@@ -15,7 +16,7 @@ def usage():
     print()
     print("Usage:./dBridge.py -h|-c <cfg> -l|-r -v ")
 
-    print("\t-c <cfg>\tConfig file.")
+    print("\t-c <cfg>\tConfig directory.")
     print("\t-t <topic>\tMQTT Topic.")
     print("\t-m <msg>\tMQTT Payload.")
 
@@ -107,13 +108,14 @@ def main():
     localBroker  = True
     remoteBroker = False
     verbose = False
-    configFile="/etc/mqtt/bridge.ini"
+    configFolder="/etc/mqtt"
+#    configFile="/etc/mqtt/bridge.ini"
 
     topic=""
     msg=""
 
-    home=getenv("HOME")
-    cert = home + '/.certs/dioty_ca.crt'
+#    home=getenv("HOME")
+#    cert = home + '/.certs/dioty_ca.crt'
 
     global rc
 
@@ -133,7 +135,7 @@ def main():
             elif o in ["-v","--verbose"]:
                 verbose=True
             elif o in ["-c","--config"]:
-                configFile = a
+                configFolder = a
             elif o in ["-t","--topic"]:
                 topic = a
             elif o in ["-m","--message"]:
@@ -152,8 +154,13 @@ def main():
         usage()
         sys.exit(2)
 
-    localMqttHost="localhost"
-    localMqttPort=1883
+
+    cert = configFolder + '/dioty_ca.crt'
+    configFile=configFolder + "/bridge.ini"
+
+    if localBroker:
+        localMqttHost="localhost"
+        localMqttPort=1883
 
     remoteMqttHost="fred"
     remoteMqttPort=1883
@@ -173,8 +180,9 @@ def main():
         print()
 
 
-    localMqttHost = cfg.get('local','name')
-    localMqttPort = int(cfg.get('local','port'))
+    if localBroker:
+        localMqttHost = cfg.get('local','name')
+        localMqttPort = int(cfg.get('local','port'))
 
     global localMqttPrefix
     localMqttPrefix = cfg.get('local','prefix')
@@ -188,9 +196,12 @@ def main():
 
     if verbose:
         print()
-        print("Local  MQTT Broker  : " + localMqttHost)
-        print("            Port    : " , localMqttPort)
-        print("            Prefix  : " + localMqttPrefix)
+        if localBroker:
+            print("Local  MQTT Broker  : " + localMqttHost)
+            print("            Port    : " , localMqttPort)
+
+            print("            Prefix  : " + localMqttPrefix)
+
         print("Remote MQTT Broker  : " + remoteMqttHost)
         print("            Port    : " + str(remoteMqttPort))
         print("            Prefix  : " + remoteMqttPrefix)
@@ -214,7 +225,7 @@ def main():
     global remoteClient
 
     if remoteBroker:
-        certFile= remoteMqttCert
+        certFile= configFolder + '/' + remoteMqttCert
         print("certFile is ", certFile)
         remoteClient = mqtt.Client()
         remoteClient.on_connect = remoteOnConnect
