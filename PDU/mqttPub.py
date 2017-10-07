@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
+
+# On Android:termux use ---
 # #!/data/data/com.termux/files/usr/bin/env python3
+# or run termux-fix-shebang
 
 import configparser as cp
 import getopt
