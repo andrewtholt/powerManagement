@@ -222,7 +222,8 @@ def main():
 
     if remoteBroker:
         certFile= configFolder + '/' + remoteMqttCert
-        remoteTopic = "/" + remoteMqttPrefix + topic
+#        remoteTopic = "/" + remoteMqttPrefix + topic
+        remoteTopic = topic
 
         if verbose:
             print("certFile is ", certFile)
