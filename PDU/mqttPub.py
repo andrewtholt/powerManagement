@@ -17,9 +17,10 @@ from os import getenv
 
 def usage():
     print()
-    print("Usage:./dBridge.py -h|-c <cfg> -l|-r -v ")
+    print("Usage:./dBridge.py -h|-c <cfg folder> -l|-r -v ")
 
     print("\t-c <cfg>\tConfig directory.")
+    print("\t-d\t\tTest.")
     print("\t-t <topic>\tMQTT Topic.")
     print("\t-m <msg>\tMQTT Payload.")
 
@@ -108,6 +109,7 @@ def remoteOnMessage(client, userdata, msg):
 def main():
     global verbose
     
+    dryRun = False
     localBroker  = True
     remoteBroker = False
     verbose = False
@@ -123,12 +125,14 @@ def main():
     global rc
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "c:hlrvt:m:", ["config=","help","local","remote","verbose","topic","message"])
+        opts, args = getopt.getopt(sys.argv[1:], "c:dhlrvt:m:", ["config=","test","help","local","remote","verbose","topic","message"])
 
         for o,a in opts:
             if o in ["-h","--help"]:
                 usage()
                 sys.exit()
+            elif o in ["-d","--test"]:
+                dryRun=True
             elif o in ["-l","--local"]:
                 localBroker=True
                 remoteBroker=False
@@ -205,15 +209,28 @@ def main():
 
             print("            Prefix  : " + localMqttPrefix)
 
-        print("Remote MQTT Broker  : " + remoteMqttHost)
-        print("            Port    : " + str(remoteMqttPort))
-        print("            Prefix  : " + remoteMqttPrefix)
-        print("            Password: " + remoteMqttPassword)
-        print("            Cert    : " + remoteMqttCert)
-        print("")
-        print("            Topic   : " + topic)
-        print("            Message : " + msg)
+        if remoteBroker:
+            print("Remote MQTT Broker  : " + remoteMqttHost)
+            print("            Port    : " + str(remoteMqttPort))
+            print("            Prefix  : " + remoteMqttPrefix)
+            print("            Password: " + remoteMqttPassword)
+            print("            Cert    : " + remoteMqttCert)
+            print("")
+            print("            Topic   : " + topic)
+            print("            Message : " + msg)
 
+
+    if remoteBroker:
+        certFile= configFolder + '/' + remoteMqttCert
+        remoteTopic = "/" + remoteMqttPrefix + topic
+
+        if verbose:
+            print("certFile is ", certFile)
+            print("Remote",remoteMqttPrefix,remoteMqttPassword)
+            print("     Remote Topic   : " + remoteTopic)
+
+    if dryRun:
+        sys.exit(0)
 
     global localClient
 
@@ -228,20 +245,20 @@ def main():
     global remoteClient
 
     if remoteBroker:
-        certFile= configFolder + '/' + remoteMqttCert
-        print("certFile is ", certFile)
+#        certFile= configFolder + '/' + remoteMqttCert
+#        print("certFile is ", certFile)
         remoteClient = mqtt.Client()
         remoteClient.on_connect = remoteOnConnect
 #        remoteClient.on_message = remoteOnMessage
-        print("Remote",remoteMqttPrefix,remoteMqttPassword)
+#        print("Remote",remoteMqttPrefix,remoteMqttPassword)
         remoteClient.username_pw_set(remoteMqttPrefix,remoteMqttPassword)
         remoteClient.tls_set(certFile)
     
         remoteClient.connect(remoteMqttHost, remoteMqttPort)
 
-        remoteTopic = "/" + remoteMqttPrefix + topic
-        if verbose:
-            print("     Remote Topic   : " + remoteTopic)
+#        remoteTopic = "/" + remoteMqttPrefix + topic
+#        if verbose:
+#            print("     Remote Topic   : " + remoteTopic)
 
         remoteClient.publish(remoteTopic, msg, qos=0, retain=True)
 

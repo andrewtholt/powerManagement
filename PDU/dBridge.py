@@ -13,9 +13,9 @@ from os import getenv
 
 def usage():
     print()
-    print("Usage:./dBridge.py -h|-c <cfg> -l|-r -v ")
+    print("Usage:./dBridge.py -h|-c <cfg folder> -l|-r -v ")
 
-    print("\t-c <cfg>\tConfig file.")
+    print("\t-c <cfg>\tConfig Folder.")
     print("\t-h\t\tHelp.")
     print("\t-l\t\tLocal.")
     print("\t-r\t\tRemote.")
@@ -114,8 +114,8 @@ def main():
     localBroker  = True
     remoteBroker = False
     verbose = False
-    configFile="/etc/mqtt/bridge.ini"
-#    configFile="./bridge.ini"
+    configFolder="/etc/mqtt"
+#    configFile="/etc/mqtt/bridge.ini"
     global rc
 
     try:
@@ -134,7 +134,8 @@ def main():
             elif o in ["-v","--verbose"]:
                 verbose=True
             elif o in ["-c","--config"]:
-                configFile = a
+#                configFile = a
+                configFolder = a
 
     except getopt.GetoptError as err:
         print(err)
@@ -148,6 +149,7 @@ def main():
 
     home=getenv("HOME")
 
+    configFile=configFolder + "/bridge.ini"
 
     cfg = cp.ConfigParser()
     cfg.read( configFile )
@@ -205,7 +207,9 @@ def main():
     localClient.on_connect = localOnConnect
     localClient.on_message = localOnMessage
 
-    certFile= home + "/.certs/dioty_ca.crt"
+#    certFile= home + "/.certs/dioty_ca.crt"
+    certFile= configFolder + "/dioty_ca.crt"
+
     global remoteClient
     remoteClient = mqtt.Client()
     remoteClient.on_connect = remoteOnConnect
