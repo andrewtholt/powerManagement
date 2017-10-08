@@ -7,8 +7,9 @@ import redis
 import paho.mqtt.client as mqtt
 import time
 
-from os import getenv
-
+import os
+import os.path
+from time import sleep
 
 
 def usage():
@@ -40,7 +41,6 @@ def localOnConnect(client, userdata, flags, rc):
 
 def remoteOnConnect(client, userdata, flags, rc):
     global verbose
-    
 
     pfix="/" + remoteMqttPrefix
 
@@ -82,8 +82,19 @@ def localOnMessage(client, userdata, msg):
             remoteClient.publish(topic, m, qos=0, retain=True)
             
             print("==== LOGIC HERE ====")
-            time.sleep(2)
-            print("==== AWAKE ====")
+            path="/tmp/logicTrigger"
+
+            if os.path.exists(path):
+                print("Fifo exists")
+
+                fifo = open(path,"w")
+                fifo.write("ACT")
+                fifo.flush()
+                sleep(0.1)
+                fifo.close()
+
+
+#            sleep(2)
         else:
             print("Local: NO Change")
 
@@ -152,7 +163,7 @@ def main():
     remoteMqttHost="fred"
     remoteMqttPort=1883
 
-    home=getenv("HOME")
+    home=os.getenv("HOME")
 
     configFile=configFolder + "/bridge.ini"
 
