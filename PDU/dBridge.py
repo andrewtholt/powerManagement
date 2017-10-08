@@ -36,7 +36,7 @@ def localOnConnect(client, userdata, flags, rc):
     client.subscribe("/home/office/+/power")
     client.subscribe("/home/outside/+/power")
     client.subscribe("/home/outside/+/cmnd/power")
-
+    client.subscribe("/home/environment/#")
 
 def remoteOnConnect(client, userdata, flags, rc):
     global verbose
