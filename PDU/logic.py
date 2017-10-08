@@ -4,6 +4,8 @@ import redis
 import paho.mqtt.client as mqtt
 import configparser as cp
 import time
+import os
+import sys
 
 def state(rdis,key):
     value=(rdis.get(key)).decode('utf-8')
@@ -23,6 +25,12 @@ def main():
     cfg = cp.ConfigParser()
     cfg.sections()
     cfg.read('/etc/mqtt/bridge.ini')
+    fifoPath="/tmp/logicTrigger"
+    
+    runFlag=True
+    
+    if not os.path.exists(fifoPath):
+        os.mkfifo(fifoPath)
     
     redisHost = cfg.get('common','redis-host',fallback='localhost')
     redisPort = cfg.getint('common','redis-port', fallback=6379)
@@ -38,32 +46,35 @@ def main():
     
     mqttClient = mqtt.Client()
     mqttClient.connect(mqttHost, mqttPort, 60)
-    
 
-#    for key in r.scan_iter("/*"):
-#        k= key.decode('utf-8')
-#        value=r.get(key)
-#        v= value.decode('utf-8')
+    waitForCmd=True
+    while(runFlag):
+        print("Top")
         
-#        print(k)
-#        if state(r,key):
-#            print("\tTrue")
-#        else:
-#            print("\tFalse")
-
-    t="/home/outside/BackFloodlight/cmnd/power"
-    if state(r, "/home/environment/day"):
-        msg="OFF"
-    else:
-        msg = "ON"
+        fifo = open(fifoPath, "r")
         
-    
-    print(t)
-    print(msg)
-    
-    mqttClient.publish(t,msg,qos=0,retain=True)
-    
-    time.sleep(0.1)
+        while waitForCmd:
+            for line in fifo:
+                print("Received: >" + line.strip() + "<")
+                if line == "ACT":
+                    waitForCmd=False
+                    
+            
+        waitForCmd=True
+        t="/home/outside/BackFloodlight/cmnd/power"
+        if state(r, "/home/environment/day"):
+            msg="OFF"
+        else:
+            msg = "ON"
+        
+        print(t)
+        print(msg)
+        
+        mqttClient.publish(t,msg,qos=0,retain=True)
+        
+        time.sleep(0.1)
+        
+    fifo.close()
 
 main()
 
