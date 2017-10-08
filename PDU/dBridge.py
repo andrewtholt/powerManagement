@@ -19,6 +19,7 @@ def usage():
     print("\t-h\t\tHelp.")
     print("\t-l\t\tLocal.")
     print("\t-r\t\tRemote.")
+    print("\t-x\t\tExecute script on events.")
     print("Note: Default is:")
     print("\t./dBridge.py -l ")
     print()
@@ -79,6 +80,10 @@ def localOnMessage(client, userdata, msg):
             print( remoteMqttPrefix )
             print( m )
             remoteClient.publish(topic, m, qos=0, retain=True)
+            
+            print("==== LOGIC HERE ====")
+            time.sleep(2)
+            print("==== AWAKE ====")
         else:
             print("Local: NO Change")
 
@@ -89,13 +94,10 @@ def remoteOnMessage(client, userdata, msg):
 
     payload=(msg.payload).decode()
 
-#    print(msg.topic)
-#    print(payload)
-#    print((msg.topic).split("/",2))
     tmp=(msg.topic).split("/",2)
 
     key="/" + tmp[2]
-#    print( key )
+
     d=rc.get(key)
 
     if d != None:
@@ -114,12 +116,13 @@ def main():
     localBroker  = True
     remoteBroker = False
     verbose = False
+    execute = False
     configFolder="/etc/mqtt"
 #    configFile="/etc/mqtt/bridge.ini"
     global rc
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "c:hlrv", ["config=","help","local","remote","verbose"])
+        opts, args = getopt.getopt(sys.argv[1:], "c:hlrvx", ["config=","help","local","remote","verbose","execute"])
 
         for o,a in opts:
             if o in ["-h","--help"]:
@@ -136,6 +139,8 @@ def main():
             elif o in ["-c","--config"]:
 #                configFile = a
                 configFolder = a
+            elif o in ["-x","--execute"]:
+                execute = True
 
     except getopt.GetoptError as err:
         print(err)
@@ -165,11 +170,11 @@ def main():
         print()
 
 
-    redisHost='localhost'
-    redisPort = 6379
+#    redisHost='localhost'
+#    redisPort = 6379
 
-    redisHost = cfg.get('common','redis-host')
-    redisPort = cfg.get('common','redis-port')
+    redisHost = cfg.get('common','redis-host',fallback='localhost')
+    redisPort = cfg.getint('common','redis-port', fallback=6379)
 
     print( redisHost )
     print( redisPort )
@@ -179,11 +184,11 @@ def main():
     for k in rc.scan_iter("/home/office/*"):
         print(k.decode(), (rc.get(k)).decode())
 
-    localMqttHost = cfg.get('local','name')
-    localMqttPort = int(cfg.get('local','port'))
+    localMqttHost = cfg.get('local','name',fallback='localhost')
+    localMqttPort = cfg.getint('local','port', fallback=1883)
 
     global localMqttPrefix
-    localMqttPrefix = cfg.get('local','prefix')
+    localMqttPrefix = cfg.get('local','prefix',fallback='')
 
     global remoteMqttPrefix
     remoteMqttHost = cfg.get('remote','name')
