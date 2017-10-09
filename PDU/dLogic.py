@@ -48,10 +48,11 @@ def main():
     mqttClient.connect(mqttHost, mqttPort, 60)
 
     waitForCmd=True
+    fifo = open(fifoPath, "r")
+
     while(runFlag):
         print("Top")
         
-        fifo = open(fifoPath, "r")
         
         while waitForCmd:
             for line in fifo:
