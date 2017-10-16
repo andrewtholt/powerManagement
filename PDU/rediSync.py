@@ -8,14 +8,17 @@ import os
 import time
 import redis
 
-verbose=True
+verbose=False
 redisClient=None
 
 def usage():
     print("Help")
 
 def on_connect(client, userdata, flags, rc):
-    print("Connected")
+    global verbose
+
+    if verbose:
+        print("Connected")
     # 
     # TODO: SHould this list be part of the config.
     # 
@@ -27,18 +30,21 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     global redisClient
-    print("Message")
+    global verbose
 
     t=msg.topic
     m=(msg.payload).decode()
    
     if verbose:
+        print("Message")
         print("Topic : " + t )
         print("Msg   : " + m )
+        print("=======")
 
     redisClient.set(t,m)
 
 def main():
+    global verbose
     configFile="/etc/mqtt/bridge.ini"
     global verbose
     global redisClient
@@ -91,7 +97,7 @@ def main():
     redisClient = redis.StrictRedis(redisHost, port=redisPort, db=0)
     
     client.loop_start()
-    time.sleep(5)
+    time.sleep(3)
 
     
 
