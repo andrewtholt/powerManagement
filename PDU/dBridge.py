@@ -74,6 +74,7 @@ def localOnMessage(client, userdata, msg):
         if m != d :
             print("Local: Change")
             rc.set(msg.topic, m)
+            sleep(0.5)
 
             topic = "/" + remoteMqttPrefix + msg.topic
             print(topic)
@@ -81,19 +82,6 @@ def localOnMessage(client, userdata, msg):
             print( m )
             remoteClient.publish(topic, m, qos=0, retain=True)
             
-            print("==== LOGIC HERE ====")
-            path="/tmp/logicTrigger"
-
-            if os.path.exists(path):
-                print("Fifo exists")
-
-                fifo = open(path,"w")
-                fifo.write("ACT")
-                fifo.flush()
-                sleep(0.1)
-                fifo.close()
-
-
 #            sleep(2)
         else:
             print("Local: NO Change")
