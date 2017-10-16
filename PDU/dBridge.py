@@ -25,7 +25,7 @@ def usage():
     print("\t./dBridge.py -l ")
     print()
 
-def localOnConnect(client, userdata, flags, rc):
+def localOnConnect(client, userdata, flags, returnCode):
     global verbose
     
     if verbose:
