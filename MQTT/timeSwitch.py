@@ -12,7 +12,7 @@ from os import getenv
 
 def usage():
     print("")
-    print("Usage: timeSwitch.py -c|--config=<cfg> -v|--verbose -time=<ff:ff-tt:tt> -t|--topic=<mqtt topic> -i|--invert")
+    print("Usage: timeSwitch.py -c|--config=<cfg> -v|--verbose --time=<ff:ff-tt:tt> -t|--topic=<mqtt topic> -i|--invert")
     print("\t-v\t\t\tVerbose.")
     print("\t-c|--config=<cfg>\tConfig file for MQTT broker settings.")
     print("\t--time ff:ff-tt:tt\tTime range, earlier first.")
@@ -123,7 +123,7 @@ def main():
 #            print("True")
             msg="ON"
         else:
-            print("False")
+#            print("False")
             msg="OFF"
     if not flag:
         if invert:
