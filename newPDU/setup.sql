@@ -38,11 +38,8 @@ create table outlets
     name varchar(32) unique,
     delay integer default 10,
     -- 
-    -- 26 Feb: if the outlet is 'hosted' by a none
-    -- snmp type, suchas MQTT the oid is reused as (say)
-    -- 'topic'
-    --
-    oid varchar(128),
+    topic varchar(128) default 'NONE',
+    oid varchar(128)   default 'NONE',
     number int,
     state varchar(8) default 'UNKNOWN',
     requested_state varchar(8) default 'NA',
