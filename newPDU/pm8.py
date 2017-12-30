@@ -32,7 +32,8 @@ def handler(signum, frame):
 
 def usage():
     print()
-    print("Usage:pm8.py -h|-c <cfg> ")
+    print("Usage:pm8.py -v -n <name> -p <port> -h|-c <cfg> ")
+#        opts, args = getopt.getopt(sys.argv[1:], "c:hvn:p:", ["config=","help","verbose","host","port"])
 
 def on_connect(client, userdata, flags, rc):
     global verbose
