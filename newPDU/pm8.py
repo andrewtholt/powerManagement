@@ -27,6 +27,7 @@ def handler(signum, frame):
         child.sendline('exit')
         time.sleep(2)
         exitFlag=True
+        sys.exit(0)
 
 
 
@@ -46,7 +47,7 @@ def on_connect(client, userdata, flags, rc):
         print("Connected")
 
     for k,v in outlets.items():
-        print(k)
+#        print(k)
         client.subscribe( k )
 
 #    client.subscribe("/home/office/proliant/power")
@@ -108,7 +109,7 @@ def pm8Connect( host, port):
     child.sendline('')
     child.expect('pm>')
 
-    print(child.before)
+#    print(child.before)
 
 
 
