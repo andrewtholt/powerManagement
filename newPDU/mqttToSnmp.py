@@ -3,17 +3,24 @@ import sqlite3 as sqlite
 import paho.mqtt.client as mqtt
 import configparser as cp
 import os
+import sys
+import getopt
 
 
 sqlCmd="select hosts.ip,outlets.name, outlets.oid, hosts.on_value,off_value from outlets, hosts  where outlets.hostidx=hosts.idx and outlets.name='%s';"
 
 snmpCmd="snmpset -OQven  -v1 -c private %s %s i %d"
 
-verbose=True
+verbose=False
 hosts=[]
 database="/opt/power/data/power.db"
 
 sql=None
+
+def usage():
+    print()
+    print("Usage:mqttToSnmp.py -v -h|-c <cfg> ")
+
 
 def on_message(client, userdata, msg):
     global verbose
@@ -90,9 +97,26 @@ def main():
     global verbose
     global sql
 
-    sql = sqlite.connect( database )
-
+    verbose = False
     configFile="/etc/mqtt/bridge.ini"
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "c:hv", ["config=","help","verbose"])
+        for o,a in opts:
+            if o in ["-h","--help"]:
+                usage()
+                sys.exit(0)
+            elif o in ["-c","--config"]:
+                configFile = a
+            elif o in ["-v","--verbose"]:
+                verbose = True
+
+    except getopt.GetoptError as err:
+        print(err)
+        usage()
+        sys.exit(2)
+
+    sql = sqlite.connect( database )
 
     if os.path.exists(configFile):
         cfg = cp.ConfigParser()
