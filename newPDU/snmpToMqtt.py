@@ -109,7 +109,7 @@ def main():
             print( topic)
             print(msg)
 
-        client.publish(topic, msg )
+        client.publish(topic, msg, retain=True )
     client.loop()
 
 
