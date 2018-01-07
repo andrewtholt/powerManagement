@@ -74,13 +74,25 @@ def on_message(client, userdata, msg):
 def pm8Switch( out, state ):
     global verbose
 
+    child.sendline('')
+    i=child.expect(['Username:','pm>'])
+
+    if i == 0:
+        print("Logging in")
+        child.sendline('admin')
+        child.expect('Password:')
+        child.sendline('pm8')
+        child.expect('pm>')
+    elif i==1:
+        print("Already logged in")
+
     cmd = state.lower() + ' ' + str(out)
 
     if verbose:
         print( cmd )
     
     child.sendline( cmd )
-#    child.expect('pm8')
+    child.expect('pm>')
 
 
 
@@ -90,24 +102,22 @@ def pm8Connect( host, port):
 
     child = pexpect.spawn(cmd)
     
-    child.sendline('')
-    
-    i=child.expect(['Username:','pm>'])
+#    child.sendline('')
+#    i=child.expect(['Username:','pm>'])
     
 #    print("i=",i)
     
-    if i == 0:
-        child.sendline('admin')
-        child.expect('Password:')
-        child.sendline('pm8')
-    elif i==1:
-        print("Already logged in")
-    
-#    child.sendline("off 1")
-    
-#    child.expect("Outlet ")
-    child.sendline('')
-    child.expect('pm>')
+#    if i == 0:
+#        child.sendline('admin')
+#        child.expect('Password:')
+#        child.sendline('pm8')
+#    elif i==1:
+#        print("Already logged in")
+#    
+##    child.sendline("off 1")
+##    child.expect("Outlet ")
+#    child.sendline('')
+#    child.expect('pm>')
 
 #    print(child.before)
 
