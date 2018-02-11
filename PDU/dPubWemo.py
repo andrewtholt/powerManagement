@@ -95,7 +95,7 @@ def main():
         print("Port   : %d " % (mqttPort))
 
     wd = wemo(device)
-    wd.setVerbose(True)
+    wd.setVerbose(verbose)
 
     client = mqtt.Client()
     client.on_connect = on_connect
