@@ -1,5 +1,10 @@
 #!/usr/bin/python3
 
+# 
+# If this doesn't work make sure that the name of the wemo device is
+# in hosts or DNS
+# 
+
 import configparser as cp
 from  dWemo import wemo
 import getopt
