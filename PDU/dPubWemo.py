@@ -7,6 +7,7 @@ import paho.mqtt.client as mqtt
 import sys
 import os
 
+verbose=True
 
 def on_connect(client, userdata, flags, rc):
 
@@ -20,6 +21,9 @@ def on_message(client, userdata, msg):
     global topic
 
     m=(msg.payload).decode()
+
+    if verbose:
+        print("Payload = ",m)
 
     wd.setStatus( m )
 
@@ -35,6 +39,7 @@ def usage():
     print("\tdPubWemo.py -c ./bridge.ini\n")
 
 def main():
+    global verbose
 
 #    configFile="./bridge.ini"
     configFile="/etc/mqtt/bridge.ini"
@@ -90,6 +95,7 @@ def main():
         print("Port   : %d " % (mqttPort))
 
     wd = wemo(device)
+    wd.setVerbose(True)
 
     client = mqtt.Client()
     client.on_connect = on_connect
@@ -103,9 +109,6 @@ def main():
         print(iam)
 
     client.loop_forever()
-
-
-    
     
 #    device='PorchLight'
 #    porchLight = wemo(device)
