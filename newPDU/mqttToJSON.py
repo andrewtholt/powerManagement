@@ -7,7 +7,7 @@ import sys
 import getopt
 import json
 
-from myDevice import sonata
+from myDevice import sonata,system
 
 
 verbose=False
@@ -34,7 +34,7 @@ def on_message(client, userdata, msg):
     t=msg.topic
     m=(msg.payload).decode()
 
-    devType="system"
+    devType="SYSTEM"
 
     if verbose:
         print("Message")
@@ -46,7 +46,11 @@ def on_message(client, userdata, msg):
     base=tmp[1]
     location=tmp[2]
     device=tmp[3]
-    parameter=tmp[4]
+
+    if len(tmp) > 4:
+        parameter=tmp[4]
+    else:
+        parameter=None
 
     if base not in result:
         result[base] = {}
@@ -62,11 +66,12 @@ def on_message(client, userdata, msg):
 #            print(result)
 
         if device == "ups":
+            devType = "UPS"
             result[base][location][device]['type'] = 'UPS'
             result[base][location][device][parameter] = m
 
         if parameter in ("STATE","SENSOR","LWT","POWER"):
-            devType="sonata"
+            devType="SONATA"
 
             if device not in hosts:
                 fred = sonata()
@@ -91,8 +96,20 @@ def on_message(client, userdata, msg):
                 hosts[device].setState(m)
 
         elif parameter in ("power","state"):
+            print("param " + parameter)
+            if device not in hosts:
+                hosts[device] = system()
+                hosts[device].setBase( base )
+                hosts[device].setLocation( location )
+
             result[base][location][device] = {}
             result[base][location][device][parameter]= m
+
+            if parameter == "power":
+                hosts[device].setPower(m)
+            elif parameter == 'state':
+                hosts[device].setState(m)
+
             result[base][location][device]['type']= devType
     else:
         result[base][location] = {}
@@ -103,6 +120,7 @@ def on_message(client, userdata, msg):
         print(json.dumps(result, sort_keys=True, indent=4))
 
         for key, val in hosts.items():
+            print()
             print(key)
             val.dumpState()
 
@@ -122,8 +140,10 @@ def on_connect(client, userdata, flags, rc):
 #    client.subscribe("/home/outside/+/cmnd/power")
 #    client.subscribe("/home/environment/#")
 
-#    client.subscribe("/home/#")
-    client.subscribe("/home/outside/BackFloodlight/#")
+    client.subscribe("/home/#")
+
+#    client.subscribe("/home/office/raspberrypi/#")
+#    client.subscribe("/home/outside/BackFloodlight/#")
 
     return
 

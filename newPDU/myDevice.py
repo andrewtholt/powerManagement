@@ -58,7 +58,6 @@ class device:
 
 
 class sonata(device):
-
     def __init__(self):
         device.__init__(self)
         self.type="SONATA"
@@ -88,6 +87,16 @@ class sonata(device):
 
     def setSensor(self,s):
         self.sensor=s
+
+class system(device):
+    def __init__(self):
+        device.__init__(self)
+        self.type="SYSTEM"
+
+    def setState(self,s):
+        self.state = s
+
+
 
 if __name__ == "__main__":
     tst = sonata()
