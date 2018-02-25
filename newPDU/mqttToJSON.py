@@ -7,9 +7,11 @@ import sys
 import getopt
 import json
 
+from myDevice import sonata
+
 
 verbose=False
-hosts=[]
+hosts={}
 database="/opt/power/data/npower.db"
 
 sql=None
@@ -25,6 +27,9 @@ def on_message(client, userdata, msg):
     global verbose
     global sql
     global result
+    global hosts
+
+    update=True
 
     t=msg.topic
     m=(msg.payload).decode()
@@ -38,47 +43,69 @@ def on_message(client, userdata, msg):
         print("=======")
 
     tmp=t.split('/')
+    base=tmp[1]
+    location=tmp[2]
+    device=tmp[3]
+    parameter=tmp[4]
 
-    if tmp[1] not in result:
-        result[tmp[1]] = {}
-        print(result)
+    if base not in result:
+        result[base] = {}
+#        print(result)
 
-    if tmp[2] != "environment":
-        if tmp[2] not in result[tmp[1]]:
-            result[tmp[1]][tmp[2]] = {}
+    if location != "environment":
+        if location not in result[base]:
+            result[base][location] = {}
 
-        if tmp[3] not in result[tmp[1]][tmp[2]]:
-            result[tmp[1]][tmp[2]][tmp[3]] = {}
-            print(result)
+        if device not in result[base][location]:
+            result[base][location][device] = {}
 
-        if tmp[3] == "ups":
-            result[tmp[1]][tmp[2]][tmp[3]]['type'] = 'UPS'
-            result[tmp[1]][tmp[2]][tmp[3]][tmp[4]] = m
+#            print(result)
 
+        if device == "ups":
+            result[base][location][device]['type'] = 'UPS'
+            result[base][location][device][parameter] = m
 
-        if tmp[4] in ("STATE","SENSOR","LWT","POWER"):
+        if parameter in ("STATE","SENSOR","LWT","POWER"):
             devType="sonata"
-            result[tmp[1]][tmp[2]][tmp[3]]['type']= devType
-            if tmp[4] == "POWER":
-                result[tmp[1]][tmp[2]][tmp[3]]['power']= m
-            elif tmp[4] == "SENSOR":
+
+            if device not in hosts:
+                fred = sonata()
+                fred.setBase(base)
+                fred.setLocation(location)
+                hosts[device] = fred
+
+            result[base][location][device]['type']= devType
+            if parameter == "POWER":
+                result[base][location][device]['power']= m
+                hosts[device].setPower(m)
+
+            elif parameter == "SENSOR":
                 sensorData = json.loads( m )
-                result[tmp[1]][tmp[2]][tmp[3]]['sensor']= sensorData
-            elif tmp[4] == "STATE":
+                result[base][location][device]['sensor']= sensorData
+                hosts[device].setSensor(sensorData)
+
+            elif parameter == "STATE":
+                print(m)
                 stateData = json.loads( m )
-                result[tmp[1]][tmp[2]][tmp[3]]['state']= stateData
+                result[base][location][device]['state']= stateData
+                hosts[device].setState(m)
 
-        elif tmp[4] in ("power","state"):
-            result[tmp[1]][tmp[2]][tmp[3]] = {}
-            result[tmp[1]][tmp[2]][tmp[3]][tmp[4]]= m
-            result[tmp[1]][tmp[2]][tmp[3]]['type']= devType
+        elif parameter in ("power","state"):
+            result[base][location][device] = {}
+            result[base][location][device][parameter]= m
+            result[base][location][device]['type']= devType
     else:
-        print("tmp[3]",tmp[3])
-        result[tmp[1]][tmp[2]] = {}
-        result[tmp[1]][tmp[2]][tmp[3]]=m
+        result[base][location] = {}
+        result[base][location][device]=m
 
 
-    print(json.dumps(result, sort_keys=True, indent=4))
+    if update:
+        print(json.dumps(result, sort_keys=True, indent=4))
+
+        for key, val in hosts.items():
+            print(key)
+            val.dumpState()
+
 
 
 def on_connect(client, userdata, flags, rc):
@@ -95,8 +122,8 @@ def on_connect(client, userdata, flags, rc):
 #    client.subscribe("/home/outside/+/cmnd/power")
 #    client.subscribe("/home/environment/#")
 
-    client.subscribe("/home/#")
-#    client.subscribe("/home/outside/BackFloodlight/#")
+#    client.subscribe("/home/#")
+    client.subscribe("/home/outside/BackFloodlight/#")
 
     return
 
