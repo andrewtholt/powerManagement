@@ -19,6 +19,7 @@ class device:
             self.dirty=True
 
         self.power = t
+        self.dirty=True
 
     def getPower(self):
 
@@ -56,6 +57,9 @@ class device:
         print("State    >" + str(self.state) + "<")
         print("Dirty    >" + str(self.dirty) + "<")
 
+    def dumpJson(self,name):
+        pass
+
 
 class sonata(device):
     def __init__(self):
@@ -88,6 +92,18 @@ class sonata(device):
     def setSensor(self,s):
         self.sensor=s
 
+    def dumpJson(self,name):
+        print('"' + name + '": {')
+        print('    "power": "' + str(self.power) + '",')
+        print('    "type": "' + str(self.type) + '",')
+
+        if self.state != None:
+            print('    "state": "' + str(self.state) + '",')
+
+
+        print('    "sensor":' +  json.dumps(self.sensor))
+        print('}')
+
 class system(device):
     def __init__(self):
         device.__init__(self)
@@ -95,7 +111,15 @@ class system(device):
 
     def setState(self,s):
         self.state = s
+        self.dirty = True
 
+    def dumpJson(self,name):
+        print('"' + name + '": {')
+        print('    "power": "' + str(self.power) + '",')
+        print('    "state": "' + str(self.state) + '",')
+        print('    "type": "' + str(self.type) )
+        print('}')
+        self.dirty=False
 
 
 if __name__ == "__main__":

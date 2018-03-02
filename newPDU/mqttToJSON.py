@@ -90,13 +90,13 @@ def on_message(client, userdata, msg):
                 hosts[device].setSensor(sensorData)
 
             elif parameter == "STATE":
-                print(m)
+#                print(m)
                 stateData = json.loads( m )
                 result[base][location][device]['state']= stateData
                 hosts[device].setState(m)
 
         elif parameter in ("power","state"):
-            print("param " + parameter)
+#            print("param " + parameter)
             if device not in hosts:
                 hosts[device] = system()
                 hosts[device].setBase( base )
@@ -111,18 +111,25 @@ def on_message(client, userdata, msg):
                 hosts[device].setState(m)
 
             result[base][location][device]['type']= devType
+
+            hosts[device].dumpJson( device )
     else:
         result[base][location] = {}
         result[base][location][device]=m
 
 
+    update=True
     if update:
-        print(json.dumps(result, sort_keys=True, indent=4))
+#        print(json.dumps(result, sort_keys=True, indent=4))
 
         for key, val in hosts.items():
-            print()
-            print(key)
-            val.dumpState()
+#            print()
+#            print(key)
+
+            if val.dirty:
+#                val.dumpState()
+                val.dumpJson(key)
+                val.dirty=False
 
 
 
