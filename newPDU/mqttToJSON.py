@@ -101,6 +101,10 @@ def on_message(client, userdata, msg):
                 hosts[device] = system()
                 hosts[device].setBase( base )
                 hosts[device].setLocation( location )
+                if parameter == 'power':
+                    hosts[device].setPower(m)
+                elif parameter == 'state':
+                    hosts[device].setState(m)
 
             result[base][location][device] = {}
             result[base][location][device][parameter]= m
