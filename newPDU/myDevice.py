@@ -100,7 +100,6 @@ class sonata(device):
         if self.state != None:
             print('    "state": "' + str(self.state) + '",')
 
-
         print('    "sensor":' +  json.dumps(self.sensor))
         print('}')
 
@@ -120,7 +119,13 @@ class system(device):
         print('    "type": "' + str(self.type) )
         print('}')
         self.dirty=False
-
+# 
+# TODO How do I identify that the device is a WeMo ?
+# 
+class wemo(device):
+    def __init__(self):
+        device.__init__(self)
+        self.type="WEMO"
 
 if __name__ == "__main__":
     tst = sonata()
@@ -130,7 +135,5 @@ if __name__ == "__main__":
     tst.dumpState()
 
     print("getState >" + tst.getState() + "<")
-
-
 
 
