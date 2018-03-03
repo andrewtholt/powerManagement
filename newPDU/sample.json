@@ -1,0 +1,54 @@
+{
+    "home": {
+        "environment": {
+            "day": "TRUE"
+        },
+        "office": {
+            "Fans": {
+                "power": "OFF",
+                "type": "SYSTEM"
+            },
+            "Internet": {
+                "state": "UP",
+                "type": "SYSTEM"
+            },
+            "proliant": {
+                "power": "OFF",
+                "type": "SYSTEM"
+            },
+            "raspberrypi": {
+                "state": "UP",
+                "type": "SYSTEM"
+            },
+            "raspberrypi0": {
+                "state": "UP",
+                "type": "SYSTEM"
+            },
+            "ups": {
+                "BATTV": "13.7",
+                "BCHARGE": "100.0",
+                "LINEV": "246.2",
+                "LOADPCT": "25.3",
+                "MAXLINEV": "246.2",
+                "MINLINEV": "241.9",
+                "OUTPUTV": "246.2",
+                "STATUS": "ONLINE",
+                "TIMELEFT": "17.0",
+                "type": "UPS"
+            }
+        },
+        "outside": {
+            "BackFloodlight": {
+                "sensor": {
+                    "Switch1": "ON",
+                    "Time": "2018-02-24T16:31:43"
+                },
+                "type": "SONATA"
+            },
+            "PorchLight": {
+                "power": "OFF",
+                "type": "SYSTEM"
+            }
+        }
+    }
+}
