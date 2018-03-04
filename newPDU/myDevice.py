@@ -77,12 +77,12 @@ class sonata(device):
 
     def setState(self, s):
         if self.state==None:
-            print("HERE")
+#            print("HERE")
             self.dirty=True
             self.state = json.loads(s)
             self.setPower(self.state['POWER'])
         else:
-            print("NOT HERE")
+#            print("NOT HERE")
             if self.state == s:
                 self.dirty=False
             else:
