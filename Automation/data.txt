@@ -1,1 +1,2 @@
 PorchLight:/home/outside/PorchLight/power:OUT:
+day:/home/environment/day:IN:

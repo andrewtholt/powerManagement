@@ -1,0 +1,30 @@
+
+Note an instruction with and N appended means invert.
+                    with and R appended means true on rising edge.
+                    with and F appended means true on falling edge.
+
+LD name
+LDN name
+    get the logic value for name
+
+AND name
+ANDN name
+ANDR name
+ANDF name
+    And the value of name with the entry on the stack (typically from LD)
+
+OR name
+ORN name
+ORR name
+ORF name
+    Or the value of name with the entry on the stack (typically from LD)
+
+XOR name
+XORN name
+XORR name
+XORF name
+    Xor the value of name with the entry on the stack (typically from LD)
+
+OUT name
+OUTN name
+    Output to name, inverted if N.

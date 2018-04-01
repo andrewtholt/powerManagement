@@ -7,5 +7,5 @@ create table io_point (
     direction varchar(8) not null 
         check(direction='IN' or direction = 'OUT' or direction = 'DISABLED') default 'DISABLED',
     state varchar(8) not null 
-        check(state = 'ON' or state = 'OFF' or state = 'UNKNOWN') default 'UNKNOWN'
+        check(state = 'TRUE' or state = 'FALSE' or state = 'UNKNOWN') default 'UNKNOWN'
 );
