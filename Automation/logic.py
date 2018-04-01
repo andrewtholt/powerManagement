@@ -37,6 +37,9 @@ def on_message(client, userdata, msg):
     state = toOn((msg.payload).decode("utf-8"))
     print(msg.topic+" "+ state )
 
+    # 
+    # TODO how to test for rising/falling edge ?
+    #
     sql = "update io_point set state='%s' where topic='%s'" %( state, msg.topic)
     print(">> " + sql)
     con = sqlite.connect( db )
