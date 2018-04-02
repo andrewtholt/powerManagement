@@ -1,0 +1,35 @@
+
+Simple logic engine akin to a instruction list PLC
+
+IO points are define in data.txt
+
+DAY:/home/environment/day:IN:TRUE:TRUE:FALSE
+PorchLight:/home/outside/PorchLight/power:OUT:OFF:ON:OFF
+
+The fields are:
+
+Name
+MQTT topic
+Direction
+Initial state (can be blank)
+True message    If the state is true send this to make the topic true.
+False message   If the state is false send this to make the topic false.
+
+And the logic 'program' is by default in logic.txt and
+
+LDN DAY
+OUT PorchLight
+END
+
+So if DAY changes state from TRUE to FALSE, PorchLight will change from OFF to ON.
+
+This is held in a datbase the schema for which is in setup.sql
+
+To reset the DB use:
+
+./loader.py -v -c -i ./data.txt 
+
+
+
+
+
