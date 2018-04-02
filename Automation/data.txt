@@ -1,2 +1,3 @@
-PorchLight:/home/outside/PorchLight/power:OUT:
-day:/home/environment/day:IN:
+RLY1:/test/Relay1:OUT:OFF:ON:OFF
+START:/test/StartSwitch:IN:OFF:TRUE:FALSE
+STOP:/test/StopSwitch:IN:OFF:TRUE:FALSE

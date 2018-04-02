@@ -8,18 +8,34 @@ from os import getenv
 import paho.mqtt.client as mqtt
 import configparser as cp
 
-sys.path.append(".")
+class logicVM:
+    ip=0
+    logicFile=""
+    db   = None
+    pdir = None
+    configFile="/etc/mqtt/bridge.ini"
 
-import logicVM as logic
+    def __init__(self, lf="logic.txt"):
+        self.logicFile = lf
+        self.db = getenv("CTL_DB")
+        self.pdir = getenv("CTL_PDIR")
+        if self.db == None or self.pdir == None:
+            print("FATAL ERROR: setup CTL_PDIR & CTL_DB env variables")
+            sys.exit(1)
+
+
 
 
 verbose=False
-machine=None
+db=None
 
 subCount=0
 
 def usage():
     print("Usage: logic.py ...")
+
+def engine():
+    print("Engine")
 
 def toOn( state ):
     if state == "TRUE" or state == "ON" or state == "YES":
@@ -30,34 +46,11 @@ def toOn( state ):
         state="UNKNOWN"
     return state
 
-def updateOutput(client):
-    con = sqlite.connect( db )
-    cur = con.cursor()
-
-    sql = "select topic,state from io_point where direction = 'OUT' and state <> 'UNKNOWN'"
-
-    print("\t " + sql)
-
-    cur.execute( sql )
-
-    for point in cur.fetchall():
-        topic = point[0]
-        msg = point[1]
-
-        print("\t " + topic)
-        print("\t " + msg)
-
-        client.publish(topic, msg, qos=0, retain=True)
-
-    con.commit()
-    con.close()
-
-
 def on_message(client, userdata, msg):
     global subCount
 
     print("On Message")
-
+#    print(msg.topic+" "+str(msg.payload))
     state = toOn((msg.payload).decode("utf-8"))
     print(msg.topic+" "+ state )
 
@@ -79,14 +72,10 @@ def on_message(client, userdata, msg):
     if subCount < 0:
         subCount=0
 
-#    if subCount > 0:
-#        print("== subCount ",subCount)
-#    elif subCount == 0:
-#        machine.run()
-#        updateOutput(client)
-
-    machine.run()
-    updateOutput(client)
+    if subCount > 0:
+        print("== subCount ",subCount)
+    elif subCount == 0:
+        engine()
 
 
 def on_connect(client, userdata, flags, rc):
@@ -96,7 +85,6 @@ def main():
     global verbose
     global db
     global subCount
-    global machine
 
     configFile="/etc/mqtt/bridge.ini"
 
@@ -124,13 +112,7 @@ def main():
         usage()
         sys.exit(2)
 
-    machine = logic.logicVM()
-    machine.verbose()
-    machine.load()
-
-    con,cur = machine.getDb()
-    print(con)
-    print(cur)
+    machine = logicVM()
 
     if os.path.exists(configFile):
         cfg = cp.ConfigParser()
@@ -151,12 +133,8 @@ def main():
 
     client.connect(mqttBroker, mqttPort, 60)
 
-    # 
-    # All conected, now run the machine to set o/ps
-    # and get i/ps
-    # 
-    machine.run()
-    updateOutput(client)
+    con = sqlite.connect( db )
+    cur = con.cursor()
 
     sql = "select name,topic from io_point where direction = 'IN'"
     cur.execute(sql)
@@ -166,9 +144,8 @@ def main():
         name  = point[0]
         topic = point[1]
 
-        if len(topic) > 0:
-            client.subscribe( topic )
-            subCount=subCount+1
+        client.subscribe( topic )
+        subCount=subCount+1
 
         if verbose:
             print("=========")

@@ -79,16 +79,26 @@ def initDb(databaseName, initFile):
         name      = d[0]
         topic     = d[1]
         direction = d[2]
-        state     = d[3]
 
-        if state == "":
-            state="UNKNOWN"
+        state     = d[3]
+        if len(state) == 0:
+            state = 'UNKNOWN'
+
+        on_state  = d[4]
+        if len(on_state) == 0:
+            on_state = 'ON'
+
+        off_state = d[5]
+        if len(off_state) == 0:
+            off_state = 'OFF'
 
         if verbose:
             print("Name     : " + name )
             print("Topic    : " + topic )
             print("Direction: " + direction)
             print("State    : " + state)
+            print("On  State: " + on_state)
+            print("Off State: " + off_state)
         sql = "insert into io_point (name, topic,direction,state) values ('%s','%s','%s','%s'); " % (name,topic,direction,state)
 
         if verbose:
