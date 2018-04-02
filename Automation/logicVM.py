@@ -37,14 +37,14 @@ class logicVM:
     def getDb(self):
         return self.con, self.cur 
 
-    def logicToStr(self, state):
+    def logicToStr(self, state, on_state, off_state):
 
         s="UNKNOWN"
 
         if state == 0:
-            s="FALSE"
+            s= off_state
         elif state == 1:
-            s="TRUE"
+            s=on_state
         else:
             s="UNKNOWN"
 
@@ -159,12 +159,18 @@ class logicVM:
         self.acc = self.strToLogic(data[0])
         self.ip += 1
 
+    def invertAcc(self):
 
-    def logicOut(self):
+        if self.acc == 2:  # unknown
+            pass
+        elif self.acc == 0: # FALSE ..
+            self.acc = 1    # ... made TRUE
+        elif self.acc == 1: # TRUE ...
+            self.acc = 0    # ... made FALSE
 
+
+    def ldNot(self):
         name=self.prog[self.ip][1]
-
-        print(name)
 
         sql = "select state from io_point where name = '%s'" % name
 
@@ -173,12 +179,36 @@ class logicVM:
 
         self.cur.execute( sql )
         data = self.cur.fetchone()
+        print("\t " + data[0])
+
+        self.acc = self.strToLogic(data[0])
+        self.invertAcc()
+        self.ip += 1
+
+    def logicOut(self):
+
+        name=self.prog[self.ip][1]
+
+        print(name)
+
+        sql = "select state,on_state,off_state from io_point where name = '%s'" % name
 
         if self.verbose:
-            print("\t " + data[0])
+            print("\t " + sql )
 
-        state=self.logicToStr( self.acc )
-        self.acc=0;
+        self.cur.execute( sql )
+        data = self.cur.fetchone()
+
+        on_state  = data[1]
+        off_state = data[2]
+
+        if self.verbose:
+            print("\tstate     " + data[0])
+            print("\ton_state  " + data[1])
+            print("\toff_state " + data[2])
+
+
+        state=self.logicToStr( self.acc, on_state, off_state )
 
         if state == "UNKNOWN":
             pass
@@ -190,6 +220,8 @@ class logicVM:
 
             self.cur.execute( sql )
             self.con.commit(  )
+
+        self.acc=0;
         self.ip += 1
 
 
@@ -210,8 +242,10 @@ class logicVM:
                 else:
                     print(" %s %s" % (self.prog[self.ip][0], self.prog[self.ip][1]))
 
-            if  (self.prog[self.ip][0]).upper() == 'LD':
+            if (self.prog[self.ip][0]).upper() == 'LD':
                 self.ld()
+            elif (self.prog[self.ip][0]).upper() == 'LDN':
+                self.ldNot()
             elif  (self.prog[self.ip][0]).upper() == 'ANDN':
                 self.logicAndNot()
             elif  (self.prog[self.ip][0]).upper() == 'OR':
