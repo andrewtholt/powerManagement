@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-import sqlite3 as sqlite
+import pymysql as mysql
 import getopt
 import os.path
 from os import getenv
@@ -17,32 +17,30 @@ def usage():
     print("\t-i <file>|--init=<file>")
     print("\t\t\tPopulate the database.")
 
-def cleanUp(db,pdir):
+def cleanUp(con,pdir):
     if verbose:
-        print("Cleaning database " + db)
+        print("Cleaning database " )
 
-    try:
-        os.unlink(db)
-    except:
-        pass
-
-    if os.path.exists(pdir +"/setup.sql"):
+    if os.path.exists(pdir +"/mySqlSetup.sql"):
         if verbose:
             print("SQL setup exists")
 
-    cmd = "sqlite3 %s < %s" % ( db,(pdir + "/setup.sql"))
+        tmp=open(pdir +"/mySqlSetup.sql").readlines()
+        data=map(str.strip,tmp)
 
-    if os.system( cmd ) != 0:
-        print("FATAL ERROR:%s failed" % cmd)
-        sys.exit(1)
-    else:
-        if verbose:
-            print("%s success" % cmd)
+        cur = con.cursor()
+        for sql in data:
+            if verbose:
+                print(sql)
+            if len(sql) > 0:
+                cur.execute( sql )
+
+        con.commit()
+        cur.close()
 
 
 
-
-def initDb(databaseName, initFile):
+def initDb(con, initFile):
     global verbose
 
     if verbose:
@@ -53,14 +51,6 @@ def initDb(databaseName, initFile):
         if verbose:
             print("... " + initFile + " exists ...")
 
-    try:
-        con = sqlite.connect( databaseName )
-        cur = con.cursor()
-
-    except:
-        print("\nProblem with database, re-run with -v")
-        sys.exit(1)
-
     tmp=open(initFile).readlines()
     data=map(str.strip,tmp)
 
@@ -68,11 +58,13 @@ def initDb(databaseName, initFile):
     if verbose:
         print("... Empty tables ...")
         print(">> " + sql )
+        print()
+
+    cur = con.cursor()
 
     cur.execute( sql )
     con.commit()
 
-    print()
     for n in data:
         d = n.split(":")
 
@@ -106,6 +98,7 @@ def initDb(databaseName, initFile):
         cur.execute( sql )
 
     con.commit()
+    cur.close()
 
 def main():
 
@@ -152,13 +145,20 @@ def main():
     if verbose:
         print("Database is " + dbName)
 
+    try:
+        con = mysql.connect("localhost", "automation","automation","automation")
+
+    except:
+        print("\nProblem with database, re-run with -v")
+        sys.exit(1)
+
     if clean:
         if verbose:
             print("Clean:remove the existing database")
-        cleanUp(dbName, pdir)
+        cleanUp(con, pdir)
 
     if initFile != None:
-        initDb(dbName, initFile)
+        initDb(con, initFile)
 
 main()
 
