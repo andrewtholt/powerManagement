@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-import sqlite3 as sqlite
+import pymysql as mysql
 import getopt
 import os.path
 from os import getenv
@@ -31,7 +31,7 @@ def toOn( state ):
     return state
 
 def updateOutput(client):
-    con = sqlite.connect( db )
+    con = mysql.connect("localhost", "automation","automation","automation")
     cur = con.cursor()
 
     sql = "select topic,state from io_point where direction = 'OUT' and state <> 'UNKNOWN'"
@@ -50,6 +50,7 @@ def updateOutput(client):
         client.publish(topic, msg, qos=0, retain=True)
 
     con.commit()
+    cur.close()
     con.close()
 
 
@@ -61,17 +62,21 @@ def on_message(client, userdata, msg):
     state = toOn((msg.payload).decode("utf-8"))
     print(msg.topic+" "+ state )
 
+
+    con = mysql.connect("localhost", "automation","automation","automation")
+    cur = con.cursor()
+
+    sql = "use automation"
+    cur.execute(sql)
     # 
     # TODO how to test for rising/falling edge ?
     #
     sql = "update io_point set state='%s' where topic='%s'" %( state, msg.topic)
     print(">> " + sql)
-    con = sqlite.connect( db )
-    cur = con.cursor()
-
     cur.execute(sql)
 
     con.commit()
+    cur.close()
     con.close()
 
     subCount -=1

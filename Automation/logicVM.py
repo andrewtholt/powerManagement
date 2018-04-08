@@ -1,5 +1,5 @@
 import sys 
-import sqlite3 as sqlite
+import pymysql as mysql
 import getopt
 import os.path
 from os import getenv
@@ -29,8 +29,14 @@ class logicVM:
             print("FATAL ERROR: setup CTL_PDIR & CTL_DB env variables")
             sys.exit(1)
 
-        self.con = sqlite.connect( self.db )
-        self.cur = self.con.cursor()
+        try:
+            self.con = mysql.connect("localhost", "automation","automation","automation")
+            self.cur = self.con.cursor()
+        except:
+            print("__init__ error:", sys.exc_info()[0])
+            sys.exit(1)
+
+        
 
     # 0=False 1=True, >2 unknown/invalid
 
@@ -271,7 +277,6 @@ class logicVM:
 
     def dump(self):
         print("\tLogicVM Dump")
-        print("Database : " + self.db)
         print("pdir     : " + self.pdir)
         print("Config   : " + self.configFile)
 
@@ -291,5 +296,5 @@ class logicVM:
 #         sys.exit(3)
 # 
 #     machine.run()
-
-
+# 
+# 
