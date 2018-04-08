@@ -1,0 +1,9 @@
+{
+    "io_points": [
+        { "name":"DAY", "topic":"/home/environment/day", "direction":"IN","state":"TRUE","on_state":"ON","off_state":"OFF" },
+        { "name":"PorchLight", "topic":"/home/outside/PorchLight/power", "direction":"OUT","state":"OFF","on_state":"ON","off_state":"OFF" },
+	{ "name":"RLY1", "topic":"/test/Relay1", "direction":"OUT","state":"OFF","on_state":"ON","off_state":"OFF" },
+	{ "name":"START", "topic":"/test/StartSwitch", "direction":"IN","state":"FALSE","on_state":"ON","off_state":"OFF" },   
+	{ "name":"STOP", "topic":"/test/StopSwitch", "direction":"IN","state":"FALSE","on_state":"ON","off_state":"OFF" }  
+    ]
+ }
