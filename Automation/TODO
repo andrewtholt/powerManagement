@@ -1,0 +1,26 @@
+
+Extend mySqlClient.py as follows
+
+Create language interpreter:
+
+^go-first   Set pointer to first row in result
+^go-next    Set pointer to row after current
+^go-prev    Set pointer to row before current
+^go-last    Set pointer to last row in result
+
+^get-row    Return current row.
+
+^get <column name>  Return column from current row.
+
+^clear      Clear results
+
+^exit       Exit client when user disconnects.
+
+Returns:
+
+^ok <count> Succes, count is of number of rows returnrd (0 means none, or irrelevent)
+
+^error
+
+Make multi-threaded, one connection, one thread.
+
