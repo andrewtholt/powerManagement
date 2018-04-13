@@ -9,6 +9,7 @@ class msgParser:
     verbose=False
     db=None
     cursor=None
+    rowIdx=0
 
     param = {
             'database' : 'automation',
@@ -19,6 +20,9 @@ class msgParser:
 
     def __init__(self):
         print("Constructor")
+
+    def __del__(self):
+        print("Cleaning up")
 
     def dumpData(self):
         print("database : " + self.param['database'])
@@ -68,6 +72,20 @@ class msgParser:
                 self.param['database'],
                 self.param['user'],
                 self.param['password'] )
+        
+        self.cursor = self.db.cursor()
+        sql=' use ' + self.param['database']
+
+        if self.verbose:
+            print("sql>"+sql)
+
+        if 0 == self.cursor.execute( sql ):
+            failFlag=False
+        else:
+            failFlag=True
+
+        rc=[failFlag, ""]
+        return rc
 
 
     def localParser(self,cmd):
@@ -88,8 +106,7 @@ class msgParser:
                 failFlag=False
                 rc=[failFlag, ""]
             elif c[0] == "connect":
-                self.dbConnect()
-                pass
+                rc=self.dbConnect()
             else:
                 failFlag=True
                 rc=[failFlag, ""]
@@ -104,8 +121,30 @@ class msgParser:
         return rc
 
 
+    def executeSql(self, sql):
+
+        self.rowIdx=0
+        if self.verbose:
+            print("executeSql:" + sql)
+
+        try:
+            self.cursor.execute(sql)
+
+
+            if self.cursor.description == None:
+                pass
+            else:
+                fLen = len(self.cursor.description)
+                if self.verbose:
+                    print("Number of fields ",fLen)
+                    print("Number of rows   ",self.cursor.rowcount)
+        except Exception :
+            print(sys.exc_info()[0])
+
+
     def parseMsg(self,msg):
         failFlag=True
+        rc=[failFlag, ""]
 
         m=msg.strip()
         if self.verbose:
@@ -113,11 +152,14 @@ class msgParser:
 
         if m[0] == '^':
             print("Client command")
-            failFlag=self.localParser( m[1:] )
+            rc=self.localParser( m[1:] )
         else:
             print("sql")
+            failFlag=False
+            rc=[failFlag, ""]
+            self.executeSql(msg)
 
-        return failFlag
+        return rc
 
 
 

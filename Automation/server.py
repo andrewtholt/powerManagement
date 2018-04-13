@@ -3,6 +3,7 @@
 import socketserver
 import getopt
 import sys
+import msgParser
 
 verbose = False
 serverCount=0
@@ -21,6 +22,10 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         runFlag=True
+        global serverCount
+        
+        parser=msgParser.msgParser()
+        parser.setVerbose(True)
 
         serverCount += 1
         while runFlag:
@@ -32,8 +37,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                 else:
                     print("{} wrote:".format(self.client_address[0]))
                     print(self.data)
-        # just send back the same data, but upper-cased
-                self.request.sendall(self.data.upper())
+                    rc=parser.parseMsg(self.data.decode('utf-8'))
+                    print(rc)
             except:
                 runFlag=False
                 print("Ooops")
