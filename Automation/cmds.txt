@@ -1,0 +1,6 @@
+^set user automation
+^set database automation
+^set password automation
+^set host localhost
+^print
+^connect
