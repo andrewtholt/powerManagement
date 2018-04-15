@@ -6,23 +6,27 @@ from os import getenv
 
 
 class msgParser:
-    verbose=False
+    echo=False
     db=None
     cursor=None
     rowIdx=0
+    sqlResults=[]
 
     param = {
             'database' : 'automation',
             'user' : 'NOBODY',
             'password' : 'NOTHING',
-            'host' : 'localhost'
+            'host' : 'localhost',
+            'verbose' : 'false'
             }
 
     def __init__(self):
-        print("Constructor")
+#        print("Constructor")
+        pass
 
     def __del__(self):
-        print("Cleaning up")
+#        print("Cleaning up")
+        pass
 
     def dumpData(self):
         print("database : " + self.param['database'])
@@ -30,14 +34,11 @@ class msgParser:
         print("password : " + self.param['password'])
         print("host     : " + self.param['host'])
 
-    def setVerbose(self,flag):
-        self.verbose = flag
+    def setEcho(self,flag):
+        self.echo=flag
 
-        print("msgParser verbose ", end="")
-        if self.verbose:
-            print("On")
-        else:
-            print("Off")
+    def getEcho(self):
+        return self.echo
 
 
     def getParam(self,name):
@@ -76,7 +77,7 @@ class msgParser:
         self.cursor = self.db.cursor()
         sql=' use ' + self.param['database']
 
-        if self.verbose:
+        if self.param['verbose'] == 'true':
             print("sql>"+sql)
 
         if 0 == self.cursor.execute( sql ):
@@ -94,7 +95,6 @@ class msgParser:
 
         c = cmd.split()
         paramCount = len(c)
-        print( paramCount )
 
         if paramCount == 1:
             if c[0] == "help": 
@@ -107,9 +107,38 @@ class msgParser:
                 rc=[failFlag, ""]
             elif c[0] == "connect":
                 rc=self.dbConnect()
+            elif c[0] == "get-row":
+                print("get-row", self.rowIdx)
+                print(self.sqlResults[self.rowIdx])
+                failFlag=False
+                rc=[failFlag, ""]
+            elif c[0] == "go-first":
+                self.rowIdx=0
+                failFlag=False
+                rc=[failFlag, ""]
+            elif c[0] == "go-last":
+                self.rowIdx= len(self.sqlResults)-1
+
+                failFlag=False
+                rc=[failFlag, ""]
+            elif c[0] == "go-prev":
+                if self.rowIdx > 0:
+                    self.rowIdx -=1
+
+                failFlag=False
+                rc=[failFlag, ""]
+            elif c[0] == "go-next":
+                if self.rowIdx >= len(self.sqlResults)-1 :
+                    pass
+                else:
+                    self.rowIdx += 1
+
+                failFlag=False
+                rc=[failFlag, ""]
             else:
                 failFlag=True
                 rc=[failFlag, ""]
+
         elif paramCount == 2:
             if c[0] == "get":
                 rc = self.getParam(c[1])
@@ -122,22 +151,30 @@ class msgParser:
 
 
     def executeSql(self, sql):
-
+        self.sqlResults=[]
         self.rowIdx=0
-        if self.verbose:
-            print("executeSql:" + sql)
 
+        if self.getParam('verbose') == 'true':
+            print("executeSql:" + sql)
         try:
             self.cursor.execute(sql)
-
 
             if self.cursor.description == None:
                 pass
             else:
                 fLen = len(self.cursor.description)
-                if self.verbose:
-                    print("Number of fields ",fLen)
-                    print("Number of rows   ",self.cursor.rowcount)
+                fieldNames = [i[0] for i in self.cursor.description]
+#                print(fieldNames)
+                
+#                print("Number of fields ",fLen)
+#                print("Number of rows   ",self.cursor.rowcount)
+
+                if fLen > 0:
+                    results = self.cursor.fetchall()
+                    for row in results:
+                        self.sqlResults.append(row)
+#                        print(row)
+
         except Exception :
             print(sys.exc_info()[0])
 
@@ -147,17 +184,23 @@ class msgParser:
         rc=[failFlag, ""]
 
         m=msg.strip()
-        if self.verbose:
-            print("msg >" + m + "<")
 
-        if m[0] == '^':
-            print("Client command")
-            rc=self.localParser( m[1:] )
-        else:
-            print("sql")
+        if len(m) == 0:
             failFlag=False
             rc=[failFlag, ""]
-            self.executeSql(msg)
+        else:
+
+            if self.param['verbose'] == 'true':
+                print("msg >" + m + "<")
+    
+            if m[0] == '^':
+    #            print("Client command")
+                rc=self.localParser( m[1:] )
+            else:
+#                print("sql")
+                failFlag=False
+                rc=[failFlag, ""]
+                self.executeSql(msg)
 
         return rc
 

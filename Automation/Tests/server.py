@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-import socketserver
+import socketserver, subprocess
+from threading import Thread
 import getopt
 import sys
 import msgParser
@@ -23,10 +24,14 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
         runFlag=True
         global serverCount
+        global verbose
         
         parser=msgParser.msgParser()
         parser.setVerbose(True)
 
+        if verbose:
+            print("Client address:",self.client_address)
+            print(self.request)
         serverCount += 1
         while runFlag:
         # self.request is the TCP socket connected to the client
@@ -70,6 +75,8 @@ if __name__ == "__main__":
         print("Port    :" , PORT)
 
     # Create the server, binding to localhost on port 9999
+    daemon_threads=True
+    allow_reuse_address=True
     with socketserver.TCPServer((HOST, PORT), MyTCPHandler) as server:
         # Activate the server; this will keep running until you
         # interrupt the program with Ctrl-C
