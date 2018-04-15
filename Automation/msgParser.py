@@ -13,11 +13,12 @@ class msgParser:
     sqlResults=[]
 
     param = {
-            'database' : 'automation',
-            'user' : 'NOBODY',
-            'password' : 'NOTHING',
-            'host' : 'localhost',
-            'verbose' : 'false'
+            'database'      : 'NODATA',
+            'user'          : 'NOBODY',
+            'password'      : 'NOTHING',
+            'host'          : 'localhost',
+            'verbose'       : 'false',
+            'output-format' : 'native'
             }
 
     def __init__(self):
@@ -124,7 +125,6 @@ class msgParser:
             elif c[0] == "go-prev":
                 if self.rowIdx > 0:
                     self.rowIdx -=1
-
                 failFlag=False
                 rc=[failFlag, ""]
             elif c[0] == "go-next":
@@ -142,6 +142,12 @@ class msgParser:
         elif paramCount == 2:
             if c[0] == "get":
                 rc = self.getParam(c[1])
+            elif c[0] == "get-col":
+                fred=self.sqlResults[self.rowIdx]
+                print(fred[c[1]])
+                failFlag=False
+                rc=[failFlag, ""]
+
         elif paramCount == 3:
             if c[0] == "set":
                 failFlag=self.setParam(c[1],c[2])
@@ -163,8 +169,7 @@ class msgParser:
                 pass
             else:
                 fLen = len(self.cursor.description)
-                fieldNames = [i[0] for i in self.cursor.description]
-#                print(fieldNames)
+                fieldName = [i[0] for i in self.cursor.description]
                 
 #                print("Number of fields ",fLen)
 #                print("Number of rows   ",self.cursor.rowcount)
@@ -172,8 +177,13 @@ class msgParser:
                 if fLen > 0:
                     results = self.cursor.fetchall()
                     for row in results:
-                        self.sqlResults.append(row)
-#                        print(row)
+                        count=0
+                        fred={}
+                        for col in row:
+                            fred[ fieldName[count] ] = col
+                            count += 1
+
+                        self.sqlResults.append(fred)
 
         except Exception :
             print(sys.exc_info()[0])
