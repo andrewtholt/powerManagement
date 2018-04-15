@@ -1,0 +1,11 @@
+service myclient
+{
+    socket_type    = stream
+    protocol       = tcp
+    wait           = no
+    user           = andrewh
+    only_from      = 192.168.10.0 localhost
+    server         = /home/andrewh/Source/powerManagement/Automation/inter.py
+    instances      = 5
+#    banner         = /home/andrewh/Source/powerManagement/Automation/banner.txt
+}
