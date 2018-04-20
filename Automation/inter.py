@@ -5,7 +5,11 @@ import getopt
 import sys
 
 def usage():
-    print("Usage:")
+    print("Usage: interp.py -v -h -c <file name>")
+    print("\t-v|--verbose\tVerbose.")
+    print("\t-h|--help\tHelp")
+    print("\t-c <file>|--commands=<file> Read commands from given file.")
+
 
 def main():
     tst = msgParser.msgParser()
