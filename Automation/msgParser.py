@@ -147,6 +147,8 @@ class msgParser:
                 print(fred[c[1]])
                 failFlag=False
                 rc=[failFlag, ""]
+            elif c[0] == "load":
+                print("Load command file")
 
         elif paramCount == 3:
             if c[0] == "set":
