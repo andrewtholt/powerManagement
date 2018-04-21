@@ -19,7 +19,7 @@ machine=None
 subCount=0
 
 def usage():
-    print("Usage: logic.py ...")
+    print("Usage: logger.py ...")
 
 
 def on_message(client, userdata, msg):
