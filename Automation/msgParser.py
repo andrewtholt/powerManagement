@@ -47,7 +47,6 @@ class msgParser:
         print("Database Type:" , self.param['database-type'])
 
     def setDatabaseType(self, dbType):
-        print('setDatabaseType ->', dbType)
         if dbType == 'MYSQL':
             self.param['database-type'] = dbType
             self.database = databaseType.MYSQL
@@ -94,6 +93,7 @@ class msgParser:
         rc=[failFlag, ""]
 
         print(self.database)
+
         if self.database is databaseType.MYSQL:
             import pymysql as mysql
             self.db=mysql.connect( self.param['host'],
@@ -102,7 +102,15 @@ class msgParser:
                 self.param['password'] )
         elif self.database is databaseType.SQLITE:
             import sqlite3 as sqlite
-            self.db = sqlite.connect( self.param['database'] + ".db" )
+
+            dbDir = getenv("CTL_DB")
+
+            dbPath = dbDir + "/" + self.param['database'] + ".db"
+            if self.param['verbose'] == 'true':
+                print("Connecting to " + dbPath )
+
+            self.db = sqlite.connect( dbPath )
+            print("Self.db is " , self.db)
             failFlag=False
         
         self.cursor = self.db.cursor()
@@ -208,13 +216,14 @@ class msgParser:
             else:
                 fLen = len(self.cursor.description)
                 fieldName = [i[0] for i in self.cursor.description]
-                
-#                print("Number of fields ",fLen)
-#                print("Number of rows   ",self.cursor.rowcount)
+
+                results = self.cursor.fetchall()
+                rowCount = len(results);
 
                 if fLen > 0:
-                    results = self.cursor.fetchall()
+#                    results = self.cursor.fetchall()
                     for row in results:
+#                        print(row)
                         count=0
                         fred={}
                         for col in row:

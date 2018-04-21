@@ -1,3 +1,3 @@
-export CTL_DB=/var/tmp/tst.db
+export CTL_DB=/var/tmp
 export CTL_PDIR=$(pwd)
 

@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 
 import sys
-import pymysql as mysql
 import getopt
 import os.path
 from os import getenv
 
 
 verbose=False
+dbType="NONE"
+pdir="."
+dbDir=None
+con=None
 
 def usage():
     print("Usage: loader.py ...")
@@ -17,15 +20,43 @@ def usage():
     print("\t-i <file>|--init=<file>")
     print("\t\t\tPopulate the database.")
 
-def cleanUp(con,pdir):
+def cleanUp(dbName):
+    global dbType
+    global pdir
+    global con
+
+    if dbType == "SQLITE":
+        print("SQLITE")
+
+        setupFile = pdir + '/' + "sqliteSetup.sql"
+
+        dbPath = dbDir + '/' + dbName + ".db"
+
+        if verbose:
+            print("cleanUp:" + dbPath)
+
+        if os.path.exists( dbPath ):
+            if verbose:
+                print("cleanUp:removing db File")
+
+            con.close()
+            os.remove( dbPath )
+            import sqlite3 as sqlite
+            con = sqlite.connect(dbPath)
+
+    elif dbType == "MYSQL":
+        setupFile = pdir + '/' + "mySqlSetup.sql"
+
+
     if verbose:
         print("Cleaning database " )
+        print("... And creating anew from " + setupFile)
 
-    if os.path.exists(pdir +"/mySqlSetup.sql"):
-        if verbose:
-            print("SQL setup exists")
-
-        tmp=open(pdir +"/mySqlSetup.sql").readlines()
+#    if os.path.exists(pdir +"/mySqlSetup.sql"):
+#        if verbose:
+#            print("SQL setup exists")
+#
+        tmp=open(setupFile).readlines()
         data=map(str.strip,tmp)
 
         cur = con.cursor()
@@ -40,8 +71,9 @@ def cleanUp(con,pdir):
 
 
 
-def initDb(con, initFile):
+def initDb( initFile):
     global verbose
+    global con
 
     if verbose:
         print("Initialize database....")
@@ -62,8 +94,12 @@ def initDb(con, initFile):
 
     cur = con.cursor()
 
-    cur.execute( sql )
-    con.commit()
+    try:
+        cur.execute( sql )
+        con.commit()
+    except:
+        print("Ooops " + sql )
+
 
     for n in data:
         d = n.split(":")
@@ -103,25 +139,28 @@ def initDb(con, initFile):
 def main():
 
     global verbose
+    global dbType
+    global pdir
+    global dbDir
+    global con
 
     dbName=None
     clean=False
     initFile=None
-
-    pdir = "."
-    dbDir = None
 
     dbName = getenv("CTL_DB")
     if dbName != None:
         dbDir = os.path.dirname(dbName)
 
     pdir = getenv("CTL_PDIR")
+    dbDir = getenv("CTL_DB")
+
     if dbName == None or pdir == None or dbDir == None:
         print( "FATAL ERROR: setup CTL_PDIR & CTL_DB env variables")
         sys.exit(1)
 
     try:
-        opts,args = getopt.getopt(sys.argv[1:], "cd:hvi:",["clean","database","help","verbose","init"])
+        opts,args = getopt.getopt(sys.argv[1:], "cd:hvi:t:",["clean","database","help","verbose","init","type" ])
     except:
         print("Argument error")
         usage()
@@ -141,24 +180,41 @@ def main():
             print("Verbose")
         elif o in ("-h","--help"):
             usage()
+        elif o in ("-t","--type"):
+            dbType = a
+
+    if dbType not in ("MYSQL", "SQLITE"):
+        print("You must select a valid database type, options are MYSQL or SQLITE.")
+        print()
+        usage()
 
     if verbose:
         print("Database is " + dbName)
 
+
     try:
-        con = mysql.connect("localhost", "automation","automation","automation")
+        if dbType == "MYSQL":
+            import pymysql as mysql
+            con = mysql.connect("localhost", "automation","automation","automation")
+        elif dbType == "SQLITE":
+            import sqlite3 as sqlite
+            fred = dbDir + "/" + dbName +".db" 
+            print("SQLITE db is " + fred )
+            con = sqlite.connect(fred)
+            print(con)
 
     except:
         print("\nProblem with database, re-run with -v")
         sys.exit(1)
 
+
     if clean:
         if verbose:
             print("Clean:remove the existing database")
-        cleanUp(con, pdir)
+        cleanUp(dbName)
 
     if initFile != None:
-        initDb(con, initFile)
+        initDb(initFile)
 
 main()
 
