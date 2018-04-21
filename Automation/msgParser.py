@@ -104,6 +104,8 @@ class msgParser:
             import sqlite3 as sqlite
 
             dbDir = getenv("CTL_DB")
+            if dbDir == None:
+                dbDir='/var/tmp'
 
             dbPath = dbDir + "/" + self.param['database'] + ".db"
             if self.param['verbose'] == 'true':
