@@ -1,9 +1,16 @@
 import sys 
-import pymysql as mysql
+# import pymysql as mysql
 import getopt
 import os.path
 from os import getenv
 
+from enum import Enum, auto
+
+class databaseType(Enum):
+    NONE = auto()
+    MYSQL = auto()
+    SQLITE = auto()
+    LAST = auto()
 
 class msgParser:
     echo=False
@@ -12,13 +19,16 @@ class msgParser:
     rowIdx=0
     sqlResults=[]
 
+    database = databaseType.NONE
+
     param = {
             'database'      : 'NODATA',
             'user'          : 'NOBODY',
             'password'      : 'NOTHING',
             'host'          : 'localhost',
             'verbose'       : 'false',
-            'output-format' : 'native'
+            'output-format' : 'native',
+            'database-type' : 'NONE'
             }
 
     def __init__(self):
@@ -30,10 +40,23 @@ class msgParser:
         pass
 
     def dumpData(self):
-        print("database : " + self.param['database'])
-        print("user     : " + self.param['user'])
-        print("password : " + self.param['password'])
-        print("host     : " + self.param['host'])
+        print("database     : " + self.param['database'])
+        print("user         : " + self.param['user'])
+        print("password     : " + self.param['password'])
+        print("host         : " + self.param['host'])
+        print("Database Type:" , self.param['database-type'])
+
+    def setDatabaseType(self, dbType):
+        print('setDatabaseType ->', dbType)
+        if dbType == 'MYSQL':
+            self.param['database-type'] = dbType
+            self.database = databaseType.MYSQL
+        elif dbType == 'SQLITE':
+            self.param['database-type'] = dbType
+            self.database = databaseType.SQLITE
+        else:
+            self.param['database-type'] = 'NONE'
+            self.database = databaseType.NONE
 
     def setEcho(self,flag):
         self.echo=flag
@@ -70,21 +93,30 @@ class msgParser:
         failFlag=True
         rc=[failFlag, ""]
 
-        self.db=mysql.connect( self.param['host'],
+        print(self.database)
+        if self.database is databaseType.MYSQL:
+            import pymysql as mysql
+            self.db=mysql.connect( self.param['host'],
                 self.param['database'],
                 self.param['user'],
                 self.param['password'] )
+        elif self.database is databaseType.SQLITE:
+            import sqlite3 as sqlite
+            self.db = sqlite.connect( self.param['database'] + ".db" )
+            failFlag=False
         
         self.cursor = self.db.cursor()
-        sql=' use ' + self.param['database']
 
-        if self.param['verbose'] == 'true':
-            print("sql>"+sql)
-
-        if 0 == self.cursor.execute( sql ):
-            failFlag=False
-        else:
-            failFlag=True
+        if self.database is databaseType.MYSQL:
+            sql=' use ' + self.param['database']
+    
+            if self.param['verbose'] == 'true':
+                print("sql>"+sql)
+    
+            if 0 == self.cursor.execute( sql ):
+                failFlag=False
+            else:
+                failFlag=True
 
         rc=[failFlag, ""]
         return rc
@@ -149,6 +181,10 @@ class msgParser:
                 rc=[failFlag, ""]
             elif c[0] == "load":
                 print("Load command file")
+            elif c[0] == "set-database":
+                self.setDatabaseType(c[1])
+                failFlag=False
+                rc=[failFlag, ""]
 
         elif paramCount == 3:
             if c[0] == "set":
