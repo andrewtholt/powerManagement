@@ -191,7 +191,17 @@ class msgParser:
                 failFlag=False
                 rc=[failFlag, ""]
             elif c[0] == "load":
-                print("Load command file")
+                cmdFile = c[1]
+                count=0
+                with open(cmdFile) as fp:
+                    line=fp.readline()
+                    while line:
+                        rc=self.parseMsg(line)
+
+                        if self.getParam('verbose') == 'true':
+                            print(count,":" + line)
+                        line=fp.readline()
+
             elif c[0] == "set-database":
                 self.setDatabaseType(c[1])
                 failFlag=False

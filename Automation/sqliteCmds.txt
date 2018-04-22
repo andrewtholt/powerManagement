@@ -1,0 +1,4 @@
+^set database automation
+^set host localhost
+^set-database SQLITE
+^print
