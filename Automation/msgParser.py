@@ -27,7 +27,7 @@ class msgParser:
             'password'      : 'NOTHING',
             'host'          : 'localhost',
             'verbose'       : 'false',
-            'output-format' : 'native',
+            'output-format' : 'native', # native, json, or forth
             'database-type' : 'NONE'
             }
 
@@ -45,6 +45,7 @@ class msgParser:
         print("password     : " + self.param['password'])
         print("host         : " + self.param['host'])
         print("Database Type:" , self.param['database-type'])
+        print("Output Format:" , self.param['output-format'])
 
     def setDatabaseType(self, dbType):
         if dbType == 'MYSQL':
