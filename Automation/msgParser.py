@@ -3,6 +3,7 @@ import sys
 import getopt
 import os.path
 from os import getenv
+import os.path
 
 from enum import Enum, auto
 
@@ -28,15 +29,18 @@ class msgParser:
             'host'          : 'localhost',
             'verbose'       : 'false',
             'output-format' : 'native', # native, json, or forth
-            'database-type' : 'NONE'
+            'database-type' : 'NONE',
+            'database-dir'  : "/var/tmp"
             }
 
     def __init__(self):
-#        print("Constructor")
-        pass
+        localDbDir = getenv("CTL_DB")
+
+        if localDbDir != None :
+            self.param['database-dir']=localDbDir
+
 
     def __del__(self):
-#        print("Cleaning up")
         pass
 
     def dumpData(self):
@@ -45,6 +49,7 @@ class msgParser:
         print("password     : " + self.param['password'])
         print("host         : " + self.param['host'])
         print("Database Type:" , self.param['database-type'])
+        print("Database Dir :" , self.param['database-dir'])
         print("Output Format:" , self.param['output-format'])
 
     def setDatabaseType(self, dbType):
@@ -104,9 +109,9 @@ class msgParser:
         elif self.database is databaseType.SQLITE:
             import sqlite3 as sqlite
 
-            dbDir = getenv("CTL_DB")
-            if dbDir == None:
-                dbDir='/var/tmp'
+            localDbDir = getenv("CTL_DB")
+            if localDbDir == None:
+                self.param['database-dir'] = localDbDir
 
             print("dbDir=" , dbDir)
             dbPath = dbDir + "/" + self.param['database'] + ".db"
@@ -215,7 +220,13 @@ class msgParser:
                 failFlag=False
                 rc=[failFlag, ""]
             elif c[0] == "load":
-                cmdFile = c[1]
+                rc = self.getParam('database-dir')
+                if rc[0] == False:
+                    cmdFile = rc[1] + '/' + c[1]
+
+                if not os.path.isfile(cmdFile) :
+                    print("NO-FILE")
+                    return rc
                 count=0
                 with open(cmdFile) as fp:
                     line=fp.readline()
