@@ -52,6 +52,9 @@ class msgParser:
         print("Database Dir :" , self.param['database-dir'])
         print("Output Format:" , self.param['output-format'])
 
+        if crap=="Test":
+            pass
+
     def setDatabaseType(self, dbType):
         if dbType == 'MYSQL':
             self.param['database-type'] = dbType
@@ -98,8 +101,6 @@ class msgParser:
         failFlag=True
         rc=[failFlag, ""]
 
-        print("HERE")
-
         if self.database is databaseType.MYSQL:
             import pymysql as mysql
             self.db=mysql.connect( self.param['host'],
@@ -109,13 +110,13 @@ class msgParser:
         elif self.database is databaseType.SQLITE:
             import sqlite3 as sqlite
 
-            localDbDir = getenv("CTL_DB")
-            if localDbDir == None:
-                self.param['database-dir'] = localDbDir
+            dbDir = getenv("CTL_DB")
+            if dbDir == None:
+                dbDir = self.param['database-dir']
+#                self.param['database-dir'] = localDbDir
 
-            print("dbDir=" , dbDir)
             dbPath = dbDir + "/" + self.param['database'] + ".db"
-            print("dbPath=" , dbPath)
+
             if self.param['verbose'] == 'true':
                 print("Connecting to " + dbPath )
 
@@ -158,7 +159,7 @@ class msgParser:
                 rc=[failFlag, ""]
             elif c[0] == "connect":
                 rc=self.dbConnect()
-                print("rc=", rc)
+#                print("rc=", rc)
                 failFlag=False
                 rc=[failFlag, ""]
             elif c[0] == "get-columns":
