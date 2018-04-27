@@ -93,7 +93,7 @@ class msgParser:
         failFlag=True
         rc=[failFlag, ""]
 
-        print(self.database)
+        print("HERE")
 
         if self.database is databaseType.MYSQL:
             import pymysql as mysql
@@ -108,12 +108,14 @@ class msgParser:
             if dbDir == None:
                 dbDir='/var/tmp'
 
+            print("dbDir=" , dbDir)
             dbPath = dbDir + "/" + self.param['database'] + ".db"
+            print("dbPath=" , dbPath)
             if self.param['verbose'] == 'true':
                 print("Connecting to " + dbPath )
 
             self.db = sqlite.connect( dbPath )
-            print("Self.db is " , self.db)
+#            print("Self.db is " , self.db)
             failFlag=False
         
         self.cursor = self.db.cursor()
@@ -151,6 +153,18 @@ class msgParser:
                 rc=[failFlag, ""]
             elif c[0] == "connect":
                 rc=self.dbConnect()
+                print("rc=", rc)
+                failFlag=False
+                rc=[failFlag, ""]
+            elif c[0] == "get-columns":
+                print("get columns")
+
+                fLen = len(self.cursor.description)
+                fieldName = [i[0] for i in self.cursor.description]
+
+                print(fieldName)
+                failFlag=False
+                rc=[failFlag, ""]
             elif c[0] == "get-row":
                 print("get-row", self.rowIdx)
                 print(self.sqlResults[self.rowIdx])
@@ -162,7 +176,6 @@ class msgParser:
                 rc=[failFlag, ""]
             elif c[0] == "go-last":
                 self.rowIdx= len(self.sqlResults)-1
-
                 failFlag=False
                 rc=[failFlag, ""]
             elif c[0] == "go-prev":
@@ -184,7 +197,18 @@ class msgParser:
 
         elif paramCount == 2:
             if c[0] == "get":
+                failFlag=False
+
                 rc = self.getParam(c[1])
+                rc[0]=False
+
+                if rc[1] =="":
+                    rc[1]="UNKNOWN"
+                    print(rc[1])
+                else:
+                    print(rc[1])
+
+
             elif c[0] == "get-col":
                 fred=self.sqlResults[self.rowIdx]
                 print(fred[c[1]])
