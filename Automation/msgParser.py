@@ -27,8 +27,9 @@ class msgParser:
             'user'          : 'NOBODY',
             'password'      : 'NOTHING',
             'host'          : 'localhost',
+            'connected'     : 'false',
             'verbose'       : 'false',
-            'output-format' : 'native', # native, json, or forth
+            'output-format' : 'interactive', # interactive, json, or forth
             'database-type' : 'NONE',
             'database-dir'  : "/var/tmp"
             }
@@ -44,16 +45,15 @@ class msgParser:
         pass
 
     def dumpData(self):
-        print("database     : " + self.param['database'])
-        print("user         : " + self.param['user'])
-        print("password     : " + self.param['password'])
-        print("host         : " + self.param['host'])
-        print("Database Type:" , self.param['database-type'])
-        print("Database Dir :" , self.param['database-dir'])
-        print("Output Format:" , self.param['output-format'])
+        print("database      : " + self.param['database'])
+        print("user          : " + self.param['user'])
+        print("password      : " + self.param['password'])
+        print("host          : " + self.param['host'])
+        print("Database Type :" , self.param['database-type'])
+        print("Database Dir  :" , self.param['database-dir'])
+        print("Database State:" , self.param['connected'])
+        print("Output Format :" , self.param['output-format'])
 
-        if crap=="Test":
-            pass
 
     def setDatabaseType(self, dbType):
         if dbType == 'MYSQL':
@@ -138,6 +138,13 @@ class msgParser:
                 failFlag=True
 
         rc=[failFlag, ""]
+
+        if rc[0]:
+            self.param['connected'] = 'false'
+        else:
+            self.param['connected'] = 'true'
+
+
         return rc
 
 
