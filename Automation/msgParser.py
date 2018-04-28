@@ -44,6 +44,16 @@ class msgParser:
     def __del__(self):
         pass
 
+    def output(self, msg ):
+        opFormat = self.param['output-format']
+
+        if opFormat == 'forth':
+            op=chr(len(msg)) + msg
+            print( op )
+        else:
+            print(msg)
+
+
     def dumpData(self):
         print("database      : " + self.param['database'])
         print("user          : " + self.param['user'])
@@ -166,12 +176,9 @@ class msgParser:
                 rc=[failFlag, ""]
             elif c[0] == "connect":
                 rc=self.dbConnect()
-#                print("rc=", rc)
                 failFlag=False
                 rc=[failFlag, ""]
             elif c[0] == "get-columns":
-                print("get columns")
-
                 fLen = len(self.cursor.description)
                 fieldName = [i[0] for i in self.cursor.description]
 
@@ -179,9 +186,14 @@ class msgParser:
                 failFlag=False
                 rc=[failFlag, ""]
             elif c[0] == "get-row":
-                print("get-row", self.rowIdx)
-                print(self.sqlResults[self.rowIdx])
-                failFlag=False
+                try:
+#                    print("get-row", self.rowIdx)
+                    print(self.sqlResults[self.rowIdx])
+                    failFlag=False
+                except:
+                    print("ERROR")
+                    failFlag = True
+
                 rc=[failFlag, ""]
             elif c[0] == "go-first":
                 self.rowIdx=0
@@ -217,14 +229,17 @@ class msgParser:
 
                 if rc[1] =="":
                     rc[1]="UNKNOWN"
-                    print(rc[1])
+                    self.output(rc[1])
                 else:
-                    print(rc[1])
+                    self.output(rc[1])
 
-
+            elif c[0] == "test":
+                self.output(c[1])
+                failFlag=False
+                rc=[failFlag, ""]
             elif c[0] == "get-col":
                 fred=self.sqlResults[self.rowIdx]
-                print(fred[c[1]])
+                self.output(fred[c[1]])
                 failFlag=False
                 rc=[failFlag, ""]
             elif c[0] == "load":
@@ -277,9 +292,7 @@ class msgParser:
                 rowCount = len(results);
 
                 if fLen > 0:
-#                    results = self.cursor.fetchall()
                     for row in results:
-#                        print(row)
                         count=0
                         fred={}
                         for col in row:
@@ -289,7 +302,7 @@ class msgParser:
                         self.sqlResults.append(fred)
 
         except Exception :
-            print(sys.exc_info()[0])
+            self.output(sys.exc_info()[0])
 
 
     def parseMsg(self,msg):
@@ -307,7 +320,6 @@ class msgParser:
                 print("msg >" + m + "<")
     
             if m[0] == '^':
-    #            print("Client command")
                 rc=self.localParser( m[1:] )
             else:
 #                print("sql")
