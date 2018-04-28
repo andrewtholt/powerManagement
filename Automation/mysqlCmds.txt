@@ -1,7 +1,6 @@
-
 ^set user automation
 ^set database automation
 ^set password automation
 ^set host localhost
+^set-database MYSQL
 ^print
-^connect

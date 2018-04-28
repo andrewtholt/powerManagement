@@ -76,6 +76,6 @@ def main():
         rc=tst.parseMsg(cmd)
 
         runFlag=not rc[0]
-        tst.output("DISCONNECTED")
+    tst.output("DISCONNECTED")
 
 main()
