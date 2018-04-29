@@ -33,7 +33,7 @@ class msgParser:
             'output-format' : 'interactive', # interactive, json, or forth
             'database-type' : 'NONE',
             'database-dir'  : "/var/tmp",
-            'log-file'      : "/var/tmp/log.txt"
+            'log-file'      : "NONE"
             }
 
     def __init__(self):
