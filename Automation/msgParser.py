@@ -19,6 +19,7 @@ class msgParser:
     cursor=None
     rowIdx=0
     sqlResults=[]
+    log=None
 
     database = databaseType.NONE
 
@@ -31,7 +32,8 @@ class msgParser:
             'verbose'       : 'false',
             'output-format' : 'interactive', # interactive, json, or forth
             'database-type' : 'NONE',
-            'database-dir'  : "/var/tmp"
+            'database-dir'  : "/var/tmp",
+            'log-file'      : "/var/tmp/log.txt"
             }
 
     def __init__(self):
@@ -40,6 +42,8 @@ class msgParser:
         if localDbDir != None :
             self.param['database-dir']=localDbDir
 
+        if self.param['log-file'] != "NONE":
+            self.log =  open( self.param['log-file'], 'a') 
 
     def __del__(self):
         pass
@@ -49,9 +53,14 @@ class msgParser:
 
         if opFormat == 'forth':
             op=chr(len(msg)) + msg
-            print( op )
+            print( op,end="" )
+        elif opFormat == 'interactive':
+            print( msg )
         else:
             print(msg)
+
+        if self.log !=None:
+            self.inToLog( str(msg ))
 
 
     def dumpData(self):
@@ -153,10 +162,21 @@ class msgParser:
             self.param['connected'] = 'false'
         else:
             self.param['connected'] = 'true'
+            self.output("CONNECTED")
 
 
         return rc
 
+
+    def outToLog(self, msg):
+        self.log.write("-->:" + msg + ":\n")
+        self.log.flush()
+        os.fsync(self.log)
+
+    def inToLog(self, msg):
+        self.log.write("<--:" + msg + ":\n")
+        self.log.flush()
+        os.fsync(self.log)
 
     def localParser(self,cmd):
         failFlag=True
@@ -164,6 +184,10 @@ class msgParser:
 
         c = cmd.split()
         paramCount = len(c)
+
+        if self.log != None:
+            self.outToLog(cmd)
+
 
         if paramCount == 1:
             if c[0] == "help": 
@@ -280,6 +304,7 @@ class msgParser:
         if self.getParam('verbose') == 'true':
             print("executeSql:" + sql)
         try:
+#            print(sql)
             self.cursor.execute(sql)
 
             if self.cursor.description == None:
@@ -302,7 +327,8 @@ class msgParser:
                         self.sqlResults.append(fred)
 
         except Exception :
-            self.output(sys.exc_info()[0])
+            self.output("ERROR:SQL")
+#            self.output(sys.exc_info()[0])
 
 
     def parseMsg(self,msg):

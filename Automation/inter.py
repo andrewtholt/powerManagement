@@ -72,10 +72,14 @@ def main():
                 line=fp.readline()
 
     while runFlag:
-        cmd = input("cmd>")
+#        cmd = input("cmd>")
+        tst.output("cmd>")
+        cmd = input()
         rc=tst.parseMsg(cmd)
 
         runFlag=not rc[0]
+
+    tst.outToLog("---- ERROR ----")
     tst.output("DISCONNECTED")
 
 main()
