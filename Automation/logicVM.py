@@ -36,7 +36,6 @@ class logicVM:
             print("__init__ error:", sys.exc_info()[0])
             sys.exit(1)
 
-        
 
     # 0=False 1=True, >2 unknown/invalid
 
@@ -213,7 +212,6 @@ class logicVM:
             print("\ton_state  " + data[1])
             print("\toff_state " + data[2])
 
-
         state=self.logicToStr( self.acc, on_state, off_state )
 
         if state == "UNKNOWN":
@@ -229,7 +227,6 @@ class logicVM:
 
         self.acc=0;
         self.ip += 1
-
 
 
     def run(self):
@@ -274,7 +271,6 @@ class logicVM:
     def quiet(self):
         self.msg=False
 
-
     def dump(self):
         print("\tLogicVM Dump")
         print("pdir     : " + self.pdir)
@@ -285,7 +281,7 @@ class logicVM:
         self.con.commit()
         self.con.close()
 
-
+# 
 # if __name__ == "__main__":
 #     machine = logicVM()
 #     machine.verbose()
