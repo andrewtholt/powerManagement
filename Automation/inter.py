@@ -79,7 +79,8 @@ def main():
 
         runFlag=not rc[0]
 
-    tst.outToLog("---- ERROR ----")
+    if tst.log != None:
+        tst.outToLog("---- ERROR ----")
     tst.output("DISCONNECTED")
 
 main()
