@@ -43,7 +43,9 @@ def main():
     
     # Bind the socket to the port
     server = (serverAddress, serverPort)
-    print('starting up on {} port {}'.format(*serverAddress))
+
+    print ("Start on " + serverAddress + " port %d" % serverPort )
+#    print('starting up on {} port {}'.format(*serverAddress))
     sock.bind(server)
     
     # Listen for incoming connections
