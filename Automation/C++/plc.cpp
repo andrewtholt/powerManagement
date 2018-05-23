@@ -35,7 +35,7 @@ void getIoPoint( char *n) {
 
     sprintf(cmdBuffer,sqlTemplate, n);
 
-    printf("%s\n", cmdBuffer);
+//    printf("%s\n", cmdBuffer);
 
     rc = sqlite3_exec(db, cmdBuffer, getLogicCallback, 0, &zErrMsg);
 
@@ -58,7 +58,7 @@ void setIoPoint( char *n, bool s) {
     } else {
         sprintf(cmdBuffer, sqlTemplate, "off_state", n);
     }
-    printf("%s\n", cmdBuffer);
+//    printf("%s\n", cmdBuffer);
     rc = sqlite3_exec(db, cmdBuffer, NULL, 0, &zErrMsg);
     if( rc != SQLITE_OK ) {
         fprintf(stderr, "SQL error: %s\n", zErrMsg);
@@ -69,7 +69,7 @@ void setIoPoint( char *n, bool s) {
 
 
 void instruction::dump(char *iName) {
-    printf("[%d]\t%s\t%s\n",state, iName, name);
+    printf("\t[%d]\n\t%s\t%s",state, iName, name);
 }
 
 // 
@@ -83,12 +83,13 @@ ld::ld(char *n) {
 
 void ld::act() {
     getIoPoint( name );
+    state = flag;
 
 }
 
 void ld::dump() {
-//    instruction::dump((char *)"LD");
-    instruction::dump((char *)name);
+    instruction::dump((char *)"LD");
+//    instruction::dump((char *)name);
 }
 
 // 
@@ -123,8 +124,51 @@ void out::act() {
 void out::dump() {
     instruction::dump((char *)"OUT");
 }
+// 
+// OR 
+//
+Or::Or(char *n) {
+    strncpy(name, n, sizeof(name));
+}
 
+void Or::act() {
+    getIoPoint( name);
+    state = state || flag;
+}
 
+void Or::dump() {
+    instruction::dump((char *)"OR");
+}
+// 
+// AND 
+//
+And::And(char *n) {
+    strncpy(name, n, sizeof(name));
+}
+
+void And::act() {
+    getIoPoint( name);
+    state = state && flag;
+}
+
+void And::dump() {
+    instruction::dump((char *)"ANDN");
+}
+// 
+// ANDN 
+//
+Andn::Andn(char *n) {
+    strncpy(name, n, sizeof(name));
+}
+
+void Andn::act() {
+    getIoPoint( name);
+    state = state && !flag;
+}
+
+void Andn::dump() {
+    instruction::dump((char *)"ANDN");
+}
 
 
 

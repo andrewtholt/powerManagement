@@ -12,30 +12,49 @@ class instruction {
         char name[32];
         void dump(char *iName) ;
         virtual void dump() = 0;
-        void act() {};
+        virtual void act() = 0;
 };
 
 class ld : public instruction {
     public:
-//        char *name = (char *)"LD";
         ld(char *n);
-        void act();
+        virtual void act() ;
         virtual void dump() override;
 };
 
 class ldn : public instruction {
     public:
-//        char *name = (char *)"LDN";
         ldn(char *n);
         void act();
-        void dump();
+        virtual void dump() override;
 };
 
 class out : public instruction {
     public:
         out(char *n);
         void act();
-        void dump();
+        virtual void dump() override ;
 
+};
+
+class Or : public instruction {
+    public:
+        Or(char *n);
+        void act();
+        virtual void dump() override ;
+};
+
+class And : public instruction {
+    public:
+        And(char *n);
+        void act();
+        virtual void dump() override ;
+};
+
+class Andn : public instruction {
+    public:
+        Andn(char *n);
+        void act();
+        virtual void dump() override ;
 };
 

@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 
     instruction *thing;
     while(getline(progFile, line)) {
-//        cout << line << endl;
+        cout << line << endl;
         char *inst = strtok( (char *)line.c_str(), " \t");
         char *var = strtok( NULL, " \t");
         //
@@ -55,6 +55,18 @@ int main(int argc, char *argv[]) {
             if(inst[3] == '\0' ) {
                 thing = new out(var );
             }
+        } else if(!strncmp( inst, "OR", 2)) {
+            if(inst[2] == '\0' ) {
+                thing = new Or(var );
+            }
+        } else if(!strncmp( inst, "AND", 3)) {
+            if(inst[3] == '\0' ) {
+                thing = new And(var );
+            } else if(inst[3] == 'N' ) {
+                thing = new Andn(var );
+            }
+        } else if(!strncmp( inst, "END", 3)) {
+            break;
         }
         prog.push_back( thing );
     }
@@ -69,7 +81,6 @@ int main(int argc, char *argv[]) {
     }
 
     for (auto i : prog ) {
-        printf("Hello\n");
         instruction *y = (instruction *)i;
         y->dump();
         y->act();
