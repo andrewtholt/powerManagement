@@ -5,19 +5,29 @@ Note an instruction with and N appended means invert.
 
 LD name
 LDN name
-    get the logic value for name
+    Get the logic value for name
 
 AND name
+    And the value of name with the entry on the stack (typically from 
+    LD)
+
 ANDN name
+    Invert name and and
+
 ANDR name
+    If name is a rising edge, i.e. from false to true then and true
+    otherwise false.
+
 ANDF name
-    And the value of name with the entry on the stack (typically from LD)
+    If name is a falling edge, i.e. from true to false then and with
+    true otherwise false.
 
 OR name
 ORN name
 ORR name
 ORF name
-    Or the value of name with the entry on the stack (typically from LD)
+    Or the value of name with the entry on the stack (typically from 
+    LD).
 
 XOR name
 XORN name
