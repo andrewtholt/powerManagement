@@ -3,6 +3,14 @@ Extend mySqlClient.py as follows
 
 Create language interpreter:
 
+^set output <json|default>  Format to use for output.
+
+^set database <name>
+^set user <name>
+^set passwd <password>
+
+^connect    Use the above to connect to MySQL
+
 ^go-first   Set pointer to first row in result
 ^go-next    Set pointer to row after current
 ^go-prev    Set pointer to row before current
