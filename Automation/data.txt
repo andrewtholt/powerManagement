@@ -1,5 +1,5 @@
-RLY1:/test/Relay1:OUT:OFF:ON:OFF
-START:/test/StartSwitch:IN:OFF:TRUE:FALSE
-STOP:/test/StopSwitch:IN:OFF:TRUE:FALSE
-DAY:/home/environment/day:IN::TRUE:FALSE
-PorchLight:/home/outside/PorchLight/power:OUT::ON:OFF
+RLY1:/test/Relay1:OUT:FALSE:ON:OFF
+START:/test/StartSwitch:IN:FALSE:TRUE:FALSE
+STOP:/test/StopSwitch:IN:FALSE:TRUE:FALSE
+DAY:/home/environment/day:IN:TRUE:ON:FALSE
+PorchLight:/home/outside/PorchLight/power:OUT:FALSE:ON:OFF

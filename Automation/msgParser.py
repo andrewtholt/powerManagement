@@ -3,6 +3,7 @@ import sys
 import getopt
 import os.path
 from os import getenv
+import os.path
 
 from enum import Enum, auto
 
@@ -18,6 +19,7 @@ class msgParser:
     cursor=None
     rowIdx=0
     sqlResults=[]
+    log=None
 
     database = databaseType.NONE
 
@@ -26,26 +28,51 @@ class msgParser:
             'user'          : 'NOBODY',
             'password'      : 'NOTHING',
             'host'          : 'localhost',
+            'connected'     : 'false',
             'verbose'       : 'false',
-            'output-format' : 'native', # native, json, or forth
-            'database-type' : 'NONE'
+            'output-format' : 'interactive', # interactive, json, or forth
+            'database-type' : 'NONE',
+            'database-dir'  : "/var/tmp",
+            'log-file'      : "NONE"
             }
 
     def __init__(self):
-#        print("Constructor")
-        pass
+        localDbDir = getenv("CTL_DB")
+
+        if localDbDir != None :
+            self.param['database-dir']=localDbDir
+
+        if self.param['log-file'] != "NONE":
+            self.log =  open( self.param['log-file'], 'a') 
 
     def __del__(self):
-#        print("Cleaning up")
         pass
 
+    def output(self, msg ):
+        opFormat = self.param['output-format']
+
+        if opFormat == 'forth':
+            op=chr(len(msg)) + msg
+            print( op,end="" )
+        elif opFormat == 'interactive':
+            print( msg )
+        else:
+            print(msg)
+
+        if self.log !=None:
+            self.inToLog( str(msg ))
+
+
     def dumpData(self):
-        print("database     : " + self.param['database'])
-        print("user         : " + self.param['user'])
-        print("password     : " + self.param['password'])
-        print("host         : " + self.param['host'])
-        print("Database Type:" , self.param['database-type'])
-        print("Output Format:" , self.param['output-format'])
+        print("database      : " + self.param['database'])
+        print("user          : " + self.param['user'])
+        print("password      : " + self.param['password'])
+        print("host          : " + self.param['host'])
+        print("Database Type :" , self.param['database-type'])
+        print("Database Dir  :" , self.param['database-dir'])
+        print("Database State:" , self.param['connected'])
+        print("Output Format :" , self.param['output-format'])
+
 
     def setDatabaseType(self, dbType):
         if dbType == 'MYSQL':
@@ -93,8 +120,6 @@ class msgParser:
         failFlag=True
         rc=[failFlag, ""]
 
-        print(self.database)
-
         if self.database is databaseType.MYSQL:
             import pymysql as mysql
             self.db=mysql.connect( self.param['host'],
@@ -106,14 +131,16 @@ class msgParser:
 
             dbDir = getenv("CTL_DB")
             if dbDir == None:
-                dbDir='/var/tmp'
+                dbDir = self.param['database-dir']
+#                self.param['database-dir'] = localDbDir
 
             dbPath = dbDir + "/" + self.param['database'] + ".db"
+
             if self.param['verbose'] == 'true':
                 print("Connecting to " + dbPath )
 
             self.db = sqlite.connect( dbPath )
-            print("Self.db is " , self.db)
+#            print("Self.db is " , self.db)
             failFlag=False
         
         self.cursor = self.db.cursor()
@@ -130,8 +157,26 @@ class msgParser:
                 failFlag=True
 
         rc=[failFlag, ""]
+
+        if rc[0]:
+            self.param['connected'] = 'false'
+        else:
+            self.param['connected'] = 'true'
+            self.output("CONNECTED")
+
+
         return rc
 
+
+    def outToLog(self, msg):
+        self.log.write("-->:" + msg + ":\n")
+        self.log.flush()
+        os.fsync(self.log)
+
+    def inToLog(self, msg):
+        self.log.write("<--:" + msg + ":\n")
+        self.log.flush()
+        os.fsync(self.log)
 
     def localParser(self,cmd):
         failFlag=True
@@ -139,6 +184,10 @@ class msgParser:
 
         c = cmd.split()
         paramCount = len(c)
+
+        if self.log != None:
+            self.outToLog(cmd)
+
 
         if paramCount == 1:
             if c[0] == "help": 
@@ -151,10 +200,24 @@ class msgParser:
                 rc=[failFlag, ""]
             elif c[0] == "connect":
                 rc=self.dbConnect()
-            elif c[0] == "get-row":
-                print("get-row", self.rowIdx)
-                print(self.sqlResults[self.rowIdx])
                 failFlag=False
+                rc=[failFlag, ""]
+            elif c[0] == "get-columns":
+                fLen = len(self.cursor.description)
+                fieldName = [i[0] for i in self.cursor.description]
+
+                print(fieldName)
+                failFlag=False
+                rc=[failFlag, ""]
+            elif c[0] == "get-row":
+                try:
+#                    print("get-row", self.rowIdx)
+                    print(self.sqlResults[self.rowIdx])
+                    failFlag=False
+                except:
+                    print("ERROR")
+                    failFlag = True
+
                 rc=[failFlag, ""]
             elif c[0] == "go-first":
                 self.rowIdx=0
@@ -162,7 +225,6 @@ class msgParser:
                 rc=[failFlag, ""]
             elif c[0] == "go-last":
                 self.rowIdx= len(self.sqlResults)-1
-
                 failFlag=False
                 rc=[failFlag, ""]
             elif c[0] == "go-prev":
@@ -184,14 +246,34 @@ class msgParser:
 
         elif paramCount == 2:
             if c[0] == "get":
+                failFlag=False
+
                 rc = self.getParam(c[1])
+                rc[0]=False
+
+                if rc[1] =="":
+                    rc[1]="UNKNOWN"
+                    self.output(rc[1])
+                else:
+                    self.output(rc[1])
+
+            elif c[0] == "test":
+                self.output(c[1])
+                failFlag=False
+                rc=[failFlag, ""]
             elif c[0] == "get-col":
                 fred=self.sqlResults[self.rowIdx]
-                print(fred[c[1]])
+                self.output(fred[c[1]])
                 failFlag=False
                 rc=[failFlag, ""]
             elif c[0] == "load":
-                cmdFile = c[1]
+                rc = self.getParam('database-dir')
+                if rc[0] == False:
+                    cmdFile = rc[1] + '/' + c[1]
+
+                if not os.path.isfile(cmdFile) :
+                    print("NO-FILE")
+                    return rc
                 count=0
                 with open(cmdFile) as fp:
                     line=fp.readline()
@@ -222,6 +304,7 @@ class msgParser:
         if self.getParam('verbose') == 'true':
             print("executeSql:" + sql)
         try:
+#            print(sql)
             self.cursor.execute(sql)
 
             if self.cursor.description == None:
@@ -234,9 +317,7 @@ class msgParser:
                 rowCount = len(results);
 
                 if fLen > 0:
-#                    results = self.cursor.fetchall()
                     for row in results:
-#                        print(row)
                         count=0
                         fred={}
                         for col in row:
@@ -246,7 +327,8 @@ class msgParser:
                         self.sqlResults.append(fred)
 
         except Exception :
-            print(sys.exc_info()[0])
+            self.output("ERROR:SQL")
+#            self.output(sys.exc_info()[0])
 
 
     def parseMsg(self,msg):
@@ -264,7 +346,6 @@ class msgParser:
                 print("msg >" + m + "<")
     
             if m[0] == '^':
-    #            print("Client command")
                 rc=self.localParser( m[1:] )
             else:
 #                print("sql")
