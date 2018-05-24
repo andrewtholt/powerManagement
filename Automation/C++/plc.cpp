@@ -1,6 +1,7 @@
 #include <string.h>
 #include "plc.h"
 #include <stdio.h>
+#include <iostream>
 
 
 static bool state;
@@ -119,10 +120,12 @@ out::out(char *n) {
 
 void out::act() {
     setIoPoint( name, state );
+    state=false;
 }
 
 void out::dump() {
     instruction::dump((char *)"OUT");
+    cout << endl;
 }
 // 
 // OR 
@@ -169,6 +172,20 @@ void Andn::act() {
 void Andn::dump() {
     instruction::dump((char *)"ANDN");
 }
+// 
+// NOOP 
+//
+Noop::Noop(char *n) {
+//    strncpy(name, n, sizeof(name));
+}
+
+void Noop::act() {
+}
+
+void Noop::dump() {
+    instruction::dump((char *)"NOOP");
+}
+
 
 
 

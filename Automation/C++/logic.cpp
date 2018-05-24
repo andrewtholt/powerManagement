@@ -67,6 +67,8 @@ int main(int argc, char *argv[]) {
             }
         } else if(!strncmp( inst, "END", 3)) {
             break;
+        } else {
+            thing = new Noop(NULL);
         }
         prog.push_back( thing );
     }
@@ -84,7 +86,6 @@ int main(int argc, char *argv[]) {
         instruction *y = (instruction *)i;
         y->dump();
         y->act();
-
     }
 
 

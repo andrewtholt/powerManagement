@@ -58,3 +58,10 @@ class Andn : public instruction {
         virtual void dump() override ;
 };
 
+class Noop : public instruction {
+    public:
+        Noop(char *n);
+        void act();
+        virtual void dump() override ;
+};
+
