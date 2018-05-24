@@ -19,6 +19,7 @@ def usage():
     print("\t-c|--clean\tCreate a new empty database to replace any existing data.")
     print("\t-i <file>|--init=<file>")
     print("\t\t\tPopulate the database.")
+    print("\t-t <type>|--type=<type>")
 
 def cleanUp(dbName):
     global dbType
@@ -187,6 +188,7 @@ def main():
         print("You must select a valid database type, options are MYSQL or SQLITE.")
         print()
         usage()
+        sys.exit(0)
 
     if verbose:
         print("Database is " + dbName)
