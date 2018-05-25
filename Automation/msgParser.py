@@ -209,6 +209,12 @@ class msgParser:
                 print(fieldName)
                 failFlag=False
                 rc=[failFlag, ""]
+
+            elif c[0] == "get-row-count":
+                print(len(self.sqlResults))
+                failFlag=False
+                rc=[failFlag, ""]
+
             elif c[0] == "get-row":
                 try:
 #                    print("get-row", self.rowIdx)
@@ -232,10 +238,21 @@ class msgParser:
                     self.rowIdx -=1
                 failFlag=False
                 rc=[failFlag, ""]
+            elif c[0] == "get-next":
+                if self.rowIdx >= len(self.sqlResults)-1 :
+                    print("END")
+                else:
+                    self.rowIdx += 1
+                    print(self.sqlResults[self.rowIdx])
+
+                failFlag=False
+                rc=[failFlag, ""]
+
             elif c[0] == "go-next":
                 if self.rowIdx >= len(self.sqlResults)-1 :
-                    pass
+                    print("END")
                 else:
+                    print("OK")
                     self.rowIdx += 1
 
                 failFlag=False
