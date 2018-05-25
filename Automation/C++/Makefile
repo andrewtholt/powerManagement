@@ -7,8 +7,8 @@ BINS=logic tstClient updateInputs
 
 all:	$(BINS)
 
-logic:	logic.cpp plc.o
-	$(CPP) $(CFLAGS) logic.cpp plc.o -o logic -lsqlite3
+logic:	logic.cpp plc.o myClientClass.o
+	$(CPP) $(CFLAGS) logic.cpp plc.o myClientClass.o -o logic -lsqlite3
 
 plc.o:	plc.cpp plc.h
 	$(CPP) $(CFLAGS) -c plc.cpp -o plc.o

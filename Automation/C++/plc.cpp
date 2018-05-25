@@ -1,3 +1,4 @@
+#include "myClientClass.h"
 #include <string.h>
 #include "plc.h"
 #include <stdio.h>
@@ -27,23 +28,34 @@ static int getLogicCallback(void *NotUsed, int argc, char **argv, char **azColNa
 }
 
 void getIoPoint( char *n) { 
-    extern sqlite3 *db;
+    extern myClient *me;
     int rc;
     char *zErrMsg = 0;
 
-    static char cmdBuffer[255];
-    char *sqlTemplate = (char *)"select state, on_state, off_state from io_point where name = '%s';";
+    int len=-1;
+    string out;
 
-    sprintf(cmdBuffer,sqlTemplate, n);
+    static char cmd[255];
+    char *sqlTemplate = (char *)"select state, on_state, off_state from io_point where name = '%s';\n";
 
-//    printf("%s\n", cmdBuffer);
+    sprintf(cmd,sqlTemplate, n);
 
-    rc = sqlite3_exec(db, cmdBuffer, getLogicCallback, 0, &zErrMsg);
+    len = me->sendCmd( cmd, out );
 
-    if( rc != SQLITE_OK ) {
-        fprintf(stderr, "SQL error: %s\n", zErrMsg);
-        sqlite3_free(zErrMsg);
-    }
+    string state;
+    string on_state;
+    string off_state;
+
+    strcpy(cmd, (char *)"^get-col state\n");
+    len = me->sendCmd( cmd, state );
+
+    strcpy(cmd, (char *)"^get-col on_state\n");
+    len = me->sendCmd( cmd, on_state );
+
+    strcpy(cmd, (char *)"^get-col off_state\n");
+    len = me->sendCmd( cmd, off_state );
+
+    flag = ( state == on_state ) ? true : false ;
 }
 
 void setIoPoint( char *n, bool s) { 

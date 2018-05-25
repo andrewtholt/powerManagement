@@ -1,5 +1,7 @@
 
 #include "plc.h"
+#include "myClientClass.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,6 +12,8 @@
 
 sqlite3 *db;
 
+myClient *me;
+
 void usage() {
     printf("Help\n");
 }
@@ -17,6 +21,7 @@ void usage() {
 int main(int argc, char *argv[]) {
     int rc;
     char *fileName;
+    bool verbose=true;
 
     if( argc != 2 ) {
         usage();
@@ -75,18 +80,47 @@ int main(int argc, char *argv[]) {
 
     progFile.close();
 
-    rc = sqlite3_open("/var/tmp/automation.db", &db);
+    string hostName = "localhost";
+    string serviceName ="myclient" ;
 
-    if( rc ) {
-        fprintf(stderr,"Failed to open database.\n");
-        exit(1);
+    //    myClient *n = myClient::Instance();
+    me = myClient::Instance();
+
+    bool failFlag = me->setupNetwork((char *)hostName.c_str(), (char *)serviceName.c_str());
+    if(verbose) {
+        printf("Network setup %s\n", ((failFlag) ? (char *)"failed" : (char *)"success"));
+    } 
+
+    failFlag = me->loadFile( "mysqlCmds.txt");
+    if(verbose) {
+        cout << "loadFile ";
+        printf("%s\n", ((failFlag) ? (char *)"failed" : (char *)"success"));
     }
+
+    failFlag = me->clientConnect() ;
+
+    if(verbose) {
+        cout << "clientConnect ";
+        printf("%s\n", ((failFlag) ? (char *)"failed" : (char *)"success"));
+    }
+
+    if ( me->clientConnected() == false ) {
+        fprintf(stderr, "FATAL ERROR: Connected to interface but not to database\n");
+        exit(2);
+    }
+
+    /*
+       rc = sqlite3_open("/var/tmp/automation.db", &db);
+
+       if( rc ) {
+       fprintf(stderr,"Failed to open database.\n");
+       exit(1);
+       }
+       */
 
     for (auto i : prog ) {
         instruction *y = (instruction *)i;
         y->dump();
         y->act();
     }
-
-
 }
