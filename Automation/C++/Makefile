@@ -20,7 +20,7 @@ myClientClass.o:	myClientClass.cpp myClientClass.h
 	$(CPP) -c $(CFLAGS) myClientClass.cpp -o myClientClass.o
 
 updateInputs:	updateInputs.cpp myClientClass.h myClientClass.o
-	$(CPP) $(CFLAGS) updateInputs.cpp myClientClass.o -o updateInputs
+	$(CPP) $(CFLAGS) updateInputs.cpp myClientClass.o -o updateInputs -lmosquitto
 
 clean:
 	rm -f $(BINS) *.o
