@@ -1,9 +1,9 @@
 
 CPP=g++
 
-CFLAGS=-g
+CFLAGS=-g -std=c++11
 
-BINS=logic tstClient
+BINS=logic tstClient updateInputs
 
 all:	$(BINS)
 
@@ -15,3 +15,12 @@ plc.o:	plc.cpp plc.h
 
 tstClient:	tstClient.c
 	$(CPP) $(CFLAGS) tstClient.c -o tstClient
+
+myClientClass.o:	myClientClass.cpp myClientClass.h
+	$(CPP) -c $(CFLAGS) myClientClass.cpp -o myClientClass.o
+
+updateInputs:	updateInputs.cpp myClientClass.h myClientClass.o
+	$(CPP) $(CFLAGS) updateInputs.cpp myClientClass.o -o updateInputs
+
+clean:
+	rm -f $(BINS) *.o
