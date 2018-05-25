@@ -33,7 +33,9 @@ class msgParser:
             'output-format' : 'interactive', # interactive, json, or forth
             'database-type' : 'NONE',
             'database-dir'  : "/var/tmp",
-            'log-file'      : "NONE"
+            'log-file'      : "NONE",
+            'mqtt-host'     : "localhost",
+            'mqtt-port'     : "1883"
             }
 
     def __init__(self):
@@ -72,6 +74,8 @@ class msgParser:
         print("Database Dir  :" , self.param['database-dir'])
         print("Database State:" , self.param['connected'])
         print("Output Format :" , self.param['output-format'])
+        print("MQTT Server   :" , self.param['mqtt-host'])
+        print("MQTT Port     :" , self.param['mqtt-port'])
 
 
     def setDatabaseType(self, dbType):
