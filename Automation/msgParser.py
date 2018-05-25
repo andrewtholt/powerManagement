@@ -323,6 +323,7 @@ class msgParser:
         try:
 #            print(sql)
             self.cursor.execute(sql)
+            self.db.commit()
 
             if self.cursor.description == None:
                 pass
