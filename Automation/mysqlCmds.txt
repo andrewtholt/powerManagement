@@ -3,4 +3,4 @@
 ^set password automation
 ^set host localhost
 ^set-database MYSQL
-^print
+
