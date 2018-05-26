@@ -5,6 +5,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
+#include <time.h>
+#include <unistd.h>
+#include <signal.h>
+#include <sys/types.h>
 
 #include <iostream>
 #include <fstream>
@@ -13,6 +18,21 @@
 sqlite3 *db;
 
 myClient *me;
+
+uint32_t signalCount=0;
+
+void alarmHandler(int sig) {
+    signal(SIGALRM, SIG_IGN);
+    printf("Alarm fired\n");
+    signalCount++;
+    signal(SIGALRM, alarmHandler);
+}
+
+void decrementSignalCount() {
+    if( signalCount > 0) {
+        signalCount--;
+    }
+}
 
 void usage() {
     printf("Help\n");
@@ -30,6 +50,8 @@ int main(int argc, char *argv[]) {
 
     fileName = argv[1];
 
+    string myName = basename(argv[0]);
+
     ifstream progFile;
 
     progFile.open( fileName );
@@ -41,6 +63,32 @@ int main(int argc, char *argv[]) {
 
     string line;
     vector<void *> prog;
+    int outputPid;
+
+    bool gotOutputsPid=false;
+    do {
+        FILE *fd = fopen("/var/tmp/updateOutputs", "r");
+
+        if( fd == NULL ) { 
+            printf("Can't open updateOutputs pid file, sleeping .... zzz\n");
+            sleep(5);
+        } else {
+            char pidBuffer[16];
+            char *rc = fgets( pidBuffer, 16, fd);
+            fclose( fd );
+            outputPid = atoi( pidBuffer );
+
+            int ok = kill(outputPid, 0); 
+
+            gotOutputsPid = ( ok == 0) ? true : false ;
+
+            if( gotOutputsPid == false ) { 
+                printf("Can't contact updateOutputs, sleeping .... zzz\n");
+                sleep(5);
+            }
+        }
+    } while(gotOutputsPid == false) ;
+
 
     instruction *thing;
     while(getline(progFile, line)) {
@@ -109,18 +157,63 @@ int main(int argc, char *argv[]) {
         exit(2);
     }
 
-    /*
-       rc = sqlite3_open("/var/tmp/automation.db", &db);
+    time_t now=0;
+    struct tm *hms;
+    int delay =0;
+    int hours=0;
+    int minutes=0;
+    int seconds=0;
+    bool runFlag = true;
 
-       if( rc ) {
-       fprintf(stderr,"Failed to open database.\n");
-       exit(1);
-       }
-       */
+    pid_t iam=getpid();
 
-    for (auto i : prog ) {
-        instruction *y = (instruction *)i;
-        y->dump();
-        y->act();
+    string pidFile = "/var/tmp/" + myName;
+
+    FILE *fd = fopen( pidFile.c_str(), "w");
+
+    if( fd == NULL ) {
+        fprintf(stderr, "FATAL ERROR: Failed to open pidFile\n");
+        exit(3);
+    }
+
+    fprintf(fd, "%d\n" , iam);
+    fclose(fd);
+
+    signal(SIGALRM, alarmHandler);
+    while( runFlag) {
+        now = time(NULL);
+        hms = localtime( &now );
+        hours = hms->tm_hour ;
+        minutes = hms->tm_min ;
+        seconds = hms->tm_sec ;
+
+        delay = 61 - seconds ;
+
+        if( verbose ) {
+            printf("Wait for %d seconds\n", delay);
+        }
+
+        if ( signalCount == 0 ) {
+            alarm(delay);
+            sleep(delay-1);
+        } else {
+            alarm(0);
+        }
+
+        if( verbose ) {
+            printf("Signal count %d\n", signalCount);
+        }
+
+        for (auto i : prog ) {
+            instruction *y = (instruction *)i;
+            y->dump();
+            y->act();
+        }
+
+        decrementSignalCount();
+        printf("signal count %d\n", signalCount);
+
+        kill(outputPid, SIGUSR1);
+
     }
 }

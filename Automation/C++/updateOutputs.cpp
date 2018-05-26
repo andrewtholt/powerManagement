@@ -14,6 +14,12 @@
 using namespace std;
 int logicPid=0;
 
+void alarmHandler(int sig) {
+    signal(SIGUSR1, SIG_IGN);
+    printf("Alarm fired\n");
+    signal(SIGUSR1, alarmHandler);
+}
+
 // MQTT Stuff
 //
 void connect_callback(struct mosquitto *mosq, void *obj, int result) {
@@ -34,7 +40,6 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
 
     me->sendCmd( sql );
 
-    kill( logicPid, SIGALRM);
 }
 
 void usage() {
@@ -76,6 +81,7 @@ int main(int argc, char *argv[]) {
         cout << "Hostname : " << hostName << endl;
         cout << "Service  : " << serviceName << endl;
     }
+
 
     myClient *n = myClient::Instance();
 
@@ -127,68 +133,59 @@ int main(int argc, char *argv[]) {
     rc = mosquitto_connect(mosq, mqtt_host, mqtt_port, 60);
 
     string out;
-    string sql = "select topic from io_point where direction = 'in';\n";
-    len = n->sendCmd( sql );
+    string topic;
+    string state;
+    bool firstTime=true;
 
-    string cmd = "^get-row-count\n";
-    len = n->sendCmd( cmd, out );
+    pid_t iam=getpid();
+    string myName = basename(argv[0]);
 
-    int cnt = stoi( out,nullptr);
+    string pidFile = "/var/tmp/" + myName;
 
-    cout << cnt << endl;
+    FILE *fd = fopen( pidFile.c_str(), "w");
+    if( fd == NULL ) {
+        fprintf(stderr, "FATAL ERROR: Failed to open pidFile\n");
+        exit(3);
+    }
 
-    for( int i=0; i < cnt ; i++ ) {
-        if( i == 0 ) {
-            cmd = "^get-col topic\n";
+    fprintf(fd, "%d\n" , iam);
+    fclose(fd);
+
+    signal(SIGUSR1, alarmHandler);
+
+    while(true) {
+
+        if ( firstTime ) {
+            firstTime=false;
         } else {
-            cmd = "^go-next\n";
-            len = n->sendCmd( cmd );
-            cmd = "^get-col topic\n";
+            pause();
         }
+        string sql = "select topic, state from io_point where direction = 'out';\n";
+        len = n->sendCmd( sql );
+
+        string cmd = "^get-row-count\n";
         len = n->sendCmd( cmd, out );
 
-        cout << out << endl;
-        mosquitto_subscribe(mosq, NULL,(char *)out.c_str() , 0);
-    }
+        int cnt = stoi( out,nullptr);
 
+        cout << cnt << endl;
 
-    bool gotLogicPid=false;
-
-    do {
-        FILE *fd = fopen("/var/tmp/logic", "r");
-
-        if( fd == NULL ) {
-            printf("Can't open logic pid file, sleeping .... zzz\n");
-            sleep(5);
-        } else {
-            char pidBuffer[16];
-            char *rc = fgets( pidBuffer, 16, fd);
-            fclose( fd );
-            logicPid = atoi( pidBuffer );
-
-            int ok = kill(logicPid, 0);
-
-            gotLogicPid = ( ok == 0) ? true : false ;
-
-            if( gotLogicPid == false ) {
-                printf("Can't contact logic, sleeping .... zzz\n");
-                sleep(5);
+        for( int i=0; i < cnt ; i++ ) {
+            if( i > 0 ) {
+                cmd = "^go-next\n";
+                len = n->sendCmd( cmd );
             }
-        }
-    } while(gotLogicPid == false) ;
+            cmd = "^get-col topic\n";
+            len = n->sendCmd( cmd, topic );
+            cmd = "^get-col state\n";
+            len = n->sendCmd( cmd, state );
 
-    rc = mosquitto_loop_forever(mosq, -1, 1);
+            cout << "Topic : " + topic << endl;
+            cout << "Msg   : " + state << endl;
 
-    bool run=true;
-    while(run) {
-        rc = mosquitto_loop(mosq, -1, 1);
-        if(run && (rc == 0)) {
-            printf("connection error!\n");
-            printf("%s\n", mosquitto_strerror( rc ));
-            sleep(10);
-            mosquitto_reconnect(mosq);
+            mosquitto_publish(mosq, NULL, topic.c_str(), state.length(), state.c_str(),0,true);
+
         }
     }
-    mosquitto_destroy(mosq);
 }
 

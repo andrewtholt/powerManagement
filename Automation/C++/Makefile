@@ -3,7 +3,7 @@ CPP=g++
 
 CFLAGS=-g -std=c++11
 
-BINS=logic tstClient updateInputs
+BINS=logic tstClient updateInputs updateOutputs
 
 all:	$(BINS)
 
@@ -21,6 +21,9 @@ myClientClass.o:	myClientClass.cpp myClientClass.h
 
 updateInputs:	updateInputs.cpp myClientClass.h myClientClass.o
 	$(CPP) $(CFLAGS) updateInputs.cpp myClientClass.o -o updateInputs -lmosquitto
+
+updateOutputs:	updateOutputs.cpp myClientClass.h myClientClass.o
+	$(CPP) $(CFLAGS) updateOutputs.cpp myClientClass.o -o updateOutputs -lmosquitto
 
 clean:
 	rm -f $(BINS) *.o
