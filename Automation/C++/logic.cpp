@@ -190,6 +190,7 @@ int main(int argc, char *argv[]) {
         delay = 61 - seconds ;
 
         if( verbose ) {
+            printf("Time is %02d:%02d\n", hours, minutes);
             printf("Wait for %d seconds\n", delay);
         }
 
