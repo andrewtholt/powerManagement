@@ -30,7 +30,6 @@ static int getLogicCallback(void *NotUsed, int argc, char **argv, char **azColNa
 void getIoPoint( char *n) { 
     extern myClient *me;
     int rc;
-    char *zErrMsg = 0;
 
     int len=-1;
     string out;
@@ -59,25 +58,21 @@ void getIoPoint( char *n) {
 }
 
 void setIoPoint( char *n, bool s) { 
-    extern sqlite3 *db;
-    int rc;
-    static char cmdBuffer[255];
-    char *zErrMsg = 0;
+    extern myClient *me;
 
-    char *sqlTemplate = (char *)"update io_point set state = %s where name = '%s'";
+    static char cmdBuffer[255];
+
+    int len=0;
+
+    char *sqlTemplate = (char *)"update io_point set state = %s where name = '%s';\n";
 
     if ( s == true) {
         sprintf(cmdBuffer, sqlTemplate, "on_state", n);
     } else {
         sprintf(cmdBuffer, sqlTemplate, "off_state", n);
     }
-//    printf("%s\n", cmdBuffer);
-    rc = sqlite3_exec(db, cmdBuffer, NULL, 0, &zErrMsg);
-    if( rc != SQLITE_OK ) {
-        fprintf(stderr, "SQL error: %s\n", zErrMsg);
-        sqlite3_free(zErrMsg);
-    }
-
+    printf("%s\n", cmdBuffer);
+    len = me->sendCmd( cmdBuffer );
 }
 
 
