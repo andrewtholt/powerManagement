@@ -21,6 +21,17 @@ class ld : public instruction {
         virtual void act() ;
         virtual void dump() override;
 };
+// true on rising edge.
+class ldr : public instruction {
+    public:
+        ldr(char *n);
+        virtual void act() ;
+        virtual void dump() override;
+    private:
+        bool old=false;
+        bool current = false;
+
+};
 
 class ldn : public instruction {
     public:

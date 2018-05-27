@@ -1,0 +1,8 @@
+
+* Internal relays.  i.e. Direction is nether IN, nor OUT, but INTERNAL.
+
+* Empty lines and comments, e.g. ';' for a comment
+
+* On first run don't wait for delay run program.
+
+

@@ -99,6 +99,27 @@ void ld::dump() {
     instruction::dump((char *)"LD");
 }
 // 
+// LDR Load a value, set the state on rising edge
+//
+ldr::ldr(char *n) {
+    extern sqlite3 *db;
+    strncpy(name, n, sizeof(name));
+    strcpy(id,(char *)"LDR");
+}
+
+void ldr::act() {
+    getIoPoint( name );
+    current=flag;
+
+    state = (( old == false ) && ( current == true )) ? true : false ;
+
+    old = current;
+}
+
+void ldr::dump() {
+    instruction::dump((char *)"LDR");
+}
+// 
 // LDN Load a value, invert and set ths state
 //
 ldn::ldn(char *n) {
@@ -212,11 +233,6 @@ void timLd::act() {
     char *tMins = strtok(NULL,":");
 
     state = ((hours == atoi(tHours)) && (minutes == atoi(tMins))) ? true : false ;    
-
-//    printf( "tim-ld %s %s\n", tHours, tMins);
-//    getIoPoint( name );
-//    state = flag;
-
 }
 
 void timLd::dump() {

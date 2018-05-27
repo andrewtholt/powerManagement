@@ -114,12 +114,12 @@ int main(int argc, char *argv[]) {
         //
         // Check if it's one of the LD instructions
         //
-        if ( inst[0] == 'L' && inst[1] == 'D') {
-            if( inst[2] == '\0') {
-                thing = new ld(var );
-            } if( inst[2] == 'N') {
+        if(!strcmp( inst, "LD")) {
+            thing = new ld(var );
+        } else if(!strcmp( inst, "LDN")) {
                 thing = new ldn(var );
-            } 
+        } else if(!strcmp( inst, "LDR")) {
+                thing = new ldr(var );
         } else if(!strncmp( inst, "OUT", 3)) {
             if(inst[3] == '\0' ) {
                 thing = new out(var );
