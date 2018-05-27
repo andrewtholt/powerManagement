@@ -65,3 +65,32 @@ class Noop : public instruction {
         virtual void dump() override ;
 };
 
+class timLd : public instruction {
+    public:
+        timLd(char *n);
+        virtual void act() ;
+        virtual void dump() override;
+};
+
+class timLdn : public instruction {
+    public:
+        timLdn(char *n);
+        virtual void act() ;
+        virtual void dump() override;
+};
+
+class timAndn : public instruction {
+    public:
+        timAndn(char *n);
+        void act();
+        virtual void dump() override ;
+};
+
+class timAnd : public instruction {
+    public:
+        timAnd(char *n);
+        void act();
+        virtual void dump() override ;
+};
+
+

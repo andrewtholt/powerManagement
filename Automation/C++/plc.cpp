@@ -97,9 +97,7 @@ void ld::act() {
 
 void ld::dump() {
     instruction::dump((char *)"LD");
-//    instruction::dump((char *)name);
 }
-
 // 
 // LDN Load a value, invert and set ths state
 //
@@ -192,8 +190,124 @@ void Noop::act() {
 void Noop::dump() {
     instruction::dump((char *)"NOOP");
 }
+// 
+// TIM-LD When the time matches set time return true, else false.
+//
+timLd::timLd(char *n) {
+    extern sqlite3 *db;
+    strncpy(name, n, sizeof(name));
+    strcpy(id,(char *)"LD");
+}
 
+void timLd::act() {
+    time_t now=time(NULL);
+    struct tm *hms = localtime( &now );
+    int hours = hms->tm_hour ;
+    int minutes = hms->tm_min ;
+    char target[6];  // hh:mm
 
+    strcpy( target, name );
 
+    char *tHours = strtok(target,":");
+    char *tMins = strtok(NULL,":");
+
+    state = ((hours == atoi(tHours)) && (minutes == atoi(tMins))) ? true : false ;    
+
+//    printf( "tim-ld %s %s\n", tHours, tMins);
+//    getIoPoint( name );
+//    state = flag;
+
+}
+
+void timLd::dump() {
+    instruction::dump((char *)"TIM-LD");
+}
+// 
+// TIM-LDN When the time matches set time return false, else true.
+//
+timLdn::timLdn(char *n) {
+    extern sqlite3 *db;
+    strncpy(name, n, sizeof(name));
+    strcpy(id,(char *)"LD");
+}
+
+void timLdn::act() {
+    time_t now=time(NULL);
+    struct tm *hms = localtime( &now );
+    int hours = hms->tm_hour ;
+    int minutes = hms->tm_min ;
+    char target[6];  // hh:mm
+
+    strcpy( target, name );
+
+    char *tHours = strtok(target,":");
+    char *tMins = strtok(NULL,":");
+
+    state = ((hours == atoi(tHours)) && (minutes == atoi(tMins))) ? false : true ;    
+}
+
+void timLdn::dump() {
+    instruction::dump((char *)"TIM-LD");
+}
+// 
+// TIM-ANDN When the time matches set time 
+//
+timAndn::timAndn(char *n) {
+    extern sqlite3 *db;
+    strncpy(name, n, sizeof(name));
+    strcpy(id,(char *)"LD");
+}
+
+void timAndn::act() {
+    time_t now=time(NULL);
+    bool flag = false;
+    struct tm *hms = localtime( &now );
+    int hours = hms->tm_hour ;
+    int minutes = hms->tm_min ;
+    char target[6];  // hh:mm
+
+    strcpy( target, name );
+
+    char *tHours = strtok(target,":");
+    char *tMins = strtok(NULL,":");
+
+    flag = ((hours == atoi(tHours)) && (minutes == atoi(tMins))) ? false : true ;    
+
+    state = state & !flag;
+}
+
+void timAndn::dump() {
+    instruction::dump((char *)"TIM-ANDN");
+}
+// 
+// TIM-AND When the time matches set time 
+//
+timAnd::timAnd(char *n) {
+    extern sqlite3 *db;
+    strncpy(name, n, sizeof(name));
+    strcpy(id,(char *)"LD");
+}
+
+void timAnd::act() {
+    time_t now=time(NULL);
+    bool flag = false;
+    struct tm *hms = localtime( &now );
+    int hours = hms->tm_hour ;
+    int minutes = hms->tm_min ;
+    char target[6];  // hh:mm
+
+    strcpy( target, name );
+
+    char *tHours = strtok(target,":");
+    char *tMins = strtok(NULL,":");
+
+    flag = ((hours == atoi(tHours)) && (minutes == atoi(tMins))) ? false : true ;    
+
+    state = state & flag;
+}
+
+void timAnd::dump() {
+    instruction::dump((char *)"TIM-AND");
+}
 
 

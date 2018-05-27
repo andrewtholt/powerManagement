@@ -111,10 +111,6 @@ int main(int argc, char *argv[]) {
         cout << line << endl;
         char *inst = strtok( (char *)line.c_str(), " \t");
         char *var = strtok( NULL, " \t");
-        char *timeTest = strstr(inst,"TIM-");
-
-        isaTimer = ( timeTest ) ? true : false ;
-
         //
         // Check if it's one of the LD instructions
         //
@@ -140,6 +136,14 @@ int main(int argc, char *argv[]) {
             }
         } else if(!strncmp( inst, "END", 3)) {
             break;
+        } else if(!strcmp( inst, "TIM-LD")) {
+            thing = new timLd(var );
+        } else if(!strcmp( inst, "TIM-LDN")) {
+            thing = new timLdn(var );
+        } else if(!strcmp( inst, "TIM-AND")) {
+            thing = new timAnd(var );
+        } else if(!strcmp( inst, "TIM-ANDN")) {
+            thing = new timAndn(var );
         } else {
             thing = new Noop(NULL);
         }
