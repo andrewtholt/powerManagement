@@ -1,6 +1,7 @@
 
 #include "plc.h"
 #include "myClientClass.h"
+#include "semaphore.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,12 +21,13 @@ sqlite3 *db;
 myClient *me;
 
 uint32_t signalCount=0;
+int sid;
 
 void alarmHandler(int sig) {
     signal(SIGALRM, SIG_IGN);
     printf("Alarm fired\n");
     signalCount++;
-    signal(SIGALRM, alarmHandler);
+//    signal(SIGALRM, alarmHandler);
 }
 
 void decrementSignalCount() {
@@ -42,6 +44,8 @@ int main(int argc, char *argv[]) {
     int rc;
     char *fileName;
     bool verbose=true;
+
+    int key=42;
 
     if( argc != 2 ) {
         usage();
@@ -91,10 +95,17 @@ int main(int argc, char *argv[]) {
 
 
     instruction *thing;
+    bool isaTimer = false;
     while(getline(progFile, line)) {
+        isaTimer=false;
+
         cout << line << endl;
         char *inst = strtok( (char *)line.c_str(), " \t");
         char *var = strtok( NULL, " \t");
+        char *timeTest = strstr(inst,"TIM-");
+
+        isaTimer = ( timeTest ) ? true : false ;
+
         //
         // Check if it's one of the LD instructions
         //
@@ -179,6 +190,7 @@ int main(int argc, char *argv[]) {
     fprintf(fd, "%d\n" , iam);
     fclose(fd);
 
+    sid = semtran( key );
     signal(SIGALRM, alarmHandler);
     while( runFlag) {
         now = time(NULL);
@@ -195,11 +207,14 @@ int main(int argc, char *argv[]) {
         }
 
         if ( signalCount == 0 ) {
+            signal(SIGALRM, alarmHandler);
             alarm(delay);
             sleep(delay-1);
         } else {
             alarm(0);
         }
+
+        getSem(sid);
 
         if( verbose ) {
             printf("Signal count %d\n", signalCount);
@@ -212,6 +227,8 @@ int main(int argc, char *argv[]) {
         }
 
         decrementSignalCount();
+        relSem(sid);
+
         printf("signal count %d\n", signalCount);
 
         kill(outputPid, SIGUSR1);

@@ -1,10 +1,14 @@
 #include "myClientClass.h"
+#include "semaphore.h"
+
 #include <string.h>
 #include <unistd.h>
 #include <mosquitto.h>
 #include <sys/types.h>
 #include <signal.h>
-
+#include <sys/ipc.h>
+#include <sys/sem.h>
+#include <time.h>
 
 #include <iostream>
 
@@ -13,6 +17,7 @@
 
 using namespace std;
 int logicPid=0;
+int sid;
 
 // MQTT Stuff
 //
@@ -22,6 +27,9 @@ void connect_callback(struct mosquitto *mosq, void *obj, int result) {
 
 void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message) {
     printf("message callback\n");
+
+    time_t old = 0;
+    time_t now = 0;
     char sql[BUFFER_SIZE];
 
     myClient *me = (myClient *)obj;
@@ -32,9 +40,16 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
 
     printf("%s\n", sql);
 
+    getSem(sid);
+    old=time(NULL);
     me->sendCmd( sql );
+    now=time(NULL);
+
+    printf("delta %d\n", (int)(now - old));
+    relSem(sid);
 
     kill( logicPid, SIGALRM);
+    usleep(1000 * 1000);
 }
 
 void usage() {
@@ -151,6 +166,16 @@ int main(int argc, char *argv[]) {
         mosquitto_subscribe(mosq, NULL,(char *)out.c_str() , 0);
     }
 
+    int key = 42;
+    sid = semtran( key );
+
+    // If 0 then locked, created locked.
+    printf("Semaphore value is %d\n", getSemValue(sid));
+
+    if( sid < 0 ) {
+        perror("FATAL ERROR: semtran");
+        exit(4);
+    }
 
     bool gotLogicPid=false;
 
@@ -177,8 +202,13 @@ int main(int argc, char *argv[]) {
         }
     } while(gotLogicPid == false) ;
 
+    if( relSem(sid) < 0) {
+        perror("Failed to release lock.");
+        exit(4);
+    }
     rc = mosquitto_loop_forever(mosq, -1, 1);
 
+    /*
     bool run=true;
     while(run) {
         rc = mosquitto_loop(mosq, -1, 1);
@@ -190,5 +220,6 @@ int main(int argc, char *argv[]) {
         }
     }
     mosquitto_destroy(mosq);
+    */
 }
 
