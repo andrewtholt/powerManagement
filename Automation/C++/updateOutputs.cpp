@@ -13,12 +13,21 @@
 
 using namespace std;
 int logicPid=0;
+bool runFlag;
 
 void alarmHandler(int sig) {
     signal(SIGUSR1, SIG_IGN);
     printf("Alarm fired\n");
     signal(SIGUSR1, alarmHandler);
 }
+
+void hupHandler(int sig) {
+    signal(SIGHUP, SIG_IGN);
+    printf("HUP fired\n");
+    runFlag=false;
+    signal(SIGHUP, hupHandler);
+}
+
 
 // MQTT Stuff
 //
@@ -137,54 +146,59 @@ int main(int argc, char *argv[]) {
     string state;
     bool firstTime=true;
 
-    pid_t iam=getpid();
-    string myName = basename(argv[0]);
-
-    string pidFile = "/var/tmp/" + myName;
-
-    FILE *fd = fopen( pidFile.c_str(), "w");
-    if( fd == NULL ) {
-        fprintf(stderr, "FATAL ERROR: Failed to open pidFile\n");
-        exit(3);
-    }
-
-    fprintf(fd, "%d\n" , iam);
-    fclose(fd);
-
-    signal(SIGUSR1, alarmHandler);
-
     while(true) {
+        pid_t iam=getpid();
+        string myName = basename(argv[0]);
 
-        if ( firstTime ) {
-            firstTime=false;
-        } else {
-            pause();
+        string pidFile = "/var/tmp/" + myName;
+
+        FILE *fd = fopen( pidFile.c_str(), "w");
+        if( fd == NULL ) {
+            fprintf(stderr, "FATAL ERROR: Failed to open pidFile\n");
+            exit(3);
         }
-        string sql = "select topic, state from io_point where direction = 'out';\n";
-        len = n->sendCmd( sql );
 
-        string cmd = "^get-row-count\n";
-        len = n->sendCmd( cmd, out );
+        fprintf(fd, "%d\n" , iam);
+        fclose(fd);
 
-        int cnt = stoi( out,nullptr);
+        signal(SIGUSR1, alarmHandler);
+        signal(SIGHUP, hupHandler);
 
-        cout << cnt << endl;
 
-        for( int i=0; i < cnt ; i++ ) {
-            if( i > 0 ) {
-                cmd = "^go-next\n";
-                len = n->sendCmd( cmd );
+        runFlag = true;
+        while(runFlag) {
+
+            if ( firstTime ) {
+                firstTime=false;
+            } else {
+                pause();
             }
-            cmd = "^get-col topic\n";
-            len = n->sendCmd( cmd, topic );
-            cmd = "^get-col state\n";
-            len = n->sendCmd( cmd, state );
+            string sql = "select topic, state from io_point where direction = 'out';\n";
+            len = n->sendCmd( sql );
 
-            cout << "Topic : " + topic << endl;
-            cout << "Msg   : " + state << endl;
+            string cmd = "^get-row-count\n";
+            len = n->sendCmd( cmd, out );
 
-            mosquitto_publish(mosq, NULL, topic.c_str(), state.length(), state.c_str(),0,true);
+            int cnt = stoi( out,nullptr);
 
+            cout << cnt << endl;
+
+            for( int i=0; i < cnt ; i++ ) {
+                if( i > 0 ) {
+                    cmd = "^go-next\n";
+                    len = n->sendCmd( cmd );
+                }
+                cmd = "^get-col topic\n";
+                len = n->sendCmd( cmd, topic );
+                cmd = "^get-col state\n";
+                len = n->sendCmd( cmd, state );
+
+                cout << "Topic : " + topic << endl;
+                cout << "Msg   : " + state << endl;
+
+                mosquitto_publish(mosq, NULL, topic.c_str(), state.length(), state.c_str(),0,true);
+
+            }
         }
     }
 }

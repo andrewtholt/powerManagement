@@ -22,12 +22,21 @@ myClient *me;
 
 uint32_t signalCount=0;
 int sid;
+bool runFlag ;
 
 void alarmHandler(int sig) {
     signal(SIGALRM, SIG_IGN);
     printf("Alarm fired\n");
     signalCount++;
-//    signal(SIGALRM, alarmHandler);
+    //    signal(SIGALRM, alarmHandler);
+}
+
+void hupHandler(int sig) {
+    signal(SIGHUP, SIG_IGN);
+    printf("HUP fired\n");
+    signalCount++;
+    runFlag=false;
+    signal(SIGHUP, hupHandler);
 }
 
 void decrementSignalCount() {
@@ -174,64 +183,68 @@ int main(int argc, char *argv[]) {
     int hours=0;
     int minutes=0;
     int seconds=0;
-    bool runFlag = true;
 
-    pid_t iam=getpid();
+    while(true) {
+        runFlag = true;
+        pid_t iam=getpid();
 
-    string pidFile = "/var/tmp/" + myName;
+        string pidFile = "/var/tmp/" + myName;
 
-    FILE *fd = fopen( pidFile.c_str(), "w");
+        FILE *fd = fopen( pidFile.c_str(), "w");
 
-    if( fd == NULL ) {
-        fprintf(stderr, "FATAL ERROR: Failed to open pidFile\n");
-        exit(3);
-    }
-
-    fprintf(fd, "%d\n" , iam);
-    fclose(fd);
-
-    sid = semtran( key );
-    signal(SIGALRM, alarmHandler);
-    while( runFlag) {
-        now = time(NULL);
-        hms = localtime( &now );
-        hours = hms->tm_hour ;
-        minutes = hms->tm_min ;
-        seconds = hms->tm_sec ;
-
-        delay = 61 - seconds ;
-
-        if( verbose ) {
-            printf("Time is %02d:%02d\n", hours, minutes);
-            printf("Wait for %d seconds\n", delay);
+        if( fd == NULL ) {
+            fprintf(stderr, "FATAL ERROR: Failed to open pidFile\n");
+            exit(3);
         }
 
-        if ( signalCount == 0 ) {
-            signal(SIGALRM, alarmHandler);
-            alarm(delay);
-            sleep(delay-1);
-        } else {
-            alarm(0);
+        fprintf(fd, "%d\n" , iam);
+        fclose(fd);
+
+        sid = semtran( key );
+        signal(SIGALRM, alarmHandler);
+        signal(SIGHUP, hupHandler);
+
+        while( runFlag) {
+            now = time(NULL);
+            hms = localtime( &now );
+            hours = hms->tm_hour ;
+            minutes = hms->tm_min ;
+            seconds = hms->tm_sec ;
+
+            delay = 61 - seconds ;
+
+            if( verbose ) {
+                printf("Time is %02d:%02d\n", hours, minutes);
+                printf("Wait for %d seconds\n", delay);
+            }
+
+            if ( signalCount == 0 ) {
+                signal(SIGALRM, alarmHandler);
+                alarm(delay);
+                sleep(delay-1);
+            } else {
+                alarm(0);
+            }
+
+            getSem(sid);
+
+            if( verbose ) {
+                printf("Signal count %d\n", signalCount);
+            }
+
+            for (auto i : prog ) {
+                instruction *y = (instruction *)i;
+                y->dump();
+                y->act();
+            }
+
+            decrementSignalCount();
+            relSem(sid);
+
+            printf("signal count %d\n", signalCount);
+
+            kill(outputPid, SIGUSR1);
+
         }
-
-        getSem(sid);
-
-        if( verbose ) {
-            printf("Signal count %d\n", signalCount);
-        }
-
-        for (auto i : prog ) {
-            instruction *y = (instruction *)i;
-            y->dump();
-            y->act();
-        }
-
-        decrementSignalCount();
-        relSem(sid);
-
-        printf("signal count %d\n", signalCount);
-
-        kill(outputPid, SIGUSR1);
-
     }
 }
