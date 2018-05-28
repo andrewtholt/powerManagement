@@ -3,12 +3,14 @@
 #include "myClientClass.h"
 #include "semaphore.h"
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
 #include <time.h>
+
 #include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
 #include <signal.h>
 #include <sys/types.h>
 
@@ -51,63 +53,86 @@ void usage() {
 
 int main(int argc, char *argv[]) {
     int rc;
-    char *fileName;
-    bool verbose=true;
-
+    string fileName;
+    bool verbose=false;
+    
     int key=42;
+    
+    /*
+     *    if( argc != 2 ) {
+     *        usage();
+     *        exit(1);
+}
 
-    if( argc != 2 ) {
-        usage();
-        exit(1);
-    }
+fileName = argv[1];
 
-    fileName = argv[1];
-
+*/
     string myName = basename(argv[0]);
-
+    
     ifstream progFile;
-
-    progFile.open( fileName );
-
+    bool check=false;
+    
+    int opt;
+    while ((opt = getopt(argc, argv, "chp:v")) != -1) {
+        switch(opt) {
+            case 'c':
+                check = true;
+                break;
+            case 'h':
+                usage( );
+                exit(0);
+                break;
+            case 'p':
+                fileName = optarg;
+                break;
+        }
+    }
+    
+    progFile.open( fileName.c_str() );
+    
     if( progFile.fail()) {
-        fprintf(stderr,"Failed to open %s\n", fileName);
+        fprintf(stderr,"Failed to open %s\n", fileName.c_str());
         exit(1);
     }
-
+    
     string line;
     vector<void *> prog;
     int outputPid;
-
+    
     bool gotOutputsPid=false;
-    do {
-        FILE *fd = fopen("/var/tmp/updateOutputs", "r");
-
-        if( fd == NULL ) { 
-            printf("Can't open updateOutputs pid file, sleeping .... zzz\n");
-            sleep(5);
-        } else {
-            char pidBuffer[16];
-            char *rc = fgets( pidBuffer, 16, fd);
-            fclose( fd );
-            outputPid = atoi( pidBuffer );
-
-            int ok = kill(outputPid, 0); 
-
-            gotOutputsPid = ( ok == 0) ? true : false ;
-
-            if( gotOutputsPid == false ) { 
-                printf("Can't contact updateOutputs, sleeping .... zzz\n");
+    
+    if( check == false ) {
+        
+        do {
+            FILE *fd = fopen("/var/tmp/updateOutputs", "r");
+            
+            if( fd == NULL ) { 
+                printf("Can't open updateOutputs pid file, sleeping .... zzz\n");
                 sleep(5);
+            } else {
+                char pidBuffer[16];
+                char *rc = fgets( pidBuffer, 16, fd);
+                fclose( fd );
+                outputPid = atoi( pidBuffer );
+                
+                int ok = kill(outputPid, 0); 
+                
+                gotOutputsPid = ( ok == 0) ? true : false ;
+                
+                if( gotOutputsPid == false ) { 
+                    printf("Can't contact updateOutputs, sleeping .... zzz\n");
+                    sleep(5);
+                }
             }
-        }
-    } while(gotOutputsPid == false) ;
-
-
+        } while(gotOutputsPid == false) ;
+    }
+    
+    
     instruction *thing;
     bool isaTimer = false;
     while(getline(progFile, line)) {
         isaTimer=false;
-
+        
         cout << line << endl;
         char *inst = strtok( (char *)line.c_str(), " \t");
         char *var = strtok( NULL, " \t");
@@ -117,9 +142,9 @@ int main(int argc, char *argv[]) {
         if(!strcmp( inst, "LD")) {
             thing = new ld(var );
         } else if(!strcmp( inst, "LDN")) {
-                thing = new ldn(var );
+            thing = new ldn(var );
         } else if(!strcmp( inst, "LDR")) {
-                thing = new ldr(var );
+            thing = new ldr(var );
         } else if(!strncmp( inst, "OUT", 3)) {
             if(inst[3] == '\0' ) {
                 thing = new out(var );
@@ -149,79 +174,87 @@ int main(int argc, char *argv[]) {
         }
         prog.push_back( thing );
     }
-
+    
     progFile.close();
-
+    
+    if( check) {
+        for (auto i : prog ) {
+            instruction *y = (instruction *)i;
+            y->dump();
+        }
+        exit(0);
+    }
+    
     string hostName = "localhost";
     string serviceName ="myclient" ;
-
+    
     //    myClient *n = myClient::Instance();
     me = myClient::Instance();
-
+    
     bool failFlag = me->setupNetwork((char *)hostName.c_str(), (char *)serviceName.c_str());
     if(verbose) {
         printf("Network setup %s\n", ((failFlag) ? (char *)"failed" : (char *)"success"));
     } 
-
+    
     failFlag = me->loadFile( "mysqlCmds.txt");
     if(verbose) {
         cout << "loadFile ";
         printf("%s\n", ((failFlag) ? (char *)"failed" : (char *)"success"));
     }
-
+    
     failFlag = me->clientConnect() ;
-
+    
     if(verbose) {
         cout << "clientConnect ";
         printf("%s\n", ((failFlag) ? (char *)"failed" : (char *)"success"));
     }
-
+    
     if ( me->clientConnected() == false ) {
         fprintf(stderr, "FATAL ERROR: Connected to interface but not to database\n");
         exit(2);
     }
-
+    
     time_t now=0;
     struct tm *hms;
     int delay =0;
     int hours=0;
     int minutes=0;
     int seconds=0;
-
+    
     while(true) {
         runFlag = true;
         pid_t iam=getpid();
-
+        
         string pidFile = "/var/tmp/" + myName;
-
+        
         FILE *fd = fopen( pidFile.c_str(), "w");
-
+        
         if( fd == NULL ) {
             fprintf(stderr, "FATAL ERROR: Failed to open pidFile\n");
             exit(3);
         }
-
+        
         fprintf(fd, "%d\n" , iam);
         fclose(fd);
-
+        
         sid = semtran( key );
         signal(SIGALRM, alarmHandler);
         signal(SIGHUP, hupHandler);
-
+        
         while( runFlag) {
             now = time(NULL);
             hms = localtime( &now );
             hours = hms->tm_hour ;
             minutes = hms->tm_min ;
             seconds = hms->tm_sec ;
-
+            
             delay = 61 - seconds ;
-
+            
             if( verbose ) {
                 printf("Time is %02d:%02d\n", hours, minutes);
                 printf("Wait for %d seconds\n", delay);
             }
-
+            
             if ( signalCount == 0 ) {
                 signal(SIGALRM, alarmHandler);
                 alarm(delay);
@@ -229,26 +262,26 @@ int main(int argc, char *argv[]) {
             } else {
                 alarm(0);
             }
-
+            
             getSem(sid);
-
+            
             if( verbose ) {
                 printf("Signal count %d\n", signalCount);
             }
-
+            
             for (auto i : prog ) {
                 instruction *y = (instruction *)i;
                 y->dump();
                 y->act();
             }
-
+            
             decrementSignalCount();
             relSem(sid);
-
+            
             printf("signal count %d\n", signalCount);
-
+            
             kill(outputPid, SIGUSR1);
-
+            
         }
     }
 }
