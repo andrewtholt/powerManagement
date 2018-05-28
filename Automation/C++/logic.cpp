@@ -49,6 +49,11 @@ void decrementSignalCount() {
 
 void usage() {
     printf("Help\n");
+    
+    printf("\t-c\tCheck program\n");
+    printf("\t-h\tHelp\n");
+    printf("\t-v\tVerbose\n");
+    printf("\t-p <file>\tProgram file\n");
 }
 
 int main(int argc, char *argv[]) {

@@ -3,11 +3,11 @@ CPP=g++
 
 CFLAGS=-g -std=c++11
 
-BINS=logic tstClient updateInputs updateOutputs # testCompile
+BINS=logic tstClient updateInputs updateOutputs 
 
 all:	$(BINS)
 
-logic:	logic.cpp plc.o myClientClass.o semaphore.o compile.o
+logic:	logic.cpp plc.o myClientClass.o semaphore.o 
 	$(CPP) $(CFLAGS) logic.cpp plc.o myClientClass.o semaphore.o -o logic # -lsqlite3
 
 plc.o:	plc.cpp plc.h
@@ -27,12 +27,6 @@ updateOutputs:	updateOutputs.cpp myClientClass.h myClientClass.o
 
 semaphore.o:	semaphore.cpp
 	$(CPP) -c $(CFLAGS) semaphore.cpp -o semaphore.o
-
-compile.o:	compile.cpp
-	$(CPP) -c $(CFLAGS) compile.cpp -o compile.o
 	
-testCompile:	testCompile.cpp compile.o plc.o
-	$(CPP)  $(CFLAGS) testCompile.cpp compile.o plc.o -o testCompile
-
 clean:
 	rm -f $(BINS) *.o
