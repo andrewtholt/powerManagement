@@ -22,6 +22,7 @@ class ld : public instruction {
         virtual void dump() override;
 };
 // true on rising edge.
+// 
 class ldr : public instruction {
     public:
         ldr(char *n);
@@ -30,7 +31,17 @@ class ldr : public instruction {
     private:
         bool old=false;
         bool current = false;
-
+};
+// true on falling edge.
+// 
+class ldf : public instruction {
+    public:
+        ldf(char *n);
+        virtual void act() ;
+        virtual void dump() override;
+    private:
+        bool old=false;
+        bool current = false;
 };
 
 class ldn : public instruction {
@@ -48,6 +59,14 @@ class out : public instruction {
 
 };
 
+class outn : public instruction {
+    public:
+        outn(char *n);
+        void act();
+        virtual void dump() override ;
+
+};
+
 class Or : public instruction {
     public:
         Or(char *n);
@@ -55,9 +74,44 @@ class Or : public instruction {
         virtual void dump() override ;
 };
 
+class Orn : public instruction {
+    public:
+        Orn(char *n);
+        void act();
+        virtual void dump() override ;
+};
+
+class Orr : public instruction {
+    public:
+        Orr(char *n);
+        void act();
+        virtual void dump() override ;
+};
+
+class Orf : public instruction {
+    public:
+        Orf(char *n);
+        void act();
+        virtual void dump() override ;
+};
+
 class And : public instruction {
     public:
         And(char *n);
+        void act();
+        virtual void dump() override ;
+};
+
+class Andr : public instruction {
+    public:
+        Andr(char *n);
+        void act();
+        virtual void dump() override ;
+};
+
+class Andf : public instruction {
+    public:
+        Andf(char *n);
         void act();
         virtual void dump() override ;
 };
@@ -100,6 +154,20 @@ class timAndn : public instruction {
 class timAnd : public instruction {
     public:
         timAnd(char *n);
+        void act();
+        virtual void dump() override ;
+};
+
+class timOrn : public instruction {
+    public:
+        timOrn(char *n);
+        void act();
+        virtual void dump() override ;
+};
+
+class timOr : public instruction {
+    public:
+        timOr(char *n);
         void act();
         virtual void dump() override ;
 };

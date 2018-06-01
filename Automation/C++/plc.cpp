@@ -99,7 +99,7 @@ void ld::dump() {
     instruction::dump((char *)"LD");
 }
 // 
-// LDR Load a value, set the state on rising edge
+// LDR Load a value, set the state true on rising edge
 //
 ldr::ldr(char *n) {
     extern sqlite3 *db;
@@ -110,14 +110,33 @@ ldr::ldr(char *n) {
 void ldr::act() {
     getIoPoint( name );
     current=flag;
-
     state = (( old == false ) && ( current == true )) ? true : false ;
-
     old = current;
 }
 
 void ldr::dump() {
     instruction::dump((char *)"LDR");
+}
+// 
+// LDF Load a value, set the state true on falling edge
+//
+ldf::ldf(char *n) {
+    extern sqlite3 *db;
+    strncpy(name, n, sizeof(name));
+    strcpy(id,(char *)"LDR");
+}
+
+void ldf::act() {
+    getIoPoint( name );
+    current=flag;
+
+    state = (( old == true ) && ( current == false )) ? true : false ;
+
+    old = current;
+}
+
+void ldf::dump() {
+    instruction::dump((char *)"LDF");
 }
 // 
 // LDN Load a value, invert and set ths state
@@ -154,6 +173,22 @@ void out::dump() {
     cout << endl;
 }
 // 
+// OUTN take a bool, invert it and set the output.
+//
+outn::outn(char *n) {
+    strncpy(name, n, sizeof(name));
+}
+
+void outn::act() {
+    setIoPoint( name, state );
+    state=false;
+}
+
+void outn::dump() {
+    instruction::dump((char *)"OUTN");
+    cout << endl;
+}
+// 
 // OR 
 //
 Or::Or(char *n) {
@@ -167,6 +202,65 @@ void Or::act() {
 
 void Or::dump() {
     instruction::dump((char *)"OR");
+}
+// 
+// ORN
+//
+Orn::Orn(char *n) {
+    strncpy(name, n, sizeof(name));
+}
+
+void Orn::act() {
+    getIoPoint( name);
+    state = state || !flag;
+}
+
+void Orn::dump() {
+    instruction::dump((char *)"ORN");
+}
+// 
+// ORR 
+//
+Orr::Orr(char *n) {
+    strncpy(name, n, sizeof(name));
+}
+
+void Orr::act() {
+    getIoPoint( name);
+    bool old;
+    
+    bool current=flag;
+    
+    bool tmp = (( old == false ) && ( current == true )) ? true : false ;
+    old = current;
+    
+    state = state || tmp;
+}
+
+void Orr::dump() {
+    instruction::dump((char *)"ORR");
+}
+// 
+// ORF 
+//
+Orf::Orf(char *n) {
+    strncpy(name, n, sizeof(name));
+}
+
+void Orf::act() {
+    getIoPoint( name);
+    bool old;
+    
+    bool current=flag;
+    
+    bool tmp = (( old == true ) && ( current == false )) ? true : false ;
+    old = current;
+    
+    state = state || tmp;
+}
+
+void Orf::dump() {
+    instruction::dump((char *)"ORF");
 }
 // 
 // AND 
@@ -197,6 +291,45 @@ void Andn::act() {
 
 void Andn::dump() {
     instruction::dump((char *)"ANDN");
+}
+// 
+// ANDR 
+//
+Andr::Andr(char *n) {
+    strncpy(name, n, sizeof(name));
+}
+
+void Andr::act() {
+    getIoPoint( name);
+    bool old;
+    
+    bool current=flag;
+    
+    bool tmp = (( old == false ) && ( current == true )) ? true : false ;
+    old = current;
+    
+    state = state && tmp;
+}
+
+void Andr::dump() {
+    instruction::dump((char *)"ANDR");
+}
+// ANDF 
+// 
+void Andf::act() {
+    getIoPoint( name);
+    bool old;
+    
+    bool current=flag;
+    
+    bool tmp = (( old == true ) && ( current == false )) ? true : false ;
+    old = current;
+    
+    state = state && tmp;
+}
+
+void Andf::dump() {
+    instruction::dump((char *)"ANDR");
 }
 // 
 // NOOP 
@@ -325,5 +458,68 @@ void timAnd::act() {
 void timAnd::dump() {
     instruction::dump((char *)"TIM-AND");
 }
+// 
+// TIM-ORN When the time matches set time 
+//
+timOrn::timOrn(char *n) {
+    extern sqlite3 *db;
+    strncpy(name, n, sizeof(name));
+    strcpy(id,(char *)"LD");
+}
+
+void timOrn::act() {
+    time_t now=time(NULL);
+    bool flag = false;
+    struct tm *hms = localtime( &now );
+    int hours = hms->tm_hour ;
+    int minutes = hms->tm_min ;
+    char target[6];  // hh:mm
+
+    strcpy( target, name );
+
+    char *tHours = strtok(target,":");
+    char *tMins = strtok(NULL,":");
+
+    flag = ((hours == atoi(tHours)) && (minutes == atoi(tMins))) ? false : true ;    
+
+    state = state || !flag;
+}
+
+void timOrn::dump() {
+    instruction::dump((char *)"TIM-ORN");
+}
+// 
+// TIM-OR When the time matches set time 
+//
+timOr::timOr(char *n) {
+    extern sqlite3 *db;
+    strncpy(name, n, sizeof(name));
+    strcpy(id,(char *)"TIM-OR");
+}
+
+void timOr::act() {
+    time_t now=time(NULL);
+    bool flag = false;
+    struct tm *hms = localtime( &now );
+    int hours = hms->tm_hour ;
+    int minutes = hms->tm_min ;
+    char target[6];  // hh:mm
+
+    strcpy( target, name );
+
+    char *tHours = strtok(target,":");
+    char *tMins = strtok(NULL,":");
+
+    flag = ((hours == atoi(tHours)) && (minutes == atoi(tMins))) ? false : true ;    
+
+    state = state || flag;
+}
+
+void timOr::dump() {
+    instruction::dump((char *)"TIM-OR");
+}
+
+
+
 
 
