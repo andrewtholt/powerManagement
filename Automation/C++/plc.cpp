@@ -77,7 +77,7 @@ void setIoPoint( char *n, bool s) {
 
 
 void instruction::dump(char *iName) {
-    printf("\t[%d]\n\t%s\t%s",state, iName, name);
+    printf("\t[%d]\t%s\t%s\n",state, iName, name);
 }
 
 // 
@@ -180,7 +180,7 @@ outn::outn(char *n) {
 }
 
 void outn::act() {
-    setIoPoint( name, state );
+    setIoPoint( name, !state );
     state=false;
 }
 

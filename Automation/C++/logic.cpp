@@ -90,6 +90,9 @@ fileName = argv[1];
             case 'p':
                 fileName = optarg;
                 break;
+            case 'v':
+                verbose=true;
+                break;
         }
     }
     
@@ -150,14 +153,18 @@ fileName = argv[1];
             thing = new ldn(var );
         } else if(!strcmp( inst, "LDR")) {
             thing = new ldr(var );
+        } else if(!strcmp( inst, "LDF")) {
+            thing = new ldf(var );
         } else if(!strncmp( inst, "OUT", 3)) {
             if(inst[3] == '\0' ) {
                 thing = new out(var );
+            } else if( inst[3] == 'N') {
+                thing = new outn(var );
             }
         } else if(!strncmp( inst, "OR", 2)) {
             if(inst[2] == '\0' ) {
                 thing = new Or(var );
-            }
+            } 
         } else if(!strncmp( inst, "AND", 3)) {
             if(inst[3] == '\0' ) {
                 thing = new And(var );
