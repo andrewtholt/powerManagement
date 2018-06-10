@@ -138,11 +138,20 @@ fileName = argv[1];
     
     instruction *thing;
     bool isaTimer = false;
+    char *comment;
     while(getline(progFile, line)) {
         isaTimer=false;
         
         cout << line << endl;
+        char *l = (char *)line.c_str();
+        
+        comment = strsep(&l,";");
+        
         char *inst = strtok( (char *)line.c_str(), " \t");
+        if( inst == NULL) {
+            continue;
+        }
+        
         char *var = strtok( NULL, " \t");
         //
         // Check if it's one of the LD instructions

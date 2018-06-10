@@ -1,10 +1,13 @@
-TIM-LD 05:00
+; This is a comment
+TIM-LD 05:00 ; and so is this
 ANDN DAY
 OR PorchLight
 TIM-ANDN 07:00
 OUT PorchLight
-LDR START
-OR RLY1
-ANDN STOP
-OUT RLY1
+
+LDF DAY
+OR PorchLight
+TIM-ANDN 23:00
+OUT PorchLight
+
 END
