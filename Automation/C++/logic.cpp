@@ -230,9 +230,17 @@ fileName = argv[1];
         printf("%s\n", ((failFlag) ? (char *)"failed" : (char *)"success"));
     }
     
+/*
     if ( me->clientConnected() == false ) {
         fprintf(stderr, "FATAL ERROR: Connected to interface but not to database\n");
         exit(2);
+    }
+    */
+    while ( me->clientConnected() == false ) {
+        if(verbose) {
+            fprintf(stderr, "FATAL ERROR: Connected to interface but not to database\n");
+        }
+        sleep(2);
     }
     
     time_t now=0;
