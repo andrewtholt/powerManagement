@@ -10,6 +10,8 @@
 #include <sys/sem.h>
 #include <time.h>
 
+#include <hspread.h>
+
 #include <iostream>
 
 #define mqtt_host "192.168.0.65"
@@ -18,6 +20,7 @@
 using namespace std;
 int logicPid=0;
 int sid;
+string destGroup = "logic";
 
 // MQTT Stuff
 //
@@ -26,11 +29,13 @@ void connect_callback(struct mosquitto *mosq, void *obj, int result) {
 }
 
 void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message) {
-    printf("message callback\n");
-
     time_t old = 0;
     time_t now = 0;
     char sql[BUFFER_SIZE];
+    string spreadMsg;
+    string out;
+    string onValue;
+    string offValue;
 
     myClient *me = (myClient *)obj;
 
@@ -38,26 +43,62 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
 
     sprintf(sql,"update io_point set state='%s'  where topic='%s';\n",(char*) message->payload, message->topic);
 
-    printf("%s\n", sql);
-
-    getSem(sid);
+//    printf("%s\n", sql);
+//    getSem(sid);
     old=time(NULL);
     me->sendCmd( sql );
     now=time(NULL);
+//    relSem(sid);
 
-    printf("delta %d\n", (int)(now - old));
-    relSem(sid);
+    sprintf(sql, "select name,on_state,off_state from io_point where topic = '%s';\n", message->topic);
+//    printf("%s\n", sql);
+//    getSem(sid);
+    old=time(NULL);
+    me->sendCmd( sql );
+    now=time(NULL);
+//    relSem(sid);
 
-    kill( logicPid, SIGALRM);
+    me->sendCmd( (char *)"^get-col name\n", out);
+    spreadMsg = out + " ";
+
+//    cout << out << endl;
+    me->sendCmd( (char *)"^get-col on_state\n",  onValue);
+    me->sendCmd( (char *)"^get-col off_state\n", offValue);
+
+    if( !strcmp((char *)message->payload,(char *)onValue.c_str())) {
+        spreadMsg += "TRUE";
+    } else if( !strcmp((char *)message->payload,(char *)offValue.c_str())) {
+        spreadMsg += "FALSE";
+    } else {
+        spreadMsg += "UNKNOWN";
+    }
+
+
+    int rc =  SPTxSimple((char *)destGroup.c_str(), (char *)spreadMsg.c_str()) ;
+
+//    printf("delta %d\n", (int)(now - old));
+
+    if ( logicPid > 0) {
+        kill( logicPid, SIGALRM);
+    }
     usleep(1000 * 1000);
 }
 
 void usage() {
     printf("Usage\n");
+    printf("\t-g <spread group>\tSpread group to send message to\n");
+    printf("\t-h|?\t\tHelp\n");
+    printf("\t-i <name>\tMy name for spread\n");
+    printf("\t-n <name>\tDatabase hostname\n");
+    printf("\t-p <svc name>\tDatabase service name\n");
+    printf("\t-s <spread host>\tHostname of spread host\n");
+    printf("\t-v\t\tVerbose\n");
+    printf("\t-w\t\tWait for logic.\n");
 }
 
 int main(int argc, char *argv[]) {
     bool verbose=false;
+    bool waitForLogic=false;
 
     int len=0;
     char inBuffer[BUFFER_SIZE];
@@ -66,31 +107,51 @@ int main(int argc, char *argv[]) {
     string hostName = "localhost";
     string serviceName ="myclient" ;
 
+    string spreadHost = "localhost" ;
+    string myName = "updateInputsMQTT";
+    int spreadPort=4803;
+
     int opt;
     int rc;
 
-    while (( opt = getopt(argc, argv, "h?n:p:v")) !=-1) {
+    while (( opt = getopt(argc, argv, "g:h?i:n:p:s:vw")) !=-1) {
         switch(opt) {
+            case 'g':
+                // Spread group to send messages to.
+                destGroup = optarg;
+                break;
             case '?':
             case 'h':
                 usage();
                 exit(0);
+            case 'i':
+                myName = optarg;
+                break;
             case 'n':
                 hostName = optarg;
                 break;
             case 'p':
                 serviceName = optarg;
                 break;
+            case 's':
+                spreadHost = optarg;
+                break;
             case 'v':
                 verbose = true;
+                break;
+            case 'w':
+                waitForLogic = true;
                 break;
         }
     }
 
-    if(verbose) {
-        cout << "Hostname : " << hostName << endl;
-        cout << "Service  : " << serviceName << endl;
-    }
+//    if(verbose) {
+        cout << "Hostname    : " << hostName << endl;
+        cout << "Service     : " << serviceName << endl;
+        cout << "Spread Host : " << spreadHost << endl;
+        cout << "I am        : " << myName << endl;
+        cout << endl;
+//    }
 
     myClient *n = myClient::Instance();
 
@@ -120,12 +181,33 @@ int main(int argc, char *argv[]) {
 
     while ( n->clientConnected() == false ) {
         if( verbose ) {
-            fprintf(stderr, "FATAL ERROR: Connected to interface but not to database\n");
+            fprintf(stderr, "ERROR: Connected to interface but not to database\n");
         }
         sleep(2);
     }
+    // Now connect to spread.
+    //
+    //
+    setUser((char *)myName.c_str());
+    setServer((char *)spreadHost.c_str());
+    dump();
+
+    rc=SPConnectSimple();
+    printf("SPConnectSimple rc=%d\n", rc);
+
+    if( rc < 0 ) {
+        printf("Spread connect failed\n");
+        dump();
+        exit(1);
+    }
+
+    rc=SPJoinSimple((char *)"global");
+
+
+    sleep(1);
+
     // 
-    // OK, all connected to database and ready to go.
+    // OK, all connected to database and and spread, so ready to go.
     // Time now to setup MQTT
     //
     mosquitto_lib_init();
@@ -181,28 +263,30 @@ int main(int argc, char *argv[]) {
 
     bool gotLogicPid=false;
 
-    do {
-        FILE *fd = fopen("/var/tmp/logic", "r");
+    if( waitForLogic) {
+        do {
+            FILE *fd = fopen("/var/tmp/logic", "r");
 
-        if( fd == NULL ) {
-            printf("Can't open logic pid file, sleeping .... zzz\n");
-            sleep(5);
-        } else {
-            char pidBuffer[16];
-            char *rc = fgets( pidBuffer, 16, fd);
-            fclose( fd );
-            logicPid = atoi( pidBuffer );
-
-            int ok = kill(logicPid, 0);
-
-            gotLogicPid = ( ok == 0) ? true : false ;
-
-            if( gotLogicPid == false ) {
-                printf("Can't contact logic, sleeping .... zzz\n");
+            if( fd == NULL ) {
+                printf("Can't open logic pid file, sleeping .... zzz\n");
                 sleep(5);
+            } else {
+                char pidBuffer[16];
+                char *rc = fgets( pidBuffer, 16, fd);
+                fclose( fd );
+                logicPid = atoi( pidBuffer );
+
+                int ok = kill(logicPid, 0);
+
+                gotLogicPid = ( ok == 0) ? true : false ;
+
+                if( gotLogicPid == false ) {
+                    printf("Can't contact logic, sleeping .... zzz\n");
+                    sleep(5);
+                }
             }
-        }
-    } while(gotLogicPid == false) ;
+        } while(gotLogicPid == false) ;
+    }
 
     if( relSem(sid) < 0) {
         perror("Failed to release lock.");
@@ -211,17 +295,17 @@ int main(int argc, char *argv[]) {
     rc = mosquitto_loop_forever(mosq, -1, 1);
 
     /*
-    bool run=true;
-    while(run) {
-        rc = mosquitto_loop(mosq, -1, 1);
-        if(run && (rc == 0)) {
-            printf("connection error!\n");
-            printf("%s\n", mosquitto_strerror( rc ));
-            sleep(10);
-            mosquitto_reconnect(mosq);
-        }
-    }
-    mosquitto_destroy(mosq);
-    */
+       bool run=true;
+       while(run) {
+       rc = mosquitto_loop(mosq, -1, 1);
+       if(run && (rc == 0)) {
+       printf("connection error!\n");
+       printf("%s\n", mosquitto_strerror( rc ));
+       sleep(10);
+       mosquitto_reconnect(mosq);
+       }
+       }
+       mosquitto_destroy(mosq);
+       */
 }
 

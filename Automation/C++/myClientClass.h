@@ -22,7 +22,7 @@ public:
 
 private:
    int sockfd=-1;
-   bool verbose=true;
+   bool verbose=false;
    bool connected=false;
    myClient(){};  // Private so that it can  not be called
    myClient(myClient const&){};             // copy constructor is private

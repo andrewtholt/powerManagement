@@ -56,6 +56,7 @@ int main(int argc, char *argv[]) {
       * will be read by server
    */
 	
+   while (1) {
    printf("Please enter the message: ");
    bzero(buffer,256);
    fgets(buffer,255,stdin);
@@ -78,5 +79,6 @@ int main(int argc, char *argv[]) {
    }
 	
    printf("%s\n",buffer);
+   }
    return 0;
 }

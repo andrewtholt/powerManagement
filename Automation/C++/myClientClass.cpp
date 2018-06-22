@@ -23,14 +23,17 @@ myClient* myClient::m_pInstance = NULL;
   */
 
 myClient* myClient::Instance() {
-    printf("Instance\n");
+//    printf("Instance\n");
 
     // Only allow one instance of class to be generated.
     if (!m_pInstance) {
         m_pInstance = new myClient;
-    } else {
+    } 
+    /*
+    else {
         printf("Exists\n");
     }
+    */
 
     return m_pInstance;
 }
@@ -41,8 +44,10 @@ bool myClient::setupNetwork(char *hostName, char *serviceName)  {
     struct addrinfo *result;
     struct addrinfo *rp;
 
-    printf("Host   :%s\n",hostName);
-    printf("Service:%s\n",serviceName);
+    if(verbose) {
+        printf("Host   :%s\n",hostName);
+        printf("Service:%s\n",serviceName);
+    }
 
     int rc = getaddrinfo( hostName, serviceName, NULL, &result);
 
