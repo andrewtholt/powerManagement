@@ -149,18 +149,19 @@ bool myClient::loadFile( string fileName ) {
 bool myClient::clientConnect() {
     bool failFlag = true;
     char buffer[BUFFER_SIZE];
+    verbose=true;
 
     bzero( buffer, BUFFER_SIZE );
 
     int rLen = -1;
 
+    clientFlush();
     string cmd = "^connect\n" ;
 
-    clientFlush();
     rLen = sendMessage( (char *)cmd.c_str(), cmd.length());
     failFlag = ( rLen < 0 ) ? true : false ;
 
-    if( !failFlag ) {
+    if( failFlag == false) {
         int len=getMessage( buffer, BUFFER_SIZE);
 
         if (verbose) {
@@ -171,6 +172,11 @@ bool myClient::clientConnect() {
             failFlag = true;
             connected=false;
         } else {
+            failFlag = false;
+            connected= true;
+        }
+        /*
+        else {
             char *tmp = strstr(buffer,(char *)"CONNECTED");
             if(tmp) {
                 char *t = tmp ;
@@ -186,6 +192,7 @@ bool myClient::clientConnect() {
                 }
             }
         }
+        */
     }
 
     return failFlag;

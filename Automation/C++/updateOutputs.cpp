@@ -4,7 +4,7 @@
 #include <mosquitto.h>
 #include <sys/types.h>
 #include <signal.h>
-
+#include <hspread.h>
 
 #include <iostream>
 
@@ -14,6 +14,7 @@
 using namespace std;
 int logicPid=0;
 bool runFlag;
+string srcGroup = "output";
 
 void alarmHandler(int sig) {
     signal(SIGUSR1, SIG_IGN);
@@ -53,6 +54,13 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
 
 void usage() {
     printf("Usage\n");
+    printf("\t-g <spread group>\tSpread group to send message to\n");
+    printf("\t-h|?\t\tHelp\n");
+    printf("\t-i <name>\tMy name for spread\n");
+    printf("\t-n <name>\tDatabase hostname\n");
+    printf("\t-p <svc name>\tDatabase service name\n");
+    printf("\t-s <spread host>\tHostname of spread host\n");
+    printf("\t-v\t\tVerbose\n");
 }
 
 int main(int argc, char *argv[]) {
@@ -64,22 +72,34 @@ int main(int argc, char *argv[]) {
 
     string hostName = "localhost";
     string serviceName ="myclient" ;
+    string spreadHost = "localhost" ;
+    string myName = "updateOutputsMQTT";
+    int spreadPort=4803;
 
     int opt;
     int rc;
 
-    while (( opt = getopt(argc, argv, "h?n:p:v")) !=-1) {
+    while (( opt = getopt(argc, argv, "g:h?n:p:s:v")) !=-1) {
         switch(opt) {
+            case 'g':
+                // Spread group to receive messages from.
+                srcGroup = optarg;
+                break;
             case '?':
             case 'h':
                 usage();
                 exit(0);
+            case 'i':
+                myName = optarg;
+                break;
             case 'n':
                 hostName = optarg;
                 break;
             case 'p':
                 serviceName = optarg;
                 break;
+            case 's':
+                spreadHost = optarg;
             case 'v':
                 verbose = true;
                 break;
@@ -89,6 +109,9 @@ int main(int argc, char *argv[]) {
     if(verbose) {
         cout << "Hostname : " << hostName << endl;
         cout << "Service  : " << serviceName << endl;
+
+        cout << "Spread Host : " << spreadHost << endl;
+        cout << "I am        : " << myName << endl;
     }
 
 
@@ -118,21 +141,13 @@ int main(int argc, char *argv[]) {
         printf("%s\n", ((failFlag) ? (char *)"failed" : (char *)"success"));
     }
 
-    /*
-    if ( n->clientConnected() == false ) {
-        fprintf(stderr, "FATAL ERROR: Connected to interface but not to database\n");
-        exit(2);
-    }
-    */
-
+    usleep(100 * 1000);
     while ( n->clientConnected() == false ) {
         if( verbose ) {
             fprintf(stderr, "FATAL ERROR: Connected to interface but not to database\n");
         }
         sleep(2);
-
     }
-
     // 
     // OK, all connected to database and ready to go.
     // Time now to setup MQTT
@@ -172,19 +187,59 @@ int main(int argc, char *argv[]) {
         fprintf(fd, "%d\n" , iam);
         fclose(fd);
 
-        signal(SIGUSR1, alarmHandler);
-        signal(SIGHUP, hupHandler);
+        //        signal(SIGUSR1, alarmHandler);
+        //        signal(SIGHUP, hupHandler);
 
+
+        //
+        // Setup spread
+        //
+        char rxMsg[255];
+
+        setUser((char *)myName.c_str());
+        setServer((char *)spreadHost.c_str());
+        dump();
+
+        rc=SPConnectSimple();
+        printf("SPConnectSimple rc=%d\n", rc);
+        if( rc < 0 ) {
+            printf("Spread connect failed\n");
+            dump();
+            exit(1);
+        }
+        rc=SPJoinSimple((char *)"global");
+        rc=SPJoinSimple((char *)srcGroup.c_str());
 
         runFlag = true;
-        while(runFlag) {
+        string out;
 
+        char sql[255];
+
+        string name;
+        string state;
+        string onState;
+        string offState;
+        string outputState;
+
+        while(runFlag) {
             if ( firstTime ) {
-                firstTime=false;
+                sprintf(sql, "select topic,state, on_state, off_state from io_point where direction = 'out';\n");
             } else {
-                pause();
+                rc= SPRxSimple( rxMsg, 255) ;
+                int len=strlen(rxMsg);
+                if ( len > 0) {
+                    len--;
+                    if( isalnum(rxMsg[len]) == 0 ) {
+                        rxMsg[len]='\0';
+                    }
+                    name = strtok(rxMsg," ");
+                    state = strtok(NULL," \n");
+
+                    sprintf(sql, "select topic,state, on_state, off_state from io_point where direction = 'out' and name='%s';\n", name.c_str());
+
+                }
             }
-            string sql = "select topic, state from io_point where direction = 'out';\n";
+
             len = n->sendCmd( sql );
 
             string cmd = "^get-row-count\n";
@@ -201,15 +256,52 @@ int main(int argc, char *argv[]) {
                 }
                 cmd = "^get-col topic\n";
                 len = n->sendCmd( cmd, topic );
-                cmd = "^get-col state\n";
-                len = n->sendCmd( cmd, state );
+
+                cmd = "^get-col on_state\n";
+                len = n->sendCmd( cmd, onState );
+
+                cmd = "^get-col off_state\n";
+                len = n->sendCmd( cmd, offState );
+
+                if(firstTime) {
+                    cmd = "^get-col state\n";
+                    len = n->sendCmd( cmd, state );
+
+                }
 
                 cout << "Topic : " + topic << endl;
                 cout << "Msg   : " + state << endl;
 
-                mosquitto_publish(mosq, NULL, topic.c_str(), state.length(), state.c_str(),0,true);
+                if( firstTime ) {
+                    cout << "First Time" << endl;
+                }
 
+                if( firstTime ) {
+                    outputState = state;
+                } else {
+                    if ( state == "TRUE" ) {
+                        outputState = "";
+                        outputState = onState;
+                    } else if ( state == "FALSE" ) {
+                        outputState = offState;
+                    } else {
+                        outputState = "UNKNOWN";
+                    }
+                }
+
+
+                cout << "OutputState :" + outputState << endl;
+                mosquitto_publish(mosq, NULL, topic.c_str(), outputState.length(), outputState.c_str(),0,true);
+
+                if( firstTime == false ) {
+                sprintf(sql,"update io_point set state='%s'  where topic='%s';\n",(char*) outputState.c_str(), topic.c_str());
+                printf("Final >%s<\n",sql);
+                len = n->sendCmd(sql);
+                }
             }
+            firstTime=false;
+            rc = mosquitto_loop(mosq, -1, 1);
+
         }
     }
 }

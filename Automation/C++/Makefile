@@ -24,7 +24,7 @@ updateInputs:	updateInputs.cpp myClientClass.h myClientClass.o semaphore.o
 	$(CPP) $(CFLAGS) updateInputs.cpp myClientClass.o semaphore.o -o updateInputs $(LIBS) -lmosquitto 
 
 updateOutputs:	updateOutputs.cpp myClientClass.h myClientClass.o
-	$(CPP) $(CFLAGS) updateOutputs.cpp myClientClass.o -o updateOutputs -lmosquitto
+	$(CPP) $(CFLAGS) updateOutputs.cpp myClientClass.o -o updateOutputs $(LIBS) -lmosquitto
 
 semaphore.o:	semaphore.cpp
 	$(CPP) -c $(CFLAGS) semaphore.cpp -o semaphore.o
