@@ -118,12 +118,6 @@ int main(int argc, char *argv[]) {
         printf("%s\n", ((failFlag) ? (char *)"failed" : (char *)"success"));
     }
 
-    /*
-    if ( n->clientConnected() == false ) {
-        fprintf(stderr, "FATAL ERROR: Connected to interface but not to database\n");
-        exit(2);
-    }
-    */
     while ( n->clientConnected() == false ) {
         if( verbose ) {
             fprintf(stderr, "FATAL ERROR: Connected to interface but not to database\n");
