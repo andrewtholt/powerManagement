@@ -2,3 +2,5 @@ logic
 tstClient
 updateInputs
 updateOutputs
+old_*
+tstPlc

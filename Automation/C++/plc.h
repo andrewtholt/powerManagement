@@ -3,173 +3,67 @@
 
 #include <sqlite3.h>
 #include <string>
+#include <map>
+#include <vector>
+#include <hspread.h>
 
 using namespace std;
 
-class instruction {
-    public:
-        char id[32];
-        char name[32];
-        void dump(char *iName) ;
-        virtual void dump() = 0;
-        virtual void act() = 0;
+enum Inst { 
+    NOP=0, 
+    LD, 
+    LDN,
+    LDR,
+    LDF,
+
+    OR,
+    ORN,
+    ORR,
+    ORF,
+
+    AND,
+    ANDN,
+    ANDR,
+    ANDF,
+
+    OUT,
+    OUTN,
+    END=0xff
 };
 
-class ld : public instruction {
-    public:
-        ld(char *n);
-        virtual void act() ;
-        virtual void dump() override;
-};
-// true on rising edge.
-// 
-class ldr : public instruction {
-    public:
-        ldr(char *n);
-        virtual void act() ;
-        virtual void dump() override;
+
+class plc {
     private:
-        bool old=false;
-        bool current = false;
-};
-// true on falling edge.
-// 
-class ldf : public instruction {
+        struct ramEntry {
+            uint8_t inst;
+            string iop;
+        } ;
+
+        map<string, bool> ioPoint;
+//        vector<array<string,2>> RAM;
+        vector<ramEntry> RAM;
+
+        string iam;
+        string spreadHost;
+        string inGroup="logic";     // Joins this to be notified of inputs
+        string outGroup="output";  // DOesn't join this, send results.
+
+        bool spreadOK=false;
+        int spreadError = 0;
+        bool verbose=false;
+
+        void initPlc();
+        void compile(string inst, string iop);
+        void dumpProgram();
     public:
-        ldf(char *n);
-        virtual void act() ;
-        virtual void dump() override;
-    private:
-        bool old=false;
-        bool current = false;
+        plc(string name);
+        plc(string name, string progFile);
+
+        void setVerbose(bool v);
+
+        bool loadProg(string fileName);
+
+        void plcDump();
+        bool plcStatus();
+        void plcRun();
 };
-
-class ldn : public instruction {
-    public:
-        ldn(char *n);
-        void act();
-        virtual void dump() override;
-};
-
-class out : public instruction {
-    public:
-        out(char *n);
-        void act();
-        virtual void dump() override ;
-
-};
-
-class outn : public instruction {
-    public:
-        outn(char *n);
-        void act();
-        virtual void dump() override ;
-
-};
-
-class Or : public instruction {
-    public:
-        Or(char *n);
-        void act();
-        virtual void dump() override ;
-};
-
-class Orn : public instruction {
-    public:
-        Orn(char *n);
-        void act();
-        virtual void dump() override ;
-};
-
-class Orr : public instruction {
-    public:
-        Orr(char *n);
-        void act();
-        virtual void dump() override ;
-};
-
-class Orf : public instruction {
-    public:
-        Orf(char *n);
-        void act();
-        virtual void dump() override ;
-};
-
-class And : public instruction {
-    public:
-        And(char *n);
-        void act();
-        virtual void dump() override ;
-};
-
-class Andr : public instruction {
-    public:
-        Andr(char *n);
-        void act();
-        virtual void dump() override ;
-};
-
-class Andf : public instruction {
-    public:
-        Andf(char *n);
-        void act();
-        virtual void dump() override ;
-};
-
-class Andn : public instruction {
-    public:
-        Andn(char *n);
-        void act();
-        virtual void dump() override ;
-};
-
-class Noop : public instruction {
-    public:
-        Noop(char *n);
-        void act();
-        virtual void dump() override ;
-};
-
-class timLd : public instruction {
-    public:
-        timLd(char *n);
-        virtual void act() ;
-        virtual void dump() override;
-};
-
-class timLdn : public instruction {
-    public:
-        timLdn(char *n);
-        virtual void act() ;
-        virtual void dump() override;
-};
-
-class timAndn : public instruction {
-    public:
-        timAndn(char *n);
-        void act();
-        virtual void dump() override ;
-};
-
-class timAnd : public instruction {
-    public:
-        timAnd(char *n);
-        void act();
-        virtual void dump() override ;
-};
-
-class timOrn : public instruction {
-    public:
-        timOrn(char *n);
-        void act();
-        virtual void dump() override ;
-};
-
-class timOr : public instruction {
-    public:
-        timOr(char *n);
-        void act();
-        virtual void dump() override ;
-};
-
-
