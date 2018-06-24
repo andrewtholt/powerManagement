@@ -1,7 +1,7 @@
 ; comment a ful line
 LD START    ; part line
-OR RLY1
+OR BackFloodlight
 ANDN STOP
-OUT RLY1
+OUT BackFloodlight
 END
 

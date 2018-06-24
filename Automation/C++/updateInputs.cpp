@@ -74,6 +74,7 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
     }
 
 
+    cout << destGroup + " " + spreadMsg << endl;
     int rc =  SPTxSimple((char *)destGroup.c_str(), (char *)spreadMsg.c_str()) ;
 
 //    printf("delta %d\n", (int)(now - old));
