@@ -16,17 +16,17 @@ enum Inst {
     LDR,
     LDF,
 
-    OR,
+    OR=0x10,
     ORN,
     ORR,
     ORF,
 
-    AND,
+    AND=0x20,
     ANDN,
     ANDR,
     ANDF,
 
-    OUT,
+    OUT=0x30,
     OUTN,
     END=0xff
 };
@@ -38,6 +38,8 @@ class plc {
             uint8_t inst;
             string iop;
         } ;
+        
+        bool acc=false;
 
         map<string, bool> ioPoint;
 //        vector<array<string,2>> RAM;
@@ -54,12 +56,16 @@ class plc {
 
         void initPlc();
         void compile(string inst, string iop);
-        void dumpProgram();
+        
+        void Ld(string symbol);
+        void Or(string symbol);
+        void Andn(string symbol);
+        void Out(string symbol);
     public:
+        void setVerbose(bool flag);
+        void dumpProgram();
         plc(string name);
         plc(string name, string progFile);
-
-        void setVerbose(bool v);
 
         bool loadProg(string fileName);
 

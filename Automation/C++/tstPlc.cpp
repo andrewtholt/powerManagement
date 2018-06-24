@@ -10,5 +10,10 @@ int main(int argc, char *argv[]) {
 
     dump();
 
+    test.setVerbose(true);
     test.loadProg((char *)argv[1]);
+    
+    test.dumpProgram();
+    
+    test.plcRun();
 }
