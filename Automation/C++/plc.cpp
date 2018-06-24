@@ -203,11 +203,13 @@ void plc::plcRun() {
         tmpV = strtok(NULL, " \n");
         
         string thing = tmpI;
+        thing = trim(thing);
         
-        boolV = (!strcmp(tmpV,"TRUE")) ? true : false; 
         
         if( thing == "TICK") {
+            cout << thing << endl;
         } else {
+            boolV = (!strcmp(tmpV,"TRUE")) ? true : false; 
             
             ioPoint[ thing ] = boolV;
         }
