@@ -58,9 +58,22 @@ class plc {
         void compile(string inst, string iop);
         
         void Ld(string symbol);
+        void Ldn(string symbol);
+        void Ldr(string symbol);
+        void Ldf(string symbol);
+
         void Or(string symbol);
+        void Orn(string symbol);
+        void Orr(string symbol);
+        void Orf(string symbol);
+
+        void And(string symbol);
         void Andn(string symbol);
+        void Andr(string symbol);
+        void Andf(string symbol);
+
         void Out(string symbol);
+        void Outn(string symbol);
     public:
         void setVerbose(bool flag);
         void dumpProgram();
