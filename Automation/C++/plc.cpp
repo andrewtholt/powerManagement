@@ -252,6 +252,41 @@ void plc::Ld(string symbol) {
     acc=v;
 }
 
+// TODO Test
+void plc::Ld(string symbol) {
+    bool v=ioPoint[ symbol];
+    
+    acc=!v;
+}
+
+// TODO Test
+void plc::Ldr(string symbol) {
+    static bool oldV = false;
+    bool outV=false;
+
+    bool v=ioPoint[ symbol];
+
+// So if oldV is low and new v is high then +ve edge
+    outV =  !oldV && v;
+
+    oldV = v;
+    acc=outV;
+}
+
+// TODO Test
+void plc::Ldf(string symbol) {
+    static bool oldV = false;
+    bool outV=false;
+
+    bool v=ioPoint[ symbol];
+
+// So if oldV is high and new v is lo then -ve edge
+    outV =  oldV && !v;
+
+    oldV = v;
+    acc=outV;
+}
+
 void plc::Or(string symbol) {
     bool v=ioPoint[ symbol];
     
