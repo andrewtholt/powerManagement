@@ -223,6 +223,24 @@ void plc::plcRun() {
                     }
                     Ld(i.iop);
                     break;
+                case LDN: 
+                    if( verbose) {
+                        printf("LDN\t%s\n", (char *)i.iop.c_str());
+                    }
+                    Ldn(i.iop);
+                    break;
+                case LDR: 
+                    if( verbose) {
+                        printf("LDR\t%s\n", (char *)i.iop.c_str());
+                    }
+                    Ldr(i.iop);
+                    break;
+                case LDF: 
+                    if( verbose) {
+                        printf("LDF\t%s\n", (char *)i.iop.c_str());
+                    }
+                    Ldf(i.iop);
+                    break;
                 case OR:
                     if( verbose) {
                         printf("OR\t%s\n", (char *)i.iop.c_str());
@@ -252,14 +270,12 @@ void plc::Ld(string symbol) {
     acc=v;
 }
 
-// TODO Test
-void plc::Ld(string symbol) {
+void plc::Ldn(string symbol) {
     bool v=ioPoint[ symbol];
     
     acc=!v;
 }
 
-// TODO Test
 void plc::Ldr(string symbol) {
     static bool oldV = false;
     bool outV=false;
@@ -273,7 +289,6 @@ void plc::Ldr(string symbol) {
     acc=outV;
 }
 
-// TODO Test
 void plc::Ldf(string symbol) {
     static bool oldV = false;
     bool outV=false;
