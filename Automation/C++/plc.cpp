@@ -7,17 +7,17 @@
 #include <fstream>
 #include <string>
 
-inline std::string& ltrim(std::string& s, const char* t = " \t\n\r\f\v") {
+inline std::string &ltrim(std::string& s, const char* t = " \t\n\r\f\v") {
     s.erase(0, s.find_first_not_of(t));
     return s;
 }
 
-inline std::string& rtrim(std::string& s, const char* t = " \t\n\r\f\v") {
+inline std::string &rtrim(std::string& s, const char* t = " \t\n\r\f\v") {
     s.erase(s.find_last_not_of(t) + 1);
     return s;
 }
 
-inline std::string& trim(std::string& s, const char* t = " \t\n\r\f\v") {
+inline std::string &trim(std::string& s, const char* t = " \t\n\r\f\v") {
     return ltrim(rtrim(s, t), t);
 }
 
@@ -26,18 +26,18 @@ using namespace std;
 void plc::plcDump() {
     cout << "I am      :" + iam << endl;
     cout << "PLC Status:";
-    
+
     if( spreadOK) {
         cout << "OK" << endl;
     } else {
         cout << "Failed" << endl;
     }
-    
+
     cout << "In  group :" + inGroup << endl;
     cout << "Out group :" + outGroup << endl;
-    
+
     cout << endl;
-    
+
 }
 
 void plc::setVerbose(bool flag) {
@@ -45,36 +45,36 @@ void plc::setVerbose(bool flag) {
 }
 
 void plc::initPlc() {
-    
+
     ioPoint["FALSE"] = false;
     ioPoint["TRUE"] = true;
     ioPoint["SCAN"] = false;
-    
+
     setUser((char *)iam.c_str());
-    
+
     int rc=SPConnectSimple();
-    
+
     spreadOK = ( rc < 0 ) ? false : true ;
-    
+
     if( spreadOK ) {
         rc=SPJoinSimple((char *)"global");
         spreadOK = ( rc < 0 ) ? false : true ;
-        
+
         rc=SPJoinSimple((char *)"logic");
         spreadOK = ( rc < 0 ) ? false : true ;
     }
-    
+
 }
 
 plc::plc(string name) {
     iam = name;
-    
+
     initPlc();
 }
 
 plc::plc(string name, string host) {
     iam = name;
-    
+
     setServer( (char *)host.c_str() );
     initPlc();
 }
@@ -89,13 +89,13 @@ bool plc::loadProg(string fileName) {
     string inLine;
     string token;
     size_t pos;
-    
+
     string inst;
     string iop;
     string tmp;
-    
+
     ifstream inFile( fileName);
-    
+
     while(getline(inFile, inLine )) {
         // Find and strip comments.
         //
@@ -122,13 +122,12 @@ bool plc::loadProg(string fileName) {
                 iop  = trim(iop);
                 //                cout << "\t>" + inst +"<" << endl;
                 //                cout << "\t:" + iop + "<" << endl;
-                
-                
+
                 compile(inst,iop);
             }
         }
     }
-    
+
     return failFlag;
 }
 
@@ -139,11 +138,11 @@ void plc::dumpProgram() {
 }
 void plc::compile(string inst, string iop) {
     string tmp = inst.substr(0,2);
-    
+
     struct ramEntry fred;
-    
+
     cout << inst + " " + iop << endl;
-    
+
     if( tmp == "LD" ) {
         if ( inst[2] == 'N' ) {
             fred.inst = LDN;
@@ -190,30 +189,36 @@ void plc::compile(string inst, string iop) {
 }
 
 void plc::plcRun() {
-    
+
     char rxMsg[255];
     char *tmpI;
     char *tmpV;
     bool boolV=false;
-    
+    bool firstPass=true;
+    int rc;
+
     while(true) {
-        int rc = SPRxSimple(rxMsg, 255);
-        
-        tmpI = strtok(rxMsg," ");
-        tmpV = strtok(NULL, " \n");
-        
-        string thing = tmpI;
-        thing = trim(thing);
-        
-        
-        if( thing == "TICK") {
-            cout << thing << endl;
+        if( firstPass ) {
+            firstPass=false;
         } else {
-            boolV = (!strcmp(tmpV,"TRUE")) ? true : false; 
-            
-            ioPoint[ thing ] = boolV;
+            rc = SPRxSimple(rxMsg, 255);
+
+            tmpI = strtok(rxMsg," ");
+            tmpV = strtok(NULL, " \n");
+
+            string thing = tmpI;
+            thing = trim(thing);
+
+
+            if( thing == "TICK") {
+                cout << thing << endl;
+            } else {
+                boolV = (!strcmp(tmpV,"TRUE")) ? true : false; 
+
+                ioPoint[ thing ] = boolV;
+            }
         }
-        
+
         for (auto i : RAM ) {
             //        printf("0x%02x %s\n", i.inst, (char *)i.iop.c_str());
             switch(i.inst) {
@@ -247,6 +252,24 @@ void plc::plcRun() {
                     }
                     Or(i.iop);
                     break;
+                case ORN:
+                    if( verbose) {
+                        printf("ORN\t%s\n", (char *)i.iop.c_str());
+                    }
+                    Orn(i.iop);
+                    break;
+                case ORR:
+                    if( verbose) {
+                        printf("ORR\t%s\n", (char *)i.iop.c_str());
+                    }
+                    Orr(i.iop);
+                    break;
+                case ORF:
+                    if( verbose) {
+                        printf("ORF\t%s\n", (char *)i.iop.c_str());
+                    }
+                    Orf(i.iop);
+                    break;
                 case ANDN:
                     if( verbose) {
                         printf("ANDN\t%s\n", (char *)i.iop.c_str());
@@ -266,13 +289,13 @@ void plc::plcRun() {
 
 void plc::Ld(string symbol) {
     bool v=ioPoint[ symbol];
-    
+
     acc=v;
 }
 
 void plc::Ldn(string symbol) {
     bool v=ioPoint[ symbol];
-    
+
     acc=!v;
 }
 
@@ -282,7 +305,7 @@ void plc::Ldr(string symbol) {
 
     bool v=ioPoint[ symbol];
 
-// So if oldV is low and new v is high then +ve edge
+    // So if oldV is low and new v is high then +ve edge
     outV =  !oldV && v;
 
     oldV = v;
@@ -295,7 +318,7 @@ void plc::Ldf(string symbol) {
 
     bool v=ioPoint[ symbol];
 
-// So if oldV is high and new v is lo then -ve edge
+    // So if oldV is high and new v is lo then -ve edge
     outV =  oldV && !v;
 
     oldV = v;
@@ -304,27 +327,57 @@ void plc::Ldf(string symbol) {
 
 void plc::Or(string symbol) {
     bool v=ioPoint[ symbol];
-    
+
     acc = acc || v;
+}
+
+void plc::Orn(string symbol) {
+    bool v=ioPoint[ symbol];
+
+    acc = acc || !v;
+}
+
+void plc::Orr(string symbol) {
+    static bool oldV=false;
+    bool outV=false;
+
+    bool v=ioPoint[ symbol];
+
+    outV = v && !oldV;
+    oldV = v;
+
+    acc = acc || outV;
+}
+
+void plc::Orf(string symbol) {
+    static bool oldV=false;
+    bool outV=false;
+
+    bool v=ioPoint[ symbol];
+
+    outV = !v && oldV;
+    oldV = v;
+
+    acc = acc || outV;
 }
 
 void plc::Andn(string symbol) {
     bool v=ioPoint[ symbol];
-    
+
     acc = acc && (!v);
 }
 
 void plc::Out(string symbol) {
-    
+
     string accString;
-    
+
     accString = symbol + " ";
-    
+
     accString += (acc) ? "TRUE" : "FALSE";
-    
+
     ioPoint[ symbol ] = acc;
-    
+
     int rc =  SPTxSimple((char *)outGroup.c_str(), (char *)accString.c_str()) ;    
-    
+
     acc = false;
 }
