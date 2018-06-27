@@ -270,6 +270,24 @@ void plc::plcRun() {
                     }
                     Orf(i.iop);
                     break;
+                case AND:
+                    if( verbose) {
+                        printf("AND\t%s\n", (char *)i.iop.c_str());
+                    }
+                    And(i.iop);
+                    break;
+                case ANDR:
+                    if( verbose) {
+                        printf("ANDR\t%s\n", (char *)i.iop.c_str());
+                    }
+                    Andr(i.iop);
+                    break;
+                case ANDF:
+                    if( verbose) {
+                        printf("ANDF\t%s\n", (char *)i.iop.c_str());
+                    }
+                    Andf(i.iop);
+                    break;
                 case ANDN:
                     if( verbose) {
                         printf("ANDN\t%s\n", (char *)i.iop.c_str());
@@ -281,6 +299,12 @@ void plc::plcRun() {
                         printf("OUT\t%s\n", (char *)i.iop.c_str());
                     }
                     Out(i.iop);
+                    break;
+                case OUTN:
+                    if( verbose) {
+                        printf("OUTN\t%s\n", (char *)i.iop.c_str());
+                    }
+                    Outn(i.iop);
                     break;
             }
         }
@@ -361,10 +385,53 @@ void plc::Orf(string symbol) {
     acc = acc || outV;
 }
 
+void plc::And(string symbol) {
+    bool v=ioPoint[ symbol];
+
+    acc = acc && v ;
+}
+
 void plc::Andn(string symbol) {
     bool v=ioPoint[ symbol];
 
     acc = acc && (!v);
+}
+
+void plc::Andr(string symbol) {
+    static bool oldV=false;
+    bool outV=false;
+
+    bool v=ioPoint[ symbol];
+    outV = v && !oldV;
+    oldV = v;
+
+    acc = acc && outV ;
+}
+
+void plc::Andf(string symbol) {
+    static bool oldV=false;
+    bool outV=false;
+
+    bool v=ioPoint[ symbol];
+    outV = !v && oldV;
+    oldV = v;
+
+    acc = acc && outV ;
+}
+
+void plc::Outn(string symbol) {
+
+    string accString;
+
+    accString = symbol + " ";
+
+    accString += (acc) ? "FALSE" : "TRUE";
+
+    ioPoint[ symbol ] = acc;
+
+    int rc =  SPTxSimple((char *)outGroup.c_str(), (char *)accString.c_str()) ;    
+
+    acc = false;
 }
 
 void plc::Out(string symbol) {
