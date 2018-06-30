@@ -1,8 +1,9 @@
 ; comment a ful line
-TIM-LD 20:28    ; part line
+; TIM-LD 20:28    ; part line
+LDN day
 OR BackFloodlight
 OR START
-TIM-ANDN 20:50
+TIM-ANDN 23:00
 ANDN STOP
 OUT BackFloodlight
 END

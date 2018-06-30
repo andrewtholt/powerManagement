@@ -66,13 +66,13 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
 
     printf("got message '%.*s' for topic '%s'\n", message->payloadlen, (char*) message->payload, message->topic);
 
-    sprintf(sql,"update io_point set state='%s'  where topic='%s';\n",(char*) message->payload, message->topic);
+//    sprintf(sql,"update io_point set state='%s'  where topic='%s';\n",(char*) message->payload, message->topic);
 
 //    printf("%s\n", sql);
 //    getSem(sid);
-    old=time(NULL);
-    me->sendCmd( sql );
-    now=time(NULL);
+//    old=time(NULL);
+//    me->sendCmd( sql );
+//    now=time(NULL);
 //    relSem(sid);
 
     sprintf(sql, "select name,on_state,off_state from io_point where topic = '%s';\n", message->topic);
@@ -101,6 +101,9 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
 
     cout << destGroup + " " + spreadMsg << endl;
     int rc =  SPTxSimple((char *)destGroup.c_str(), (char *)spreadMsg.c_str()) ;
+
+    printf("Sending to %s\n",(char *)destGroup.c_str());
+    printf("           %s\n",(char *)spreadMsg.c_str());
 
 //    printf("delta %d\n", (int)(now - old));
 

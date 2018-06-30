@@ -222,6 +222,7 @@ int main(int argc, char *argv[]) {
         string outputState;
 
         while(runFlag) {
+            firstTime=false;
             if ( firstTime ) {
                 sprintf(sql, "select topic,state, on_state, off_state from io_point where direction = 'out';\n");
             } else {

@@ -228,13 +228,6 @@ void plc::plcRun() {
 
         for (auto i : RAM ) {
 
-            printf("Acc: ");
-
-            if (acc) {
-                printf("TRUE\t");
-            } else {
-                printf("FALSE\t");
-            }
             switch(i.inst) {
                 case LD: 
                     if( verbose) {
@@ -332,6 +325,12 @@ void plc::plcRun() {
                     }
                     Outn(i.iop);
                     break;
+            }
+            printf("Acc: ");
+            if (acc) {
+                printf("TRUE\t");
+            } else {
+                printf("FALSE\t");
             }
         }
     }
