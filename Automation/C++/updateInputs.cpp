@@ -116,6 +116,7 @@ void usage() {
     printf("\t-n <name>\tDatabase hostname\n");
     printf("\t-p <svc name>\tDatabase service name\n");
     printf("\t-s <spread host>\tHostname of spread host\n");
+    printf("\t-t <delay>\tTime between ticks, aligned to 0 seconds.\n");
     printf("\t-v\t\tVerbose\n");
     printf("\t-w\t\tWait for logic.\n");
 }
