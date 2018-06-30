@@ -21,6 +21,29 @@ using namespace std;
 int logicPid=0;
 int sid;
 string destGroup = "logic";
+int tickDelay=0;
+
+int calcDelay(int q) {
+    time_t now=time(NULL);
+    struct tm *hms = localtime( &now );
+    int seconds = hms->tm_sec ;
+    int delay = q - ( seconds % q);
+
+    printf("Delay=%d\n", delay);
+    return delay;
+}
+//
+// alarm handler
+//
+void alarmHandler(int sig) {
+    static int count=0;
+    signal(SIGALRM, SIG_IGN);
+    count++;
+    printf("updateInputs: Alarm fired %d\n", count);
+    int rc =  SPTxSimple((char *)destGroup.c_str(), (char *)"TICK");
+    signal(SIGALRM, alarmHandler);
+    alarm(calcDelay(tickDelay));
+}
 
 // MQTT Stuff
 //
@@ -115,7 +138,7 @@ int main(int argc, char *argv[]) {
     int opt;
     int rc;
 
-    while (( opt = getopt(argc, argv, "g:h?i:n:p:s:vw")) !=-1) {
+    while (( opt = getopt(argc, argv, "g:h?i:n:p:s:t:vw")) !=-1) {
         switch(opt) {
             case 'g':
                 // Spread group to send messages to.
@@ -137,6 +160,9 @@ int main(int argc, char *argv[]) {
             case 's':
                 spreadHost = optarg;
                 break;
+            case 't':
+                tickDelay = atoi(optarg);
+                break;
             case 'v':
                 verbose = true;
                 break;
@@ -146,11 +172,13 @@ int main(int argc, char *argv[]) {
         }
     }
 
+
 //    if(verbose) {
         cout << "Hostname    : " << hostName << endl;
         cout << "Service     : " << serviceName << endl;
         cout << "Spread Host : " << spreadHost << endl;
         cout << "I am        : " << myName << endl;
+        cout << "Tick Delay  : " << tickDelay << endl;
         cout << endl;
 //    }
 
@@ -292,6 +320,12 @@ int main(int argc, char *argv[]) {
     if( relSem(sid) < 0) {
         perror("Failed to release lock.");
         exit(4);
+    }
+
+    if( tickDelay > 0) {
+        alarm(calcDelay(tickDelay));
+        signal(SIGALRM, alarmHandler);
+
     }
     rc = mosquitto_loop_forever(mosq, -1, 1);
 
