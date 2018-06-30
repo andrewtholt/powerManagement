@@ -1,5 +1,6 @@
 #include "myClientClass.h"
 #include <string.h>
+#include <time.h>
 #include "plc.h"
 #include <stdio.h>
 #include <iostream>
@@ -179,6 +180,10 @@ void plc::compile(string inst, string iop) {
         } else if(inst == "OUTN" ) {
             fred.inst = OUTN;
         }
+    } else if( tmp == "TI") {
+        if(inst == "TIM-LD") {
+            fred.inst = TIM_LD;
+        }
     }
     if( iop.size() > 0 ) {
         fred.iop = iop;
@@ -300,6 +305,12 @@ void plc::plcRun() {
                     }
                     Out(i.iop);
                     break;
+                case TIM_LD:
+                    if(verbose) {
+                        printf("TIM-LD\t%s\n", (char *)i.iop.c_str());
+                    }
+                    TimLd(i.iop);
+                    break;
                 case OUTN:
                     if( verbose) {
                         printf("OUTN\t%s\n", (char *)i.iop.c_str());
@@ -417,6 +428,34 @@ void plc::Andf(string symbol) {
     oldV = v;
 
     acc = acc && outV ;
+}
+
+void plc::TimLd(string runAt) {
+    static bool hasRun=false;
+
+    char target[6];  // hh:mm
+    time_t now=time(NULL);
+    struct tm *hms = localtime( &now );
+    int hours = hms->tm_hour ;
+    int minutes = hms->tm_min ;
+
+    strcpy(target, runAt.c_str());
+
+    char *hrs = strtok(target,(char *)":");
+    char *min = strtok(NULL,(char *)" :");
+
+    int minRun = atoi(min);
+
+    if( minRun == minutes) {
+        if( hasRun == false ) {
+            printf("Run Now\n");
+            acc = true;
+            hasRun = true;
+        }
+    } else {
+        hasRun = false;
+        acc = false;
+    }
 }
 
 void plc::Outn(string symbol) {

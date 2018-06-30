@@ -21,7 +21,7 @@ using namespace std;
 int logicPid=0;
 int sid;
 string destGroup = "logic";
-int tickDelay=0;
+int tickDelay=30;
 
 int calcDelay(int q) {
     time_t now=time(NULL);

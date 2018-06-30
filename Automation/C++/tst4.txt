@@ -1,0 +1,4 @@
+TIM-LD 17:26
+OUT RLY1
+END
+

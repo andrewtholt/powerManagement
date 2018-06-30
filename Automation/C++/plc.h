@@ -26,7 +26,12 @@ enum Inst {
     ANDR,
     ANDF,
 
-    OUT=0x30,
+    TIM_LD=0x30,
+    TIM_LDN,
+    TIM_AND,
+    TIM_ANDN,
+
+    OUT=0x40,
     OUTN,
     END=0xff
 };
@@ -42,7 +47,6 @@ class plc {
         bool acc=false;
 
         map<string, bool> ioPoint;
-//        vector<array<string,2>> RAM;
         vector<ramEntry> RAM;
 
         string iam;
@@ -72,6 +76,8 @@ class plc {
         void Andr(string symbol);
         void Andf(string symbol);
 
+        void TimLd(string time);    // what was the symbol for an IO point
+                                    // is now hh:mm time.
         void Out(string symbol);
         void Outn(string symbol);
     public:
