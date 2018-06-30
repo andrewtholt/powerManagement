@@ -27,9 +27,11 @@ int calcDelay(int q) {
     time_t now=time(NULL);
     struct tm *hms = localtime( &now );
     int seconds = hms->tm_sec ;
-    int delay = q - ( seconds % q);
+    int delay = q - ( seconds % q)+1;
 
+    printf ("%02d:%02d:%02d\n", hms->tm_hour, hms->tm_min, hms->tm_sec);
     printf("Delay=%d\n", delay);
+
     return delay;
 }
 //

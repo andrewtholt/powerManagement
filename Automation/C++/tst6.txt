@@ -1,0 +1,9 @@
+; comment a ful line
+TIM-LD 20:28    ; part line
+OR BackFloodlight
+OR START
+TIM-ANDN 20:50
+ANDN STOP
+OUT BackFloodlight
+END
+

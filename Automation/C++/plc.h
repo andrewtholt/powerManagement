@@ -60,6 +60,7 @@ class plc {
 
         void initPlc();
         void compile(string inst, string iop);
+        bool runNow(string when);
         
         void Ld(string symbol);
         void Ldn(string symbol);
@@ -78,6 +79,8 @@ class plc {
 
         void TimLd(string time);    // what was the symbol for an IO point
                                     // is now hh:mm time.
+        void TimAndn(string time);
+
         void Out(string symbol);
         void Outn(string symbol);
     public:

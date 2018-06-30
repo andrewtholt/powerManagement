@@ -183,6 +183,8 @@ void plc::compile(string inst, string iop) {
     } else if( tmp == "TI") {
         if(inst == "TIM-LD") {
             fred.inst = TIM_LD;
+        } else if(inst == "TIM-ANDN") {
+            fred.inst = TIM_ANDN;
         }
     }
     if( iop.size() > 0 ) {
@@ -225,7 +227,14 @@ void plc::plcRun() {
         }
 
         for (auto i : RAM ) {
-            //        printf("0x%02x %s\n", i.inst, (char *)i.iop.c_str());
+
+            printf("Acc: ");
+
+            if (acc) {
+                printf("TRUE\t");
+            } else {
+                printf("FALSE\t");
+            }
             switch(i.inst) {
                 case LD: 
                     if( verbose) {
@@ -310,6 +319,12 @@ void plc::plcRun() {
                         printf("TIM-LD\t%s\n", (char *)i.iop.c_str());
                     }
                     TimLd(i.iop);
+                    break;
+                case TIM_ANDN:
+                    if(verbose) {
+                        printf("TIM-ANDN\t%s\n", (char *)i.iop.c_str());
+                    }
+                    TimAndn(i.iop);
                     break;
                 case OUTN:
                     if( verbose) {
@@ -430,8 +445,8 @@ void plc::Andf(string symbol) {
     acc = acc && outV ;
 }
 
-void plc::TimLd(string runAt) {
-    static bool hasRun=false;
+bool plc::runNow(string when) {
+    bool runNow=false;
 
     char target[6];  // hh:mm
     time_t now=time(NULL);
@@ -439,22 +454,51 @@ void plc::TimLd(string runAt) {
     int hours = hms->tm_hour ;
     int minutes = hms->tm_min ;
 
-    strcpy(target, runAt.c_str());
+    strcpy(target, when.c_str());
 
     char *hrs = strtok(target,(char *)":");
     char *min = strtok(NULL,(char *)" :");
 
     int minRun = atoi(min);
 
-    if( minRun == minutes) {
-        if( hasRun == false ) {
-            printf("Run Now\n");
-            acc = true;
-            hasRun = true;
-        }
-    } else {
-        hasRun = false;
+    runNow = ( minRun == minutes) ? true:false;
+
+    return runNow;
+}
+
+void plc::TimLd(string runAt) {
+    static bool hasRun=false;
+    bool runFlag=false;
+
+    acc=false;
+
+    runFlag = runNow(runAt);
+
+    if( runFlag && !hasRun ) {
+        acc = true;
+        hasRun = true;
+    }
+
+    if ( !runFlag) {
         acc = false;
+        hasRun = false;
+    }
+}
+
+void plc::TimAndn(string runAt) {
+    static bool hasRun=false;
+    bool runFlag=false;
+
+    runFlag = runNow(runAt);
+
+    if( runFlag && !hasRun ) {
+        acc = acc && false;
+        hasRun = true;
+    }
+
+    if ( !runFlag) {
+        acc = acc && true ;
+        hasRun = false;
     }
 }
 
