@@ -223,7 +223,7 @@ int main(int argc, char *argv[]) {
         while(runFlag) {
             firstTime=false;
             if ( firstTime ) {
-                sprintf(sql, "select topic,state, on_state, off_state from io_point where direction = 'out';\n");
+                sprintf(sql, "select topic,state, on_state, off_state from io_point where direction = 'OUT';\n");
             } else {
                 rc= SPRxSimple( rxMsg, 255) ;
                 int len=strlen(rxMsg);
@@ -235,7 +235,7 @@ int main(int argc, char *argv[]) {
                     name = strtok(rxMsg," ");
                     state = strtok(NULL," \n");
 
-                    sprintf(sql, "select topic,state, on_state, off_state from io_point where direction = 'out' and name='%s';\n", name.c_str());
+                    sprintf(sql, "select topic,state, on_state, off_state from io_point where direction = 'OUT' and name='%s';\n", name.c_str());
 
                 }
             }
@@ -247,7 +247,11 @@ int main(int argc, char *argv[]) {
 
             int cnt = stoi( out,nullptr);
 
-            cout << cnt << endl;
+            if( cnt == 0) {
+                cout << sql << endl;
+            }
+
+            cout << "Rows:" << cnt << endl;
 
             for( int i=0; i < cnt ; i++ ) {
                 if( i > 0 ) {
