@@ -83,6 +83,9 @@ class plc {
 
         void Out(string symbol);
         void Outn(string symbol);
+
+        const string boolToString(bool f);
+        void instDisplay(string inst, string iop);
     public:
         void setVerbose(bool flag);
         void dumpProgram();

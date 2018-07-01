@@ -3,7 +3,7 @@ CPP=g++
 
 CFLAGS=-g -std=c++11
 
-BINS=tstPlc logic tstClient updateInputs updateOutputs 
+BINS=logic tstClient updateInputs updateOutputs 
 LIBS=-lspreadhelper
 
 all:	$(BINS)

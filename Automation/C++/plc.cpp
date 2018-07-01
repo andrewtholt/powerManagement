@@ -84,6 +84,7 @@ bool plc::plcStatus() {
     return spreadOK;
 }
 
+
 bool plc::loadProg(string fileName) {
     bool failFlag=true;
     string line;
@@ -109,7 +110,7 @@ bool plc::loadProg(string fileName) {
             line=inLine;
         }
         if( line.size() > 0) {
-            //            cout << "LINE:" + line << endl;
+            //
             // line now contains just the stuff I want.
             // The line format is <inst> <io point>
             //
@@ -121,8 +122,8 @@ bool plc::loadProg(string fileName) {
                 }
                 inst = trim(inst);
                 iop  = trim(iop);
-                //                cout << "\t>" + inst +"<" << endl;
-                //                cout << "\t:" + iop + "<" << endl;
+
+                for (auto & c: iop) c = toupper(c);
 
                 compile(inst,iop);
             }
@@ -195,6 +196,28 @@ void plc::compile(string inst, string iop) {
     RAM.push_back(fred);
 }
 
+const string plc::boolToString(bool f) {
+    string state;
+
+    state = (f) ? "True" : "False" ;
+
+    return state;
+}
+
+void plc::instDisplay(string inst, string iop) {
+
+    cout << "Acc :";
+    cout << boolToString(acc) << endl;
+    cout << "\t" + inst + "\t" + iop + "\t = " ;
+
+    if ( ioPoint[iop] ) {
+        cout << "[True]";
+    } else {
+        cout << "[False]";
+    }
+
+    cout << endl;
+}
 void plc::plcRun() {
 
     char rxMsg[255];
@@ -231,37 +254,37 @@ void plc::plcRun() {
             switch(i.inst) {
                 case LD: 
                     if( verbose) {
-                        printf("LD\t%s\n", (char *)i.iop.c_str());
+                        instDisplay("LD", i.iop);
                     }
                     Ld(i.iop);
                     break;
                 case LDN: 
                     if( verbose) {
-                        printf("LDN\t%s\n", (char *)i.iop.c_str());
+                        instDisplay("LDN", i.iop);
                     }
                     Ldn(i.iop);
                     break;
                 case LDR: 
                     if( verbose) {
-                        printf("LDR\t%s\n", (char *)i.iop.c_str());
+                        instDisplay("LDR", i.iop);
                     }
                     Ldr(i.iop);
                     break;
                 case LDF: 
                     if( verbose) {
-                        printf("LDF\t%s\n", (char *)i.iop.c_str());
+                        instDisplay("LDF", i.iop);
                     }
                     Ldf(i.iop);
                     break;
                 case OR:
                     if( verbose) {
-                        printf("OR\t%s\n", (char *)i.iop.c_str());
+                        instDisplay("OR", i.iop);
                     }
                     Or(i.iop);
                     break;
                 case ORN:
                     if( verbose) {
-                        printf("ORN\t%s\n", (char *)i.iop.c_str());
+                        instDisplay("ORN", i.iop);
                     }
                     Orn(i.iop);
                     break;
@@ -273,64 +296,58 @@ void plc::plcRun() {
                     break;
                 case ORF:
                     if( verbose) {
-                        printf("ORF\t%s\n", (char *)i.iop.c_str());
+                        instDisplay("ORF", i.iop);
                     }
                     Orf(i.iop);
                     break;
                 case AND:
                     if( verbose) {
-                        printf("AND\t%s\n", (char *)i.iop.c_str());
+                        instDisplay("AND", i.iop);
                     }
                     And(i.iop);
                     break;
                 case ANDR:
                     if( verbose) {
-                        printf("ANDR\t%s\n", (char *)i.iop.c_str());
+                        instDisplay("ANDR", i.iop);
                     }
                     Andr(i.iop);
                     break;
                 case ANDF:
                     if( verbose) {
-                        printf("ANDF\t%s\n", (char *)i.iop.c_str());
+                        instDisplay("ANDF", i.iop);
                     }
                     Andf(i.iop);
                     break;
                 case ANDN:
                     if( verbose) {
-                        printf("ANDN\t%s\n", (char *)i.iop.c_str());
+                        instDisplay("ANDN", i.iop);
                     }
                     Andn(i.iop);
                     break;
                 case OUT:
                     if( verbose) {
-                        printf("OUT\t%s\n", (char *)i.iop.c_str());
+                        instDisplay("OUT", i.iop);
                     }
                     Out(i.iop);
                     break;
                 case TIM_LD:
                     if(verbose) {
-                        printf("TIM-LD\t%s\n", (char *)i.iop.c_str());
+                        instDisplay("TIM-LD", i.iop);
                     }
                     TimLd(i.iop);
                     break;
                 case TIM_ANDN:
                     if(verbose) {
-                        printf("TIM-ANDN\t%s\n", (char *)i.iop.c_str());
+                        instDisplay("TIM-ANDN", i.iop);
                     }
                     TimAndn(i.iop);
                     break;
                 case OUTN:
                     if( verbose) {
-                        printf("OUTN\t%s\n", (char *)i.iop.c_str());
+                        instDisplay("OUTN", i.iop);
                     }
                     Outn(i.iop);
                     break;
-            }
-            printf("Acc: ");
-            if (acc) {
-                printf("TRUE\t");
-            } else {
-                printf("FALSE\t");
             }
         }
     }

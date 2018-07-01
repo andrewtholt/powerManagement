@@ -1,3 +1,5 @@
 LDN DAY
+OUT NIGHT
+LD NIGHT
 OUT BackFloodlight
 END

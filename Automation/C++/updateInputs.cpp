@@ -66,27 +66,14 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
 
     printf("got message '%.*s' for topic '%s'\n", message->payloadlen, (char*) message->payload, message->topic);
 
-//    sprintf(sql,"update io_point set state='%s'  where topic='%s';\n",(char*) message->payload, message->topic);
-
-//    printf("%s\n", sql);
-//    getSem(sid);
-//    old=time(NULL);
-//    me->sendCmd( sql );
-//    now=time(NULL);
-//    relSem(sid);
-
     sprintf(sql, "select name,on_state,off_state from io_point where topic = '%s';\n", message->topic);
-//    printf("%s\n", sql);
-//    getSem(sid);
     old=time(NULL);
     me->sendCmd( sql );
     now=time(NULL);
-//    relSem(sid);
 
     me->sendCmd( (char *)"^get-col name\n", out);
     spreadMsg = out + " ";
 
-//    cout << out << endl;
     me->sendCmd( (char *)"^get-col on_state\n",  onValue);
     me->sendCmd( (char *)"^get-col off_state\n", offValue);
 
@@ -104,8 +91,6 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
 
     printf("Sending to %s\n",(char *)destGroup.c_str());
     printf("           %s\n",(char *)spreadMsg.c_str());
-
-//    printf("delta %d\n", (int)(now - old));
 
     if ( logicPid > 0) {
         kill( logicPid, SIGALRM);
@@ -335,18 +320,5 @@ int main(int argc, char *argv[]) {
     }
     rc = mosquitto_loop_forever(mosq, -1, 1);
 
-    /*
-       bool run=true;
-       while(run) {
-       rc = mosquitto_loop(mosq, -1, 1);
-       if(run && (rc == 0)) {
-       printf("connection error!\n");
-       printf("%s\n", mosquitto_strerror( rc ));
-       sleep(10);
-       mosquitto_reconnect(mosq);
-       }
-       }
-       mosquitto_destroy(mosq);
-       */
 }
 

@@ -28,8 +28,7 @@ void hupHandler(int sig) {
     runFlag=false;
     signal(SIGHUP, hupHandler);
 }
-
-
+//
 // MQTT Stuff
 //
 void connect_callback(struct mosquitto *mosq, void *obj, int result) {
