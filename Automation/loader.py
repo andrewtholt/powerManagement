@@ -5,7 +5,6 @@ import getopt
 import os.path
 from os import getenv
 
-
 verbose=False
 dbType="NONE"
 pdir="."
@@ -149,23 +148,15 @@ def main():
     clean=False
     initFile=None
 
-    dbName = getenv("CTL_DB")
-    if dbName != None:
-        dbDir = os.path.dirname(dbName)
-
-    pdir = getenv("CTL_PDIR")
-    dbDir = getenv("CTL_DB")
-
-    if dbName == None or pdir == None or dbDir == None:
-        print( "FATAL ERROR: setup CTL_PDIR & CTL_DB env variables")
-        sys.exit(1)
-
     try:
         opts,args = getopt.getopt(sys.argv[1:], "cd:hvi:t:",["clean","database","help","verbose","init","type" ])
     except:
         print("Argument error")
         usage()
         sys.exit(2)
+
+    dbName = None
+    dbDir  = None
 
     for o,a in opts:
         if o in ("-d","--database"):
@@ -184,18 +175,31 @@ def main():
         elif o in ("-t","--type"):
             dbType = a
 
-    if dbType not in ("MYSQL", "SQLITE"):
-        print("You must select a valid database type, options are MYSQL or SQLITE.")
-        print()
-        usage()
-        sys.exit(0)
-
+#    if dbName == None:
+#        dbName = getenv("CTL_DB")
+#        if dbName != None:
+#            dbDir = os.path.dirname(dbName)
+#
+#    pdir = getenv("CTL_PDIR")
+#    dbDir = getenv("CTL_DB")
+#
+#    if dbName == None or pdir == None or dbDir == None:
+#        print( "FATAL ERROR: setup CTL_PDIR & CTL_DB env variables")
+#        sys.exit(1)
+#
+#    if dbType not in ("MYSQL", "SQLITE"):
+#        print("You must select a valid database type, options are MYSQL or SQLITE.")
+#        print()
+#        usage()
+#        sys.exit(0)
+#
     if verbose:
         print("Database is " + dbName)
 
 
     try:
         if dbType == "MYSQL":
+            print("Here")
             import pymysql as mysql
             con = mysql.connect("localhost", "automation","automation","automation")
         elif dbType == "SQLITE":
