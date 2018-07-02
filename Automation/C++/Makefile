@@ -4,7 +4,7 @@ CPP=g++
 CFLAGS=-g -std=c++11
 
 BINS=logic tstClient updateInputs updateOutputs 
-LIBS=-lspreadhelper
+LIBS=-lspreadhelper -lpthread
 
 all:	$(BINS)
 

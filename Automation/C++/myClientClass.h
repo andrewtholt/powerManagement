@@ -9,6 +9,7 @@ class myClient{
 public:
    static myClient* Instance();
    bool setupNetwork(char *hostName, char *serviceName);
+   bool setupNetwork(string hostName, string serviceName);
 
    int getMessage(char *buffer, int32_t len) ; // get message into buffer upto len bytes
    int sendMessage(char *buffer, int32_t len);  // Send message in buffer.

@@ -176,7 +176,10 @@ int main(int argc, char *argv[]) {
 
     myClient *n = myClient::Instance();
 
+
     bool failFlag = n->setupNetwork((char *)hostName.c_str(), (char *)serviceName.c_str());
+//    bool failFlag = n->setupNetwork(hostName, serviceName);
+
 
     if(verbose) {
         printf("Network setup %s\n", ((failFlag) ? (char *)"failed" : (char *)"success"));
@@ -186,7 +189,9 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
+    cout << "Here" << endl;
     failFlag = n->loadFile( "mysqlCmds.txt");
+    cout << "Here 2" << endl;
 
     if(verbose) {
         cout << "loadFile ";

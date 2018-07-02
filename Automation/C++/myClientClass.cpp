@@ -38,6 +38,14 @@ myClient* myClient::Instance() {
     return m_pInstance;
 }
 
+bool myClient::setupNetwork(string hostName, string serviceName)  {
+    bool failFlag = true;
+
+    cout << "Host   :" + hostName    << endl;
+    cout << "service:" + serviceName << endl;
+    return failFlag;
+}
+
 bool myClient::setupNetwork(char *hostName, char *serviceName)  {
     bool failFlag = true;
 
