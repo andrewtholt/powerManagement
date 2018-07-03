@@ -8,8 +8,8 @@
 
 #include <iostream>
 
-#define mqtt_host "127.0.0.1"
-// #define mqtt_host "192.168.0.65"
+// #define mqtt_host "127.0.0.1"
+#define mqtt_host "192.168.0.65"
 #define mqtt_port 1883
 
 using namespace std;
@@ -237,6 +237,7 @@ int main(int argc, char *argv[]) {
                     state = strtok(NULL," \n");
 
                     sprintf(sql, "select topic,state, on_state, off_state from io_point where direction = 'OUT' and name='%s';\n", name.c_str());
+//                    sprintf(sql, "select topic,state, on_state, off_state from io_point where direction = 'OUT';\n");
 
                 }
             }
