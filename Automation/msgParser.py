@@ -5,13 +5,13 @@ import os.path
 from os import getenv
 import os.path
 
-from enum import Enum, auto
+from enum import Enum
 
 class databaseType(Enum):
-    NONE = auto()
-    MYSQL = auto()
-    SQLITE = auto()
-    LAST = auto()
+    NONE = 0
+    MYSQL = 1
+    SQLITE = 2
+    LAST = 3
 
 class msgParser:
     echo=False
