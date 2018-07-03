@@ -123,7 +123,7 @@ bool plc::loadProg(string fileName) {
                 inst = trim(inst);
                 iop  = trim(iop);
 
-                for (auto & c: iop) c = toupper(c);
+//                for (auto & c: iop) c = toupper(c);
 
                 compile(inst,iop);
             }
