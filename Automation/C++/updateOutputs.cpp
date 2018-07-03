@@ -278,9 +278,12 @@ int main(int argc, char *argv[]) {
             } else {
                 localIoPoint[name].type = INTERNAL;
             }
-            printf("%s\n\t%d\n\t%s\n", name.c_str() , 
+
+            if(verbose) {
+                printf("%s\n\t%d\n\t%s\n", name.c_str() , 
                    localIoPoint[name].type,
                    localIoPoint[name].topic.c_str() );
+            }
         }
         
         
@@ -297,7 +300,6 @@ int main(int argc, char *argv[]) {
                 state = strtok(NULL," \n");
                 
                 if(localIoPoint.find( name ) != localIoPoint.end() ) {
-                    cout << "Name : " + name << endl;
                     if ( state == "TRUE" ) {
                         outputState = localIoPoint[name].onState;
                         localIoPoint[name].value = true;
@@ -307,21 +309,24 @@ int main(int argc, char *argv[]) {
                     } else {
                         outputState = "UNKNOWN";
                     }
-                    cout << "OutputState :" + outputState << endl;
-                    cout << "topic       :" + localIoPoint[name].topic << endl;
+                    if(verbose) {
+                        cout << "Name : " + name << endl;
+                        cout << "OutputState :" + outputState << endl;
+                        cout << "topic       :" + localIoPoint[name].topic << endl;
+                    } 
                 } else {
                     localIoPoint[name].topic = "/home/internal/" + name;
                     localIoPoint[name].onState = "TRUE";
                     localIoPoint[name].offState = "FALSE";
                     outputState = state;
                     
-//                    sql = "insert into io_point VALUES  ('A','','INTERNAL','OFF','ON','OFF')"
                     sprintf(sql, "insert into io_point VALUES  ('%s','%s','INTERNAL','%s','TRUE','FALSE')\n", (char *)name.c_str(), 
                             localIoPoint[name].topic.c_str(),
                             (char *)outputState.c_str() );
                     
-//                    strcpy(sql, "insert into io_point  (name, topic, direction, state, on_state, off_state) VALUES  ('MORNING', '/home/internal/MORNING','INTERNAL', 'FALSE', 'TRUE', 'FALSE');");
-                     printf("%s\n", sql);
+                    if(verbose) {
+                        printf("%s\n", sql);
+                    }
                     
                     len = n->sendCmd( sql );
                 }
