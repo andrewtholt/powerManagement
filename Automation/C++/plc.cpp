@@ -241,7 +241,9 @@ void plc::plcRun() {
 
 
             if( thing == "TICK") {
-                cout << thing << endl;
+                if( verbose) {
+                    cout << thing << endl;
+                }
             } else {
                 boolV = (!strcmp(tmpV,"TRUE")) ? true : false; 
 
