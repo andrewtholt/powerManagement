@@ -119,6 +119,7 @@ int main(int argc, char *argv[]) {
                 break;
             case 's':
                 spreadHost = optarg;
+                break;
             case 'v':
                 verbose = true;
                 break;
@@ -240,13 +241,31 @@ int main(int argc, char *argv[]) {
         string offState;
         string outputState;
         string direction;
+        bool selectFailed = true;
+        int cnt ;
+        string cmd ;
         
-        sprintf(sql, "select name,topic,state,on_state, off_state,direction  from io_point where direction = 'OUT' or direction = 'INTERNAL';\n");
-        len = n->sendCmd( sql );
-        
-        string cmd = "^get-row-count\n";
-        len = n->sendCmd( cmd, out );
-        int cnt = stoi( out,nullptr);
+        do {
+            sprintf(sql, "select name,topic,state,on_state, off_state,direction  from io_point where direction = 'OUT' or direction = 'INTERNAL';\n");
+            len = n->sendCmd( sql );
+            
+            cmd = "^get-row-count\n";
+            len = n->sendCmd( cmd, out );
+            
+            string::size_type sz;   // alias of size_t
+            
+            cout << out << endl;
+            
+            try {
+                cnt = stoi( out,&sz);
+                selectFailed=false;
+            } 
+            catch (...) {
+                cout << "stoi exception" << endl;
+                sleep(1);
+                selectFailed=true;;
+            }
+        } while(selectFailed);
         
         for( int i=0; i < cnt ; i++ ) {
             if( i > 0 ) {
@@ -278,11 +297,11 @@ int main(int argc, char *argv[]) {
             } else {
                 localIoPoint[name].type = INTERNAL;
             }
-
+            
             if(verbose) {
                 printf("%s\n\t%d\n\t%s\n", name.c_str() , 
-                   localIoPoint[name].type,
-                   localIoPoint[name].topic.c_str() );
+                       localIoPoint[name].type,
+                       localIoPoint[name].topic.c_str() );
             }
         }
         
