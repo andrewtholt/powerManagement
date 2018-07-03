@@ -232,7 +232,7 @@ int main(int argc, char *argv[]) {
         runFlag = true;
         string out;
         
-        char sql[255];
+        char sql[512];
         
         string name;
         string state;
@@ -284,6 +284,7 @@ int main(int argc, char *argv[]) {
         }
         
         
+        string res;
         while(runFlag) {
             rc= SPRxSimple( rxMsg, 255) ;
             int len=strlen(rxMsg);
@@ -313,6 +314,16 @@ int main(int argc, char *argv[]) {
                     localIoPoint[name].onState = "TRUE";
                     localIoPoint[name].offState = "FALSE";
                     outputState = state;
+                    
+//                    sql = "insert into io_point VALUES  ('A','','INTERNAL','OFF','ON','OFF')"
+                    sprintf(sql, "insert into io_point VALUES  ('%s','%s','INTERNAL','%s','TRUE','FALSE')\n", (char *)name.c_str(), 
+                            localIoPoint[name].topic.c_str(),
+                            (char *)outputState.c_str() );
+                    
+//                    strcpy(sql, "insert into io_point  (name, topic, direction, state, on_state, off_state) VALUES  ('MORNING', '/home/internal/MORNING','INTERNAL', 'FALSE', 'TRUE', 'FALSE');");
+                     printf("%s\n", sql);
+                    
+                    len = n->sendCmd( sql );
                 }
                 mosquitto_publish(mosq, NULL, localIoPoint[name].topic.c_str(), outputState.length(), outputState.c_str(),0,true);
             } 
