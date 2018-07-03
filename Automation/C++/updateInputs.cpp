@@ -14,15 +14,16 @@
 
 #include <iostream>
 
-#define mqtt_host "127.0.0.1"
+// #define mqtt_host "127.0.0.1"
 // #define mqtt_host "192.168.0.65"
-#define mqtt_port 1883
+// #define mqtt_port 1883
 
 using namespace std;
 int logicPid=0;
 int sid;
 string destGroup = "logic";
 int tickDelay=30;
+bool verbose=false;
 
 int calcDelay(int q) {
     time_t now=time(NULL);
@@ -30,8 +31,10 @@ int calcDelay(int q) {
     int seconds = hms->tm_sec ;
     int delay = q - ( seconds % q)+1;
 
-    printf ("%02d:%02d:%02d\n", hms->tm_hour, hms->tm_min, hms->tm_sec);
-    printf("Delay=%d\n", delay);
+    if(verbose) {
+        printf ("%02d:%02d:%02d\n", hms->tm_hour, hms->tm_min, hms->tm_sec);
+        printf("Delay=%d\n", delay);
+    }
 
     return delay;
 }
@@ -42,7 +45,9 @@ void alarmHandler(int sig) {
     static int count=0;
     signal(SIGALRM, SIG_IGN);
     count++;
-    printf("updateInputs: Alarm fired %d\n", count);
+    if(verbose) {
+        printf("updateInputs: Alarm fired %d\n", count);
+    }
     int rc =  SPTxSimple((char *)destGroup.c_str(), (char *)"TICK");
     signal(SIGALRM, alarmHandler);
     alarm(calcDelay(tickDelay));
@@ -51,7 +56,9 @@ void alarmHandler(int sig) {
 // MQTT Stuff
 //
 void connect_callback(struct mosquitto *mosq, void *obj, int result) {
-    printf("connect callback, rc=%d\n", result);
+    if(verbose) {
+        printf("connect callback, rc=%d\n", result);
+    }
 }
 
 void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message) {
@@ -65,7 +72,9 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
 
     myClient *me = (myClient *)obj;
 
-    printf("got message '%.*s' for topic '%s'\n", message->payloadlen, (char*) message->payload, message->topic);
+    if(verbose) {
+        printf("got message '%.*s' for topic '%s'\n", message->payloadlen, (char*) message->payload, message->topic);
+    }
 
     sprintf(sql, "select name,on_state,off_state from io_point where topic = '%s';\n", message->topic);
     old=time(NULL);
@@ -87,16 +96,22 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
     }
 
 
-    cout << destGroup + " " + spreadMsg << endl;
+//    if(verbose) {
+//        cout << destGroup + " " + spreadMsg << endl;
+//    }
     int rc =  SPTxSimple((char *)destGroup.c_str(), (char *)spreadMsg.c_str()) ;
 
-    printf("Sending to %s\n",(char *)destGroup.c_str());
-    printf("           %s\n",(char *)spreadMsg.c_str());
+    if(verbose) {
+        printf("Sending to %s\n",(char *)destGroup.c_str());
+        printf("           %s\n",(char *)spreadMsg.c_str());
+    }
 
+    /*
     if ( logicPid > 0) {
         kill( logicPid, SIGALRM);
     }
     usleep(1000 * 1000);
+    */
 }
 
 void usage() {
@@ -113,24 +128,26 @@ void usage() {
 }
 
 int main(int argc, char *argv[]) {
-    bool verbose=false;
     bool waitForLogic=false;
 
     int len=0;
     char inBuffer[BUFFER_SIZE];
     char outBuffer[BUFFER_SIZE];
 
-    string hostName = "localhost";
+    string hostName = "localhost";  // database service
     string serviceName ="myclient" ;
 
     string spreadHost = "localhost" ;
     string myName = "updateInputsMQTT";
     int spreadPort=4803;
 
+    string mqttHost = "localhost";
+    int mqttPort=1883;
+
     int opt;
     int rc;
 
-    while (( opt = getopt(argc, argv, "g:h?i:n:p:s:t:vw")) !=-1) {
+    while (( opt = getopt(argc, argv, "g:h?i:m:n:p:s:t:vw")) !=-1) {
         switch(opt) {
             case 'g':
                 // Spread group to send messages to.
@@ -145,6 +162,9 @@ int main(int argc, char *argv[]) {
                 break;
             case 'n':
                 hostName = optarg;
+                break;
+            case 'm':
+                mqttHost = optarg;
                 break;
             case 'p':
                 serviceName = optarg;
@@ -165,14 +185,14 @@ int main(int argc, char *argv[]) {
     }
 
 
-//    if(verbose) {
+    if(verbose) {
         cout << "Hostname    : " << hostName << endl;
         cout << "Service     : " << serviceName << endl;
         cout << "Spread Host : " << spreadHost << endl;
         cout << "I am        : " << myName << endl;
         cout << "Tick Delay  : " << tickDelay << endl;
         cout << endl;
-//    }
+    }
 
     myClient *n = myClient::Instance();
 
@@ -189,9 +209,7 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    cout << "Here" << endl;
     failFlag = n->loadFile( "mysqlCmds.txt");
-    cout << "Here 2" << endl;
 
     if(verbose) {
         cout << "loadFile ";
@@ -219,7 +237,7 @@ int main(int argc, char *argv[]) {
     dump();
 
     rc=SPConnectSimple();
-    printf("SPConnectSimple rc=%d\n", rc);
+//    printf("SPConnectSimple rc=%d\n", rc);
 
     if( rc < 0 ) {
         printf("Spread connect failed\n");
@@ -249,10 +267,17 @@ int main(int argc, char *argv[]) {
     mosquitto_connect_callback_set(mosq, connect_callback);
     mosquitto_message_callback_set(mosq, message_callback);
 
-    rc = mosquitto_connect(mosq, mqtt_host, mqtt_port, 60);
+    if(verbose) {
+        printf("Connecting to:\n");
+        printf("         Id  : %s\n", clientId);
+        printf("         Host: %s\n", mqttHost.c_str());
+        printf("         Port: %d\n", mqttPort);
+    }
+
+    rc = mosquitto_connect(mosq, mqttHost.c_str(), mqttPort, 60);
 
     string out;
-    string sql = "select topic from io_point where direction = 'in';\n";
+    string sql = "select topic from io_point where direction = 'IN';\n";
     len = n->sendCmd( sql );
 
     string cmd = "^get-row-count\n";
@@ -260,7 +285,7 @@ int main(int argc, char *argv[]) {
 
     int cnt = stoi( out,nullptr);
 
-    cout << cnt << endl;
+//    cout << cnt << endl;
 
     for( int i=0; i < cnt ; i++ ) {
         if( i == 0 ) {
@@ -272,20 +297,13 @@ int main(int argc, char *argv[]) {
         }
         len = n->sendCmd( cmd, out );
 
-        cout << out << endl;
-        mosquitto_subscribe(mosq, NULL,(char *)out.c_str() , 0);
+        if(verbose) {
+            cout << "Subscribing to >" + out + "<" << endl;
+        }
+        rc=mosquitto_subscribe(mosq, NULL,(char *)out.c_str() , 0);
+//        cout << rc << endl;
     }
 
-    int key = 42;
-    sid = semtran( key );
-
-    // If 0 then locked, created locked.
-    printf("Semaphore value is %d\n", getSemValue(sid));
-
-    if( sid < 0 ) {
-        perror("FATAL ERROR: semtran");
-        exit(4);
-    }
 
     bool gotLogicPid=false;
 
@@ -314,10 +332,12 @@ int main(int argc, char *argv[]) {
         } while(gotLogicPid == false) ;
     }
 
+    /*
     if( relSem(sid) < 0) {
         perror("Failed to release lock.");
         exit(4);
     }
+    */
 
     if( tickDelay > 0) {
         alarm(calcDelay(tickDelay));
