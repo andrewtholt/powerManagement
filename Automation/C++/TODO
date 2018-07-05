@@ -1,11 +1,14 @@
 
+* Add logging of state change to theOUTx instructions.
+
 * Internal relays.  i.e. Direction is nether IN, nor OUT, but INTERNAL.
 
 * Modify loader.  Add switch so that it will only create new entries.
   Existing entries are left alone.
 
+Done
+
 * Empty lines and comments, e.g. ';' for a comment
 
-* On first run don't wait for delay run program.
 
 
