@@ -1,0 +1,19 @@
+
+updateInputs
+
+Uses a database to map io names (e.g START) to MQTT topics (/test/start) and select INPUTS
+
+RO
+
+updateOutputs
+
+Uses a database to map io names (e.g START) to MQTT topics (/test/start) and select OUTPUTS
+
+Also if a name is not defined in the DB create this as an INTERNAL.
+
+Note maybe the creation should be done when the program is loaded.
+
+logic
+
+No access to db.
+
