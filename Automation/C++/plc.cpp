@@ -466,20 +466,57 @@ void plc::Andf(string symbol) {
 bool plc::runNow(string when) {
     bool runNow=false;
 
-    char target[6];  // hh:mm
+    char target[16];  // hh:mm-hh:mm
+    
+    char timeFrom[6];
+    char timeTo[6];
+    
+    uint32_t fromMins=0;
+    uint32_t toMins=0;
+    
+    strcpy(target, when.c_str());
+    
+    char *tmp = strtok(target, "-");
+    strcpy(timeFrom, tmp);
+    
+    tmp = strtok(NULL, "-");
+    strcpy(timeTo, tmp);
+    // 
+    // Convert time from into minutes since midnight.
+    // 
+    tmp = strtok(timeFrom,":");
+    fromMins = atoi(tmp)*60;
+    
+    tmp = strtok(NULL, ":");
+    fromMins += atoi(tmp);
+    // 
+    // Convert time TO into minutes since midnight.
+    // 
+    tmp = strtok(timeTo,":");
+    toMins = atoi(tmp)*60;
+    
+    tmp = strtok(NULL, ":");
+    toMins += atoi(tmp);
+    
     time_t now=time(NULL);
     struct tm *hms = localtime( &now );
     int hours = hms->tm_hour ;
     int minutes = hms->tm_min ;
+    
+    int nowMins = (hours*60) + minutes;
+    
+    runNow = ( nowMins >= fromMins && nowMins <= toMins) ? true : false ;
 
+    /*
     strcpy(target, when.c_str());
 
     char *hrs = strtok(target,(char *)":");
     char *min = strtok(NULL,(char *)" :");
 
     int minRun = atoi(min);
+    */
 
-    runNow = ( minRun == minutes) ? true:false;
+//    runNow = ( minRun == minutes) ? true:false;
 
     return runNow;
 }
