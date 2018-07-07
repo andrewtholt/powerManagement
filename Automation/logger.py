@@ -30,10 +30,10 @@ def on_message(client, userdata, msg):
 #    print("On Message")
     state = (msg.payload).decode("utf-8")
 
-    now = datetime.datetime.now()
-    print( now, end="" )
 
     if state != oldState:
+        now = datetime.datetime.now()
+        print( now, end="" )
         print(">>> " + msg.topic+" "+ state )
         oldState = state
 
