@@ -17,6 +17,7 @@ verbose=False
 machine=None
 
 subCount=0
+oldState="UNKNOWN"
 
 def usage():
     print("Usage: logger.py ...")
@@ -24,14 +25,17 @@ def usage():
 
 def on_message(client, userdata, msg):
     global subCount
+    global oldState
 
-    print("On Message")
+#    print("On Message")
     state = (msg.payload).decode("utf-8")
 
     now = datetime.datetime.now()
     print( now, end="" )
-    print(">>> " + msg.topic+" "+ state )
 
+    if state != oldState:
+        print(">>> " + msg.topic+" "+ state )
+        oldState = state
 
 
 def on_connect(client, userdata, flags, rc):
