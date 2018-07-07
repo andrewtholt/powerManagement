@@ -4,7 +4,8 @@ CPP=g++
 CFLAGS=-g -std=c++11
 
 BINS=logic tstClient updateInputs updateOutputs 
-LIBS=-lspreadhelper -lpthread
+LIBS=-lspreadhelper -lpthread -L/usr/local/lib -lMyClientSocket
+INCS=-I/usr/local/include 
 
 all:	$(BINS)
 
@@ -24,7 +25,7 @@ myClientClass.o:	myClientClass.cpp myClientClass.h
 	$(CPP) -c $(CFLAGS) myClientClass.cpp -o myClientClass.o
 
 updateInputs:	updateInputs.cpp myClientClass.h myClientClass.o semaphore.o 
-	$(CPP) $(CFLAGS) updateInputs.cpp myClientClass.o semaphore.o -o updateInputs $(LIBS) -lmosquitto 
+	$(CPP) $(CFLAGS) $(INCS) updateInputs.cpp myClientClass.o semaphore.o -o updateInputs $(LIBS) -lmosquitto 
 
 updateOutputs:	updateOutputs.cpp myClientClass.h myClientClass.o
 	$(CPP) $(CFLAGS) updateOutputs.cpp myClientClass.o -o updateOutputs $(LIBS) -lmosquitto

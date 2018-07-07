@@ -1,4 +1,4 @@
-#include "myClientClass.h"
+#include "myClientSocket.h"
 #include <string.h>
 #include <unistd.h>
 #include <mosquitto.h>
@@ -59,7 +59,7 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
     printf("message callback\n");
     char sql[BUFFER_SIZE];
     
-    myClient *me = (myClient *)obj;
+    myClientSocket *me = (myClientSocket *)obj;
     
     printf("got message '%.*s' for topic '%s'\n", message->payloadlen, (char*) message->payload, message->topic);
     
@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
     }
     
     
-    myClient *n = myClient::Instance();
+    myClientSocket *n = new myClientSocket();
     
     bool failFlag = n->setupNetwork((char *)hostName.c_str(), (char *)serviceName.c_str());
     

@@ -1,4 +1,4 @@
-#include "myClientClass.h"
+#include "myClientSocket.h"
 #include "semaphore.h"
 
 #include <string.h>
@@ -70,7 +70,7 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
     string onValue;
     string offValue;
 
-    myClient *me = (myClient *)obj;
+    myClientSocket *me = (myClientSocket *)obj;
 
     if(verbose) {
         printf("got message '%.*s' for topic '%s'\n", message->payloadlen, (char*) message->payload, message->topic);
@@ -194,7 +194,7 @@ int main(int argc, char *argv[]) {
         cout << endl;
     }
 
-    myClient *n = myClient::Instance();
+    myClientSocket *n = new myClientSocket();
 
 
     bool failFlag = n->setupNetwork((char *)hostName.c_str(), (char *)serviceName.c_str());
