@@ -7,6 +7,7 @@ import redis
 import paho.mqtt.client as mqtt
 import time
 
+import signal
 import os
 import os.path
 from time import sleep
@@ -109,7 +110,7 @@ def remoteOnMessage(client, userdata, msg):
 
 
 
-def main():
+def process():
     global verbose
     
     localBroker  = True
@@ -241,5 +242,28 @@ def main():
 
     return
 
+def handler():
+    print("HUP")
+
+def main():
+
+    signal.signal(signal.SIGHUP, handler)
+
+    pidFileName="/var/run/dBridge.pid"
+    iam = os.getpid()
+    pidFile = open(pidFileName,'w')
+    iamStr = str(iam) + '\n'
+
+    pidFile.write(iamStr)
+    pidFile.close()
+
+    try:
+        process()
+    except:
+        os.remove(pidFileName)
+        sys.exit(1)
+
+
 main()
+
 
