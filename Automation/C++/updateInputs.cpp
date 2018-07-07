@@ -277,7 +277,7 @@ int main(int argc, char *argv[]) {
     rc = mosquitto_connect(mosq, mqttHost.c_str(), mqttPort, 60);
 
     string out;
-    string sql = "select topic from io_point where direction = 'IN';\n";
+    string sql = "select topic from io_point where direction = 'IN' or direction = 'INTERNAL;\n";
     len = n->sendCmd( sql );
 
     string cmd = "^get-row-count\n";
