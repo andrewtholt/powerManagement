@@ -196,10 +196,7 @@ int main(int argc, char *argv[]) {
 
     myClientSocket *n = new myClientSocket();
 
-
-    bool failFlag = n->setupNetwork((char *)hostName.c_str(), (char *)serviceName.c_str());
-//    bool failFlag = n->setupNetwork(hostName, serviceName);
-
+    bool failFlag = n->setupNetwork(hostName, serviceName);
 
     if(verbose) {
         printf("Network setup %s\n", ((failFlag) ? (char *)"failed" : (char *)"success"));
