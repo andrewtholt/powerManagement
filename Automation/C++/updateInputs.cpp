@@ -73,7 +73,7 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
     myClientSocket *me = (myClientSocket *)obj;
 
     if(verbose) {
-        printf("got message '%.*s' for topic '%s'\n", message->payloadlen, (char*) message->payload, message->topic);
+        printf("Message '%.*s' for topic '%s'\n", message->payloadlen, (char*) message->payload, message->topic);
     }
 
     sprintf(sql, "select name,on_state,off_state from io_point where topic = '%s';\n", message->topic);
@@ -88,10 +88,13 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
     me->sendCmd( (char *)"^get-col off_state\n", offValue);
 
     if( !strcmp((char *)message->payload,(char *)onValue.c_str())) {
+        cout << "ON" << endl;
         spreadMsg += "TRUE";
     } else if( !strcmp((char *)message->payload,(char *)offValue.c_str())) {
+        cout << "OFF" << endl;
         spreadMsg += "FALSE";
     } else {
+        cout << "OOOPS" << endl;
         spreadMsg += "UNKNOWN";
     }
 
@@ -106,12 +109,7 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
         printf("           %s\n",(char *)spreadMsg.c_str());
     }
 
-    /*
-    if ( logicPid > 0) {
-        kill( logicPid, SIGALRM);
-    }
-    usleep(1000 * 1000);
-    */
+    usleep(100 * 1000);
 }
 
 void usage() {
@@ -274,7 +272,8 @@ int main(int argc, char *argv[]) {
     rc = mosquitto_connect(mosq, mqttHost.c_str(), mqttPort, 60);
 
     string out;
-    string sql = "select topic from io_point where direction = 'IN' or direction = 'INTERNAL;\n";
+    string sql = "select topic from io_point where direction = 'IN' ;\n";
+//    string sql = "select topic from io_point where direction = 'IN' or direction = 'INTERNAL';\n";
     len = n->sendCmd( sql );
 
     string cmd = "^get-row-count\n";
@@ -282,7 +281,7 @@ int main(int argc, char *argv[]) {
 
     int cnt = stoi( out,nullptr);
 
-//    cout << cnt << endl;
+    cout << cnt << endl;
 
     for( int i=0; i < cnt ; i++ ) {
         if( i == 0 ) {
@@ -298,7 +297,7 @@ int main(int argc, char *argv[]) {
             cout << "Subscribing to >" + out + "<" << endl;
         }
         rc=mosquitto_subscribe(mosq, NULL,(char *)out.c_str() , 0);
-//        cout << rc << endl;
+        cout << rc << endl;
     }
 
 
@@ -336,10 +335,11 @@ int main(int argc, char *argv[]) {
     }
     */
 
+    int sleepTime=0;
     if( tickDelay > 0) {
-        alarm(calcDelay(tickDelay));
+        sleepTime=calcDelay(tickDelay);
+        alarm(sleepTime);
         signal(SIGALRM, alarmHandler);
-
     }
     rc = mosquitto_loop_forever(mosq, -1, 1);
 
