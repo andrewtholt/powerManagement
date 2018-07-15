@@ -1,0 +1,22 @@
+; Force light on
+LD START
+OR OverRide
+ANDN STOP
+OUT OverRide
+; True when sun below horizon
+LDN DAY
+OUT DARK
+;
+TIM-LD 05:00-08:00
+AND DARK
+OUT MORNING
+;
+TIM-LD 16:00-23:00
+AND DARK
+OUT EVENING
+;
+LD MORNING
+OR EVENING
+OR OverRide
+OUT BackFloodlight
+END
