@@ -16,4 +16,6 @@ create table io_point ( name varchar(32) not null unique,
     state varchar(8) not null default 'OFF',
     on_state  varchar(6) default 'ON',
     off_state varchar(6) default 'OFF'
+
+    ioType enum('MQTT','MODBUS','SNMP') not null default 'MQTT');
 );
