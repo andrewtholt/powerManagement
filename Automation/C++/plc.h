@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <stack>
 #include <hspread.h>
 
 using namespace std;
@@ -44,7 +45,9 @@ class plc {
             string iop;
         } ;
         
-        bool acc=false;
+//        bool acc=false;
+
+        stack<bool> logicStack;
 
         map<string, bool> ioPoint;
         vector<ramEntry> RAM;
@@ -62,6 +65,7 @@ class plc {
         void compile(string inst, string iop);
         bool runNow(string when);
         
+        bool fromStack();
         void Ld(string symbol);
         void Ldn(string symbol);
         void Ldr(string symbol);

@@ -206,8 +206,14 @@ const string plc::boolToString(bool f) {
 
 void plc::instDisplay(string inst, string iop) {
 
-    cout << "Acc :";
-    cout << boolToString(acc) << endl;
+    cout << "Stack :";
+
+    for (stack<bool> dump = logicStack; !dump.empty(); dump.pop()) {
+        cout << dump.top() << ", ";
+    }
+
+    std::cout << "(" << logicStack.size() << " elements)\n";
+
     cout << "\t" + inst + "\t" + iop + "\t = " ;
 
     if ( ioPoint[iop] ) {
@@ -218,6 +224,7 @@ void plc::instDisplay(string inst, string iop) {
 
     cout << endl;
 }
+
 void plc::plcRun() {
 
     char rxMsg[255];
@@ -358,13 +365,16 @@ void plc::plcRun() {
 void plc::Ld(string symbol) {
     bool v=ioPoint[ symbol];
 
-    acc=v;
+    logicStack.push( v );
+//    acc=v;
 }
 
 void plc::Ldn(string symbol) {
     bool v=ioPoint[ symbol];
 
-    acc=!v;
+    logicStack.push( !v );
+
+//    acc=!v;
 }
 
 void plc::Ldr(string symbol) {
@@ -377,7 +387,8 @@ void plc::Ldr(string symbol) {
     outV =  !oldV && v;
 
     oldV = v;
-    acc=outV;
+    logicStack.push( outV );
+//    acc=outV;
 }
 
 void plc::Ldf(string symbol) {
@@ -390,31 +401,50 @@ void plc::Ldf(string symbol) {
     outV =  oldV && !v;
 
     oldV = v;
-    acc=outV;
+    logicStack.push( outV );
+//    acc=outV;
+}
+
+bool plc::fromStack() {
+    bool a = logicStack.top();
+    logicStack.pop();
+
+    return a;
 }
 
 void plc::Or(string symbol) {
     bool v=ioPoint[ symbol];
+    bool a;
 
-    acc = acc || v;
+    a = fromStack() || v ;
+    logicStack.push(a);
+
+//    acc = acc || v;
 }
 
 void plc::Orn(string symbol) {
     bool v=ioPoint[ symbol];
+    bool a;
 
-    acc = acc || !v;
+    a = fromStack() || !v ;
+    logicStack.push(a);
+
+//    acc = acc || !v;
 }
 
 void plc::Orr(string symbol) {
     static bool oldV=false;
     bool outV=false;
+    bool a;
 
     bool v=ioPoint[ symbol];
 
     outV = v && !oldV;
     oldV = v;
 
-    acc = acc || outV;
+    a = fromStack() ;
+    a = a || outV;
+    logicStack.push(a);
 }
 
 void plc::Orf(string symbol) {
@@ -423,44 +453,56 @@ void plc::Orf(string symbol) {
 
     bool v=ioPoint[ symbol];
 
+    bool a = fromStack() ;
+
     outV = !v && oldV;
     oldV = v;
 
-    acc = acc || outV;
+    a = a || outV;
+    logicStack.push(a);
 }
 
 void plc::And(string symbol) {
     bool v=ioPoint[ symbol];
+    bool a = fromStack() ;
 
-    acc = acc && v ;
+    a = a && v ;
+
+    logicStack.push(a);
 }
 
 void plc::Andn(string symbol) {
     bool v=ioPoint[ symbol];
+    bool a = fromStack() ;
 
-    acc = acc && (!v);
+    a = a && (!v);
+    logicStack.push(a);
 }
 
 void plc::Andr(string symbol) {
     static bool oldV=false;
     bool outV=false;
+    bool a = fromStack() ;
 
     bool v=ioPoint[ symbol];
     outV = v && !oldV;
     oldV = v;
 
-    acc = acc && outV ;
+    a = a && outV ;
+    logicStack.push(a);
 }
 
 void plc::Andf(string symbol) {
     static bool oldV=false;
     bool outV=false;
+    bool a = fromStack() ;
 
     bool v=ioPoint[ symbol];
     outV = !v && oldV;
     oldV = v;
 
-    acc = acc && outV ;
+    a = a && outV ;
+    logicStack.push(a);
 }
 
 bool plc::runNow(string when) {
@@ -524,65 +566,73 @@ bool plc::runNow(string when) {
 void plc::TimLd(string runAt) {
     static bool hasRun=false;
     bool runFlag=false;
-
-    acc=false;
+    bool a = false;
 
     runFlag = runNow(runAt);
 
     if( runFlag && !hasRun ) {
-        acc = true;
+        a = true;
         hasRun = true;
     }
 
     if ( !runFlag) {
-        acc = false;
+        a = false;
         hasRun = false;
     }
+    logicStack.push(a);
 }
 
 void plc::TimAndn(string runAt) {
     static bool hasRun=false;
     bool runFlag=false;
+    bool a = false;
 
     runFlag = runNow(runAt);
 
     if( runFlag && !hasRun ) {
-        acc = acc && false;
+        a = a && false;
         hasRun = true;
     }
 
     if ( !runFlag) {
-        acc = acc && true ;
+        a = a && true ;
         hasRun = false;
     }
+    logicStack.push(a);
 }
 
 void plc::Outn(string symbol) {
 
-    string accString;
+    bool a = fromStack() ;
 
-    accString = symbol + " ";
+    string accString = symbol + " ";
 
-    accString += (acc) ? "FALSE" : "TRUE";
+    accString += (a) ? "FALSE" : "TRUE";
 
-    ioPoint[ symbol ] = acc;
+    ioPoint[ symbol ] = a;
 
     int rc =  SPTxSimple((char *)outGroup.c_str(), (char *)accString.c_str()) ;    
 
-    acc = false;
+    while( !logicStack.empty() ) {
+        logicStack.pop();
+    }
+//    acc = false;
 }
 
 void plc::Out(string symbol) {
 
-    string accString;
+    bool a = fromStack() ;
 
-    accString = symbol + " ";
+    string accString = symbol + " ";
 
-    accString += (acc) ? "TRUE" : "FALSE";
+    accString += (a) ? "TRUE" : "FALSE";
 
-    ioPoint[ symbol ] = acc;
+    ioPoint[ symbol ] = a;
 
     int rc =  SPTxSimple((char *)outGroup.c_str(), (char *)accString.c_str()) ;    
 
-    acc = false;
+    while( !logicStack.empty() ) {
+        logicStack.pop();
+    }
+//    acc = false;
 }

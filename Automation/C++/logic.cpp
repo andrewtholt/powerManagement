@@ -19,12 +19,15 @@ int main(int argc, char *argv[]) {
     bool verbose=false;
     string myName = basename(argv[0]);
     
-    while ((opt = getopt(argc, argv, "?hp:s:v")) != -1) {
+    while ((opt = getopt(argc, argv, "?hp:s:vn:")) != -1) {
             switch(opt) {
                 case 'h':
                 case '?':
                     usage();
                     exit(0);
+                    break;
+                case 'n':
+                    myName = optarg;
                     break;
                 case 'p':
                     plcProg = optarg;
