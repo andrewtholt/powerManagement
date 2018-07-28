@@ -7,6 +7,9 @@ from os import getenv
 import paho.mqtt.client as mqtt
 import configparser as cp
 import datetime
+import logging
+import logging.handlers
+
 
 sys.path.append(".")
 
@@ -18,6 +21,15 @@ machine=None
 
 subCount=0
 oldState="UNKNOWN"
+
+my_logger = logging.getLogger("logger.py")
+my_logger.setLevel(logging.DEBUG)
+
+handler = logging.handlers.SysLogHandler(address = '/dev/log')
+
+my_logger.addHandler(handler)
+
+
 
 def usage():
     print("Usage: logger.py ...")
@@ -33,8 +45,11 @@ def on_message(client, userdata, msg):
 
     if state != oldState:
         now = datetime.datetime.now()
+        msg = ">>> " + msg.topic+" "+ state
+
         print( now, end="" )
-        print(">>> " + msg.topic+" "+ state )
+        print( msg )
+        my_logger.debug( msg )
         oldState = state
 
 
