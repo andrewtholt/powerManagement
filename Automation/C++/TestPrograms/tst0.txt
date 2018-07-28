@@ -1,0 +1,4 @@
+LD START
+OUT RLY1
+END
+
