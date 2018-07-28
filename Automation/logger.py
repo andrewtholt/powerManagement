@@ -30,7 +30,6 @@ handler = logging.handlers.SysLogHandler(address = '/dev/log')
 my_logger.addHandler(handler)
 
 
-
 def usage():
     print("Usage: logger.py ...")
 
