@@ -45,11 +45,11 @@ def on_message(client, userdata, msg):
 
     if state != oldState:
         now = datetime.datetime.now()
-        msg = ">>> " + msg.topic+" "+ state
+        m = msg.topic+" "+ state
 
         print( now, end="" )
-        print( msg )
-        my_logger.debug( msg )
+        print( ">>>" + m )
+        my_logger.debug( "logger.py:" + m )
         oldState = state
 
 
