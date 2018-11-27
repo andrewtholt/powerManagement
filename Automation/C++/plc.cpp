@@ -363,6 +363,11 @@ void plc::plcRun() {
 }
 
 void plc::Ld(string symbol) {
+    // TODO
+    // Replace with "select value from plc where shorthand = 'symbol'"
+    // Followed by convert YES, TRUE, ON to true, and
+    // NO, FALSE, OFF to false
+    //
     bool v=ioPoint[ symbol];
 
     logicStack.push( v );
@@ -627,8 +632,15 @@ void plc::Out(string symbol) {
 
     accString += (a) ? "TRUE" : "FALSE";
 
+    // TODO
+    // Replace with SQL update.
+    //
     ioPoint[ symbol ] = a;
 
+    // TODO
+    // Replace with:
+    // update sql databas
+    // and publish.
     int rc =  SPTxSimple((char *)outGroup.c_str(), (char *)accString.c_str()) ;    
 
     while( !logicStack.empty() ) {
