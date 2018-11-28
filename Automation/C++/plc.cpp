@@ -409,7 +409,10 @@ void plc::Ldf(string symbol) {
     logicStack.push( outV );
 //    acc=outV;
 }
-
+// 
+// return the value TOS and
+// remove it from the stack.
+// 
 bool plc::fromStack() {
     bool a = logicStack.top();
     logicStack.pop();
