@@ -1,12 +1,12 @@
-#include "myClientClass.h"
 #include <string.h>
 #include <time.h>
-#include "plc.h"
 #include <stdio.h>
 #include <iostream>
 #include <map>
 #include <fstream>
 #include <string>
+
+#include "plcBase.h"
 
 inline std::string &ltrim(std::string& s, const char* t = " \t\n\r\f\v") {
     s.erase(0, s.find_first_not_of(t));
@@ -24,7 +24,8 @@ inline std::string &trim(std::string& s, const char* t = " \t\n\r\f\v") {
 
 using namespace std;
 
-void plc::plcDump() {
+/*
+void plcBase::plcDump() {
     cout << "I am      :" + iam << endl;
     cout << "PLC Status:";
 
@@ -40,54 +41,35 @@ void plc::plcDump() {
     cout << endl;
 
 }
+*/
 
-void plc::setVerbose(bool flag) {
+void plcBase::setVerbose(bool flag) {
     verbose=flag;
 }
 
-void plc::initPlc() {
-
-    ioPoint["FALSE"] = false;
-    ioPoint["TRUE"] = true;
-    ioPoint["SCAN"] = false;
-
-    setUser((char *)iam.c_str());
-
-    int rc=SPConnectSimple();
-
-    spreadOK = ( rc < 0 ) ? false : true ;
-
-    if( spreadOK ) {
-        rc=SPJoinSimple((char *)"global");
-        spreadOK = ( rc < 0 ) ? false : true ;
-
-        rc=SPJoinSimple((char *)"logic");
-        spreadOK = ( rc < 0 ) ? false : true ;
-    }
+void plcBase::initPlc() {
 
 }
 
-plc::plc() {
-}
-plc::plc(string name) {
-    iam = name;
+plcBase::plcBase() {
+//    iam = name;
 
     initPlc();
 }
-
-plc::plc(string name, string host) {
-    iam = name;
+/*
+plcBase::plcBase(string name, string host) {
+//    iam = name;
 
     setServer( (char *)host.c_str() );
     initPlc();
 }
 
-bool plc::plcStatus() {
+bool plcBase::plcStatus() {
     return spreadOK;
 }
 
 
-bool plc::loadProg(string fileName) {
+bool plcBase::loadProg(string fileName) {
     bool failFlag=true;
     string line;
     string inLine;
@@ -135,12 +117,13 @@ bool plc::loadProg(string fileName) {
     return failFlag;
 }
 
-void plc::dumpProgram() {
+void plcBase::dumpProgram() {
     for (auto i : RAM ) {
         printf("0x%02x %s\n", i.inst, (char *)i.iop.c_str());
     }
 }
-void plc::compile(string inst, string iop) {
+
+void plcBase::compile(string inst, string iop) {
     string tmp = inst.substr(0,2);
 
     struct ramEntry fred;
@@ -197,8 +180,9 @@ void plc::compile(string inst, string iop) {
     }
     RAM.push_back(fred);
 }
+*/
 
-const string plc::boolToString(bool f) {
+const string plcBase::boolToString(bool f) {
     string state;
 
     state = (f) ? "True" : "False" ;
@@ -206,7 +190,8 @@ const string plc::boolToString(bool f) {
     return state;
 }
 
-void plc::instDisplay(string inst, string iop) {
+/*
+void plcBase::instDisplay(string inst, string iop) {
 
     cout << "Stack :";
 
@@ -227,7 +212,7 @@ void plc::instDisplay(string inst, string iop) {
     cout << endl;
 }
 
-void plc::plcRun() {
+void plcBase::plcRun() {
 
     char rxMsg[255];
     char *tmpI;
@@ -363,28 +348,30 @@ void plc::plcRun() {
         }
     }
 }
+*/
 
-void plc::Ld(string symbol) {
+void plcBase::Ld(string symbol) {
     // TODO
     // Replace with "select value from plc where shorthand = 'symbol'"
     // Followed by convert YES, TRUE, ON to true, and
     // NO, FALSE, OFF to false
     //
-    bool v=ioPoint[ symbol];
+    bool v=false;
 
     logicStack.push( v );
 //    acc=v;
 }
 
-void plc::Ldn(string symbol) {
-    bool v=ioPoint[ symbol];
+void plcBase::Ldn(string symbol) {
+//    bool v=ioPoint[ symbol];
+    bool v=false;
 
     logicStack.push( !v );
 
 //    acc=!v;
 }
 
-void plc::Ldr(string symbol) {
+void plcBase::Ldr(string symbol) {
     static bool oldV = false;
     bool outV=false;
 
@@ -398,7 +385,7 @@ void plc::Ldr(string symbol) {
 //    acc=outV;
 }
 
-void plc::Ldf(string symbol) {
+void plcBase::Ldf(string symbol) {
     static bool oldV = false;
     bool outV=false;
 
@@ -415,14 +402,14 @@ void plc::Ldf(string symbol) {
 // return the value TOS and
 // remove it from the stack.
 // 
-bool plc::fromStack() {
+bool plcBase::fromStack() {
     bool a = logicStack.top();
     logicStack.pop();
 
     return a;
 }
 
-void plc::Or(string symbol) {
+void plcBase::Or(string symbol) {
     bool v=ioPoint[ symbol];
     bool a;
 
@@ -432,7 +419,7 @@ void plc::Or(string symbol) {
 //    acc = acc || v;
 }
 
-void plc::Orn(string symbol) {
+void plcBase::Orn(string symbol) {
     bool v=ioPoint[ symbol];
     bool a;
 
@@ -442,7 +429,7 @@ void plc::Orn(string symbol) {
 //    acc = acc || !v;
 }
 
-void plc::Orr(string symbol) {
+void plcBase::Orr(string symbol) {
     static bool oldV=false;
     bool outV=false;
     bool a;
@@ -457,7 +444,7 @@ void plc::Orr(string symbol) {
     logicStack.push(a);
 }
 
-void plc::Orf(string symbol) {
+void plcBase::Orf(string symbol) {
     static bool oldV=false;
     bool outV=false;
 
@@ -472,7 +459,7 @@ void plc::Orf(string symbol) {
     logicStack.push(a);
 }
 
-void plc::And(string symbol) {
+void plcBase::And(string symbol) {
     bool v=ioPoint[ symbol];
     bool a = fromStack() ;
 
@@ -481,7 +468,7 @@ void plc::And(string symbol) {
     logicStack.push(a);
 }
 
-void plc::Andn(string symbol) {
+void plcBase::Andn(string symbol) {
     bool v=ioPoint[ symbol];
     bool a = fromStack() ;
 
@@ -489,7 +476,7 @@ void plc::Andn(string symbol) {
     logicStack.push(a);
 }
 
-void plc::Andr(string symbol) {
+void plcBase::Andr(string symbol) {
     static bool oldV=false;
     bool outV=false;
     bool a = fromStack() ;
@@ -502,7 +489,7 @@ void plc::Andr(string symbol) {
     logicStack.push(a);
 }
 
-void plc::Andf(string symbol) {
+void plcBase::Andf(string symbol) {
     static bool oldV=false;
     bool outV=false;
     bool a = fromStack() ;
@@ -514,8 +501,8 @@ void plc::Andf(string symbol) {
     a = a && outV ;
     logicStack.push(a);
 }
-
-bool plc::runNow(string when) {
+/*
+bool plcBase::runNow(string when) {
     bool runNow=false;
 
     char target[16];  // hh:mm-hh:mm
@@ -559,21 +546,20 @@ bool plc::runNow(string when) {
     
     runNow = ( nowMins >= fromMins && nowMins <= toMins) ? true : false ;
 
-    /*
-    strcpy(target, when.c_str());
-
-    char *hrs = strtok(target,(char *)":");
-    char *min = strtok(NULL,(char *)" :");
-
-    int minRun = atoi(min);
-    */
+//    strcpy(target, when.c_str());
+//
+//    char *hrs = strtok(target,(char *)":");
+//    char *min = strtok(NULL,(char *)" :");
+//
+//    int minRun = atoi(min);
 
 //    runNow = ( minRun == minutes) ? true:false;
 
     return runNow;
 }
+*/
 
-void plc::TimLd(string runAt) {
+void plcBase::TimLd(string runAt) {
     static bool hasRun=false;
     bool runFlag=false;
     bool a = false;
@@ -592,7 +578,7 @@ void plc::TimLd(string runAt) {
     logicStack.push(a);
 }
 
-void plc::TimAndn(string runAt) {
+void plcBase::TimAndn(string runAt) {
     static bool hasRun=false;
     bool runFlag=false;
     bool a = false;
@@ -611,7 +597,7 @@ void plc::TimAndn(string runAt) {
     logicStack.push(a);
 }
 
-void plc::Outn(string symbol) {
+void plcBase::Outn(string symbol) {
 
     bool a = fromStack() ;
 
@@ -621,7 +607,7 @@ void plc::Outn(string symbol) {
 
     ioPoint[ symbol ] = a;
 
-    int rc =  SPTxSimple((char *)outGroup.c_str(), (char *)accString.c_str()) ;    
+//    int rc =  SPTxSimple((char *)outGroup.c_str(), (char *)accString.c_str()) ;    
 
     while( !logicStack.empty() ) {
         logicStack.pop();
@@ -629,7 +615,7 @@ void plc::Outn(string symbol) {
 //    acc = false;
 }
 
-void plc::Out(string symbol) {
+void plcBase::Out(string symbol) {
 
     bool a = fromStack() ;
 
@@ -646,7 +632,7 @@ void plc::Out(string symbol) {
     // Replace with:
     // update sql databas
     // and publish.
-    int rc =  SPTxSimple((char *)outGroup.c_str(), (char *)accString.c_str()) ;    
+//    int rc =  SPTxSimple((char *)outGroup.c_str(), (char *)accString.c_str()) ;    
 
     while( !logicStack.empty() ) {
         logicStack.pop();

@@ -3,20 +3,26 @@ CPP=g++
 
 CFLAGS=-g -std=c++11
 
-BINS=logic tstClient updateInputs updateOutputs 
-LIBS=-lspreadhelper -lpthread -L/usr/local/lib -lMyClientSocket
+BINS=tstPlc # logic tstClient # updateInputs updateOutputs 
+LIBS=-lspreadhelper -lpthread # -L/usr/local/lib -lMyClientSocket
 INCS=-I/usr/local/include 
 
 all:	$(BINS)
 
-tstPlc:	tstPlc.cpp plc.o myClientClass.o semaphore.o 
-	$(CPP) $(CFLAGS) tstPlc.cpp plc.o myClientClass.o semaphore.o -o tstPlc $(LIBS) # -lsqlite3
+tstPlc:	tstPlc.cpp myClientClass.o semaphore.o plcMQTT.o
+	$(CPP) $(CFLAGS) tstPlc.cpp plcMQTT.o myClientClass.o semaphore.o -o tstPlc $(LIBS) # -lsqlite3
 
 logic:	logic.cpp plc.o myClientClass.o semaphore.o 
 	$(CPP) $(CFLAGS) logic.cpp plc.o myClientClass.o semaphore.o -o logic $(LIBS) # -lsqlite3
 
-plc.o:	plc.cpp plc.h
-	$(CPP) $(CFLAGS) -c plc.cpp -o plc.o
+# plc.o:	plc.cpp plc.h
+#	$(CPP) $(CFLAGS) -c plc.cpp -o plc.o
+
+plcBase.o:	plcBase.cpp plcBase.h
+	$(CPP) $(CFLAGS) -c plcBase.cpp -o plcBase.o
+
+plcMQTT.o:	plcMQTT.cpp plcMQTT.h plcBase.o
+	$(CPP) $(CFLAGS) -c plcMQTT.cpp -o plcMQTT.o
 
 tstClient:	tstClient.c
 	$(CPP) $(CFLAGS) tstClient.c -o tstClient

@@ -38,32 +38,16 @@ enum Inst {
 };
 
 
-class plc {
+class plcBase {
     private:
-        struct ramEntry {
-            uint8_t inst;
-            string iop;
-        } ;
-        
-//        bool acc=false;
 
         stack<bool> logicStack;
 
-        map<string, bool> ioPoint;
-        vector<ramEntry> RAM;
-
         string iam;
-        string spreadHost;
-        string inGroup="logic";     // Joins this to be notified of inputs
-        string outGroup="output";  // DOesn't join this, send results.
 
-        bool spreadOK=false;
-        int spreadError = 0;
         bool verbose=false;
 
         void initPlc();
-        void compile(string inst, string iop);
-        bool runNow(string when);
         
         bool fromStack();
         void Ld(string symbol);
@@ -93,13 +77,5 @@ class plc {
     public:
         void setVerbose(bool flag);
         void dumpProgram();
-        plc();
-        plc(string name);
-        plc(string name, string progFile);
-
-        bool loadProg(string fileName);
-
-        void plcDump();
-        bool plcStatus();
-        void plcRun();
+        plcBase();
 };
