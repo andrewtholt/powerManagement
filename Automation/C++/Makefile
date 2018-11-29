@@ -4,7 +4,7 @@ CPP=g++
 CFLAGS=-g -std=c++11
 
 BINS=tstPlc # logic tstClient # updateInputs updateOutputs 
-LIBS=-lspreadhelper -lpthread # -L/usr/local/lib -lMyClientSocket
+LIBS= -lpthread # -L/usr/local/lib -lMyClientSocket -lspreadhelper 
 INCS=-I/usr/local/include 
 
 all:	$(BINS)
