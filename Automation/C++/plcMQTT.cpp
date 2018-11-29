@@ -5,3 +5,7 @@
 plcMQTT::plcMQTT() {
 }
 
+void plcMQTT::initPlc() {
+    printf("plcMQTT\n");
+}
+

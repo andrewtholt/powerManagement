@@ -9,8 +9,8 @@ INCS=-I/usr/local/include
 
 all:	$(BINS)
 
-tstPlc:	tstPlc.cpp myClientClass.o semaphore.o plcMQTT.o
-	$(CPP) $(CFLAGS) tstPlc.cpp plcMQTT.o myClientClass.o semaphore.o -o tstPlc $(LIBS) # -lsqlite3
+tstPlc:	tstPlc.cpp myClientClass.o semaphore.o plcMQTT.o plcBase.o
+	$(CPP) $(CFLAGS) tstPlc.cpp plcMQTT.o plcBase.o myClientClass.o semaphore.o -o tstPlc $(LIBS) # -lsqlite3
 
 logic:	logic.cpp plc.o myClientClass.o semaphore.o 
 	$(CPP) $(CFLAGS) logic.cpp plc.o myClientClass.o semaphore.o -o logic $(LIBS) # -lsqlite3

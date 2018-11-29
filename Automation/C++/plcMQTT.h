@@ -21,4 +21,5 @@ class plcMQTT : public plcBase
     public:
         plcMQTT() ;
 
+        void initPlc() ;
 };

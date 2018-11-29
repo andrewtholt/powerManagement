@@ -48,6 +48,7 @@ void plcBase::setVerbose(bool flag) {
 }
 
 void plcBase::initPlc() {
+    printf("plcBase\n");
 
 }
 
@@ -375,7 +376,11 @@ void plcBase::Ldr(string symbol) {
     static bool oldV = false;
     bool outV=false;
 
-    bool v=ioPoint[ symbol];
+    string sqlCmd = "select value from plc where shortname = '" + symbol + "';";
+
+    // run above and set return in v
+
+    bool v=false ;
 
     // So if oldV is low and new v is high then +ve edge
     outV =  !oldV && v;
@@ -389,7 +394,8 @@ void plcBase::Ldf(string symbol) {
     static bool oldV = false;
     bool outV=false;
 
-    bool v=ioPoint[ symbol];
+//    bool v=ioPoint[ symbol];
+    bool v = false;
 
     // So if oldV is high and new v is lo then -ve edge
     outV =  oldV && !v;
@@ -410,7 +416,8 @@ bool plcBase::fromStack() {
 }
 
 void plcBase::Or(string symbol) {
-    bool v=ioPoint[ symbol];
+//    bool v=ioPoint[ symbol];
+    bool v = false;
     bool a;
 
     a = fromStack() || v ;
@@ -420,7 +427,8 @@ void plcBase::Or(string symbol) {
 }
 
 void plcBase::Orn(string symbol) {
-    bool v=ioPoint[ symbol];
+//    bool v=ioPoint[ symbol];
+    bool v = false;
     bool a;
 
     a = fromStack() || !v ;
@@ -434,7 +442,8 @@ void plcBase::Orr(string symbol) {
     bool outV=false;
     bool a;
 
-    bool v=ioPoint[ symbol];
+//    bool v=ioPoint[ symbol];
+    bool v=false;
 
     outV = v && !oldV;
     oldV = v;
@@ -448,7 +457,8 @@ void plcBase::Orf(string symbol) {
     static bool oldV=false;
     bool outV=false;
 
-    bool v=ioPoint[ symbol];
+//    bool v=ioPoint[ symbol];
+    bool v=false;
 
     bool a = fromStack() ;
 
@@ -460,7 +470,8 @@ void plcBase::Orf(string symbol) {
 }
 
 void plcBase::And(string symbol) {
-    bool v=ioPoint[ symbol];
+//    bool v=ioPoint[ symbol];
+    bool v = false;
     bool a = fromStack() ;
 
     a = a && v ;
@@ -469,7 +480,8 @@ void plcBase::And(string symbol) {
 }
 
 void plcBase::Andn(string symbol) {
-    bool v=ioPoint[ symbol];
+//    bool v=ioPoint[ symbol];
+    bool v = false;
     bool a = fromStack() ;
 
     a = a && (!v);
@@ -481,7 +493,8 @@ void plcBase::Andr(string symbol) {
     bool outV=false;
     bool a = fromStack() ;
 
-    bool v=ioPoint[ symbol];
+//    bool v=ioPoint[ symbol];
+    bool v = false;
     outV = v && !oldV;
     oldV = v;
 
@@ -494,7 +507,9 @@ void plcBase::Andf(string symbol) {
     bool outV=false;
     bool a = fromStack() ;
 
-    bool v=ioPoint[ symbol];
+//    bool v=ioPoint[ symbol];
+    bool v = false;
+
     outV = !v && oldV;
     oldV = v;
 
@@ -564,7 +579,7 @@ void plcBase::TimLd(string runAt) {
     bool runFlag=false;
     bool a = false;
 
-    runFlag = runNow(runAt);
+//    runFlag = runNow(runAt);
 
     if( runFlag && !hasRun ) {
         a = true;
@@ -583,7 +598,7 @@ void plcBase::TimAndn(string runAt) {
     bool runFlag=false;
     bool a = false;
 
-    runFlag = runNow(runAt);
+//    runFlag = runNow(runAt);
 
     if( runFlag && !hasRun ) {
         a = a && false;
@@ -605,9 +620,7 @@ void plcBase::Outn(string symbol) {
 
     accString += (a) ? "FALSE" : "TRUE";
 
-    ioPoint[ symbol ] = a;
-
-//    int rc =  SPTxSimple((char *)outGroup.c_str(), (char *)accString.c_str()) ;    
+//    ioPoint[ symbol ] = a;
 
     while( !logicStack.empty() ) {
         logicStack.pop();
@@ -626,7 +639,7 @@ void plcBase::Out(string symbol) {
     // TODO
     // Replace with SQL update.
     //
-    ioPoint[ symbol ] = a;
+//    ioPoint[ symbol ] = a;
 
     // TODO
     // Replace with:
