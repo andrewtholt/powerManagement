@@ -7,8 +7,10 @@ using namespace std;
 void logic(plcMQTT *l) {
     cout << "LOGIC" << endl ;
 
-    l->Ld("BACK_LIGHT");
-    l->Outn("fred");
+    l->Ld("START");
+    l->Or("MOTOR");
+    l->Andn("STOP");
+    l->Out("MOTOR");
 }
 
 int main() {
@@ -17,6 +19,7 @@ int main() {
     plcMQTT *me = new plcMQTT();
 
     me->setLogic( logic );
+//    me->setVerbose(true);
 
     me->plcDump();  // Show defaults
 
@@ -58,15 +61,10 @@ int main() {
 
     me->initPlc();
 
-    me->addIOPoint("fred");
+    me->addIOPoint("START", "/test/start","IN");
+    me->addIOPoint("STOP", "/test/stop","IN");
+    me->addIOPoint("MOTOR", "/test/motor","OUT");
 
-    me->addIOPoint("BACK_LIGHT", "/home/outside/BackFloodlight/cmnd/power","IN");
-
-    string result = me->getValue( "BACK_LIGHT" );
-
-    bool setValueFlag = me->setValue("BACK_LIGHT","TEST_VALUE");
-
-    cout << result << endl;
 
     me->plcRun();
 }

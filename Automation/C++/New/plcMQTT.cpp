@@ -4,6 +4,7 @@
 #include <sqlite3.h>
 #include <iostream>
 #include <unistd.h>
+#include <string.h>
 
 using namespace std;
 
@@ -245,7 +246,11 @@ string plcMQTT::getValue(string shortName) {
 
     tmp=(char *)sqlite3_column_text(res, 0);
 
-    value=tmp;
+    if( tmp ) {
+        value=tmp;
+    } else {
+        value="";
+    }
 
     return value;
 
@@ -259,7 +264,7 @@ bool plcMQTT::setValue(string shortName, string value) {
 
     sql = "update iopoints set value='"+value+"' where short_name = '" + shortName + "';";
     if(verbose) {
-    cout << sql << endl;
+        cout << sql << endl;
     }
 
     rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
@@ -291,10 +296,37 @@ void plcMQTT::setLogic( void (*f) (plcMQTT *)) {
 }
 
 void plcMQTT::Ld(string symbol) {
-    cout << "plcMQTT::Ld " << symbol << endl;
+    cout << "plcMQTT::Ld " << symbol ;
     string val = getValue( symbol );
     bool v = stringToBool( val );
     logicStack.push( v );
+
+    cout << "   TOS: " << logicStack.top() << endl;
+}
+
+void plcMQTT::Or(string symbol) {
+    cout << "plcMQTT::Or " << symbol ;
+    bool v = false;
+    bool a;
+
+    v = stringToBool( getValue( symbol ));
+
+    a = fromStack() || v ;
+    logicStack.push(a);
+    cout << "   TOS: " << logicStack.top() << endl;
+}
+
+void plcMQTT::Andn(string symbol) {
+    cout << "plcMQTT::Andn " << symbol ;
+    bool v = false;
+    bool a = fromStack() ;
+
+    v = stringToBool( getValue( symbol ));
+
+    a = a && (!v);
+    logicStack.push(a);
+
+    cout << "   TOS: " << logicStack.top() << endl;
 }
 
 
@@ -302,13 +334,21 @@ void plcMQTT::Out(string symbol) {
     cout << "plcMQTT::Out " << symbol << endl;
     bool a = fromStack() ;
     string topic ;
+    string msg ;
+    string old = getValue( symbol );
 
     topic = getTopic( symbol );
+    msg   = boolToString(a);
 
     if( topic != "LOCAL")  {
-    }
+        // publish
+        if( old != msg ) {
+            mosquitto_publish(mosq,NULL,topic.c_str(), strlen(msg.c_str()), msg.c_str(), 0,true);
+        }
+    } 
+    // set local db value
 
-    setValue( symbol, boolToString( a ));
+    setValue( symbol, msg);
 
     while( !logicStack.empty() ) {
         logicStack.pop();
