@@ -32,7 +32,7 @@ class plcBase {
         virtual bool setBoolValue(string shortName, bool v );
         virtual bool setValue(string shortName, string v );
 
-        void Ld(string symbol);
+        virtual void Ld(string symbol);
         void Ldn(string symbol);
         void Ldr(string symbol);
         void Ldf(string symbol);

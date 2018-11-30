@@ -302,6 +302,7 @@ void plcMQTT::setLogic( void (*f) (plcMQTT *)) {
     logic = f;
 }
 
+/*
 void plcMQTT::Ld(string symbol) {
     cout << "plcMQTT::Ld " << symbol ;
 
@@ -310,7 +311,7 @@ void plcMQTT::Ld(string symbol) {
 
     cout << "   TOS: " << logicStack.top() << endl;
 }
-/*
+
 void plcMQTT::Or(string symbol) {
     cout << "plcMQTT::Or " << symbol ;
     bool a;

@@ -242,20 +242,20 @@ bool plcBase::setBoolValue( string symbol, bool v ) {
 }
 
 void plcBase::Ld(string symbol) {
-    cout << "plcBase::Ld" << endl;
-    bool v=false;
+    cout << "plcBase::Ld " << symbol ;
+
+    bool v=getBoolValue( symbol );
 
     logicStack.push( v );
-//    acc=v;
+    cout << "   TOS: " << logicStack.top() << endl;
 }
 
 void plcBase::Ldn(string symbol) {
-//    bool v=ioPoint[ symbol];
-    bool v=false;
+    bool v=getBoolValue( symbol );
 
     logicStack.push( !v );
 
-//    acc=!v;
+    cout << "   TOS: " << logicStack.top() << endl;
 }
 
 void plcBase::Ldr(string symbol) {
@@ -273,7 +273,6 @@ void plcBase::Ldr(string symbol) {
 
     oldV = v;
     logicStack.push( outV );
-//    acc=outV;
 }
 
 void plcBase::Ldf(string symbol) {
@@ -326,18 +325,20 @@ void plcBase::Or(string symbol) {
 
 
 void plcBase::Orn(string symbol) {
-//    bool v=ioPoint[ symbol];
-    bool v = false;
+    cout << "plcBase::Orn " << symbol ;
+
+    bool v = getBoolValue( symbol );
     bool a;
 
     a = fromStack() || !v ;
     logicStack.push(a);
 
-//    acc = acc || !v;
+    cout << "   TOS: " << logicStack.top() << endl;
 }
 
 void plcBase::Orr(string symbol) {
-    static bool oldV=false;
+    cout << "plcBase::Orr " << symbol ;
+    static bool oldV = getBoolValue( symbol );
     bool outV=false;
     bool a;
 
@@ -350,10 +351,12 @@ void plcBase::Orr(string symbol) {
     a = fromStack() ;
     a = a || outV;
     logicStack.push(a);
+    cout << "   TOS: " << logicStack.top() << endl;
 }
 
 void plcBase::Orf(string symbol) {
-    static bool oldV=false;
+    cout << "plcBase::Orf " << symbol ;
+    static bool oldV = getBoolValue( symbol );
     bool outV=false;
 
 //    bool v=ioPoint[ symbol];
@@ -366,16 +369,20 @@ void plcBase::Orf(string symbol) {
 
     a = a || outV;
     logicStack.push(a);
+    cout << "   TOS: " << logicStack.top() << endl;
 }
 
 void plcBase::And(string symbol) {
+    cout << "plcBase::And " << symbol ;
 //    bool v=ioPoint[ symbol];
-    bool v = false;
+
+    bool v = getBoolValue( symbol );
     bool a = fromStack() ;
 
     a = a && v ;
 
     logicStack.push(a);
+    cout << "   TOS: " << logicStack.top() << endl;
 }
 
 void plcBase::Andn(string symbol) {
@@ -418,63 +425,6 @@ void plcBase::Andf(string symbol) {
     a = a && outV ;
     logicStack.push(a);
 }
-/*
-bool plcBase::runNow(string when) {
-    bool runNow=false;
-
-    char target[16];  // hh:mm-hh:mm
-    
-    char timeFrom[6];
-    char timeTo[6];
-    
-    uint32_t fromMins=0;
-    uint32_t toMins=0;
-    
-    strcpy(target, when.c_str());
-    
-    char *tmp = strtok(target, "-");
-    strcpy(timeFrom, tmp);
-    
-    tmp = strtok(NULL, "-");
-    strcpy(timeTo, tmp);
-    // 
-    // Convert time from into minutes since midnight.
-    // 
-    tmp = strtok(timeFrom,":");
-    fromMins = atoi(tmp)*60;
-    
-    tmp = strtok(NULL, ":");
-    fromMins += atoi(tmp);
-    // 
-    // Convert time TO into minutes since midnight.
-    // 
-    tmp = strtok(timeTo,":");
-    toMins = atoi(tmp)*60;
-    
-    tmp = strtok(NULL, ":");
-    toMins += atoi(tmp);
-    
-    time_t now=time(NULL);
-    struct tm *hms = localtime( &now );
-    int hours = hms->tm_hour ;
-    int minutes = hms->tm_min ;
-    
-    int nowMins = (hours*60) + minutes;
-    
-    runNow = ( nowMins >= fromMins && nowMins <= toMins) ? true : false ;
-
-//    strcpy(target, when.c_str());
-//
-//    char *hrs = strtok(target,(char *)":");
-//    char *min = strtok(NULL,(char *)" :");
-//
-//    int minRun = atoi(min);
-
-//    runNow = ( minRun == minutes) ? true:false;
-
-    return runNow;
-}
-*/
 
 void plcBase::TimLd(string runAt) {
     static bool hasRun=false;

@@ -48,9 +48,7 @@ class plcMQTT : public plcBase
         void plcRun();
         void setLogic( void (*f) (plcMQTT *));
 
-        void Ld(string);
-//        void Or(string);
-//        void Andn(string);
+//        void Ld(string);
         void Out(string);
         void Outn(string);
     private:
