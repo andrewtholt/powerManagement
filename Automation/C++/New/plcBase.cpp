@@ -33,9 +33,9 @@ void plcBase::setVerbose(bool flag) {
     verbose=flag;
 }
 
-void plcBase::initPlc() {
+bool plcBase::initPlc() {
     printf("plcBase\n");
-
+    return false;
 }
 
 plcBase::plcBase() {
@@ -47,11 +47,29 @@ plcBase::plcBase() {
 
 // You can set this only once.
 //
-void plcBase::setHost(string host) {
-    if( "UNKNOWN" != hostName) {
+bool plcBase::setHost(string host) {
+    bool failFlag = true ;
+    if( "UNKNOWN" == hostName) {
         hostName = host;
+        failFlag = false;
+    } else {
+        failFlag = true;
     }
-        
+
+    return failFlag;
+}
+//
+// You can set this only once.
+//
+bool plcBase::setPort(int p) {
+    bool failFlag = true ;
+    if( 0 == port ) {
+        port = p;
+        failFlag = false;
+    } else {
+        failFlag = true;
+    }
+    return failFlag;
 }
 /*
 plcBase::plcBase(string name, string host) {
@@ -182,170 +200,25 @@ void plcBase::compile(string inst, string iop) {
 const string plcBase::boolToString(bool f) {
     string state;
 
-    state = (f) ? "True" : "False" ;
+    state = (f) ? "ON" : "OFF" ;
 
     return state;
 }
 
-/*
-void plcBase::instDisplay(string inst, string iop) {
+bool plcBase::stringToBool(string value) {
+    bool state;
 
-    cout << "Stack :";
-
-    for (stack<bool> dump = logicStack; !dump.empty(); dump.pop()) {
-        cout << dump.top() << ", ";
+    if ( value == "YES" || value == "TRUE" || value == "ON" ) {
+        state = true;
     }
 
-    std::cout << "(" << logicStack.size() << " elements)\n";
-
-    cout << "\t" + inst + "\t" + iop + "\t = " ;
-
-    if ( ioPoint[iop] ) {
-        cout << "[True]";
-    } else {
-        cout << "[False]";
+    if ( value == "NO" || value == "FALSE" || value == "OFF" ) {
+        state = false;
     }
 
-    cout << endl;
+    return state;
 }
 
-void plcBase::plcRun() {
-
-    char rxMsg[255];
-    char *tmpI;
-    char *tmpV;
-    bool boolV=false;
-    bool firstPass=true;
-    int rc;
-
-    while(true) {
-        if( firstPass ) {
-            firstPass=false;
-        } else {
-            rc = SPRxSimple(rxMsg, 255);
-
-            tmpI = strtok(rxMsg," ");
-            tmpV = strtok(NULL, " \n");
-
-            string thing = tmpI;
-            thing = trim(thing);
-
-
-            if( thing == "TICK") {
-                if( verbose) {
-                    cout << thing << endl;
-                }
-            } else {
-                boolV = (!strcmp(tmpV,"TRUE")) ? true : false; 
-
-                ioPoint[ thing ] = boolV;
-            }
-        }
-
-        for (auto i : RAM ) {
-
-            switch(i.inst) {
-                case LD: 
-                    if( verbose) {
-                        instDisplay("LD", i.iop);
-                    }
-                    Ld(i.iop);
-                    break;
-                case LDN: 
-                    if( verbose) {
-                        instDisplay("LDN", i.iop);
-                    }
-                    Ldn(i.iop);
-                    break;
-                case LDR: 
-                    if( verbose) {
-                        instDisplay("LDR", i.iop);
-                    }
-                    Ldr(i.iop);
-                    break;
-                case LDF: 
-                    if( verbose) {
-                        instDisplay("LDF", i.iop);
-                    }
-                    Ldf(i.iop);
-                    break;
-                case OR:
-                    if( verbose) {
-                        instDisplay("OR", i.iop);
-                    }
-                    Or(i.iop);
-                    break;
-                case ORN:
-                    if( verbose) {
-                        instDisplay("ORN", i.iop);
-                    }
-                    Orn(i.iop);
-                    break;
-                case ORR:
-                    if( verbose) {
-                        printf("ORR\t%s\n", (char *)i.iop.c_str());
-                    }
-                    Orr(i.iop);
-                    break;
-                case ORF:
-                    if( verbose) {
-                        instDisplay("ORF", i.iop);
-                    }
-                    Orf(i.iop);
-                    break;
-                case AND:
-                    if( verbose) {
-                        instDisplay("AND", i.iop);
-                    }
-                    And(i.iop);
-                    break;
-                case ANDR:
-                    if( verbose) {
-                        instDisplay("ANDR", i.iop);
-                    }
-                    Andr(i.iop);
-                    break;
-                case ANDF:
-                    if( verbose) {
-                        instDisplay("ANDF", i.iop);
-                    }
-                    Andf(i.iop);
-                    break;
-                case ANDN:
-                    if( verbose) {
-                        instDisplay("ANDN", i.iop);
-                    }
-                    Andn(i.iop);
-                    break;
-                case OUT:
-                    if( verbose) {
-                        instDisplay("OUT", i.iop);
-                    }
-                    Out(i.iop);
-                    break;
-                case TIM_LD:
-                    if(verbose) {
-                        instDisplay("TIM-LD", i.iop);
-                    }
-                    TimLd(i.iop);
-                    break;
-                case TIM_ANDN:
-                    if(verbose) {
-                        instDisplay("TIM-ANDN", i.iop);
-                    }
-                    TimAndn(i.iop);
-                    break;
-                case OUTN:
-                    if( verbose) {
-                        instDisplay("OUTN", i.iop);
-                    }
-                    Outn(i.iop);
-                    break;
-            }
-        }
-    }
-}
-*/
 
 void plcBase::Ld(string symbol) {
     // TODO
@@ -353,6 +226,7 @@ void plcBase::Ld(string symbol) {
     // Followed by convert YES, TRUE, ON to true, and
     // NO, FALSE, OFF to false
     //
+    cout << "plcBase::Ld" << endl;
     bool v=false;
 
     logicStack.push( v );

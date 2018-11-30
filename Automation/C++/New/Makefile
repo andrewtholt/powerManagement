@@ -4,12 +4,12 @@ CPP=g++
 CFLAGS=-g -std=c++11
 
 BINS=tstPlc 
-LIBS= -lpthread 
+LIBS= -lpthread -lmosquitto -lsqlite3
 
 all:	$(BINS)
 
 tstPlc:	tstPlc.cpp plcMQTT.o plcBase.o
-	$(CPP) $(CFLAGS) tstPlc.cpp plcMQTT.o plcBase.o -o tstPlc $(LIBS) # -lsqlite3
+	$(CPP) $(CFLAGS) tstPlc.cpp plcMQTT.o plcBase.o -o tstPlc $(LIBS) 
 
 plcBase.o:	plcBase.cpp plcBase.h
 	$(CPP) $(CFLAGS) -c plcBase.cpp -o plcBase.o

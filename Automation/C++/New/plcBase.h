@@ -10,50 +10,22 @@
 
 using namespace std;
 
-/*
-enum Inst { 
-    NOP=0, 
-    LD, 
-    LDN,
-    LDR,
-    LDF,
-
-    OR=0x10,
-    ORN,
-    ORR,
-    ORF,
-
-    AND=0x20,
-    ANDN,
-    ANDR,
-    ANDF,
-
-    TIM_LD=0x30,
-    TIM_LDN,
-    TIM_AND,
-    TIM_ANDN,
-
-    OUT=0x40,
-    OUTN,
-    END=0xff
-};
-*/
-
 
 class plcBase {
-    private:
-
+    protected:
+        string hostName;
+        int port;
         stack<bool> logicStack;
-
-        string iam;
-
+        bool fromStack();
         bool verbose=false;
 
-        void initPlc();
-       
+    private:
+
+        string iam;
+        bool initPlc();
         bool connect(string, string);
 
-        bool fromStack();
+    public:
         void Ld(string symbol);
         void Ldn(string symbol);
         void Ldr(string symbol);
@@ -77,13 +49,11 @@ class plcBase {
         void Outn(string symbol);
 
         const string boolToString(bool f);
+        bool stringToBool(string);
         void instDisplay(string inst, string iop);
-
-    protected:
-        string hostName;
-        int port;
-    public:
         void setVerbose(bool flag);
         void plcDump();
         plcBase();
+        bool setHost(string);
+        bool setPort(int);
 };
