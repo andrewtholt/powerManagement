@@ -24,8 +24,14 @@ class plcBase {
         string iam;
         bool initPlc();
         bool connect(string, string);
+        map<string, bool> ioPoint;
 
     public:
+        virtual string getValue( string );
+        virtual bool getBoolValue( string );
+        virtual bool setBoolValue(string shortName, bool v );
+        virtual bool setValue(string shortName, string v );
+
         void Ld(string symbol);
         void Ldn(string symbol);
         void Ldr(string symbol);

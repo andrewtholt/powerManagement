@@ -253,7 +253,11 @@ string plcMQTT::getValue(string shortName) {
     }
 
     return value;
+}
 
+bool plcMQTT::getBoolValue( string shortName ) {
+
+    return stringToBool( getValue( shortName ));
 }
 
 bool plcMQTT::setValue(string shortName, string value) {
@@ -271,6 +275,9 @@ bool plcMQTT::setValue(string shortName, string value) {
     failFlag=sqlError(rc, err_msg);
 
     return failFlag;
+}
+
+bool plcMQTT::setBoolValue(string shortName, bool v ) {
 }
 
 void plcMQTT::doStuff() {
@@ -297,31 +304,30 @@ void plcMQTT::setLogic( void (*f) (plcMQTT *)) {
 
 void plcMQTT::Ld(string symbol) {
     cout << "plcMQTT::Ld " << symbol ;
-    string val = getValue( symbol );
-    bool v = stringToBool( val );
+
+    bool v = getBoolValue( symbol );
     logicStack.push( v );
 
     cout << "   TOS: " << logicStack.top() << endl;
 }
-
+/*
 void plcMQTT::Or(string symbol) {
     cout << "plcMQTT::Or " << symbol ;
-    bool v = false;
     bool a;
 
-    v = stringToBool( getValue( symbol ));
+    bool v = getBoolValue( symbol );
 
     a = fromStack() || v ;
     logicStack.push(a);
     cout << "   TOS: " << logicStack.top() << endl;
 }
+*/
 
 void plcMQTT::Andn(string symbol) {
     cout << "plcMQTT::Andn " << symbol ;
-    bool v = false;
-    bool a = fromStack() ;
 
-    v = stringToBool( getValue( symbol ));
+    bool a = fromStack() ;
+    bool v = getBoolValue( symbol );
 
     a = a && (!v);
     logicStack.push(a);

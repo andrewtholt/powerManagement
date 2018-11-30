@@ -38,14 +38,18 @@ class plcMQTT : public plcBase
         bool addIOPoint(string,string, string );// Short name, topic, direction
 
         string getTopic(string );               // Short name
-        string getValue(string );               // Short name
-        bool setValue(string, string );         // Short name, value
+
+        virtual string getValue(string );               // Short name
+        virtual bool setValue(string, string );         // Short name, string value
+        virtual bool setBoolValue(string, bool );       // Short name, boolean value
+
+        virtual bool getBoolValue(string );               // Short name
 
         void plcRun();
         void setLogic( void (*f) (plcMQTT *));
 
         void Ld(string);
-        void Or(string);
+//        void Or(string);
         void Andn(string);
         void Out(string);
         void Outn(string);

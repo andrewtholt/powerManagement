@@ -220,12 +220,28 @@ bool plcBase::stringToBool(string value) {
 }
 
 
+string plcBase::getValue( string symbol ) {
+    bool v = ioPoint[ symbol ];
+
+    string value = boolToString ( v );
+
+    return value;
+}
+
+bool plcBase::getBoolValue( string symbol ) {
+    return ioPoint[ symbol ];
+}
+
+bool plcBase::setValue( string symbol, string v ) {
+    ioPoint[ symbol ] = stringToBool(v);
+    return false;
+}
+bool plcBase::setBoolValue( string symbol, bool v ) {
+    ioPoint[ symbol ] = v;
+    return false;
+}
+
 void plcBase::Ld(string symbol) {
-    // TODO
-    // Replace with "select value from plc where shorthand = 'symbol'"
-    // Followed by convert YES, TRUE, ON to true, and
-    // NO, FALSE, OFF to false
-    //
     cout << "plcBase::Ld" << endl;
     bool v=false;
 
@@ -285,6 +301,7 @@ bool plcBase::fromStack() {
     return a;
 }
 
+/*
 void plcBase::Or(string symbol) {
 //    bool v=ioPoint[ symbol];
     bool v = false;
@@ -295,6 +312,18 @@ void plcBase::Or(string symbol) {
 
 //    acc = acc || v;
 }
+*/
+void plcBase::Or(string symbol) {
+    cout << "plcBase::Or " << symbol ;
+    bool a;
+
+    bool v = getBoolValue( symbol );
+
+    a = fromStack() || v ;
+    logicStack.push(a);
+    cout << "   TOS: " << logicStack.top() << endl;
+}
+
 
 void plcBase::Orn(string symbol) {
 //    bool v=ioPoint[ symbol];
