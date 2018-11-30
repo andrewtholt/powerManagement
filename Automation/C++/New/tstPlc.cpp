@@ -63,7 +63,7 @@ int main() {
 
     me->addIOPoint("START", "/test/start","IN");
     me->addIOPoint("STOP", "/test/stop","IN");
-    me->addIOPoint("MOTOR", "/test/motor","OUT");
+    me->addIOPoint("MOTOR", "/home/outside/BackFloodlight/cmnd/power","OUT");
 
 
     me->plcRun();

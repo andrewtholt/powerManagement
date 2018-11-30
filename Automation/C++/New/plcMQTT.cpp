@@ -323,6 +323,7 @@ void plcMQTT::Or(string symbol) {
 }
 */
 
+/*
 void plcMQTT::Andn(string symbol) {
     cout << "plcMQTT::Andn " << symbol ;
 
@@ -334,6 +335,7 @@ void plcMQTT::Andn(string symbol) {
 
     cout << "   TOS: " << logicStack.top() << endl;
 }
+*/
 
 
 void plcMQTT::Out(string symbol) {

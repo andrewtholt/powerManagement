@@ -379,12 +379,15 @@ void plcBase::And(string symbol) {
 }
 
 void plcBase::Andn(string symbol) {
-//    bool v=ioPoint[ symbol];
-    bool v = false;
+    cout << "plcBase::Andn " << symbol ;
+
     bool a = fromStack() ;
+    bool v = getBoolValue( symbol );
 
     a = a && (!v);
     logicStack.push(a);
+
+    cout << "   TOS: " << logicStack.top() << endl;
 }
 
 void plcBase::Andr(string symbol) {
