@@ -5,7 +5,9 @@
 using namespace std;
 
 void logic(plcMQTT *l) {
-    cout << "LOGIC" << endl ;
+    static int count=1;
+
+    cout << "LOGIC:" << count++ << endl ;
 
     l->Ld("START");
     l->Or("MOTOR");
@@ -60,6 +62,8 @@ int main() {
     printf("=================\n");
 
     me->initPlc();
+
+    me->addIOPoint("TIME", "/test/time","IN");
 
     me->addIOPoint("START", "/test/start","IN");
     me->addIOPoint("STOP", "/test/stop","IN");

@@ -27,9 +27,9 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
 
     if(message->payloadlen) {
 
-            cout << "Topic   " << message->topic << endl;
-            cout << "Message " << (char *)message->payload << endl;
-            cout << "================" << endl;
+        cout << "Topic   " << message->topic << endl;
+        cout << "Message " << (char *)message->payload << endl;
+        cout << "================" << endl;
 
         payload = (char *)message->payload;
         topic = message->topic ;
@@ -147,7 +147,7 @@ bool plcMQTT::addIOPoint(string shortName) {
     sql = "insert into iopoints (short_name) values ('" + shortName + "');";
 
     if(verbose) {
-    cout << sql << endl;
+        cout << sql << endl;
     }
 
     rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
@@ -167,7 +167,7 @@ bool plcMQTT::addIOPoint(string shortName, string topic) {
     sql += ");";
 
     if(verbose) {
-    cout << sql << endl;
+        cout << sql << endl;
     }
 
     rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
@@ -188,7 +188,7 @@ bool plcMQTT::addIOPoint(string shortName, string topic, string direction) {
     sql += ");";
 
     if(verbose) {
-    cout << sql << endl;
+        cout << sql << endl;
     }
 
     rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
@@ -213,7 +213,7 @@ string plcMQTT::getTopic(string shortName) {
 
     sql = "select topic from iopoints where short_name = '" + shortName + "';";
     if(verbose) {
-    cout << sql << endl;
+        cout << sql << endl;
     }
 
     rc = sqlite3_prepare_v2( db, sql.c_str(), -1, &res, NULL);
@@ -238,7 +238,7 @@ string plcMQTT::getValue(string shortName) {
 
     sql = "select value from iopoints where short_name = '" + shortName + "';";
     if(verbose) {
-    cout << sql << endl;
+        cout << sql << endl;
     }
 
     rc = sqlite3_prepare_v2( db, sql.c_str(), -1, &res, NULL);
@@ -284,16 +284,13 @@ void plcMQTT::doStuff() {
 }
 
 void plcMQTT::plcRun() {
-    //    mosquitto_loop_forever(mosq, -1, 1);
+    mosquitto_loop_start(mosq);
 
-//    mosquitto_loop_start(mosq);
-    while(true) {
-        mosquitto_loop(mosq, -1, 1);
+    while( logic != NULL) {
+        logic(this);
 
-        if( logic != NULL) {
-            logic(this);
-        }
-        usleep( 1000 );
+//        usleep( 1000 );
+        sleep( 1 );  // Slow for debugging
     }
 }
 
@@ -304,40 +301,40 @@ void plcMQTT::setLogic( void (*f) (plcMQTT *)) {
 }
 
 /*
-void plcMQTT::Ld(string symbol) {
-    cout << "plcMQTT::Ld " << symbol ;
+   void plcMQTT::Ld(string symbol) {
+   cout << "plcMQTT::Ld " << symbol ;
 
-    bool v = getBoolValue( symbol );
-    logicStack.push( v );
+   bool v = getBoolValue( symbol );
+   logicStack.push( v );
 
-    cout << "   TOS: " << logicStack.top() << endl;
-}
+   cout << "   TOS: " << logicStack.top() << endl;
+   }
 
-void plcMQTT::Or(string symbol) {
-    cout << "plcMQTT::Or " << symbol ;
-    bool a;
+   void plcMQTT::Or(string symbol) {
+   cout << "plcMQTT::Or " << symbol ;
+   bool a;
 
-    bool v = getBoolValue( symbol );
+   bool v = getBoolValue( symbol );
 
-    a = fromStack() || v ;
-    logicStack.push(a);
-    cout << "   TOS: " << logicStack.top() << endl;
-}
-*/
+   a = fromStack() || v ;
+   logicStack.push(a);
+   cout << "   TOS: " << logicStack.top() << endl;
+   }
+   */
 
 /*
-void plcMQTT::Andn(string symbol) {
-    cout << "plcMQTT::Andn " << symbol ;
+   void plcMQTT::Andn(string symbol) {
+   cout << "plcMQTT::Andn " << symbol ;
 
-    bool a = fromStack() ;
-    bool v = getBoolValue( symbol );
+   bool a = fromStack() ;
+   bool v = getBoolValue( symbol );
 
-    a = a && (!v);
-    logicStack.push(a);
+   a = a && (!v);
+   logicStack.push(a);
 
-    cout << "   TOS: " << logicStack.top() << endl;
-}
-*/
+   cout << "   TOS: " << logicStack.top() << endl;
+   }
+   */
 
 
 void plcMQTT::Out(string symbol) {
