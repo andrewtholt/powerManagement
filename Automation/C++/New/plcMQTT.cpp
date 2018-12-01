@@ -286,6 +286,7 @@ void plcMQTT::doStuff() {
 void plcMQTT::plcRun() {
     //    mosquitto_loop_forever(mosq, -1, 1);
 
+//    mosquitto_loop_start(mosq);
     while(true) {
         mosquitto_loop(mosq, -1, 1);
 

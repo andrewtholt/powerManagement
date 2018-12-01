@@ -259,35 +259,37 @@ void plcBase::Ldn(string symbol) {
 }
 
 void plcBase::Ldr(string symbol) {
+    cout << "plcBase::Ldr " << symbol ;
+
     static bool oldV = false;
     bool outV=false;
 
-    string sqlCmd = "select value from plc where shortname = '" + symbol + "';";
-
-    // run above and set return in v
-
-    bool v=false ;
+    bool v=getBoolValue( symbol );
 
     // So if oldV is low and new v is high then +ve edge
     outV =  !oldV && v;
 
     oldV = v;
     logicStack.push( outV );
+
+    cout << "   TOS: " << logicStack.top() << endl;
 }
 
 void plcBase::Ldf(string symbol) {
+    cout << "plcBase::Ldf " << symbol ;
+
     static bool oldV = false;
     bool outV=false;
 
-//    bool v=ioPoint[ symbol];
-    bool v = false;
+    bool v=getBoolValue( symbol );
 
     // So if oldV is high and new v is lo then -ve edge
     outV =  oldV && !v;
 
     oldV = v;
     logicStack.push( outV );
-//    acc=outV;
+
+    cout << "   TOS: " << logicStack.top() << endl;
 }
 // 
 // return the value TOS and
@@ -300,18 +302,6 @@ bool plcBase::fromStack() {
     return a;
 }
 
-/*
-void plcBase::Or(string symbol) {
-//    bool v=ioPoint[ symbol];
-    bool v = false;
-    bool a;
-
-    a = fromStack() || v ;
-    logicStack.push(a);
-
-//    acc = acc || v;
-}
-*/
 void plcBase::Or(string symbol) {
     cout << "plcBase::Or " << symbol ;
     bool a;
@@ -342,8 +332,7 @@ void plcBase::Orr(string symbol) {
     bool outV=false;
     bool a;
 
-//    bool v=ioPoint[ symbol];
-    bool v=false;
+    bool v = getBoolValue( symbol );
 
     outV = v && !oldV;
     oldV = v;
@@ -359,8 +348,7 @@ void plcBase::Orf(string symbol) {
     static bool oldV = getBoolValue( symbol );
     bool outV=false;
 
-//    bool v=ioPoint[ symbol];
-    bool v=false;
+    bool v = getBoolValue( symbol );
 
     bool a = fromStack() ;
 
@@ -374,7 +362,6 @@ void plcBase::Orf(string symbol) {
 
 void plcBase::And(string symbol) {
     cout << "plcBase::And " << symbol ;
-//    bool v=ioPoint[ symbol];
 
     bool v = getBoolValue( symbol );
     bool a = fromStack() ;
@@ -398,34 +385,44 @@ void plcBase::Andn(string symbol) {
 }
 
 void plcBase::Andr(string symbol) {
+    cout << "plcBase::Andr " << symbol ;
+
     static bool oldV=false;
     bool outV=false;
     bool a = fromStack() ;
 
-//    bool v=ioPoint[ symbol];
-    bool v = false;
+    bool v = getBoolValue( symbol );
+
     outV = v && !oldV;
     oldV = v;
 
     a = a && outV ;
     logicStack.push(a);
+
+    cout << "   TOS: " << logicStack.top() << endl;
 }
 
 void plcBase::Andf(string symbol) {
+    cout << "plcBase::Andf " << symbol ;
+
     static bool oldV=false;
     bool outV=false;
     bool a = fromStack() ;
 
-//    bool v=ioPoint[ symbol];
-    bool v = false;
+    bool v = getBoolValue( symbol );
 
     outV = !v && oldV;
     oldV = v;
 
     a = a && outV ;
     logicStack.push(a);
-}
 
+    cout << "   TOS: " << logicStack.top() << endl;
+}
+// 
+// TODO
+// All the time commands need a rethink.
+//
 void plcBase::TimLd(string runAt) {
     static bool hasRun=false;
     bool runFlag=false;
@@ -463,8 +460,12 @@ void plcBase::TimAndn(string runAt) {
     }
     logicStack.push(a);
 }
-
+// 
+// TODO These need some thought
+// Have an update output function that is overridden by children
+//
 void plcBase::Outn(string symbol) {
+    cout << "plcBase::Outn " << symbol ;
 
     bool a = fromStack() ;
 
