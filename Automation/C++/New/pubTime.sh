@@ -8,7 +8,7 @@ if [ $# -gt 0 ]; then
     TOPIC=$1
 fi
 
-mosquitto_pub -t $TOPIC -m $(date "+%H:%M") -h 192.168.0.65 -r
+mosquitto_pub -t $TOPIC -m $(date "+%H:%M:%S") -h 192.168.0.65 -r
 
 
 
