@@ -1,24 +1,26 @@
 
 #include "plcMQTT.h"
 #include <iostream>
+#include <unistd.h>
+
 
 using namespace std;
 
-void logic(plcMQTT *l) {
+void logicTst(plcMQTT *l) {
     static int count=1;
 
     cout << "LOGIC:" << count++ << endl ;
 
-    /*
     l->Ld("START");
     l->Or("MOTOR");
     l->Andn("STOP");
     l->Out("MOTOR");
-    */
 
+    /*
     l->Ld("START");
     l->TimAndn("15:34");
     l->Out("MOTOR");
+    */
 
 }
 
@@ -27,7 +29,7 @@ int main() {
 
     plcMQTT *me = new plcMQTT();
 
-    me->setLogic( logic );
+//    me->setLogic( logic );
 //    me->setVerbose(true);
 
     me->plcDump();  // Show defaults
@@ -78,5 +80,9 @@ int main() {
 
 
     me->plcRun();
+    while(1) {
+        logicTst(me);
+        sleep(1);
+    }
 }
 

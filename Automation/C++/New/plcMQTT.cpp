@@ -123,7 +123,7 @@ bool plcMQTT::dbSetup() {
         sql += "idx integer primary key autoincrement,";
         sql += "short_name varchar(32) not null," ;
         sql += "topic varchar(64) default 'LOCAL'," ;
-        sql += "value varchar(32) default 'NONE'," ;
+        sql += "value varchar(32) default 'OFF'," ;
         sql += "direction varchar(32) default 'LOCAL'" ;
         sql += ");";
 
