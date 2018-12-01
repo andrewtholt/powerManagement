@@ -9,10 +9,17 @@ void logic(plcMQTT *l) {
 
     cout << "LOGIC:" << count++ << endl ;
 
+    /*
     l->Ld("START");
     l->Or("MOTOR");
     l->Andn("STOP");
     l->Out("MOTOR");
+    */
+
+    l->Ld("START");
+    l->TimAndn("15:34");
+    l->Out("MOTOR");
+
 }
 
 int main() {

@@ -1,6 +1,8 @@
 #include <string.h>
 #include <time.h>
 #include <stdio.h>
+#include <time.h>
+
 #include <iostream>
 #include <map>
 #include <fstream>
@@ -23,6 +25,61 @@ inline std::string &trim(std::string& s, const char* t = " \t\n\r\f\v") {
 }
 
 using namespace std;
+
+string plcBase::getTime() {
+//    cout << "plcBase::getTime" << endl;
+    string res;
+
+    time_t rawtime;
+    struct tm *timeinfo;
+
+    time( &rawtime );
+    timeinfo = localtime ( &rawtime );
+
+    string hours   = to_string(timeinfo->tm_hour);
+    string minutes = to_string(timeinfo->tm_min);
+//    string seconds = to_string(timeinfo->tm_sec);
+
+//    res = hours +":" + minutes +":" + seconds;
+    res = hours +":" + minutes;
+
+    return res;
+
+}
+
+bool plcBase::runNow(string time) {
+    string now=getTime();
+    bool flag = (now == time) ;
+
+    return flag;
+}
+
+bool plcBase::timeBetween(string start, string end) {
+
+    int nowHH = 0;
+    int nowMM = 0;
+
+    int startHH = 0;
+    int startMM = 0;
+
+    int endHH = 0;
+    int endMM = 0;
+
+    string now=getTime();
+
+    sscanf( now.c_str(),"%d:%d", &nowHH, &nowMM);
+    int nowMinutes= (nowHH * 60) + nowMM;
+
+    sscanf( start.c_str(),"%d:%d", &startHH, &startMM);
+    int startMinutes = (startHH * 60) + startMM;
+
+    sscanf( end.c_str(),"%d:%d", &endHH, &endMM);
+    int endMinutes = (endHH * 60) + endMM;
+
+    bool flag = (( startMinutes <= nowMinutes ) && ( nowMinutes < endMinutes ));
+
+    return flag;
+}
 
 void plcBase::plcDump() {
     printf("Hostname  : %s\n", hostName.c_str());
@@ -420,45 +477,169 @@ void plcBase::Andf(string symbol) {
     cout << "   TOS: " << logicStack.top() << endl;
 }
 // 
-// TODO
-// All the time commands need a rethink.
 //
 void plcBase::TimLd(string runAt) {
-    static bool hasRun=false;
+    cout << "plcBase::TimLd " << runAt ;
     bool runFlag=false;
     bool a = false;
 
-//    runFlag = runNow(runAt);
+    runFlag = runNow(runAt);
 
-    if( runFlag && !hasRun ) {
-        a = true;
-        hasRun = true;
-    }
+    logicStack.push( runFlag );
 
-    if ( !runFlag) {
-        a = false;
-        hasRun = false;
-    }
+    cout << "   TOS: " << logicStack.top() << endl;
+}
+
+void plcBase::TimLd(string start, string end) {
+    cout << "plcBase::TimLd " << start << "-" << end ;
+    bool runFlag = false;
+
+    runFlag = timeBetween( start, end ) ;
+    logicStack.push( runFlag );
+
+    cout << "   TOS: " << logicStack.top() << endl;
+}
+
+void plcBase::TimLdn(string runAt) {
+    cout << "plcBase::TimLdn " << runAt ;
+    bool runFlag=false;
+    bool a = false;
+
+    runFlag = runNow(runAt);
+
+    logicStack.push( !runFlag );
+
+    cout << "   TOS: " << logicStack.top() << endl;
+}
+
+void plcBase::TimLdn(string start, string end) {
+    cout << "plcBase::TimLdn " << start << "-" << end ;
+    bool runFlag = false;
+
+    runFlag = timeBetween( start, end ) ;
+    logicStack.push( !runFlag );
+
+    cout << "   TOS: " << logicStack.top() << endl;
+}
+
+void plcBase::TimAnd(string runAt) {
+    cout << "plcBase::TimAnd " << runAt ;
+
+    bool runFlag=false;
+    bool a = false;
+
+    runFlag = runNow(runAt);
+
+    a = logicStack.top() && runFlag;
+    logicStack.pop();
+
     logicStack.push(a);
+    cout << "   TOS: " << logicStack.top() << endl;
+}
+
+void plcBase::TimAnd(string start, string end) {
+    cout << "plcBase::TimAnd " << start << "-" << end ;
+
+    bool runFlag=false;
+    bool a = false;
+
+    runFlag = timeBetween( start, end ) ;
+
+    a = logicStack.top() && runFlag;
+    logicStack.pop();
+
+    logicStack.push(a);
+    cout << "   TOS: " << logicStack.top() << endl;
 }
 
 void plcBase::TimAndn(string runAt) {
-    static bool hasRun=false;
+    cout << "plcBase::TimAndn " << runAt ;
+
     bool runFlag=false;
     bool a = false;
 
-//    runFlag = runNow(runAt);
+    runFlag = runNow(runAt);
 
-    if( runFlag && !hasRun ) {
-        a = a && false;
-        hasRun = true;
-    }
+    a = logicStack.top() && !runFlag;
+    logicStack.pop();
 
-    if ( !runFlag) {
-        a = a && true ;
-        hasRun = false;
-    }
     logicStack.push(a);
+    cout << "   TOS: " << logicStack.top() << endl;
+}
+
+void plcBase::TimAndn(string start, string end) {
+    cout << "plcBase::TimAndn " << start << "-" << end ;
+
+    bool runFlag=false;
+    bool a = false;
+
+    runFlag = timeBetween( start, end ) ;
+
+    a = logicStack.top() && !runFlag;
+    logicStack.pop();
+
+    logicStack.push(a);
+    cout << "   TOS: " << logicStack.top() << endl;
+}
+
+void plcBase::TimOr(string runAt) {
+    cout << "plcBase::TimOr " << runAt;
+
+    bool runFlag=false;
+    bool a = false;
+
+    runFlag = runNow(runAt);
+
+    a = logicStack.top() || runFlag;
+    logicStack.pop();
+
+    logicStack.push(a);
+    cout << "   TOS: " << logicStack.top() << endl;
+}
+
+void plcBase::TimOr(string start, string end) {
+    cout << "plcBase::TimOr " << start << "-" << end ;
+
+    bool runFlag=false;
+    bool a = false;
+
+    runFlag = timeBetween( start, end ) ;
+
+    a = logicStack.top() || !runFlag;
+    logicStack.pop();
+
+    logicStack.push(a);
+    cout << "   TOS: " << logicStack.top() << endl;
+}
+
+void plcBase::TimOrn(string runAt) {
+    cout << "plcBase::TimOrn " << runAt;
+
+    bool runFlag=false;
+    bool a = false;
+
+    runFlag = runNow(runAt);
+
+    a = logicStack.top() || !runFlag;
+    logicStack.pop();
+
+    logicStack.push(a);
+    cout << "   TOS: " << logicStack.top() << endl;
+}
+
+void plcBase::TimOrn(string start, string end) {
+    cout << "plcBase::TimOrn " << start << "-" << end ;
+
+    bool runFlag=false;
+    bool a = false;
+
+    runFlag = timeBetween( start, end ) ;
+
+    a = logicStack.top() || runFlag;
+    logicStack.pop();
+
+    logicStack.push(a);
+    cout << "   TOS: " << logicStack.top() << endl;
 }
 // 
 // TODO These need some thought
