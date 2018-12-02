@@ -106,27 +106,17 @@ bool plcBase::runNow(string time) {
 //
 bool plcBase::timeBetween(string start, string end) {
 
-    int nowHH = 0;
-    int nowMM = 0;
+    int nowMinutes = getTimeMinutes();
 
-    int startHH = 0;
-    int startMM = 0;
+    int startMinutes = checkTime( start );
 
-    int endHH = 0;
-    int endMM = 0;
+    int endMinutes = checkTime(end);
 
-    string now=getTime();
+    bool flag=false;
 
-    sscanf( now.c_str(),"%d:%d", &nowHH, &nowMM);
-    int nowMinutes= (nowHH * 60) + nowMM;
-
-    sscanf( start.c_str(),"%d:%d", &startHH, &startMM);
-    int startMinutes = (startHH * 60) + startMM;
-
-    sscanf( end.c_str(),"%d:%d", &endHH, &endMM);
-    int endMinutes = (endHH * 60) + endMM;
-
-    bool flag = (( startMinutes <= nowMinutes ) && ( nowMinutes < endMinutes ));
+    if( (startMinutes >= 0 ) && (endMinutes >= 0)) {
+        flag = (( startMinutes <= nowMinutes ) && ( nowMinutes < endMinutes ));
+    }
 
     return flag;
 }
