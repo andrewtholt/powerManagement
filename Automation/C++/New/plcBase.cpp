@@ -89,13 +89,21 @@ string plcBase::getTime() {
 
 bool plcBase::runNow(string time) {
 
+    bool flag = false;
+
     int mins = checkTime( time );
-    string now=getTime();
-    bool flag = (now == time) ;
+
+    if( mins > 0) {
+        int now = getTimeMinutes() ;
+
+        flag = (now == mins) ;
+    }
 
     return flag;
 }
-
+// TODO
+// Modify all time based functions to use checkTime
+//
 bool plcBase::timeBetween(string start, string end) {
 
     int nowHH = 0;
