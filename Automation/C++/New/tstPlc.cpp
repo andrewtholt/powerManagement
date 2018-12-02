@@ -73,9 +73,13 @@ int main() {
 
     me->initPlc();
 
-    me->addIOPoint("TIME", "/test/time","IN");
+    // Env, time day, sunrise etc
+    me->addIOPoint("TIME",    "/test/time","IN");
+    me->addIOPoint("DAY",     "/test/day","IN");
     me->addIOPoint("SUNRISE", "/test/sunrise","IN");
+    me->addIOPoint("SUNSET",  "/test/sunset","IN");
 
+    // Tests
     me->addIOPoint("START", "/test/start","IN");
     me->addIOPoint("STOP", "/test/stop","IN");
     me->addIOPoint("MOTOR", "/home/outside/BackFloodlight/cmnd/power","OUT");

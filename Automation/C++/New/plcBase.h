@@ -6,7 +6,6 @@
 #include <map>
 #include <vector>
 #include <stack>
-#include <hspread.h>
 
 using namespace std;
 
