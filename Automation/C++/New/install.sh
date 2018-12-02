@@ -9,4 +9,6 @@ DEST="/usr/local/Scripts"
 sudo mkdir -p $DEST
 sudo cp pubDay.sh $DEST
 sudo cp pubTime.sh $DEST
+sudo cp sunriseMQTT.sh $DEST
+sudo cp sunsetMQTT.sh $DEST
 
