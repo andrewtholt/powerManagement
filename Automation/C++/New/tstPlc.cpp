@@ -11,7 +11,8 @@ void logicTst(plcMQTT *l) {
 
     cout << "LOGIC:" << count++ << endl ;
 
-    l->Ld("START");
+    l->TimLd("SUNRISE");
+//    l->Ld("START");
     l->Or("MOTOR");
     l->Andn("STOP");
     l->Out("MOTOR");
@@ -73,6 +74,7 @@ int main() {
     me->initPlc();
 
     me->addIOPoint("TIME", "/test/time","IN");
+    me->addIOPoint("SUNRISE", "/test/sunrise","IN");
 
     me->addIOPoint("START", "/test/start","IN");
     me->addIOPoint("STOP", "/test/stop","IN");

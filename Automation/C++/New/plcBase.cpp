@@ -26,6 +26,48 @@ inline std::string &trim(std::string& s, const char* t = " \t\n\r\f\v") {
 
 using namespace std;
 
+int plcBase::checkTime(string time ) {
+    int retMinutes = -1;
+    int hrs;
+    int mins;
+    string tmp="";
+    int rc=0;
+
+    char first = time.at(0);
+
+    if ( first >= '0' && first <= '9' ) {
+        rc=sscanf( time.c_str(),"%d:%d", &hrs, &mins);
+
+        retMinutes = (hrs*60) + mins;
+    } else {
+        tmp = getValue( time );
+
+        if( tmp != "") {
+            rc=sscanf( tmp.c_str(),"%d:%d", &hrs, &mins);
+
+            if(rc ==2 ) {
+                retMinutes = (hrs*60) + mins;
+            }
+        }
+    }
+
+    return retMinutes;
+}
+
+int plcBase::getTimeMinutes() {
+    int mins = 0;
+
+    time_t rawtime;
+    struct tm *timeinfo;
+
+    time( &rawtime );
+    timeinfo = localtime ( &rawtime );
+
+    mins = (timeinfo->tm_hour * 60 ) + timeinfo->tm_min ;
+
+    return mins;
+}
+
 string plcBase::getTime() {
 //    cout << "plcBase::getTime" << endl;
     string res;
@@ -38,9 +80,7 @@ string plcBase::getTime() {
 
     string hours   = to_string(timeinfo->tm_hour);
     string minutes = to_string(timeinfo->tm_min);
-//    string seconds = to_string(timeinfo->tm_sec);
 
-//    res = hours +":" + minutes +":" + seconds;
     res = hours +":" + minutes;
 
     return res;
@@ -48,6 +88,8 @@ string plcBase::getTime() {
 }
 
 bool plcBase::runNow(string time) {
+
+    int mins = checkTime( time );
     string now=getTime();
     bool flag = (now == time) ;
 
