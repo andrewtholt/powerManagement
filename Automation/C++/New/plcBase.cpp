@@ -399,6 +399,28 @@ bool plcBase::fromStack() {
     return a;
 }
 
+void plcBase::toStack(bool v) {
+    logicStack.push(v);
+}
+// 
+// Return TOS, without removing it
+//
+bool plcBase::getTOS() {
+    bool a = logicStack.top();
+
+    return a;
+}
+
+void plcBase::setTOS(bool a) {
+    logicStack.top();
+    logicStack.push( a );
+}
+
+int plcBase::stackSize() {
+    return logicStack.size();
+}
+
+
 void plcBase::Or(string symbol) {
     cout << "plcBase::Or " << symbol ;
     bool a;
@@ -417,7 +439,7 @@ void plcBase::Orn(string symbol) {
     bool v = getBoolValue( symbol );
     bool a;
 
-    a = fromStack() || !v ;
+    a = fromStack() || (!v) ;
     logicStack.push(a);
 
     cout << "   TOS: " << logicStack.top() << endl;

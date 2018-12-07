@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <string.h>
 
+#include <mosquitto.h>
+
 using namespace std;
 
 
@@ -62,7 +64,8 @@ bool plcMQTT::connect() {
 bool plcMQTT::initPlc() {
     bool failFlag = true;
 
-    char clientid[24];
+//     char clientid[24];
+    char *clientid = NULL;
     failFlag = dbSetup();
 
     mosq = mosquitto_new(clientid, true, (void *)db);

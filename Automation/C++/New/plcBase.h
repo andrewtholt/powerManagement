@@ -15,11 +15,17 @@ class plcBase {
         string hostName;
         int port;
         stack<bool> logicStack;
-        bool fromStack();
-        bool verbose=false;
-
         // Returns number of minutes since 00:00 or < 0 if invalid
         int checkTime(string time ); 
+        bool verbose=false;
+
+    public:
+        bool fromStack();   // Destructive pop
+        void toStack(bool);   // Destructive pop
+        bool getTOS();      // Return TOS, non destructive
+        void setTOS(bool);  // replace TOS value.
+        int stackSize();    // Return stack size.
+
 
     private:
 

@@ -1,15 +1,20 @@
 
-CPP=g++
+CPP=g++ -Wl,--no-as-needed
 
-CFLAGS=-g -std=c++11
 
-BINS=tstPlc 
-LIBS= -lpthread -lmosquitto -lsqlite3
+BINS=mainTestAll
+LIBS= -lpthread -lmosquitto -lsqlite3 -lgtest
+TST_OBJS = ./Test/plcTests.o plcBase.o plcMQTT.o
+INCS=-I.
+CXXFLAGS = -fmax-errors=5 -g 
+
+TEST?=0
+CFLAGS=-g -std=c++11 -DTEST=$(TEST)
 
 all:	$(BINS)
 
-tstPlc:	tstPlc.cpp plcMQTT.o plcBase.o
-	$(CPP) $(CFLAGS) tstPlc.cpp plcMQTT.o plcBase.o -o tstPlc $(LIBS) 
+tstPlc:	tstPlc.cpp plcMQTT.o plcBase.o Makefile
+	$(CPP) $(CFLAGS) tstPlc.cpp plcMQTT.o plcBase.o -o tstPlc $(LIBS) $(INCS)
 
 plcBase.o:	plcBase.cpp plcBase.h
 	$(CPP) $(CFLAGS) -c plcBase.cpp -o plcBase.o
@@ -19,3 +24,13 @@ plcMQTT.o:	plcMQTT.cpp plcMQTT.h plcBase.o
 
 clean:
 	rm -f $(BINS) *.o
+
+test:	plcBase.o plcMQTT.o
+	$(CXX) $(CXXFLAGS) $(INCS) -o testAll  mainTestAll.cpp $(TST_OBJS)
+
+mainTestAll:	mainTestAll.cpp plcMQTT.o plcBase.o $(TST_OBJS)
+	$(CPP) $(CXXFLAGS) mainTestAll.cpp -o mainTestAll $(LIBS) $(TST_OBJS)
+
+
+.cpp.o:
+	$(CXX) $(CXXFLAGS) -c $< -o $@ $(INCS)
