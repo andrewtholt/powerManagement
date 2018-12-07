@@ -8,7 +8,8 @@ TST_OBJS = ./Test/plcTests.o plcBase.o plcMQTT.o
 INCS=-I.
 CXXFLAGS = -fmax-errors=5 -g 
 
-TEST?=0
+TEST?=1 # set thsi to 1 to enable testing
+
 CFLAGS=-g -std=c++11 -DTEST=$(TEST)
 
 all:	$(BINS)

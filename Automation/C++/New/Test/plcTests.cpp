@@ -63,6 +63,20 @@ TEST(plcTest,LoadInvert ) {
     tstPlc->fromStack();
 }
 
+TEST(plcTest,TimLoad ) {
+    string now = tstPlc->getTime();
+
+    tstPlc->TimLd(now);
+    ASSERT_EQ( true, tstPlc->getTOS());
+    ASSERT_EQ(1,tstPlc->stackSize());
+    tstPlc->fromStack();
+
+    tstPlc->TimLd("00:00");
+    ASSERT_EQ( false, tstPlc->getTOS());
+    ASSERT_EQ(1,tstPlc->stackSize());
+    tstPlc->fromStack();
+}
+
 TEST(plcTest,Or ) {
     tstPlc->setValue("TEST", "OFF");
     tstPlc->toStack(false);
