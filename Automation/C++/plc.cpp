@@ -127,7 +127,7 @@ bool plc::loadProg(string fileName) {
 
 //                for (auto & c: iop) c = toupper(c);
 
-                compile(inst,iop);
+//                compile(inst,iop);
             }
         }
     }
@@ -140,6 +140,7 @@ void plc::dumpProgram() {
         printf("0x%02x %s\n", i.inst, (char *)i.iop.c_str());
     }
 }
+/*
 void plc::compile(string inst, string iop) {
     string tmp = inst.substr(0,2);
 
@@ -197,6 +198,7 @@ void plc::compile(string inst, string iop) {
     }
     RAM.push_back(fred);
 }
+*/
 
 const string plc::boolToString(bool f) {
     string state;
@@ -226,7 +228,7 @@ void plc::instDisplay(string inst, string iop) {
 
     cout << endl;
 }
-
+/*
 void plc::plcRun() {
 
     char rxMsg[255];
@@ -363,6 +365,7 @@ void plc::plcRun() {
         }
     }
 }
+*/
 
 void plc::Ld(string symbol) {
     // TODO

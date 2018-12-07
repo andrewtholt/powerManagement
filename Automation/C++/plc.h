@@ -10,41 +10,9 @@
 
 using namespace std;
 
-enum Inst { 
-    NOP=0, 
-    LD, 
-    LDN,
-    LDR,
-    LDF,
-
-    OR=0x10,
-    ORN,
-    ORR,
-    ORF,
-
-    AND=0x20,
-    ANDN,
-    ANDR,
-    ANDF,
-
-    TIM_LD=0x30,
-    TIM_LDN,
-    TIM_AND,
-    TIM_ANDN,
-
-    OUT=0x40,
-    OUTN,
-    END=0xff
-};
-
 
 class plc {
     private:
-        struct ramEntry {
-            uint8_t inst;
-            string iop;
-        } ;
-        
 //        bool acc=false;
 
         stack<bool> logicStack;
