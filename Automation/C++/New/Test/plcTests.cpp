@@ -77,6 +77,7 @@ TEST(plcTest,Or ) {
 
     tstPlc->Or("TEST");
 
+    ASSERT_EQ(1,tstPlc->stackSize());
     ASSERT_EQ( true, tstPlc->fromStack());
     /* ===== */
 
@@ -84,6 +85,7 @@ TEST(plcTest,Or ) {
     tstPlc->toStack(false);
 
     tstPlc->Or("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
 
     ASSERT_EQ( true, tstPlc->fromStack());
     /* ===== */
@@ -92,6 +94,7 @@ TEST(plcTest,Or ) {
     tstPlc->toStack(true);
 
     tstPlc->Or("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
 
     ASSERT_EQ( true, tstPlc->fromStack());
 }
@@ -101,6 +104,7 @@ TEST(plcTest,Orn ) {
     tstPlc->toStack(false);
 
     tstPlc->Orn("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
 
     ASSERT_EQ( true, tstPlc->fromStack());
     /* ===== */
@@ -109,6 +113,7 @@ TEST(plcTest,Orn ) {
     tstPlc->toStack(true);
 
     tstPlc->Orn("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
 
     ASSERT_EQ( true, tstPlc->fromStack());
     /* ===== */
@@ -117,6 +122,7 @@ TEST(plcTest,Orn ) {
     tstPlc->toStack(false);
 
     tstPlc->Orn("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
 
     ASSERT_EQ( false, tstPlc->fromStack());
     /* ===== */
@@ -125,6 +131,7 @@ TEST(plcTest,Orn ) {
     tstPlc->toStack(true);
 
     tstPlc->Orn("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
 
     ASSERT_EQ( true, tstPlc->fromStack());
 }
@@ -134,6 +141,7 @@ TEST(plcTest,And ) {
     tstPlc->toStack(false);
 
     tstPlc->And("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
 
     ASSERT_EQ( false, tstPlc->fromStack());
     /* ===== */
@@ -142,6 +150,7 @@ TEST(plcTest,And ) {
     tstPlc->toStack(true);
 
     tstPlc->And("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
 
     ASSERT_EQ( false, tstPlc->fromStack());
     /* ===== */
@@ -150,6 +159,7 @@ TEST(plcTest,And ) {
     tstPlc->toStack(false);
 
     tstPlc->And("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
 
     ASSERT_EQ( false, tstPlc->fromStack());
     /* ===== */
@@ -158,6 +168,7 @@ TEST(plcTest,And ) {
     tstPlc->toStack(true);
 
     tstPlc->And("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
 
     ASSERT_EQ( true, tstPlc->fromStack());
 }
@@ -167,6 +178,7 @@ TEST(plcTest,Andn ) {
     tstPlc->toStack(false);
 
     tstPlc->Andn("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
 
     ASSERT_EQ( false, tstPlc->fromStack());
     /* ===== */
@@ -175,6 +187,7 @@ TEST(plcTest,Andn ) {
     tstPlc->toStack(true);
 
     tstPlc->Andn("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
 
     ASSERT_EQ( true, tstPlc->fromStack());
     /* ===== */
@@ -183,6 +196,7 @@ TEST(plcTest,Andn ) {
     tstPlc->toStack(false);
 
     tstPlc->Andn("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
 
     ASSERT_EQ( false, tstPlc->fromStack());
     /* ===== */
@@ -191,6 +205,7 @@ TEST(plcTest,Andn ) {
     tstPlc->toStack(true);
 
     tstPlc->Andn("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
 
     ASSERT_EQ( false, tstPlc->fromStack());
 }
@@ -206,6 +221,7 @@ TEST(plcTest,Out ) {
 
     tstPlc->Out("TEST");
     ASSERT_EQ( true, tstPlc->getBoolValue("TEST"));
+    ASSERT_EQ(0, tstPlc->stackSize());
 }
 
 TEST(plcTest,Outn ) {
@@ -219,6 +235,7 @@ TEST(plcTest,Outn ) {
 
     tstPlc->Outn("TEST");
     ASSERT_EQ( false, tstPlc->getBoolValue("TEST"));
+    ASSERT_EQ(0, tstPlc->stackSize());
 }
 
 
