@@ -68,6 +68,27 @@ int plcBase::getTimeMinutes() {
     return mins;
 }
 
+string plcBase::timeFromInt(int n) {
+    char time[6];
+
+    int hh = n / 60;
+    int mm = n % 60;
+
+    sprintf( time, "%02d:%02d", hh, mm );
+
+    string t = time;
+
+    return t;
+
+}
+string plcBase::addMinutes(string time, int adj) {
+    int t = checkTime( time );
+
+    t += adj;
+
+    return (timeFromInt(t));
+}
+
 string plcBase::getTime() {
 //    cout << "plcBase::getTime" << endl;
     string res;
@@ -166,6 +187,16 @@ bool plcBase::setPort(int p) {
     } else {
         failFlag = true;
     }
+    return failFlag;
+}
+
+bool plcBase::plcEnd() {
+    bool failFlag=false;
+    cout << "plcBase::plcEnd" << endl;
+    while(!logicStack.empty()) {
+        logicStack.pop();
+    }
+
     return failFlag;
 }
 /*

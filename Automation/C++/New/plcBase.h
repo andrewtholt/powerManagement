@@ -19,6 +19,8 @@ class plcBase {
         int checkTime(string time ); 
         bool verbose=false;
 
+        string timeFromInt(int);
+
     public:
         bool fromStack();   // Destructive pop
         void toStack(bool);   // Destructive pop
@@ -37,6 +39,11 @@ class plcBase {
     public:
         virtual string getTime(); // get time in hh:mm:ss format
         virtual int getTimeMinutes(); // get time in minbutes since 00:00
+
+        // Add minutes to ta a time given as hh:mm 
+        //  and return time in same format
+        //
+        virtual string addMinutes(string, int) ;
 
         virtual bool runNow(string ); // pass in time as hh:mm, return true if that time is now.
         virtual bool timeBetween(string, string );  // pass in time as hh:mm, 
@@ -91,4 +98,9 @@ class plcBase {
         plcBase();
         bool setHost(string);
         bool setPort(int);
+        //
+        // Used as the last instruction at the end of a sequence of operations.
+        // Performs any final tidying up and updates.
+        //
+        virtual bool plcEnd();  
 };

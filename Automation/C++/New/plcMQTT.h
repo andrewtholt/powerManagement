@@ -26,12 +26,15 @@ using namespace std;
 
 class plcMQTT : public plcBase 
 {
+
     public:
         plcMQTT() ;
 //        void setHost(string);
 //        void setPort(int);
 
         bool initPlc() ;
+
+        int sqlCount(string sqlCmd);
 
         bool addIOPoint(string );               // Short name
         bool addIOPoint(string,string );        // Short name, topic
@@ -40,15 +43,24 @@ class plcMQTT : public plcBase
         string getTopic(string );               // Short name
 
         virtual string getValue(string );               // Short name
+        virtual string getOldValue(string );               // Short name
+
         virtual bool setValue(string, string );         // Short name, string value
+        // 
+        // setOldValue, test only.
+        //
+        virtual bool setOldValue(string, string );         // Short name, string value
+
         virtual bool setBoolValue(string, bool );       // Short name, boolean value
 
         virtual bool getBoolValue(string );               // Short name
 
         void plcRun();
         void setLogic( void (*f) (plcMQTT *));
+        virtual bool plcEnd();
 
 //        void Ld(string);
+        void Ldr(string);
         void Out(string);
         void Outn(string);
     private:

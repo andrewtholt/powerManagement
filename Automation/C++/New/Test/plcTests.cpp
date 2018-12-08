@@ -48,6 +48,10 @@ TEST(plcTest, getValue) {
     ASSERT_EQ( "ON", tstPlc->getValue("TEST"));
 }
 
+TEST(plcTest, getOldValue) {
+    ASSERT_EQ( "OFF", tstPlc->getOldValue("TEST"));
+}
+
 TEST(plcTest,Load ) {
     tstPlc->setValue("TEST", "OFF");
     tstPlc->Ld("TEST");
@@ -56,11 +60,75 @@ TEST(plcTest,Load ) {
     tstPlc->fromStack();
 }
 
+TEST(plcTest,LoadRisingEdge ) {
+    //
+    // value = OFF old = OFF
+    //
+    tstPlc->setValue("TEST", "OFF");
+    tstPlc->setOldValue("TEST", "OFF");
+
+    tstPlc->Ldr("TEST");
+    ASSERT_EQ( false, tstPlc->getTOS());
+    tstPlc->fromStack();
+    //
+    // value = ON old = OFF
+    //
+    tstPlc->setValue("TEST", "ON");
+    tstPlc->setOldValue("TEST", "OFF");
+    tstPlc->Ldr("TEST");
+
+    ASSERT_EQ( true, tstPlc->getTOS());
+    tstPlc->fromStack();
+    //
+    // value = OFF old = ON
+    //
+    tstPlc->setValue("TEST", "OFF");
+    tstPlc->setOldValue("TEST", "ON");
+    tstPlc->Ldr("TEST");
+
+    ASSERT_EQ( false, tstPlc->getTOS());
+    tstPlc->fromStack();
+    //
+    // value = ON old = OFF
+    //
+    tstPlc->setValue("TEST", "ON");
+    tstPlc->setOldValue("TEST", "ON");
+    tstPlc->Ldr("TEST");
+
+    ASSERT_EQ( false, tstPlc->getTOS());
+    tstPlc->fromStack();
+
+    tstPlc->setValue("TEST", "OFF");
+    tstPlc->plcEnd();
+}
+
 TEST(plcTest,LoadInvert ) {
+    tstPlc->setValue("TEST", "OFF");
     tstPlc->Ldn("TEST");
     ASSERT_EQ( true, tstPlc->getTOS());
     ASSERT_EQ(1, tstPlc->stackSize());
+    
     tstPlc->fromStack();
+}
+
+TEST(plcTest,AddMinutes ) {
+    string adj = tstPlc->addMinutes("11:00", 51);
+    ASSERT_EQ("11:51", adj);
+
+    adj = tstPlc->addMinutes("11:00", -9);
+    ASSERT_EQ("10:51", adj);
+}
+
+TEST(plcTest,TimeBetween ) {
+    string testTime = tstPlc->getTime();
+
+    string startTime = tstPlc->addMinutes(testTime, -10);
+    string endTime = tstPlc->addMinutes(testTime, 10);
+
+    ASSERT_EQ(true, tstPlc->timeBetween( startTime, endTime));
+
+    startTime = tstPlc->addMinutes(testTime, 5);
+    ASSERT_EQ(false, tstPlc->timeBetween( startTime, endTime));
 }
 
 TEST(plcTest,TimLoad ) {
@@ -75,6 +143,7 @@ TEST(plcTest,TimLoad ) {
     ASSERT_EQ( false, tstPlc->getTOS());
     ASSERT_EQ(1,tstPlc->stackSize());
     tstPlc->fromStack();
+
 }
 
 TEST(plcTest,Or ) {
@@ -252,7 +321,35 @@ TEST(plcTest,Outn ) {
     ASSERT_EQ(0, tstPlc->stackSize());
 }
 
+TEST(plcTest,plcEnd ) {
+    tstPlc->setValue("TEST","OFF");
+    tstPlc->setOldValue("TEST","ON");
+    tstPlc->toStack(true);
 
+    ASSERT_EQ(false, tstPlc->plcEnd());
+    ASSERT_EQ(tstPlc->getValue("TEST"), tstPlc->getOldValue("TEST"));
+
+    ASSERT_EQ(0, tstPlc->stackSize());
+}
+
+TEST(plcTest,sqlCount) {
+    tstPlc->setValue("TEST","OFF");
+    tstPlc->setOldValue("TEST","OFF");
+
+    ASSERT_LE(0,tstPlc->sqlCount("short_name='TEST' and value='ON' and oldvalue='OFF'"));
+
+    tstPlc->setValue("TEST","ON");
+    ASSERT_EQ(1,tstPlc->sqlCount("short_name='TEST' and value='ON' and oldvalue='OFF'"));
+
+    tstPlc->setOldValue("TEST","ON");
+    ASSERT_EQ(0,tstPlc->sqlCount("short_name='TEST' and value='ON' and oldvalue='OFF'"));
+
+    tstPlc->setValue("TEST","OFF");
+    ASSERT_EQ(0,tstPlc->sqlCount("short_name='TEST' and value='ON' and oldvalue='OFF'"));
+
+    tstPlc->setOldValue("TEST","OFF");
+    ASSERT_EQ(0,tstPlc->sqlCount("short_name='TEST' and value='ON' and oldvalue='OFF'"));
+}
 
 
 

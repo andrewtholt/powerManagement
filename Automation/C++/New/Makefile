@@ -2,7 +2,7 @@
 CPP=g++ -Wl,--no-as-needed
 
 
-BINS=mainTestAll
+BINS=tstPlc mainTestAll
 LIBS= -lpthread -lmosquitto -lsqlite3 -lgtest
 TST_OBJS = ./Test/plcTests.o plcBase.o plcMQTT.o
 INCS=-I.
