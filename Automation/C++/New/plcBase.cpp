@@ -790,7 +790,9 @@ void plcBase::TimOr(string start, string end) {
 }
 
 void plcBase::TimOrn(string runAt) {
-    cout << "plcBase::TimOrn " << runAt;
+    if(verbose) {
+        cout << "plcBase::TimOrn " << runAt;
+    }
     
     bool runFlag=false;
     bool a = false;
@@ -801,22 +803,30 @@ void plcBase::TimOrn(string runAt) {
     logicStack.pop();
     
     logicStack.push(a);
-    cout << "   TOS: " << logicStack.top() << endl;
+    
+    if(verbose) {
+        cout << "   TOS: " << logicStack.top() << endl;
+    }
 }
 
 void plcBase::TimOrn(string start, string end) {
-    cout << "plcBase::TimOrn " << start << "-" << end ;
+    if(verbose) {
+        cout << "plcBase::TimOrn " << start << "-" << end ;
+    }
     
     bool runFlag=false;
     bool a = false;
     
     runFlag = timeBetween( start, end ) ;
     
-    a = logicStack.top() || runFlag;
+    a = logicStack.top() || !runFlag;
     logicStack.pop();
     
     logicStack.push(a);
-    cout << "   TOS: " << logicStack.top() << endl;
+    
+    if(verbose) {
+        cout << "   TOS: " << logicStack.top() << endl;
+    }
 }
 // 
 // TODO These need some thought

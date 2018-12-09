@@ -377,6 +377,64 @@ TEST(plcTest,TimOr) {
     tstPlc->emptyStack();
 }
 
+TEST(plcTest,TimOrn) {
+    string now = tstPlc->getTime();
+    string older;
+    string newer;
+    
+    tstPlc->toStack(false);
+    tstPlc->TimOrn(now);
+    ASSERT_EQ(false,tstPlc->fromStack());
+    tstPlc->emptyStack();
+    
+    tstPlc->toStack(true);
+    tstPlc->TimOrn(now);
+    ASSERT_EQ(true,tstPlc->fromStack());
+    tstPlc->emptyStack();
+    
+    tstPlc->toStack(false);
+    tstPlc->TimOrn("00:00");
+    ASSERT_EQ(true,tstPlc->fromStack());
+    tstPlc->emptyStack();
+    
+    tstPlc->toStack(true);
+    tstPlc->TimOrn("00:00");
+    ASSERT_EQ(true,tstPlc->fromStack());
+    tstPlc->emptyStack();
+    
+    tstPlc->toStack(false);
+    now = tstPlc->getTime();
+    older = tstPlc->addMinutes( now, -10 );
+    newer = tstPlc->addMinutes( now, 10 );
+    tstPlc->TimOrn(older,newer);
+    ASSERT_EQ(false,tstPlc->fromStack());
+    tstPlc->emptyStack();
+    
+    tstPlc->toStack(true);
+    now = tstPlc->getTime();
+    older = tstPlc->addMinutes( now, -10 );
+    newer = tstPlc->addMinutes( now, 10 );
+    tstPlc->TimOrn(older,newer);
+    ASSERT_EQ(true,tstPlc->fromStack());
+    tstPlc->emptyStack();
+    
+    tstPlc->toStack(false);
+    now = tstPlc->getTime();
+    older = tstPlc->addMinutes( now, -20 );
+    newer = tstPlc->addMinutes( now, -10 );
+    tstPlc->TimOrn(older,newer);
+    ASSERT_EQ(true,tstPlc->fromStack());
+    tstPlc->emptyStack();
+    
+    tstPlc->toStack(true);
+    now = tstPlc->getTime();
+    older = tstPlc->addMinutes( now, -20 );
+    newer = tstPlc->addMinutes( now, -10 );
+    tstPlc->TimOrn(older,newer);
+    ASSERT_EQ(true,tstPlc->fromStack());
+    tstPlc->emptyStack();
+}
+
 TEST(plcTest,Or ) {
     tstPlc->setValue("TEST", "OFF");
     tstPlc->toStack(false);
