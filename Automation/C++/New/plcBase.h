@@ -27,6 +27,7 @@ class plcBase {
         bool getTOS();      // Return TOS, non destructive
         void setTOS(bool);  // replace TOS value.
         int stackSize();    // Return stack size.
+        void emptyStack();
 
 
     private:

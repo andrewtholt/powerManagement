@@ -34,7 +34,10 @@ class plcMQTT : public plcBase
 
         bool initPlc() ;
 
+        
         int sqlCount(string sqlCmd);
+        bool risingEdge(string);
+        bool fallingEdge(string);
 
         bool addIOPoint(string );               // Short name
         bool addIOPoint(string,string );        // Short name, topic
@@ -61,6 +64,8 @@ class plcMQTT : public plcBase
 
 //        void Ld(string);
         void Ldr(string);
+        void Ldf(string);
+        
         void Out(string);
         void Outn(string);
     private:
