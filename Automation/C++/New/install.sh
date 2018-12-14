@@ -1,14 +1,23 @@
 #!/bin/bash
 
-set -x 
+set -x
 
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+RELEASE="0.1"
+LIB_DEST="/usr/local/lib"
+INC_DEST="/usr/local/include"
 
-DEST="/usr/local/Scripts"
+sudo cp ./libplc.so $LIB_DEST
+HERE=$(pwd)
+cd $LIB_DEST
 
-sudo mkdir -p $DEST
-sudo cp pubDay.sh $DEST
-sudo cp pubTime.sh $DEST
-sudo cp sunriseMQTT.sh $DEST
-sudo cp sunsetMQTT.sh $DEST
+if [ -L ./libplc.so.${RELEASE} ]; then
+    echo "./libplc.so.${RELEASE} already exists"
+    exit 1
+else
+    sudo ln -s ./libplc.so ./libplc.so.${RELEASE}
+fi
+
+cd $HERE
+sudo cp plcMQTT.h $INC_DEST
+sudo cp plcBase.h $INC_DEST
 

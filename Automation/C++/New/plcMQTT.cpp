@@ -51,6 +51,7 @@ void subscribe_callback(struct mosquitto *mosq, void *userdata, int mid, int qos
 
 plcMQTT::plcMQTT() {
     printf("plcMQTT\n");
+    logic = NULL;
     //    hostName = "127.0.0.1";
     //    port = 1883;
 }

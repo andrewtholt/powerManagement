@@ -2,15 +2,15 @@
 CPP=g++ -Wl,--no-as-needed
 
 
-BINS=tstPlc mainTestAll
+BINS=tstPlc mainTestAll libplc.so
 LIBS= -lpthread -lmosquitto -lsqlite3 -lgtest
 TST_OBJS = ./Test/plcTests.o plcBase.o plcMQTT.o
 INCS=-I.
-CXXFLAGS = -fmax-errors=5 -g 
+CXXFLAGS = -fmax-errors=5 -g -fPIC
 
-TEST?=1 # set thsi to 1 to enable testing
+TEST?=1 # set this to 1 to enable testing
 
-CFLAGS=-g -std=c++11 -DTEST=$(TEST)
+CFLAGS=-g -std=c++11 -DTEST=$(TEST)  $(CXXFLAGS)
 
 all:	$(BINS)
 
@@ -28,6 +28,9 @@ clean:
 
 mainTestAll:	mainTestAll.cpp plcMQTT.o plcBase.o $(TST_OBJS)
 	$(CPP) $(CXXFLAGS) mainTestAll.cpp -o mainTestAll $(LIBS) $(TST_OBJS)
+
+libplc.so:	plcBase.o plcMQTT.o
+	$(CPP) -shared plcBase.o plcMQTT.o -o libplc.so
 
 test:	mainTestAll
 	./mainTestAll
