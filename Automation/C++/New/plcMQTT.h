@@ -57,6 +57,7 @@ class plcMQTT : public plcBase
         virtual bool setBoolValue(string, bool );       // Short name, boolean value
 
         virtual bool getBoolValue(string );               // Short name
+        virtual bool getBoolOldValue(string );               // Short name
 
         void plcRun();
         void setLogic( void (*f) (plcMQTT *));

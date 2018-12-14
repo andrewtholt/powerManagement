@@ -508,6 +508,295 @@ TEST(plcTest,Orn ) {
     ASSERT_EQ( true, tstPlc->fromStack());
 }
 
+TEST(plcTest,Orf ) {
+    // 
+    // Stack: false
+    // New: OFF
+    // Old: OFF
+    // 
+    // Expected outcome: false
+    // 
+    tstPlc->setValue("TEST", "OFF");
+    tstPlc->setOldValue("TEST", "OFF");
+    tstPlc->toStack(false);
+
+    tstPlc->Orf("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( false, tstPlc->fromStack());
+    // 
+    // Stack: true
+    // New: OFF
+    // Old: OFF
+    // 
+    // Expected outcome: true
+    // 
+    tstPlc->setValue("TEST", "OFF");
+    tstPlc->setOldValue("TEST", "OFF");
+    tstPlc->toStack(true);
+
+    tstPlc->Orf("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( true, tstPlc->fromStack());
+    // 
+    // Stack: false
+    // New: ON
+    // Old: OFF
+    // 
+    // Expected outcome: false
+    // 
+    tstPlc->toStack(false);
+    tstPlc->setValue("TEST", "ON");
+    tstPlc->setOldValue("TEST", "OFF");
+
+    tstPlc->Orf("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( false, tstPlc->fromStack());
+    // 
+    // Stack: false
+    // New: ON
+    // Old: ON
+    //
+    // Expected outcome: false
+    // 
+    tstPlc->toStack(false);
+    tstPlc->setValue("TEST", "ON");
+    tstPlc->setOldValue("TEST", "ON");
+
+    tstPlc->Orf("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( false, tstPlc->fromStack());
+    // 
+    // Stack: false
+    // New: OFF
+    // Old: ON
+    //
+    // Expected outcome: true
+    // 
+    tstPlc->toStack(false);
+    tstPlc->setValue("TEST", "OFF");
+    tstPlc->setOldValue("TEST", "ON");
+
+    tstPlc->Orf("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( true, tstPlc->fromStack());
+    // 
+    // Stack: true
+    // New: OFF
+    // Old: ON
+    //
+    // Expected outcome: true
+    // 
+    tstPlc->toStack(true);
+    tstPlc->setValue("TEST", "OFF");
+    tstPlc->setOldValue("TEST", "ON");
+
+    tstPlc->Orf("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( true, tstPlc->fromStack());
+    // 
+    // Stack: true
+    // New: ON
+    // Old: ON
+    //
+    // Expected outcome: false
+    // 
+    tstPlc->toStack(true);
+    tstPlc->setValue("TEST", "ON");
+    tstPlc->setOldValue("TEST", "ON");
+
+    tstPlc->Orf("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( true, tstPlc->fromStack());
+}
+
+TEST(plcTest,Andr ) {
+    // 
+    // Stack: false
+    // New: OFF
+    // Old: OFF
+    // 
+    // Expected outcome: false
+    // 
+    tstPlc->setValue("TEST", "OFF");
+    tstPlc->setOldValue("TEST", "OFF");
+    tstPlc->toStack(false);
+
+    tstPlc->Andr("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( false, tstPlc->fromStack());
+    // 
+    // Stack: true
+    // New: OFF
+    // Old: OFF
+    // 
+    // Expected outcome: false
+    // 
+    tstPlc->setValue("TEST", "OFF");
+    tstPlc->setOldValue("TEST", "OFF");
+    tstPlc->toStack(true);
+
+    tstPlc->Andr("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( false, tstPlc->fromStack());
+    // 
+    // Stack: false
+    // New: ON
+    // Old: OFF
+    // 
+    // Expected outcome: false
+    // 
+    tstPlc->toStack(false);
+    tstPlc->setValue("TEST", "ON");
+    tstPlc->setOldValue("TEST", "OFF");
+
+    tstPlc->Andr("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( false, tstPlc->fromStack());
+    // 
+    // Stack: false
+    // New: ON
+    // Old: ON
+    //
+    // Expected outcome: false
+    // 
+    tstPlc->toStack(false);
+    tstPlc->setValue("TEST", "ON");
+    tstPlc->setOldValue("TEST", "ON");
+
+    tstPlc->Andr("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( false, tstPlc->fromStack());
+    // 
+    // Stack: true
+    // New: ON
+    // Old: OFF
+    //
+    // Expected outcome: true
+    // 
+    tstPlc->toStack(true);
+    tstPlc->setValue("TEST", "ON");
+    tstPlc->setOldValue("TEST", "OFF");
+
+    tstPlc->Andr("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( true, tstPlc->fromStack());
+    // 
+    // Stack: true
+    // New: ON
+    // Old: ON
+    //
+    // Expected outcome: false
+    // 
+    tstPlc->toStack(true);
+    tstPlc->setValue("TEST", "ON");
+    tstPlc->setOldValue("TEST", "ON");
+
+    tstPlc->Andr("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( false, tstPlc->fromStack());
+}
+
+TEST(plcTest,Andf ) {
+    // 
+    // Stack: false
+    // New: OFF
+    // Old: OFF
+    // 
+    // Expected outcome: false
+    // 
+    tstPlc->setValue("TEST", "OFF");
+    tstPlc->setOldValue("TEST", "OFF");
+    tstPlc->toStack(false);
+
+    tstPlc->Andf("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( false, tstPlc->fromStack());
+    // 
+    // Stack: true
+    // New: OFF
+    // Old: OFF
+    // 
+    // Expected outcome: false
+    // 
+    tstPlc->setValue("TEST", "OFF");
+    tstPlc->setOldValue("TEST", "OFF");
+    tstPlc->toStack(true);
+
+    tstPlc->Andf("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( false, tstPlc->fromStack());
+    // 
+    // Stack: false
+    // New: ON
+    // Old: OFF
+    // 
+    // Expected outcome: false
+    // 
+    tstPlc->toStack(false);
+    tstPlc->setValue("TEST", "ON");
+    tstPlc->setOldValue("TEST", "OFF");
+
+    tstPlc->Andf("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( false, tstPlc->fromStack());
+    // 
+    // Stack: false
+    // New: ON
+    // Old: ON
+    //
+    // Expected outcome: false
+    // 
+    tstPlc->toStack(false);
+    tstPlc->setValue("TEST", "ON");
+    tstPlc->setOldValue("TEST", "ON");
+
+    tstPlc->Andf("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( false, tstPlc->fromStack());
+    // 
+    // Stack: true
+    // New: ON
+    // Old: OFF
+    //
+    // Expected outcome: true
+    // 
+    tstPlc->toStack(true);
+    tstPlc->setValue("TEST", "ON");
+    tstPlc->setOldValue("TEST", "OFF");
+
+    tstPlc->Andf("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( false, tstPlc->fromStack());
+    // 
+    // Stack: true
+    // New: OFF
+    // Old: ON
+    //
+    // Expected outcome: true
+    // 
+    tstPlc->toStack(true);
+    tstPlc->setValue("TEST", "OFF");
+    tstPlc->setOldValue("TEST", "ON");
+
+    tstPlc->Andf("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( true, tstPlc->fromStack());
+    // 
+    // Stack: true
+    // New: OFF
+    // Old: OFF
+    //
+    // Expected outcome: false
+    // 
+    tstPlc->toStack(true);
+    tstPlc->setValue("TEST", "ON");
+    tstPlc->setOldValue("TEST", "ON");
+
+    tstPlc->Andf("TEST");
+    ASSERT_EQ(1, tstPlc->stackSize());
+    ASSERT_EQ( false, tstPlc->fromStack());
+}
+
 TEST(plcTest,And ) {
     tstPlc->setValue("TEST", "OFF");
     tstPlc->toStack(false);

@@ -52,6 +52,8 @@ class plcBase {
 
         virtual string getValue( string );
         virtual bool getBoolValue( string );
+        virtual bool getBoolOldValue( string );
+
         virtual bool setBoolValue(string shortName, bool v );
         virtual bool setValue(string shortName, string v );
 

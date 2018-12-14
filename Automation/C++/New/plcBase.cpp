@@ -366,6 +366,10 @@ string plcBase::getValue( string symbol ) {
 bool plcBase::getBoolValue( string symbol ) {
     return ioPoint[ symbol ];
 }
+bool plcBase::getBoolOldValue( string symbol ) {
+    // TODO
+    return false;
+}
 
 bool plcBase::setValue( string symbol, string v ) {
     ioPoint[ symbol ] = stringToBool(v);
@@ -504,12 +508,15 @@ void plcBase::Orn(string symbol) {
 }
 
 void plcBase::Orr(string symbol) {
-    cout << "plcBase::Orr " << symbol ;
-    static bool oldV = getBoolValue( symbol );
-    bool outV=false;
+    if(verbose) {
+        cout << "plcBase::Orr " << symbol ;
+    }
+    
     bool a;
+    bool outV=false;
     
     bool v = getBoolValue( symbol );
+    bool oldV = getBoolOldValue( symbol );
     
     outV = v && !oldV;
     oldV = v;
@@ -517,11 +524,17 @@ void plcBase::Orr(string symbol) {
     a = fromStack() ;
     a = a || outV;
     logicStack.push(a);
-    cout << "   TOS: " << logicStack.top() << endl;
+    
+    if(verbose) {
+        cout << "   TOS: " << logicStack.top() << endl;
+    }
 }
 
 void plcBase::Orf(string symbol) {
-    cout << "plcBase::Orf " << symbol ;
+    if(verbose) {
+        cout << "plcBase::Orf " << symbol ;
+    }
+    
     static bool oldV = getBoolValue( symbol );
     bool outV=false;
     
@@ -534,7 +547,10 @@ void plcBase::Orf(string symbol) {
     
     a = a || outV;
     logicStack.push(a);
-    cout << "   TOS: " << logicStack.top() << endl;
+    
+    if(verbose) {
+        cout << "   TOS: " << logicStack.top() << endl;
+    }
 }
 
 void plcBase::And(string symbol) {
@@ -570,13 +586,15 @@ void plcBase::Andn(string symbol) {
 }
 
 void plcBase::Andr(string symbol) {
-    cout << "plcBase::Andr " << symbol ;
+    if(verbose) {
+        cout << "plcBase::Andr " << symbol ;
+    }
     
-    static bool oldV=false;
     bool outV=false;
     bool a = fromStack() ;
     
     bool v = getBoolValue( symbol );
+    bool oldV = getBoolOldValue( symbol );
     
     outV = v && !oldV;
     oldV = v;
@@ -584,17 +602,21 @@ void plcBase::Andr(string symbol) {
     a = a && outV ;
     logicStack.push(a);
     
-    cout << "   TOS: " << logicStack.top() << endl;
+    if(verbose) {
+        cout << "   TOS: " << logicStack.top() << endl;
+    }
 }
 
 void plcBase::Andf(string symbol) {
-    cout << "plcBase::Andf " << symbol ;
+    if(verbose) {
+        cout << "plcBase::Andf " << symbol ;
+    }
     
-    static bool oldV=false;
     bool outV=false;
     bool a = fromStack() ;
     
     bool v = getBoolValue( symbol );
+    bool oldV = getBoolOldValue( symbol );
     
     outV = !v && oldV;
     oldV = v;
@@ -602,7 +624,9 @@ void plcBase::Andf(string symbol) {
     a = a && outV ;
     logicStack.push(a);
     
-    cout << "   TOS: " << logicStack.top() << endl;
+    if(verbose) {
+        cout << "   TOS: " << logicStack.top() << endl;
+    }
 }
 // 
 //

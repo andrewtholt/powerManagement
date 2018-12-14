@@ -292,6 +292,11 @@ bool plcMQTT::getBoolValue( string shortName ) {
     return stringToBool( getValue( shortName ));
 }
 
+bool plcMQTT::getBoolOldValue( string shortName ) {
+    
+    return stringToBool( getOldValue( shortName ));
+}
+
 bool plcMQTT::setValue(string shortName, string value) {
     string sql;
     bool failFlag=true;
