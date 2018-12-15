@@ -24,7 +24,7 @@ plcMQTT.o:	plcMQTT.cpp plcMQTT.h plcBase.o
 	$(CPP) $(CFLAGS) -c plcMQTT.cpp -o plcMQTT.o
 
 clean:
-	rm -f $(BINS) *.o
+	rm -f $(BINS) *.o Test/*.o
 
 mainTestAll:	mainTestAll.cpp plcMQTT.o plcBase.o $(TST_OBJS)
 	$(CPP) $(CXXFLAGS) mainTestAll.cpp -o mainTestAll $(LIBS) $(TST_OBJS)

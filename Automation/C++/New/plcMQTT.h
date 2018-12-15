@@ -61,7 +61,7 @@ class plcMQTT : public plcBase
 
         void plcRun();
         void setLogic( void (*f) (plcMQTT *));
-        virtual bool plcEnd();
+        virtual bool plcEnd(int );              // Delay in ms
 
 //        void Ld(string);
         void Ldr(string);

@@ -195,7 +195,7 @@ void plcBase::emptyStack() {
         logicStack.pop();
     }
 }
-bool plcBase::plcEnd() {
+bool plcBase::plcEnd(int ms) {
     bool failFlag=false;
     
     if(verbose) {
@@ -203,6 +203,10 @@ bool plcBase::plcEnd() {
     }
     
     emptyStack();
+
+    if( ms > 0) {
+        usleep(ms * 1000);
+    }
     
     return failFlag;
 }

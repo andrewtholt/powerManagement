@@ -2,6 +2,7 @@
 #pragma once
 
 #include <sqlite3.h>
+#include <unistd.h>
 #include <string>
 #include <map>
 #include <vector>
@@ -105,5 +106,5 @@ class plcBase {
         // Used as the last instruction at the end of a sequence of operations.
         // Performs any final tidying up and updates.
         //
-        virtual bool plcEnd();  
+        virtual bool plcEnd(int);  // Delay in ms
 };

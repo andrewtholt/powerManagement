@@ -242,9 +242,11 @@ string plcMQTT::getValue(string shortName) {
     int rc;
     
     sql = "select value from iopoints where short_name = '" + shortName + "';";
+    /*
     if(verbose) {
         cout << sql << endl;
     }
+    */
     
     rc = sqlite3_prepare_v2( db, sql.c_str(), -1, &res, NULL);
     rc = sqlite3_step(res);
@@ -466,19 +468,20 @@ void plcMQTT::Outn(string symbol) {
     }
 }
 
-bool plcMQTT::plcEnd() {
+bool plcMQTT::plcEnd(int ms) {
     bool failFlag=true;
     char *err_msg = NULL;
     
     if(verbose) {
         cout << "plcMQTT::plcEnd" << endl;
     }
-    failFlag=plcBase::plcEnd();
     
     string sql="update iopoints set oldvalue=value;";
     int rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
     failFlag=sqlError(rc, err_msg);
     
+    failFlag |=plcBase::plcEnd(ms);
+
     return failFlag;
     
 }

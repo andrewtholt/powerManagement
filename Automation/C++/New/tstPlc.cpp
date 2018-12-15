@@ -23,7 +23,7 @@ void logicTst(plcMQTT *l) {
     l->Out("MOTOR");
     */
 
-    l->plcEnd();
+    l->plcEnd(100);
 }
 
 int main() {

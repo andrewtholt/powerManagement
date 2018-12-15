@@ -99,7 +99,7 @@ TEST(plcTest,LoadRisingEdge ) {
     tstPlc->fromStack();
 
     tstPlc->setValue("TEST", "OFF");
-    tstPlc->plcEnd();
+    tstPlc->plcEnd(0);
 }
 
 TEST(plcTest,LoadFallingEdge ) {
@@ -142,7 +142,7 @@ TEST(plcTest,LoadFallingEdge ) {
     tstPlc->fromStack();
 
     tstPlc->setValue("TEST", "OFF");
-    tstPlc->plcEnd();
+    tstPlc->plcEnd(0);
 }
 
 TEST(plcTest,LoadInvert ) {
@@ -904,7 +904,7 @@ TEST(plcTest,plcEnd ) {
     tstPlc->setOldValue("TEST","ON");
     tstPlc->toStack(true);
 
-    ASSERT_EQ(false, tstPlc->plcEnd());
+    ASSERT_EQ(false, tstPlc->plcEnd(0));
     ASSERT_EQ(tstPlc->getValue("TEST"), tstPlc->getOldValue("TEST"));
 
     ASSERT_EQ(0, tstPlc->stackSize());
