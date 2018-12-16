@@ -10,6 +10,8 @@
 
 using namespace std;
 
+sem_t mutex;
+
 
 void connect_callback(struct mosquitto *mosq, void *obj, int result) {
     printf("Connect_callback\n");
@@ -28,6 +30,8 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
     printf("Message_callback\n");
     
     if(message->payloadlen) {
+
+        sem_post( &mutex );
         
         cout << "Topic   " << message->topic << endl;
         cout << "Message " << (char *)message->payload << endl;
@@ -68,9 +72,10 @@ bool plcMQTT::initPlc() {
     //     char clientid[24];
     char *clientid = NULL;
     failFlag = dbSetup();
+
+    sem_init(&mutex, 0, 0);
     
     mosq = mosquitto_new(clientid, true, (void *)db);
-    
     
     if(mosq) {
         failFlag = false;
@@ -480,6 +485,7 @@ bool plcMQTT::plcEnd(int ms) {
     int rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
     failFlag=sqlError(rc, err_msg);
     
+    sem_wait( &mutex );
     failFlag |=plcBase::plcEnd(ms);
 
     return failFlag;

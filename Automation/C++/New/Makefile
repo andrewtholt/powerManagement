@@ -3,7 +3,7 @@ CPP=g++ -Wl,--no-as-needed
 
 
 BINS=tstPlc mainTestAll libplc.so
-LIBS= -lpthread -lmosquitto -lsqlite3 -lgtest
+LIBS= -lpthread -lrt -lmosquitto -lsqlite3 -lgtest
 TST_OBJS = ./Test/plcTests.o plcBase.o plcMQTT.o
 INCS=-I.
 CXXFLAGS = -fmax-errors=5 -g -fPIC

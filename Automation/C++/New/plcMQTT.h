@@ -11,7 +11,7 @@
 */
 
 #include <mosquitto.h>
-
+#include <semaphore.h>
 #include "plcMQTT.h"
 #include "plcBase.h"
 
@@ -22,7 +22,6 @@
 //
 #define DB_FILE "/tmp/plc2.db"  
 using namespace std;
-
 
 class plcMQTT : public plcBase 
 {
