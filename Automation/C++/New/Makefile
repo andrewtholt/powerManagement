@@ -1,6 +1,5 @@
 
-CPP=g++ -Wl,--no-as-needed
-
+CPP=g++ -std=c++11 -Wl,--no-as-needed
 
 BINS=tstPlc mainTestAll libplc.so
 LIBS= -lpthread -lrt -lmosquitto -lsqlite3 -lgtest
