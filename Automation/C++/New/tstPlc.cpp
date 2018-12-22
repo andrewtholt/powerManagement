@@ -26,13 +26,47 @@ void logicTst(plcMQTT *l) {
     l->plcEnd(0);
 }
 
+void logicBackLight(plcMQTT *l) {
+   
+    static int count=1;
+    static bool firstTime=true;
+    if(firstTime) {
+        cout << "Backlight:" << count++ << endl ;
+        // 
+        // Outputs
+        // 
+        l->addIOPoint("BACK-LIGHT-COIL",    "/home/outside/BackFloodlight/cmnd/power","OUT");
+        // 
+        // Inputs
+        // 
+        l->addIOPoint("BACK-LIGHT-CONTACT", "/home/outside/BackFloodlight/POWER","IN");
+        l->addIOPoint("SUNRISE", "/test/sunrise","IN");
+//        l->addIOPoint("START", "/test/start","IN");
+//        l->addIOPoint("STOP", "/test/stop","IN");
+
+        firstTime=false;
+    }
+    
+    l->TimLd("04:30");
+    l->Or("BACK-LIGHT-CONTACT");
+    
+    string sunRise = l->getValue("SUNRISE");
+    string adjSunRise = l->addMinutes(sunRise, 30);
+    l->TimAnd(adjSunRise);
+    l->Out("BACK-LIGHT-COIL");
+    
+    
+    l->plcEnd(0);
+}
+
+
 int main() {
     bool setNameFlag = true;
 
     plcMQTT *me = new plcMQTT();
 
 //    me->setLogic( logic );
-//    me->setVerbose(true);
+    me->setVerbose(true);
 
     me->plcDump();  // Show defaults
 
@@ -75,6 +109,7 @@ int main() {
     me->initPlc();
 
     // Env, time day, sunrise etc
+    /*
     me->addIOPoint("TIME",    "/test/time","IN");
     me->addIOPoint("DAY",     "/test/day","IN");
     me->addIOPoint("SUNRISE", "/test/sunrise","IN");
@@ -84,11 +119,13 @@ int main() {
     me->addIOPoint("START", "/test/start","IN");
     me->addIOPoint("STOP", "/test/stop","IN");
     me->addIOPoint("MOTOR", "/home/outside/BackFloodlight/cmnd/power","OUT");
+    */
 
 
     me->plcRun();
     while(1) {
-        logicTst(me);
+//        logicTst(me);
+        logicBackLight(me);
         sleep(1);
     }
 }
