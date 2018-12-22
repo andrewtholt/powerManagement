@@ -41,6 +41,7 @@ void logicBackLight(plcMQTT *l) {
         // 
         l->addIOPoint("BACK-LIGHT-CONTACT", "/home/outside/BackFloodlight/POWER","IN");
         l->addIOPoint("SUNRISE", "/test/sunrise","IN");
+        l->addIOPoint("SUNSET",  "/test/sunset", "IN");
 //        l->addIOPoint("START", "/test/start","IN");
 //        l->addIOPoint("STOP", "/test/stop","IN");
 
@@ -48,11 +49,17 @@ void logicBackLight(plcMQTT *l) {
     }
     
     l->TimLd("04:30");
+    
+    string sunSet = l->getValue("SUNSET");
+    string adjSunSet = l->addMinutes(sunSet, -30);
+    l->TimOr(adjSunSet);
+    
     l->Or("BACK-LIGHT-CONTACT");
     
     string sunRise = l->getValue("SUNRISE");
     string adjSunRise = l->addMinutes(sunRise, 30);
-    l->TimAnd(adjSunRise);
+    l->TimAndn(adjSunRise);
+    l->TimAndn("11:00");
     l->Out("BACK-LIGHT-COIL");
     
     
