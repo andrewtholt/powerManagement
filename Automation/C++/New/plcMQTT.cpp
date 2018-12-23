@@ -14,7 +14,7 @@ sem_t mutex;
 
 
 void connect_callback(struct mosquitto *mosq, void *obj, int result) {
-    printf("Connect_callback\n");
+    printf("Connect_callback %d\n", result);
 }
 
 void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message) {
@@ -484,6 +484,12 @@ bool plcMQTT::plcEnd(int ms) {
     string sql="update iopoints set oldvalue=value;";
     int rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
     failFlag=sqlError(rc, err_msg);
+    
+    if(verbose) {
+        int sval;
+        int rc = sem_getvalue(&mutex, &sval);
+        cout << "plcMQTT::plcEnd=" << sval << endl;
+    }
     
     sem_wait( &mutex );
     failFlag |=plcBase::plcEnd(ms);
