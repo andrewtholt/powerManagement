@@ -17,6 +17,10 @@ void connect_callback(struct mosquitto *mosq, void *obj, int result) {
     printf("Connect_callback %d\n", result);
 }
 
+void disconnect_callback(struct mosquitto *mosq, void *obj, int result) {
+    printf("Disonnect_callback %d\n", result);
+}
+
 void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message) {
     string sql;
     
@@ -66,20 +70,21 @@ bool plcMQTT::connect() {
     return failFlag;
 }
 
-bool plcMQTT::initPlc() {
+bool plcMQTT::initPlc(string clientId) {
     bool failFlag = true;
     
     //     char clientid[24];
-    char *clientid = NULL;
+    
     failFlag = dbSetup();
 
     sem_init(&mutex, 0, 0);
     
-    mosq = mosquitto_new(clientid, true, (void *)db);
+    mosq = mosquitto_new(clientId.c_str(), true, (void *)db);
     
     if(mosq) {
         failFlag = false;
         mosquitto_connect_callback_set(mosq, connect_callback);
+        mosquitto_disconnect_callback_set(mosq, disconnect_callback);
         mosquitto_message_callback_set(mosq, message_callback);
     } else {
         failFlag = true;

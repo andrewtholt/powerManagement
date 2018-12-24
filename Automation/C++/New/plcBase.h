@@ -35,7 +35,7 @@ class plcBase {
     private:
 
         string iam;
-        bool initPlc();
+        bool initPlc(string);
         bool connect(string, string);
         map<string, bool> ioPoint;
 

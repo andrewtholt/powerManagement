@@ -31,7 +31,7 @@ class plcMQTT : public plcBase
 //        void setHost(string);
 //        void setPort(int);
 
-        bool initPlc() ;
+        bool initPlc(string ) ;
 
         
         int sqlCount(string sqlCmd);

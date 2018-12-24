@@ -151,8 +151,8 @@ void plcBase::setVerbose(bool flag) {
     verbose=flag;
 }
 
-bool plcBase::initPlc() {
-    printf("plcBase\n");
+bool plcBase::initPlc(string clientId) {
+    printf("plcBase %s\n", clientId.c_str());
     return false;
 }
 
@@ -160,7 +160,7 @@ plcBase::plcBase() {
     //    iam = name;
     hostName="UNKNOWN";
     port=0;
-    initPlc();
+    initPlc("DEFAULT");
 }
 
 // You can set this only once.
