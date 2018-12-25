@@ -47,7 +47,7 @@ void logicBackLight(plcMQTT *l) {
     string sunRise = l->getValue("SUNRISE");
     string adjSunRise = l->addMinutes(sunRise, 30);
     l->TimAndn(adjSunRise);
-    l->TimAndn("11:00");
+    l->TimAndn("23:00");
     l->Out("BACK-LIGHT-COIL");
     
     
@@ -90,15 +90,16 @@ int main() {
     printf("=================\n");
     
     me->initPlc("tstPlc");
-    
+    //
     // Env, time day, sunrise etc
     /*
      *    me->addIOPoint("DAY",     "/test/day","IN");
      *    me->addIOPoint("SUNRISE", "/test/sunrise","IN");
      *    me->addIOPoint("SUNSET",  "/test/sunset","IN");
      */
-    
+    //
     // Tests
+    //
     /*
      *    me->addIOPoint("BACK-LIGHT-COIL",    "/home/outside/BackFloodlight/cmnd/power","OUT");
      *    

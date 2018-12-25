@@ -14,7 +14,7 @@ CFLAGS=-g -std=c++11 -DTEST=$(TEST)  $(CXXFLAGS)
 all:	$(BINS)
 
 tstPlc:	tstPlc.cpp plcMQTT.o plcBase.o Makefile
-	$(CPP) $(CFLAGS) tstPlc.cpp plcMQTT.o plcBase.o -o tstPlc $(LIBS) $(INCS)
+	$(CPP) $(CFLAGS) tstPlc.cpp plcMQTT.o plcBase.o -o tstPlc -lpthread -lrt -lmosquitto -lsqlite3 $(INCS)
 
 plcBase.o:	plcBase.cpp plcBase.h
 	$(CPP) $(CFLAGS) -c plcBase.cpp -o plcBase.o

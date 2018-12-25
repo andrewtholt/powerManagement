@@ -45,6 +45,7 @@ class plcMQTT : public plcBase
         string getTopic(string );               // Short name
 
         virtual string getValue(string );               // Short name
+        virtual string getDirection(string );               // Short name
         virtual string getOldValue(string );               // Short name
 
         virtual bool setValue(string, string );         // Short name, string value

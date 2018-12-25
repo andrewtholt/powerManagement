@@ -6,4 +6,9 @@ Andf
 Orr
 Orn
 
+25 Dec 2018
+
+Have a function pointer to a connect function that creates and subscribes.
+On disconnect call the above.
+
 

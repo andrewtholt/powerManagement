@@ -18,7 +18,8 @@ void connect_callback(struct mosquitto *mosq, void *obj, int result) {
 }
 
 void disconnect_callback(struct mosquitto *mosq, void *obj, int result) {
-    printf("Disonnect_callback %d\n", result);
+    fprintf(stderr, "Disonnect_callback %d\n", result);
+    exit(1);
 }
 
 void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message) {
@@ -27,7 +28,9 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
     string payload;
     string topic;
     char *err_msg = NULL;
-    
+    int sval;
+    int rc;
+
     sqlite3 *db = (sqlite3 *)obj;
     
     printf("================\n");
@@ -37,6 +40,9 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
 
         sem_post( &mutex );
         
+        rc = sem_getvalue(&mutex, &sval);
+        printf("message callback sem= %d\n", sval);
+
         cout << "Topic   " << message->topic << endl;
         cout << "Message " << (char *)message->payload << endl;
         cout << "================" << endl;
@@ -133,6 +139,10 @@ bool plcMQTT::dbSetup() {
     failFlag=sqlError(rc, err_msg);
     
     if( failFlag == false ) {
+        sql = "drop table if exists iopoints";
+        rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
+        failFlag=sqlError(rc, err_msg);
+
         sql = "create table iopoints (";
         sql += "idx integer primary key autoincrement,";
         sql += "short_name varchar(32) not null," ;
@@ -147,7 +157,7 @@ bool plcMQTT::dbSetup() {
         }
         
         rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
-        failFlag=sqlError(rc, err_msg);
+        failFlag |=sqlError(rc, err_msg);
     }
     
     return failFlag;
@@ -210,6 +220,7 @@ bool plcMQTT::addIOPoint(string shortName, string topic, string direction) {
     failFlag=sqlError(rc, err_msg);
     
     if( direction == "IN") {
+        cout << "Subscribe " << topic << endl;
         mosquitto_subscribe(mosq, NULL, topic.c_str(),0);
     }
     
@@ -242,6 +253,35 @@ string plcMQTT::getTopic(string shortName) {
     
 }
 
+string plcMQTT::getDirection(string shortName) {
+    string sql;
+    string dir;
+    sqlite3_stmt *res = NULL;
+    char *tmp;
+    
+    char *err_msg = NULL;
+    int rc;
+    
+    sql = "select direction from iopoints where short_name = '" + shortName + "';";
+    /*
+    if(verbose) {
+        cout << sql << endl;
+    }
+    */
+    
+    rc = sqlite3_prepare_v2( db, sql.c_str(), -1, &res, NULL);
+    rc = sqlite3_step(res);
+    
+    tmp=(char *)sqlite3_column_text(res, 0);
+    
+    if( tmp ) {
+        dir=tmp;
+    } else {
+        dir="";
+    }
+    return dir;
+}
+
 string plcMQTT::getValue(string shortName) {
     string sql;
     string value;
@@ -268,7 +308,6 @@ string plcMQTT::getValue(string shortName) {
     } else {
         value="";
     }
-    
     return value;
 }
 
@@ -355,8 +394,8 @@ void plcMQTT::plcRun() {
     while( logic != NULL) {
         logic(this);
         
-        //        usleep( 1000 );
-        sleep( 1 );  // Slow for debugging
+        usleep( 1000 );
+        //  sleep( 1 );  // Slow for debugging
     }
 }
 
@@ -439,13 +478,19 @@ void plcMQTT::Out(string symbol) {
     bool a = fromStack() ;
     string topic ;
     string msg ;
+    string dir ;
     string old = getValue( symbol );
     
     topic = getTopic( symbol );
+    dir = getDirection( symbol );
+
     msg   = boolToString(a);
     
-    if( topic != "LOCAL")  {
+//    if( topic != "LOCAL")  {
+    if( dir != "LOCAL")  {
         // publish
+        cout << "Publish Topic " << topic << endl;
+
         if( old != msg ) {
             mosquitto_publish(mosq,NULL,topic.c_str(), strlen(msg.c_str()), msg.c_str(), 0,true);
         }
