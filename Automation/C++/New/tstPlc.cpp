@@ -54,13 +54,36 @@ void logicBackLight(plcMQTT *l) {
     l->plcEnd(0);
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     bool setNameFlag = true;
+    bool verbose = false;
+    int opt;
+
+    while(( opt = getopt(argc, argv, "hv")) != -1) {
+        switch( opt ) {
+            case 'v':
+                verbose=true;
+                break;
+            case 'h':
+                printf("Help\n\n");
+                exit(1);
+                break;
+            default:
+                printf("What ?\n\n");
+                exit(1);
+                break;
+
+        }
+    }
     
     plcMQTT *me = new plcMQTT();
     
     me->setLogic( NULL );
-//    me->setVerbose(true);
+
+    if( verbose ) {
+        cout << "Verbose" << endl;
+    }
+    me->setVerbose( verbose );
     
     me->plcDump();  // Show defaults
     
@@ -88,26 +111,10 @@ int main() {
         me->plcDump();
     }
     printf("=================\n");
-    
     me->initPlc("tstPlc");
+    
     //
     // Env, time day, sunrise etc
-    /*
-     *    me->addIOPoint("DAY",     "/test/day","IN");
-     *    me->addIOPoint("SUNRISE", "/test/sunrise","IN");
-     *    me->addIOPoint("SUNSET",  "/test/sunset","IN");
-     */
-    //
-    // Tests
-    //
-    /*
-     *    me->addIOPoint("BACK-LIGHT-COIL",    "/home/outside/BackFloodlight/cmnd/power","OUT");
-     *    
-     *    me->addIOPoint("BACK-LIGHT-CONTACT", "/home/outside/BackFloodlight/POWER","IN");
-     *    me->addIOPoint("START", "/test/start","IN");
-     *    me->addIOPoint("STOP", "/test/stop","IN");
-     */
-    
     // 
     // Outputs
     // 
@@ -119,13 +126,13 @@ int main() {
     me->addIOPoint("BACK-LIGHT-CONTACT", "/home/outside/BackFloodlight/POWER","IN");
     me->addIOPoint("SUNRISE", "/test/sunrise","IN");
     me->addIOPoint("SUNSET",  "/test/sunset", "IN");
-    me->addIOPoint("TIME",  "/test/time", "IN");
+//    me->initPlc("tstPlc");
     
     me->plcRun();
     while(1) {
 //        logicTst(me);
         logicBackLight(me);
-        sleep(1);
+//        sleep(1);
     }
 }
 

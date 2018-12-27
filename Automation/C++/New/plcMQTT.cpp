@@ -78,6 +78,10 @@ bool plcMQTT::connect() {
 
 bool plcMQTT::initPlc(string clientId) {
     bool failFlag = true;
+
+    if(verbose) {
+        cout << "plcMQTT::initPlc" << endl;
+    }
     
     //     char clientid[24];
     
@@ -100,7 +104,7 @@ bool plcMQTT::initPlc(string clientId) {
     if(mosquitto_connect(mosq, hostName.c_str(), port, keepalive)) {
         fprintf(stderr, "Unable to connect.\n");
         failFlag = true ;
-    }
+    }    
     
     //    mosquitto_loop_forever(mosq, -1, 1);
     return failFlag;
@@ -145,7 +149,7 @@ bool plcMQTT::dbSetup() {
 
         sql = "create table iopoints (";
         sql += "idx integer primary key autoincrement,";
-        sql += "short_name varchar(32) not null," ;
+        sql += "short_name varchar(32) not null unique," ;
         sql += "topic varchar(64) default 'LOCAL'," ;
         sql += "value varchar(32) default 'OFF'," ;
         sql += "oldvalue varchar(32) default 'OFF'," ;
@@ -382,6 +386,7 @@ bool plcMQTT::setOldValue(string shortName, string value) {
     
     return failFlag;
 }
+
 bool plcMQTT::setBoolValue(string shortName, bool v ) {
 }
 
@@ -389,13 +394,16 @@ void plcMQTT::doStuff() {
 }
 
 void plcMQTT::plcRun() {
+    if( verbose ) {
+        cout << "plcMQTT::plcRun" << endl;
+    }
+
     mosquitto_loop_start(mosq);
     
     while( logic != NULL) {
         logic(this);
         
         usleep( 1000 );
-        //  sleep( 1 );  // Slow for debugging
     }
 }
 
@@ -532,6 +540,7 @@ void plcMQTT::Outn(string symbol) {
 bool plcMQTT::plcEnd(int ms) {
     bool failFlag=true;
     char *err_msg = NULL;
+    static int count=0;
     
     if(verbose) {
         cout << "plcMQTT::plcEnd" << endl;
@@ -546,10 +555,12 @@ bool plcMQTT::plcEnd(int ms) {
         int rc = sem_getvalue(&mutex, &sval);
         cout << "plcMQTT::plcEnd=" << sval << endl;
     }
+    cout << "plcMQTT::plcEnd " << count << endl;
     
     sem_wait( &mutex );
     failFlag |=plcBase::plcEnd(ms);
 
+    count++;
     return failFlag;
     
 }

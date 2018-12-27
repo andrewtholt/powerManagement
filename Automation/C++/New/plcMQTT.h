@@ -73,7 +73,7 @@ class plcMQTT : public plcBase
         struct mosquitto *mosq;
         void  (*logic)(plcMQTT *);
 
-        int keepalive=60;
+        int keepalive=0;
         bool connect();
         bool dbSetup();
         bool sqlError(int, char *);

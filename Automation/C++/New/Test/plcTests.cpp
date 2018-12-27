@@ -33,7 +33,7 @@ TEST(plcTest, setPort) {
 
 TEST(plcTest, Connect) {
     tstPlc->plcDump();
-    ASSERT_EQ(false, tstPlc->initPlc());
+    ASSERT_EQ(false, tstPlc->initPlc("test-framework"));
 }
 
 TEST(plcTest, addIOPoint) {
