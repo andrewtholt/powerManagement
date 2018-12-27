@@ -471,15 +471,17 @@ void plcMQTT::Ldf(string symbol) {
 
 
 void plcMQTT::Out(string symbol) {
+    static bool first = true;
     if(verbose) {
         cout << "plcMQTT::Out " << symbol << endl;
     }
     
     bool a = fromStack() ;
     string topic ;
-    string msg ;
     string dir ;
-    string old = getValue( symbol );
+
+    string msg = getValue( symbol );;
+    string old = getOldValue( symbol );
     
     topic = getTopic( symbol );
     dir = getDirection( symbol );
@@ -490,8 +492,12 @@ void plcMQTT::Out(string symbol) {
     if( dir != "LOCAL")  {
         // publish
         cout << "Publish Topic " << topic << endl;
+        cout << "\tOld = " << old << endl;
+        cout << "\tNew = " << msg << endl;
 
-        if( old != msg ) {
+        if( (old != msg ) || first == true) {
+            first = false;
+            cout << "Publish Topic " << topic << endl;
             mosquitto_publish(mosq,NULL,topic.c_str(), strlen(msg.c_str()), msg.c_str(), 0,true);
         }
     } 

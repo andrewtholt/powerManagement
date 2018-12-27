@@ -60,7 +60,7 @@ int main() {
     plcMQTT *me = new plcMQTT();
     
     me->setLogic( NULL );
-    me->setVerbose(true);
+//    me->setVerbose(true);
     
     me->plcDump();  // Show defaults
     
