@@ -11,23 +11,22 @@ void logicBackLight(plcMQTT *l) {
     static int count=1;
     static bool firstTime=true;
     if(firstTime) {
-        cout << "Backlight:" << count++ << endl ;
+        cout << "Porch light:" << count++ << endl ;
         
         firstTime=false;
     }
     
-//    l->TimLd("04:30");
+    l->TimLd("04:30");
     
     string sunSet = l->getValue("SUNSET");
     string adjSunSet = l->addMinutes(sunSet, -30);
-    //
-    l->TimLd(adjSunSet);
+    l->TimOr(adjSunSet);
     
     l->Or("PORCHLIGHT-CONTACT");
     
-//    string sunRise = l->getValue("SUNRISE");
-//    string adjSunRise = l->addMinutes(sunRise, 30);
-//    l->TimAndn(adjSunRise);
+    string sunRise = l->getValue("SUNRISE");
+    string adjSunRise = l->addMinutes(sunRise, 30);
+    l->TimAndn(adjSunRise);
     l->TimAndn("23:00");
     l->Out("PORCHLIGHT-COIL");
     
@@ -102,12 +101,12 @@ int main(int argc, char *argv[]) {
     // 
     // Outputs
     // 
-    me->addIOPoint("BACK-LIGHT-COIL",    "/home/outside/BackFloodlight/cmnd/power","OUT");
+    me->addIOPoint("PORCHLIGHT-COIL",    "/home/outside/PorchLight_1/cmnd/power","OUT");
     // 
     // Inputs
     // 
     me->addIOPoint("TIME",    "/test/time","IN");
-    me->addIOPoint("BACK-LIGHT-CONTACT", "/home/outside/BackFloodlight/POWER","IN");
+    me->addIOPoint("PORCHLIGHT-CONTACT", "/home/outside/PorchLight_1/POWER","IN");
     me->addIOPoint("SUNRISE", "/test/sunrise","IN");
     me->addIOPoint("SUNSET",  "/test/sunset", "IN");
     
