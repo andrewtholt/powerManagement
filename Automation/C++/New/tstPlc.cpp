@@ -11,21 +11,17 @@ void logicTst(plcMQTT *l) {
     
     cout << "LOGIC:" << count++ << endl ;
     
-    //    l->TimLd("SUNRISE");
     l->Ld("START");
-    l->Or("BACK-LIGHT-CONTACT");
+    l->Or("MOTOR");
     l->Andn("STOP");
-    l->Out("BACK-LIGHT-COIL");
-    
-    /*
-     *    l->Ld("START");
-     *    l->TimAndn("15:34");
-     *    l->Out("MOTOR");
-     */
+    l->Out("MOTOR");
     
     l->plcEnd(0);
+
+    sleep(1);
 }
 
+/*
 void logicBackLight(plcMQTT *l) {
     
     static int count=1;
@@ -50,9 +46,9 @@ void logicBackLight(plcMQTT *l) {
     l->TimAndn("23:00");
     l->Out("BACK-LIGHT-COIL");
     
-    
     l->plcEnd(0);
 }
+*/
 
 int main(int argc, char *argv[]) {
     bool setNameFlag = true;
@@ -106,6 +102,7 @@ int main(int argc, char *argv[]) {
     if ( setPortFlag ) {
         printf("... Failed\n");
         fprintf(stderr,"... Failed\n");
+        exit(1);
     } else {
         printf("... OK\n");
         me->plcDump();
@@ -118,21 +115,18 @@ int main(int argc, char *argv[]) {
     // 
     // Outputs
     // 
-    me->addIOPoint("BACK-LIGHT-COIL",    "/home/outside/BackFloodlight/cmnd/power","OUT");
     // 
     // Inputs
     // 
-    me->addIOPoint("TIME",    "/test/time","IN");
-    me->addIOPoint("BACK-LIGHT-CONTACT", "/home/outside/BackFloodlight/POWER","IN");
-    me->addIOPoint("SUNRISE", "/test/sunrise","IN");
-    me->addIOPoint("SUNSET",  "/test/sunset", "IN");
-//    me->initPlc("tstPlc");
-    
+    me->addIOPoint("TIME",  "/test/time","IN");
+    me->addIOPoint("START", "/test/start","IN");
+    me->addIOPoint("STOP",  "/test/stop", "IN");
+    me->addIOPoint("MOTOR");
+
     me->plcRun();
     while(1) {
-//        logicTst(me);
-        logicBackLight(me);
-//        sleep(1);
+        logicTst(me);
+        cout << "Round and ..." << endl;
     }
 }
 

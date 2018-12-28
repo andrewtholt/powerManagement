@@ -23,13 +23,13 @@ void logicBackLight(plcMQTT *l) {
     //
     l->TimLd(adjSunSet);
     
-    l->Or("PORCHLIGHT-CONTACT");
+    l->Or("BACK-LIGHT-CONTACT");
     
 //    string sunRise = l->getValue("SUNRISE");
 //    string adjSunRise = l->addMinutes(sunRise, 30);
 //    l->TimAndn(adjSunRise);
     l->TimAndn("23:00");
-    l->Out("PORCHLIGHT-COIL");
+    l->Out("BACK-LIGHT-COIL");
     
     l->plcEnd(0);
 }

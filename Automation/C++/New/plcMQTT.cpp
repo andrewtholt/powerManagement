@@ -5,6 +5,8 @@
 #include <iostream>
 #include <unistd.h>
 #include <string.h>
+#include <semaphore.h>
+#include <time.h>
 
 #include <mosquitto.h>
 
@@ -24,7 +26,7 @@ void disconnect_callback(struct mosquitto *mosq, void *obj, int result) {
 
 void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message) {
     string sql;
-    
+
     string payload;
     string topic;
     char *err_msg = NULL;
@@ -32,30 +34,30 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
     int rc;
 
     sqlite3 *db = (sqlite3 *)obj;
-    
+
     printf("================\n");
     printf("Message_callback\n");
-    
+
     if(message->payloadlen) {
 
         sem_post( &mutex );
-        
+
         rc = sem_getvalue(&mutex, &sval);
         printf("message callback sem= %d\n", sval);
 
         cout << "Topic   " << message->topic << endl;
         cout << "Message " << (char *)message->payload << endl;
         cout << "================" << endl;
-        
+
         payload = (char *)message->payload;
         topic = message->topic ;
         sql = "update iopoints set value='" + payload + "' ";
         sql += "where topic = '" + topic + "';";
-        
+
         int rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
         cout << sql << endl;
     }
-    
+
 }
 
 void subscribe_callback(struct mosquitto *mosq, void *userdata, int mid, int qos_count, const int *    granted_qos) {
@@ -72,7 +74,7 @@ plcMQTT::plcMQTT() {
 
 bool plcMQTT::connect() {
     bool failFlag = true;
-    
+
     return failFlag;
 }
 
@@ -82,15 +84,15 @@ bool plcMQTT::initPlc(string clientId) {
     if(verbose) {
         cout << "plcMQTT::initPlc" << endl;
     }
-    
+
     //     char clientid[24];
-    
+
     failFlag = dbSetup();
 
     sem_init(&mutex, 0, 0);
-    
+
     mosq = mosquitto_new(clientId.c_str(), true, (void *)db);
-    
+
     if(mosq) {
         failFlag = false;
         mosquitto_connect_callback_set(mosq, connect_callback);
@@ -100,25 +102,25 @@ bool plcMQTT::initPlc(string clientId) {
         failFlag = true;
         return failFlag;
     }
-    
+
     if(mosquitto_connect(mosq, hostName.c_str(), port, keepalive)) {
         fprintf(stderr, "Unable to connect.\n");
         failFlag = true ;
     }    
-    
+
     //    mosquitto_loop_forever(mosq, -1, 1);
     return failFlag;
 }
 
 bool plcMQTT::sqlError(int rc, char *err_msg ) {
     bool failFlag = true;
-    
+
     if( rc != SQLITE_OK) {
         fprintf(stderr, "SQL error: %s\n", err_msg);
         sqlite3_free(err_msg);
-        
+
         sqlite3_close(db);
-        
+
         failFlag = true;
     } else {
         failFlag = false;
@@ -130,18 +132,18 @@ bool plcMQTT::dbSetup() {
     bool failFlag = true;
     char *err_msg = NULL;
     string sql;
-    
-    #ifdef DB_FILE
+
+#ifdef DB_FILE
     con = sqlite3_open( DB_FILE, &db );
-    #else
+#else
     con = sqlite3_open( ":memory:", &db );
-    #endif
-    
+#endif
+
     //    drop table if exists setting;
-    
+
     int rc = sqlite3_exec(db, "drop table if exists iopoints;", 0,0,&err_msg);
     failFlag=sqlError(rc, err_msg);
-    
+
     if( failFlag == false ) {
         sql = "drop table if exists iopoints";
         rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
@@ -155,15 +157,15 @@ bool plcMQTT::dbSetup() {
         sql += "oldvalue varchar(32) default 'OFF'," ;
         sql += "direction varchar(32) default 'LOCAL'" ;
         sql += ");";
-        
+
         if( verbose ) {
             cout << sql << endl;
         }
-        
+
         rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
         failFlag |=sqlError(rc, err_msg);
     }
-    
+
     return failFlag;
 }
 
@@ -172,16 +174,16 @@ bool plcMQTT::addIOPoint(string shortName) {
     bool failFlag=true;
     char *err_msg = NULL;
     int rc;
-    
+
     sql = "insert into iopoints (short_name) values ('" + shortName + "');";
-    
+
     if(verbose) {
         cout << sql << endl;
     }
-    
+
     rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
     failFlag=sqlError(rc, err_msg);
-    
+
     return failFlag;
 }
 
@@ -190,18 +192,18 @@ bool plcMQTT::addIOPoint(string shortName, string topic) {
     bool failFlag=true;
     char *err_msg = NULL;
     int rc;
-    
+
     sql = "insert into iopoints (short_name, topic) values ('" + shortName + "',";
     sql += "'" + topic + "'";
     sql += ");";
-    
+
     if(verbose) {
         cout << sql << endl;
     }
-    
+
     rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
     failFlag=sqlError(rc, err_msg);
-    
+
     return failFlag;
 }
 
@@ -210,51 +212,51 @@ bool plcMQTT::addIOPoint(string shortName, string topic, string direction) {
     bool failFlag=true;
     char *err_msg = NULL;
     int rc;
-    
+
     sql = "insert into iopoints (short_name, topic, direction) values ('" + shortName + "',";
     sql += "'" + topic + "',";
     sql += "'" + direction + "'";
     sql += ");";
-    
+
     if(verbose) {
         cout << sql << endl;
     }
-    
+
     rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
     failFlag=sqlError(rc, err_msg);
-    
+
     if( direction == "IN") {
         cout << "Subscribe " << topic << endl;
         mosquitto_subscribe(mosq, NULL, topic.c_str(),0);
     }
-    
+
     return failFlag;
 }
 
 string plcMQTT::getTopic(string shortName) {
     string sql;
     string topic;
-    
+
     sqlite3_stmt *res = NULL;
     char *tmp;
-    
+
     char *err_msg = NULL;
     int rc;
-    
+
     sql = "select topic from iopoints where short_name = '" + shortName + "';";
     if(verbose) {
         cout << sql << endl;
     }
-    
+
     rc = sqlite3_prepare_v2( db, sql.c_str(), -1, &res, NULL);
     rc = sqlite3_step(res);
-    
+
     tmp=(char *)sqlite3_column_text(res, 0);
-    
+
     topic=tmp;
-    
+
     return topic;
-    
+
 }
 
 string plcMQTT::getDirection(string shortName) {
@@ -262,22 +264,22 @@ string plcMQTT::getDirection(string shortName) {
     string dir;
     sqlite3_stmt *res = NULL;
     char *tmp;
-    
+
     char *err_msg = NULL;
     int rc;
-    
+
     sql = "select direction from iopoints where short_name = '" + shortName + "';";
     /*
-    if(verbose) {
-        cout << sql << endl;
-    }
-    */
-    
+       if(verbose) {
+       cout << sql << endl;
+       }
+       */
+
     rc = sqlite3_prepare_v2( db, sql.c_str(), -1, &res, NULL);
     rc = sqlite3_step(res);
-    
+
     tmp=(char *)sqlite3_column_text(res, 0);
-    
+
     if( tmp ) {
         dir=tmp;
     } else {
@@ -291,22 +293,22 @@ string plcMQTT::getValue(string shortName) {
     string value;
     sqlite3_stmt *res = NULL;
     char *tmp;
-    
+
     char *err_msg = NULL;
     int rc;
-    
+
     sql = "select value from iopoints where short_name = '" + shortName + "';";
     /*
-    if(verbose) {
-        cout << sql << endl;
-    }
-    */
-    
+       if(verbose) {
+       cout << sql << endl;
+       }
+       */
+
     rc = sqlite3_prepare_v2( db, sql.c_str(), -1, &res, NULL);
     rc = sqlite3_step(res);
-    
+
     tmp=(char *)sqlite3_column_text(res, 0);
-    
+
     if( tmp ) {
         value=tmp;
     } else {
@@ -320,36 +322,36 @@ string plcMQTT::getOldValue(string shortName) {
     string value;
     sqlite3_stmt *res = NULL;
     char *tmp;
-    
+
     char *err_msg = NULL;
     int rc;
-    
+
     sql = "select oldvalue from iopoints where short_name = '" + shortName + "';";
     if(verbose) {
         cout << sql << endl;
     }
-    
+
     rc = sqlite3_prepare_v2( db, sql.c_str(), -1, &res, NULL);
     rc = sqlite3_step(res);
-    
+
     tmp=(char *)sqlite3_column_text(res, 0);
-    
+
     if( tmp ) {
         value=tmp;
     } else {
         value="";
     }
-    
+
     return value;
 }
 
 bool plcMQTT::getBoolValue( string shortName ) {
-    
+
     return stringToBool( getValue( shortName ));
 }
 
 bool plcMQTT::getBoolOldValue( string shortName ) {
-    
+
     return stringToBool( getOldValue( shortName ));
 }
 
@@ -358,15 +360,15 @@ bool plcMQTT::setValue(string shortName, string value) {
     bool failFlag=true;
     char *err_msg = NULL;
     int rc;
-    
+
     sql = "update iopoints set value='"+value+"' where short_name = '" + shortName + "';";
     if(verbose) {
         cout << sql << endl;
     }
-    
+
     rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
     failFlag=sqlError(rc, err_msg);
-    
+
     return failFlag;
 }
 
@@ -375,15 +377,15 @@ bool plcMQTT::setOldValue(string shortName, string value) {
     bool failFlag=true;
     char *err_msg = NULL;
     int rc;
-    
+
     sql = "update iopoints set oldvalue='"+value+"' where short_name = '" + shortName + "';";
     if(verbose) {
         cout << sql << endl;
     }
-    
+
     rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
     failFlag=sqlError(rc, err_msg);
-    
+
     return failFlag;
 }
 
@@ -399,17 +401,17 @@ void plcMQTT::plcRun() {
     }
 
     mosquitto_loop_start(mosq);
-    
+
     while( logic != NULL) {
         logic(this);
-        
+
         usleep( 1000 );
     }
 }
 
 void plcMQTT::setLogic( void (*f) (plcMQTT *)) {
     cout << "setLogic" << endl;
-    
+
     logic = f;
 }
 
@@ -437,19 +439,19 @@ void plcMQTT::setLogic( void (*f) (plcMQTT *)) {
 
 bool plcMQTT::risingEdge(string symbol) {
     string sql="short_name='" + symbol + "' and value='ON' and oldvalue='OFF';";
-    
+
     int c = sqlCount( sql );
     bool risingEdge = ( c == 1 ) ? true : false ;
-    
+
     return risingEdge;
 }
 
 bool plcMQTT::fallingEdge(string symbol) {
     string sql="short_name='" + symbol + "' and value='OFF' and oldvalue='ON';";
-    
+
     int c = sqlCount( sql );
     bool fallingEdge = ( c == 1 ) ? true : false ;
-    
+
     return fallingEdge;
 }
 
@@ -457,9 +459,9 @@ void plcMQTT::Ldr(string symbol) {
     if(verbose) {
         cout << "plcMQTT::Ldr " << symbol ;
     }
-    
+
     logicStack.push(risingEdge(symbol));
-    
+
     if(verbose) {
         cout << "   TOS: " << logicStack.top() << endl;
     }
@@ -467,13 +469,13 @@ void plcMQTT::Ldr(string symbol) {
 
 void plcMQTT::Ldf(string symbol) {
     if(verbose) {
-    cout << "plcMQTT::Ldf " << symbol ;
+        cout << "plcMQTT::Ldf " << symbol ;
     }
-    
+
     logicStack.push(fallingEdge(symbol));
-    
+
     if(verbose) {
-    cout << "   TOS: " << logicStack.top() << endl;
+        cout << "   TOS: " << logicStack.top() << endl;
     }
 }
 
@@ -483,20 +485,20 @@ void plcMQTT::Out(string symbol) {
     if(verbose) {
         cout << "plcMQTT::Out " << symbol << endl;
     }
-    
+
     bool a = fromStack() ;
     string topic ;
     string dir ;
 
     string msg = getValue( symbol );;
     string old = getOldValue( symbol );
-    
+
     topic = getTopic( symbol );
     dir = getDirection( symbol );
 
     msg   = boolToString(a);
-    
-//    if( topic != "LOCAL")  {
+
+    //    if( topic != "LOCAL")  {
     if( dir != "LOCAL")  {
         // publish
         cout << "Publish Topic " << topic << endl;
@@ -510,9 +512,9 @@ void plcMQTT::Out(string symbol) {
         }
     } 
     // set local db value
-    
+
     setValue( symbol, msg);
-    
+
     while( !logicStack.empty() ) {
         logicStack.pop();
     }
@@ -524,14 +526,14 @@ void plcMQTT::Outn(string symbol) {
     }
     bool a = !fromStack() ;
     string topic ;
-    
+
     topic = getTopic( symbol );
-    
+
     if( topic != "LOCAL")  {
     }
-    
+
     setValue( symbol, boolToString( a ));
-    
+
     while( !logicStack.empty() ) {
         logicStack.pop();
     }
@@ -541,51 +543,65 @@ bool plcMQTT::plcEnd(int ms) {
     bool failFlag=true;
     char *err_msg = NULL;
     static int count=0;
-    
+
     if(verbose) {
         cout << "plcMQTT::plcEnd" << endl;
     }
-    
+
     string sql="update iopoints set oldvalue=value;";
     int rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
     failFlag=sqlError(rc, err_msg);
-    
+
     if(verbose) {
         int sval;
         int rc = sem_getvalue(&mutex, &sval);
         cout << "plcMQTT::plcEnd=" << sval << endl;
     }
     cout << "plcMQTT::plcEnd " << count << endl;
-    
-    sem_wait( &mutex );
+
+    if( ms > 0) {
+        struct timespec ts;
+
+        ts.tv_nsec+=ms * 100000;
+        if (ts.tv_nsec>=1000000000) {
+            ts.tv_sec+=1;
+            ts.tv_nsec-=1000000000;
+        }
+
+        sem_timedwait( &mutex, &ts );
+    } else {
+
+        sem_wait( &mutex );
+    }
+
     failFlag |=plcBase::plcEnd(ms);
 
     count++;
     return failFlag;
-    
+
 }
 
 int plcMQTT::sqlCount(string sqlCmd) {
     int count=-1;
-    
+
     sqlite3_stmt *res = NULL;
-    
+
     string sql = "select count(*) from iopoints where ";
-    
+
     sql += sqlCmd ;
     sql += ";";
-    
+
     if(verbose) {
         cout << sql << endl;
     }
-    
+
     int rc = sqlite3_prepare_v2( db, sql.c_str(), -1, &res, NULL);
     rc = sqlite3_step(res);
-    
+
     char *tmp=(char *)sqlite3_column_text(res, 0);
-    
+
     count = atoi(tmp);
-    
+
     return count;
 }
 
