@@ -18,14 +18,14 @@ help:
 	@echo "make mainTestAll\tBuilds test harness"
 	@echo ""
 
-porchLight:	porchLight.cpp plcMQTT.o plcBase.o Makefile
-	$(CPP) $(CFLAGS) porchLight.cpp plcMQTT.o plcBase.o -o porchLight -lpthread -lrt -lmosquitto -lsqlite3 $(INCS)
+porchLight:	porchLight.cpp Makefile libplc.so
+	$(CPP) $(CFLAGS) porchLight.cpp -o porchLight -lplc -lpthread -lrt -lmosquitto -lsqlite3 $(INCS)
 
-backLight:	backLight.cpp plcMQTT.o plcBase.o Makefile
-	$(CPP) $(CFLAGS) backLight.cpp plcMQTT.o plcBase.o -o backLight -lpthread -lrt -lmosquitto -lsqlite3 $(INCS)
+backLight:	backLight.cpp Makefile libplc.so
+	$(CPP) $(CFLAGS) backLight.cpp -o backLight -lplc -lpthread -lrt -lmosquitto -lsqlite3 $(INCS)
 
-tstPlc:	tstPlc.cpp plcMQTT.o plcBase.o Makefile
-	$(CPP) $(CFLAGS) tstPlc.cpp plcMQTT.o plcBase.o -o tstPlc -lpthread -lrt -lmosquitto -lsqlite3 $(INCS)
+tstPlc:	tstPlc.cpp Makefile libplc.so
+	$(CPP) $(CFLAGS) tstPlc.cpp -o tstPlc -lplc -lpthread -lrt -lmosquitto -lsqlite3 $(INCS)
 
 plcBase.o:	plcBase.cpp plcBase.h
 	$(CPP) $(CFLAGS) -c plcBase.cpp -o plcBase.o
