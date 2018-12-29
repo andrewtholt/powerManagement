@@ -82,6 +82,19 @@ plcMQTT::plcMQTT() {
     //    port = 1883;
 }
 
+void plcMQTT::setDBname(string db) {
+    static bool set = false;
+
+    if(set == false) {
+        dbName = db;
+        set = true;
+    }
+}
+
+string plcMQTT::getDBname() {
+    return dbName;
+}
+
 bool plcMQTT::connect() {
     bool failFlag = true;
 
@@ -148,12 +161,14 @@ bool plcMQTT::dbSetup() {
     char *err_msg = NULL;
     string sql;
 
+    /*
 #ifdef DB_FILE
     con = sqlite3_open( DB_FILE, &stuff.db );
 #else
     con = sqlite3_open( ":memory:", &stuff.db );
 #endif
-
+*/
+    con = sqlite3_open(dbName.c_str(), &stuff.db );
     //    drop table if exists setting;
 
     int rc = sqlite3_exec(stuff.db, "drop table if exists iopoints;", 0,0,&err_msg);

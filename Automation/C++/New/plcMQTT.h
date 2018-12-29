@@ -35,6 +35,9 @@ class plcMQTT : public plcBase {
 //        void setHost(string);
 //        void setPort(int);
 
+        void setDBname( string );
+        string getDBname( );
+
         bool initPlc(string ) ;
 
         sem_t *getSem();
@@ -75,7 +78,7 @@ class plcMQTT : public plcBase {
         void Out(string);
         void Outn(string);
     private:
-        string dbName;
+        string dbName=":memory:";
         struct mqttData stuff;
         struct mosquitto *mosq;
         void  (*logic)(plcMQTT *);

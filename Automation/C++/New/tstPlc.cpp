@@ -73,6 +73,8 @@ int main(int argc, char *argv[]) {
     }
     
     plcMQTT *me = new plcMQTT();
+
+    cout << me->getDBname() << endl ;
     
     me->setLogic( NULL );
 
