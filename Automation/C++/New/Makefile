@@ -13,6 +13,11 @@ CFLAGS=-g -std=c++11 -DTEST=$(TEST)  $(CXXFLAGS)
 
 all:	$(BINS)
 
+help:
+	@echo "Help"
+	@echo "make mainTestAll\tBuilds test harness"
+	@echo ""
+
 porchLight:	porchLight.cpp plcMQTT.o plcBase.o Makefile
 	$(CPP) $(CFLAGS) porchLight.cpp plcMQTT.o plcBase.o -o porchLight -lpthread -lrt -lmosquitto -lsqlite3 $(INCS)
 

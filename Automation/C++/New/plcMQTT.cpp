@@ -88,6 +88,10 @@ bool plcMQTT::connect() {
     return failFlag;
 }
 
+sem_t *plcMQTT::getSem()  {
+    return &stuff.mutex;
+}
+
 bool plcMQTT::initPlc(string clientId) {
     bool failFlag = true;
 

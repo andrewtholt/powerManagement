@@ -37,6 +37,7 @@ class plcMQTT : public plcBase {
 
         bool initPlc(string ) ;
 
+        sem_t *getSem();
         
         int sqlCount(string sqlCmd);
         bool risingEdge(string);
