@@ -12,7 +12,7 @@
 
 using namespace std;
 
-sem_t mutex;
+// sem_t mutex;
 
 
 void connect_callback(struct mosquitto *mosq, void *obj, int result) {
@@ -31,18 +31,28 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
     string topic;
     char *err_msg = NULL;
     int sval;
-    int rc;
+    int rc=0;
+    
+    struct mqttData *data;
+    
+    data = (struct mqttData *)obj;
 
-    sqlite3 *db = (sqlite3 *)obj;
+//    sqlite3 *db = (sqlite3 *)obj;
+    sqlite3 *db = (sqlite3 *)data->db;
 
     printf("================\n");
     printf("Message_callback\n");
 
     if(message->payloadlen) {
+        sem_t *mutex;
+        
+        mutex = &(data->mutex);
+//        sem_post( &mutex );
+        rc = sem_post( mutex );
 
-        sem_post( &mutex );
+//        rc = sem_getvalue(&mutex, &sval);
+        rc = sem_getvalue(mutex, &sval);
 
-        rc = sem_getvalue(&mutex, &sval);
         printf("message callback sem= %d\n", sval);
 
         cout << "Topic   " << message->topic << endl;
@@ -89,9 +99,10 @@ bool plcMQTT::initPlc(string clientId) {
 
     failFlag = dbSetup();
 
-    sem_init(&mutex, 0, 0);
+//    sem_init(&mutex, 0, 0);
+    sem_init(&(stuff.mutex), 0, 0);
 
-    mosq = mosquitto_new(clientId.c_str(), true, (void *)db);
+    mosq = mosquitto_new(clientId.c_str(), true, (void *)&stuff);
 
     if(mosq) {
         failFlag = false;
@@ -119,7 +130,7 @@ bool plcMQTT::sqlError(int rc, char *err_msg ) {
         fprintf(stderr, "SQL error: %s\n", err_msg);
         sqlite3_free(err_msg);
 
-        sqlite3_close(db);
+        sqlite3_close(stuff.db);
 
         failFlag = true;
     } else {
@@ -134,19 +145,19 @@ bool plcMQTT::dbSetup() {
     string sql;
 
 #ifdef DB_FILE
-    con = sqlite3_open( DB_FILE, &db );
+    con = sqlite3_open( DB_FILE, &stuff.db );
 #else
-    con = sqlite3_open( ":memory:", &db );
+    con = sqlite3_open( ":memory:", &stuff.db );
 #endif
 
     //    drop table if exists setting;
 
-    int rc = sqlite3_exec(db, "drop table if exists iopoints;", 0,0,&err_msg);
+    int rc = sqlite3_exec(stuff.db, "drop table if exists iopoints;", 0,0,&err_msg);
     failFlag=sqlError(rc, err_msg);
 
     if( failFlag == false ) {
         sql = "drop table if exists iopoints";
-        rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
+        rc = sqlite3_exec(stuff.db, sql.c_str(),0,0,&err_msg);
         failFlag=sqlError(rc, err_msg);
 
         sql = "create table iopoints (";
@@ -162,7 +173,7 @@ bool plcMQTT::dbSetup() {
             cout << sql << endl;
         }
 
-        rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
+        rc = sqlite3_exec(stuff.db,sql.c_str(),0,0,&err_msg);
         failFlag |=sqlError(rc, err_msg);
     }
 
@@ -181,7 +192,7 @@ bool plcMQTT::addIOPoint(string shortName) {
         cout << sql << endl;
     }
 
-    rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
+    rc = sqlite3_exec(stuff.db, sql.c_str(),0,0,&err_msg);
     failFlag=sqlError(rc, err_msg);
 
     return failFlag;
@@ -201,7 +212,7 @@ bool plcMQTT::addIOPoint(string shortName, string topic) {
         cout << sql << endl;
     }
 
-    rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
+    rc = sqlite3_exec(stuff.db,sql.c_str(),0,0,&err_msg);
     failFlag=sqlError(rc, err_msg);
 
     return failFlag;
@@ -222,7 +233,7 @@ bool plcMQTT::addIOPoint(string shortName, string topic, string direction) {
         cout << sql << endl;
     }
 
-    rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
+    rc = sqlite3_exec(stuff.db,sql.c_str(),0,0,&err_msg);
     failFlag=sqlError(rc, err_msg);
 
     if( direction == "IN") {
@@ -248,7 +259,7 @@ string plcMQTT::getTopic(string shortName) {
         cout << sql << endl;
     }
 
-    rc = sqlite3_prepare_v2( db, sql.c_str(), -1, &res, NULL);
+    rc = sqlite3_prepare_v2( stuff.db, sql.c_str(), -1, &res, NULL);
     rc = sqlite3_step(res);
 
     tmp=(char *)sqlite3_column_text(res, 0);
@@ -275,7 +286,7 @@ string plcMQTT::getDirection(string shortName) {
        }
        */
 
-    rc = sqlite3_prepare_v2( db, sql.c_str(), -1, &res, NULL);
+    rc = sqlite3_prepare_v2( stuff.db, sql.c_str(), -1, &res, NULL);
     rc = sqlite3_step(res);
 
     tmp=(char *)sqlite3_column_text(res, 0);
@@ -304,7 +315,7 @@ string plcMQTT::getValue(string shortName) {
        }
        */
 
-    rc = sqlite3_prepare_v2( db, sql.c_str(), -1, &res, NULL);
+    rc = sqlite3_prepare_v2( stuff.db, sql.c_str(), -1, &res, NULL);
     rc = sqlite3_step(res);
 
     tmp=(char *)sqlite3_column_text(res, 0);
@@ -331,7 +342,7 @@ string plcMQTT::getOldValue(string shortName) {
         cout << sql << endl;
     }
 
-    rc = sqlite3_prepare_v2( db, sql.c_str(), -1, &res, NULL);
+    rc = sqlite3_prepare_v2( stuff.db, sql.c_str(), -1, &res, NULL);
     rc = sqlite3_step(res);
 
     tmp=(char *)sqlite3_column_text(res, 0);
@@ -366,7 +377,7 @@ bool plcMQTT::setValue(string shortName, string value) {
         cout << sql << endl;
     }
 
-    rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
+    rc = sqlite3_exec( stuff.db,sql.c_str(),0,0,&err_msg);
     failFlag=sqlError(rc, err_msg);
 
     return failFlag;
@@ -383,7 +394,7 @@ bool plcMQTT::setOldValue(string shortName, string value) {
         cout << sql << endl;
     }
 
-    rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
+    rc = sqlite3_exec( stuff.db,sql.c_str(),0,0,&err_msg);
     failFlag=sqlError(rc, err_msg);
 
     return failFlag;
@@ -549,12 +560,12 @@ bool plcMQTT::plcEnd(int ms) {
     }
 
     string sql="update iopoints set oldvalue=value;";
-    int rc = sqlite3_exec(db,sql.c_str(),0,0,&err_msg);
+    int rc = sqlite3_exec( stuff.db,sql.c_str(),0,0,&err_msg);
     failFlag=sqlError(rc, err_msg);
 
     if(verbose) {
         int sval;
-        int rc = sem_getvalue(&mutex, &sval);
+        int rc = sem_getvalue( &(stuff.mutex), &sval);
         cout << "plcMQTT::plcEnd=" << sval << endl;
     }
     cout << "plcMQTT::plcEnd " << count << endl;
@@ -568,10 +579,10 @@ bool plcMQTT::plcEnd(int ms) {
             ts.tv_nsec-=1000000000;
         }
 
-        sem_timedwait( &mutex, &ts );
+        sem_timedwait( &(stuff.mutex), &ts );
     } else {
 
-        sem_wait( &mutex );
+        sem_wait( &(stuff.mutex) );
     }
 
     failFlag |=plcBase::plcEnd(ms);
@@ -595,7 +606,7 @@ int plcMQTT::sqlCount(string sqlCmd) {
         cout << sql << endl;
     }
 
-    int rc = sqlite3_prepare_v2( db, sql.c_str(), -1, &res, NULL);
+    int rc = sqlite3_prepare_v2( stuff.db, sql.c_str(), -1, &res, NULL);
     rc = sqlite3_step(res);
 
     char *tmp=(char *)sqlite3_column_text(res, 0);

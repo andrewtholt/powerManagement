@@ -23,8 +23,12 @@
 #define DB_FILE "/tmp/plc2.db"  
 using namespace std;
 
-class plcMQTT : public plcBase 
-{
+struct mqttData {
+    sqlite3 *db; 
+    sem_t mutex;
+};
+
+class plcMQTT : public plcBase {
 
     public:
         plcMQTT() ;
@@ -70,6 +74,7 @@ class plcMQTT : public plcBase
         void Out(string);
         void Outn(string);
     private:
+        struct mqttData stuff;
         struct mosquitto *mosq;
         void  (*logic)(plcMQTT *);
 
@@ -79,6 +84,6 @@ class plcMQTT : public plcBase
         bool sqlError(int, char *);
         void doStuff();
 
-        sqlite3 *db;    // db pointer
+//        sqlite3 *db;    // db pointer
         int con; // sqlite3 db connection
 };
