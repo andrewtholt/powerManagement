@@ -19,13 +19,13 @@ help:
 	@echo ""
 
 porchLight:	porchLight.cpp Makefile libplc.so
-	$(CPP) $(CFLAGS) porchLight.cpp -o porchLight -lplc -lpthread -lrt -lmosquitto -lsqlite3 $(INCS)
+	$(CPP) $(CFLAGS) porchLight.cpp -o porchLight -L. -lplc -lpthread -lrt -lmosquitto -lsqlite3 $(INCS)
 
 backLight:	backLight.cpp Makefile libplc.so
-	$(CPP) $(CFLAGS) backLight.cpp -o backLight -lplc -lpthread -lrt -lmosquitto -lsqlite3 $(INCS)
+	$(CPP) $(CFLAGS) backLight.cpp -o backLight -L. -lplc -lpthread -lrt -lmosquitto -lsqlite3 $(INCS)
 
 tstPlc:	tstPlc.cpp Makefile libplc.so
-	$(CPP) $(CFLAGS) tstPlc.cpp -o tstPlc -lplc -lpthread -lrt -lmosquitto -lsqlite3 $(INCS)
+	$(CPP) $(CFLAGS) tstPlc.cpp -o tstPlc -L. -lplc -lpthread -lrt -lmosquitto -lsqlite3 $(INCS)
 
 plcBase.o:	plcBase.cpp plcBase.h
 	$(CPP) $(CFLAGS) -c plcBase.cpp -o plcBase.o

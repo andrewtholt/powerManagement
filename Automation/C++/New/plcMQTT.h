@@ -75,6 +75,7 @@ class plcMQTT : public plcBase {
         void Out(string);
         void Outn(string);
     private:
+        string dbName;
         struct mqttData stuff;
         struct mosquitto *mosq;
         void  (*logic)(plcMQTT *);
