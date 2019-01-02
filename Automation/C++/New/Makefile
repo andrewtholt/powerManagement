@@ -33,6 +33,9 @@ plcBase.o:	plcBase.cpp plcBase.h
 plcMQTT.o:	plcMQTT.cpp plcMQTT.h plcBase.o
 	$(CPP) $(CFLAGS) -c plcMQTT.cpp -o plcMQTT.o
 
+install:	libplc.so
+	./install.sh
+
 clean:
 	rm -f $(BINS) *.o Test/*.o
 
