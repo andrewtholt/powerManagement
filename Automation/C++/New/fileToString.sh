@@ -13,6 +13,6 @@ fi
 printf "string $1 = "
 while IFS= read -r var; do
 	TMP=$(echo $var | sed -e 's/^[ \t]*//;s/[ \t]*$//')
-	echo "\"$TMP\""
+	echo "\"$TMP \""
 done 
 echo ";"
