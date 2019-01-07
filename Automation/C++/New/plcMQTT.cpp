@@ -572,7 +572,7 @@ void plcMQTT::Outn(string symbol) {
 bool plcMQTT::plcEnd(int ms) {
     bool failFlag=true;
     char *err_msg = NULL;
-    static int count=0;
+    static int count=0;   // Loop counter, move this and provide getter.
 
     if(verbose) {
         cout << "plcMQTT::plcEnd" << endl;
@@ -605,7 +605,9 @@ bool plcMQTT::plcEnd(int ms) {
     }
 
     failFlag |=plcBase::plcEnd(ms);
-
+    // 
+    // Test for non MQTT IO points here.
+    //
     count++;
     return failFlag;
 
