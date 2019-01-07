@@ -11,4 +11,9 @@ Orn
 Have a function pointer to a connect function that creates and subscribes.
 On disconnect call the above.
 
+6 Jan 2019
+
+plcMQTT::Outn is incomplete.
+
+
 
