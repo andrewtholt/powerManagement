@@ -1,5 +1,8 @@
 #!/bin/bash 
-
+# 
+# Pipe a file into this and ist spits out a C++ fragment containing the
+# contents of the file.
+# 
 # set -x
 
 if [ $# -eq 0 ]; then
