@@ -121,6 +121,7 @@ int main(int argc, char *argv[]) {
     me->Or("STOP");
     me->Andn("STOP");
     me->Out("MOTOR");
+    me->plcEnd(100);
     /*
     me->plcRun();
     while(1) {
