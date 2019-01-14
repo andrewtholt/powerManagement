@@ -328,11 +328,6 @@ string plcMQTT::getValue(string shortName) {
     int rc;
 
     sql = "select value from iopoints where short_name = '" + shortName + "';";
-    /*
-       if(verbose) {
-       cout << sql << endl;
-       }
-       */
 
     rc = sqlite3_prepare_v2( stuff.db, sql.c_str(), -1, &res, NULL);
     rc = sqlite3_step(res);

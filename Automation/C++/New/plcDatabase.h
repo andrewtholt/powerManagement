@@ -5,9 +5,14 @@ class plcDatabase : public plcBase {
     private:
         sqlite3 *db; 
         string dbName=":memory:";
+        bool sqlError(int rc, char *err_msg ) ;
+        bool dbSetup() ;            // Use default database name.
+        
+        int con; // sqlite3 db connection
 
     public:
         plcDatabase();
+        plcDatabase( string name);
         
         void setDBname( string );
         string getDBname( );

@@ -10,6 +10,7 @@
 
 #include "plcBase.h"
 
+
 inline std::string &ltrim(std::string& s, const char* t = " \t\n\r\f\v") {
     s.erase(0, s.find_first_not_of(t));
     return s;
@@ -219,8 +220,13 @@ const string plcBase::boolToString(bool f) {
     return state;
 }
 
-bool plcBase::stringToBool(string value) {
+bool plcBase::stringToBool(string v) {
     bool state;
+    
+    string value = v;
+    
+    for (auto & c: value) c = toupper(c);
+    
     
     if ( value == "YES" || value == "TRUE" || value == "ON" ) {
         state = true;
