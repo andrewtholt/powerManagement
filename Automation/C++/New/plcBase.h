@@ -26,6 +26,7 @@ class plcBase {
         string timeFromInt(int);
 
     public:
+        bool initPlc(string);
         bool fromStack();   // Destructive pop
         void toStack(bool);   // Destructive pop
         bool getTOS();      // Return TOS, non destructive
@@ -35,7 +36,6 @@ class plcBase {
 
     private:
         string iam;
-        bool initPlc(string);
         bool connect(string, string);
         map<string, bool> ioPoint;
 

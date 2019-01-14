@@ -94,10 +94,12 @@ int main(int argc, char *argv[]) {
     if( verbose ) {
         cout << "Verbose" << endl;
     }
+    */
     me->setVerbose( verbose );
     
     me->plcDump();  // Show defaults
     
+    /*
     printf("=================\n");
     printf("Set name ...\n");
     setNameFlag = me->setHost("192.168.0.65");  // Change it
@@ -123,7 +125,9 @@ int main(int argc, char *argv[]) {
         me->plcDump();
     }
     printf("=================\n");
+    */
     me->initPlc("tstPlc");
+    /*
     
     //
     // Env, time day, sunrise etc
@@ -134,10 +138,14 @@ int main(int argc, char *argv[]) {
     // Inputs
     // 
     me->addIOPoint("TIME",  "/test/time","IN");
-    me->addIOPoint("START", "/test/start","IN");
-    me->addIOPoint("STOP",  "/test/stop", "IN");
+    */
+    
+    me->addIOPoint("START", "switch.test_start","IN");
+    me->addIOPoint("STOP",  "switch.test_stop", "IN");
     me->addIOPoint("MOTOR");
 
+    me->Ld("START");
+    /*
     me->plcRun();
     while(1) {
         logicTst(me);

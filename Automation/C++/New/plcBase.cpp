@@ -251,7 +251,10 @@ string plcBase::getValue( string symbol ) {
 }
 
 bool plcBase::getBoolValue( string symbol ) {
-    return ioPoint[ symbol ];
+    bool r = false;
+    
+    r = stringToBool( getValue( symbol));
+    return r;
 }
 bool plcBase::getBoolOldValue( string symbol ) {
     // TODO Call getValue
