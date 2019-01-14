@@ -17,7 +17,9 @@ class plcBase {
         string hostName;
         int port;
         stack<bool> logicStack;
+        // 
         // Returns number of minutes since 00:00 or < 0 if invalid
+        // 
         int checkTime(string time ); 
         bool verbose=false;
 
@@ -31,9 +33,7 @@ class plcBase {
         int stackSize();    // Return stack size.
         void emptyStack();
 
-
     private:
-
         string iam;
         bool initPlc(string);
         bool connect(string, string);
@@ -42,7 +42,7 @@ class plcBase {
     public:
         virtual string getTime(); // get time in hh:mm:ss format
         virtual int getTimeMinutes(); // get time in minbutes since 00:00
-
+        //
         // Add minutes to ta a time given as hh:mm 
         //  and return time in same format
         //
@@ -51,7 +51,6 @@ class plcBase {
         virtual bool runNow(string ); // pass in time as hh:mm, return true if that time is now.
         virtual bool timeBetween(string, string );  // pass in time as hh:mm, 
                                                     // return true if that time is between the two.
-
         virtual string getValue( string );
         virtual bool getBoolValue( string );
         virtual bool getBoolOldValue( string );

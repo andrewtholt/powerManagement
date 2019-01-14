@@ -210,131 +210,6 @@ bool plcBase::plcEnd(int ms) {
     
     return failFlag;
 }
-/*
- * plcBase::plcBase(string name, string host) {
- * //    iam = name;
- * 
- *    setServer( (char *)host.c_str() );
- *    initPlc();
- * }
- * 
- * bool plcBase::plcStatus() {
- *    return spreadOK;
- * }
- * 
- * 
- * bool plcBase::loadProg(string fileName) {
- *    bool failFlag=true;
- *    string line;
- *    string inLine;
- *    string token;
- *    size_t pos;
- * 
- *    string inst;
- *    string iop;
- *    string tmp;
- * 
- *    ifstream inFile( fileName);
- * 
- *    while(getline(inFile, inLine )) {
- *        // Find and strip comments.
- *        //
- *        pos = inLine.find(";");
- *        if( pos != string::npos)  {
- *            if ( pos >= 0) {
- *                line = inLine.substr(0,pos);
- *            }
- *        } else {
- *            line=inLine;
- *        }
- *        if( line.size() > 0) {
- *            //
- *            // line now contains just the stuff I want.
- *            // The line format is <inst> <io point>
- *            //
- *            pos = line.find(" ");
- *            if( pos != string::npos)  {
- *                inst = line.substr(0, pos);
- *                if (pos >= 0) {
- *                    iop = line.substr(pos+1);
- *                }
- *                inst = trim(inst);
- *                iop  = trim(iop);
- * 
- * //                for (auto & c: iop) c = toupper(c);
- * 
- *                compile(inst,iop);
- *            }
- *        }
- *    }
- * 
- *    return failFlag;
- * }
- * 
- * void plcBase::dumpProgram() {
- *    for (auto i : RAM ) {
- *        printf("0x%02x %s\n", i.inst, (char *)i.iop.c_str());
- *    }
- * }
- * 
- * void plcBase::compile(string inst, string iop) {
- *    string tmp = inst.substr(0,2);
- * 
- *    struct ramEntry fred;
- * 
- *    cout << inst + " " + iop << endl;
- * 
- *    if( tmp == "LD" ) {
- *        if ( inst[2] == 'N' ) {
- *            fred.inst = LDN;
- *        } else if ( inst[2] == 'R' ) {
- *            fred.inst = LDR;
- *        } else if ( inst[2] == 'F' ) {
- *            fred.inst = LDF;
- *        } else {
- *            fred.inst = LD;
- *        }
- *    } else if( tmp == "OR") {
- *        if ( inst[2] == 'N' ) {
- *            fred.inst = ORN;
- *        } else if ( inst[2] == 'R' ) {
- *            fred.inst = ORR;
- *        } else if ( inst[2] == 'F' ) {
- *            fred.inst = ORF;
- *        } else {
- *            fred.inst = OR;
- *        }
- *    } else if( tmp == "AN") {
- *        if ( inst[3] == 'N' ) {
- *            fred.inst = ANDN;
- *        } else if ( inst[3] == 'R' ) {
- *            fred.inst = ANDR;
- *        } else if ( inst[3] == 'F' ) {
- *            fred.inst = ANDF;
- *        } else {
- *            fred.inst = AND;
- *        }
- *    } else if( tmp == "OU") {
- *        if(inst == "OUT" ) {
- *            fred.inst = OUT;
- *        } else if(inst == "OUTN" ) {
- *            fred.inst = OUTN;
- *        }
- *    } else if( tmp == "TI") {
- *        if(inst == "TIM-LD") {
- *            fred.inst = TIM_LD;
- *        } else if(inst == "TIM-ANDN") {
- *            fred.inst = TIM_ANDN;
- *        }
- *    }
- *    if( iop.size() > 0 ) {
- *        fred.iop = iop;
- *    } else {
- *        fred.iop ="";
- *    }
- *    RAM.push_back(fred);
- * }
- */
 
 const string plcBase::boolToString(bool f) {
     string state;
@@ -361,7 +236,9 @@ bool plcBase::stringToBool(string value) {
 
 string plcBase::getValue( string symbol ) {
     bool v = ioPoint[ symbol ];
-    
+    // 
+    // TODO database select value from iopoints where name = '<symbol'>
+    // 
     string value = boolToString ( v );
     
     return value;
@@ -371,15 +248,18 @@ bool plcBase::getBoolValue( string symbol ) {
     return ioPoint[ symbol ];
 }
 bool plcBase::getBoolOldValue( string symbol ) {
-    // TODO
+    // TODO Call getValue
     return false;
 }
 
 bool plcBase::setValue( string symbol, string v ) {
+    // TODO database
+    // update ......
     ioPoint[ symbol ] = stringToBool(v);
     return false;
 }
 bool plcBase::setBoolValue( string symbol, bool v ) {
+    // TODO database
     ioPoint[ symbol ] = v;
     return false;
 }

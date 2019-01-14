@@ -14,7 +14,6 @@
 #include <semaphore.h>
 #include "plcMQTT.h"
 #include "plcBase.h"
-
 // 
 // If this is defined then sqlite will use this file.
 // otherwise will use a RAM based database.
