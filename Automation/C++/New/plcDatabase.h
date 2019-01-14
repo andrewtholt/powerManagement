@@ -28,4 +28,6 @@ class plcDatabase : public plcBase {
         bool addIOPoint(string );               // Short name
         bool addIOPoint(string,string );        // Short name, topic
         bool addIOPoint(string,string, string );// Short name, topic, direction
+        
+        void Out(string);
 };

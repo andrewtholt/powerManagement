@@ -241,3 +241,17 @@ bool plcDatabase::addIOPoint(string shortName, string topic, string direction) {
 
     return failFlag;
 }
+
+void plcDatabase::Out(string shortName) {
+    static bool first = true;
+
+    if(verbose) {
+        cout << "plcDatabase::Out " << shortName << endl;
+    }
+
+    bool a = fromStack() ;
+    
+    string value = ( a ) ? "TRUE" : "FALSE";
+    
+    bool failFlag = setValue(shortName, value) ;
+}

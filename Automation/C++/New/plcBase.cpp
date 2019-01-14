@@ -238,8 +238,9 @@ bool plcBase::stringToBool(string v) {
     
     return state;
 }
-
-
+// 
+//  Overload this
+// 
 string plcBase::getValue( string symbol ) {
     bool v = ioPoint[ symbol ];
     // 

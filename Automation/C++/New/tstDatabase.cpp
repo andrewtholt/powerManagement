@@ -145,6 +145,7 @@ int main(int argc, char *argv[]) {
     me->addIOPoint("MOTOR");
 
     me->Ld("START");
+    me->Out("MOTOR");
     /*
     me->plcRun();
     while(1) {
