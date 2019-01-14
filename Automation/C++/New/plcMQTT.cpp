@@ -415,6 +415,9 @@ bool plcMQTT::setOldValue(string shortName, string value) {
 }
 
 bool plcMQTT::setBoolValue(string shortName, bool v ) {
+    bool r = false;
+    
+    return r;
 }
 
 void plcMQTT::doStuff() {

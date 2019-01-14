@@ -52,6 +52,8 @@ class plcBase {
         virtual bool timeBetween(string, string );  // pass in time as hh:mm, 
                                                     // return true if that time is between the two.
         virtual string getValue( string );
+        virtual string getOldValue( string );
+        
         virtual bool getBoolValue( string );
         virtual bool getBoolOldValue( string );
 

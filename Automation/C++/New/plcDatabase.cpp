@@ -255,3 +255,27 @@ void plcDatabase::Out(string shortName) {
     
     bool failFlag = setValue(shortName, value) ;
 }
+
+bool plcDatabase::plcEnd(int ms) {
+    bool failFlag = true;
+    char *err_msg = NULL;
+    
+    string sql="update iopoints set oldvalue=value;";
+    int rc = sqlite3_exec( db,sql.c_str(),0,0,&err_msg);
+    failFlag=sqlError(rc, err_msg);
+    
+    if( ms > 0) {
+        struct timespec ts;
+
+        ts.tv_nsec+=ms * 100000;
+        if (ts.tv_nsec>=1000000000) {
+            ts.tv_sec+=1;
+            ts.tv_nsec-=1000000000;
+        }
+
+//        sem_timedwait( &(stuff.mutex), &ts );
+    } else {
+
+//        sem_wait( &(stuff.mutex) );
+    }
+}

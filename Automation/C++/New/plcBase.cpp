@@ -251,15 +251,21 @@ string plcBase::getValue( string symbol ) {
     return value;
 }
 
+string plcBase::getOldValue( string symbol ) {
+    return "UNIMPLEMENTED";
+}
+
 bool plcBase::getBoolValue( string symbol ) {
     bool r = false;
     
     r = stringToBool( getValue( symbol));
     return r;
 }
+
 bool plcBase::getBoolOldValue( string symbol ) {
     // TODO Call getValue
-    return false;
+    bool r = stringToBool( getOldValue( symbol));
+    return r;
 }
 
 bool plcBase::setValue( string symbol, string v ) {
@@ -761,12 +767,11 @@ void plcBase::Outn(string symbol) {
     
     accString += (a) ? "FALSE" : "TRUE";
     
-    //    ioPoint[ symbol ] = a;
+    setValue( symbol, accString);
     
     while( !logicStack.empty() ) {
         logicStack.pop();
     }
-    //    acc = false;
 }
 
 void plcBase::Out(string symbol) {
@@ -777,19 +782,9 @@ void plcBase::Out(string symbol) {
     
     accString += (a) ? "TRUE" : "FALSE";
     
-    // TODO
-    // Replace with SQL update.
-    //
-    //    ioPoint[ symbol ] = a;
-    
-    // TODO
-    // Replace with:
-    // update sql databas
-    // and publish.
-    //    int rc =  SPTxSimple((char *)outGroup.c_str(), (char *)accString.c_str()) ;    
+    setValue( symbol, accString);
     
     while( !logicStack.empty() ) {
         logicStack.pop();
     }
-    //    acc = false;
 }

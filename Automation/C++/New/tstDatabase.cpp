@@ -99,33 +99,6 @@ int main(int argc, char *argv[]) {
     
     me->plcDump();  // Show defaults
     
-    /*
-    printf("=================\n");
-    printf("Set name ...\n");
-    setNameFlag = me->setHost("192.168.0.65");  // Change it
-    if( setNameFlag ) {
-        fprintf(stderr,"... Failed\n");
-        exit(1);
-    } else {
-        printf("... OK\n");
-        me->plcDump(); // Show change
-    }
-    
-    bool setPortFlag = true;
-    
-    printf("=================\n");
-    printf("Set port ...\n");
-    setPortFlag = me->setPort(1883);
-    if ( setPortFlag ) {
-        printf("... Failed\n");
-        fprintf(stderr,"... Failed\n");
-        exit(1);
-    } else {
-        printf("... OK\n");
-        me->plcDump();
-    }
-    printf("=================\n");
-    */
     me->initPlc("tstPlc");
     /*
     
@@ -145,6 +118,8 @@ int main(int argc, char *argv[]) {
     me->addIOPoint("MOTOR");
 
     me->Ld("START");
+    me->Or("STOP");
+    me->Andn("STOP");
     me->Out("MOTOR");
     /*
     me->plcRun();

@@ -30,4 +30,5 @@ class plcDatabase : public plcBase {
         bool addIOPoint(string,string, string );// Short name, topic, direction
         
         void Out(string);
+        virtual bool plcEnd(int);  // Delay in ms
 };
