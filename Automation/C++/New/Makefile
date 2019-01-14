@@ -1,7 +1,7 @@
 
 CPP=g++ -std=c++11 -Wl,--no-as-needed
 
-BINS=backLight porchLight tstPlc libplc.so # mainTestAll 
+BINS=tstDatabase backLight porchLight tstPlc libplc.so # mainTestAll 
 LIBS= -lpthread -lrt -lmosquitto -lsqlite3 -lgtest
 TST_OBJS = ./Test/plcTests.o plcBase.o plcMQTT.o
 INCS=-I.
@@ -26,6 +26,9 @@ backLight:	backLight.cpp Makefile libplc.so
 
 tstPlc:	tstPlc.cpp Makefile libplc.so
 	$(CPP) $(CFLAGS) tstPlc.cpp -o tstPlc -L. -lplc -lpthread -lrt -lmosquitto -lsqlite3 $(INCS)
+
+tstDatabase:	tstDatabase.cpp Makefile plcDatabase.o
+	$(CPP) $(CFLAGS) tstDatabase.cpp -o tstDatabase plcBase.o plcDatabase.o -L. -lpthread -lrt -lsqlite3 $(INCS)
 
 plcBase.o:	plcBase.cpp plcBase.h
 	$(CPP) $(CFLAGS) -c plcBase.cpp -o plcBase.o
