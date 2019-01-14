@@ -33,6 +33,9 @@ plcBase.o:	plcBase.cpp plcBase.h
 plcMQTT.o:	plcMQTT.cpp plcMQTT.h plcBase.o
 	$(CPP) $(CFLAGS) -c plcMQTT.cpp -o plcMQTT.o
 
+plcDatabase.o:	plcDatabase.cpp plcDatabase.h plcBase.o
+	$(CPP) $(CFLAGS) -c plcDatabase.cpp -o plcDatabase.o
+
 install:	libplc.so
 	./install.sh
 
