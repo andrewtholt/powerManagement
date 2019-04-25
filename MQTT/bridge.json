@@ -1,0 +1,14 @@
+{
+    "remote": {
+        "name": "test",
+        "port": "1883",
+        "prefix": "andrewtholt60@gmail.com"
+    },
+    "local": {
+        "name": "localhost",
+        "port": "1883"
+    },
+    "common": {
+        "topic": "/home/office/+/power"
+    }
+}
