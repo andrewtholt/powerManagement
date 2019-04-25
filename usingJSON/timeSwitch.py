@@ -117,11 +117,11 @@ def main():
     msg="ERROR"
     if flag :
         if invert:
-            print("True")
-            msg="ON"
-        else:
             print("False")
             msg="OFF"
+        else:
+            print("True")
+            msg="ON"
     if not flag:
         if invert:
             print("ON")
@@ -135,15 +135,11 @@ def main():
     if verbose:
         print("Message    : " + msg)
 
-
-    exit(0)
-
-
-    if nowSeconds >=fromSeconds and nowSeconds<=toSeconds:
-        print("TRUE")
-    else:
-        print("FALSE")
-
+#    if nowSeconds >=fromSeconds and nowSeconds<=toSeconds:
+#        print("TRUE")
+#    else:
+#        print("FALSE")
+#
 
 
 main()
