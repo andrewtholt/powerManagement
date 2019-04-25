@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import getopt
@@ -9,11 +9,11 @@ from time import sleep
 import socket
 
 def usage():
-    print "\nUsage: discover -a -s <subnet> -v -h\n"
-    print "\t-a\t\tAdd new machines to database."
-    print "\t-s <subnet>\tScan subnet, e.g. 10.0.1.0/24"
-    print "\t-h\t\tHelp\n"
-    print "\t-v\tVerbose\n"
+    print("\nUsage: discover -a -s <subnet> -v -h\n")
+    print("\t-a\t\tAdd new machines to database.")
+    print("\t-s <subnet>\tScan subnet, e.g. 10.0.1.0/24")
+    print("\t-h\t\tHelp\n")
+    print("\t-v\tVerbose\n")
 
 def main():
     verbose = False
@@ -27,13 +27,14 @@ def main():
     subnet=""
 
     if db == None or pdir == None:
-        print "FATAL ERROR: setup PDIR & POWER_DB env variables"
+        print("FATAL ERROR: setup PDIR & POWER_DB env variables")
+        usage()
         sys.exit(1)
 
     try:
         opts,args = getopt.getopt(sys.argv[1:], "as:hv",['subnet','help','verbose'])
     except:
-        print "Argument Error"
+        print("Argument Error")
         usage()
         sys.exit(1)
 
@@ -49,7 +50,7 @@ def main():
             add = True
 
     if verbose:
-        print"Subnet :",subnet
+        print("Subnet :",subnet)
 
     if subnet == "" :
         usage();
@@ -68,7 +69,7 @@ def main():
         cmd = "fping -a -g %s 2> /dev/null" % subnet
 
     if verbose:
-        print cmd
+        print(cmd)
 
     data = popen( cmd )
 
@@ -87,14 +88,14 @@ def main():
             sql += " name = '%s' ;" % line
 
         if verbose:
-            print sql
+            print(sql)
 
         cur.execute(sql)
         row=(cur.fetchone())[0]
 
         if add == False:
             if row == 0:
-                print"Unknown host:%s" % line
+                print("Unknown host:%s" % line)
         else:
             mac='UNKNOWN'
             if row == 0:
@@ -103,10 +104,10 @@ def main():
                 else:
                     cmd = "arp -a | grep '(%s)' " % line
 
-                print cmd
+                print(cmd)
                 f=popen( cmd )
                 stuff = ((f.readline()).strip()).split()
-                print stuff
+                print(stuff)
 
                 if len(stuff) >= 4:
                     mac=stuff[3]
@@ -129,11 +130,11 @@ def main():
 
             sqlList.append( sql )
             if verbose:
-                print sql
+                print(sql)
 
     for sql in sqlList:
         if verbose:
-            print sql
+            print(sql)
 
         cur.execute(sql)
 

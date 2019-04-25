@@ -1,4 +1,4 @@
-
-drop table if exists io_point;
-
-create table io_point ( name varchar(32) not null unique, topic varchar(128) default 'NONE', direction varchar(8) not null check(direction='IN' or direction = 'OUT' or direction = 'DISABLED') default 'DISABLED', state varchar(8) not null default 'UNKNOWN', on_state  varchar(4) default 'ON', off_state varchar(4) default 'OFF' );
+DROP TABLE IF EXISTS io_point;
+CREATE TABLE io_point ( name VARCHAR(32) NOT NULL UNIQUE, topic VARCHAR(128) DEFAULT 'NONE', direction VARCHAR(8) NOT NULL CHECK(direction = 'IN' 
+OR direction = 'OUT' 
+OR direction = 'DISABLED') DEFAULT 'DISABLED', state VARCHAR(8) NOT NULL DEFAULT 'UNKNOWN', on_state VARCHAR(4) DEFAULT 'ON', off_state VARCHAR(4) DEFAULT 'OFF' );
