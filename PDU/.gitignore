@@ -23,3 +23,4 @@
 tst.sh
 bridge.ini
 rt.py
+*.bak

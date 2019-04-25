@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python3
 #
 # POWER_DB  Database
 # PDIR      Base directory for utilities
@@ -10,10 +10,10 @@ import os.path
 from os import getenv,popen,remove
 from time import sleep
 
-from string import strip
+# from string import strip
 
 def usage():
-    print "Usage: act -s <d>|--suspend <d> -t|--test -h|--help -v|--verbose"
+    print("Usage: act -s <d>|--suspend <d> -t|--test -h|--help -v|--verbose")
 
 def main():
     cmd = ""
@@ -29,13 +29,13 @@ def main():
     pdir = getenv("PDIR")
 
     if db == None or pdir == None:
-        print "FATAL ERROR: setup PDIR & POWER_DB env variables"
+        print("FATAL ERROR: setup PDIR & POWER_DB env variables")
         sys.exit(1)
 
     try:
         opts,args = getopt.getopt(sys.argv[1:], "s:thv",["suspend","test","help","verbose"])
     except:
-        print "Argument Error"
+        print("Argument Error")
         usage()
         sys.exit(2)
 
@@ -55,18 +55,18 @@ def main():
 
     if suspend > 0:
         if verbose:
-            print "... suspend : %d ..." % suspend
+            print("... suspend : %d ..." % suspend)
         sleep( suspend )
         
     while os.path.exists(lock):
-        if verbose: print "...LOCKED..."
+        if verbose: print("...LOCKED...")
         sleep(10)
 
 
     (open(lock,"w")).close()
 
     
-    if verbose: print "...UNLOCKED..."
+    if verbose: print("...UNLOCKED...")
     con = sqlite.connect( db )
     cur = con.cursor()
 
@@ -77,7 +77,7 @@ def main():
         name = node[0]
         ip = node[1]
 
-        if verbose: print "============================"
+        if verbose: print("============================")
 
         cmd = "ping -c 2 -W 5 %s > /dev/null 2>&1" % ip
 
@@ -85,7 +85,7 @@ def main():
 
         sql = "select ping_count,ping_counter from hosts where name='%s';" % name
 
-        if verbose: print sql
+        if verbose: print(sql)
 
         cur.execute(sql)
 
@@ -99,7 +99,7 @@ def main():
                 counter = counter -1
                 sql = "update hosts set status='DOWN',ping_counter=%d,touched=datetime(\'NOW\') where name='%s';" % (counter,name)
 
-                if verbose: print sql
+                if verbose: print(sql)
 
                 cur.execute(sql)
                 con.commit()
@@ -112,12 +112,12 @@ def main():
             sql = "update hosts set status='DOWN',ping_counter=%d,touched=datetime(\'NOW\') where name='%s';" % (counter,name)
 
         if verbose:
-            print cmd
-            print sql
+            print(cmd)
+            print(sql)
 
         cur.execute(sql)
         con.commit()
-        if verbose: print "============================"
+        if verbose: print("============================")
 
     sql = """select hosts.name,
         hosts.on_value, hosts.off_value,hosts.reboot_value,
@@ -127,7 +127,7 @@ def main():
         hosts,outlets 
         where hosts.status='UP' and hosts.idx = outlets.hostidx and outlets.requested_state <> 'NA';"""
 
-    if verbose: print sql
+    if verbose: print(sql)
 
     cur.execute( sql )
 
@@ -144,17 +144,17 @@ def main():
         ip = r[9]
 
         if verbose:
-            print "================"
-            print "PDU Name        : %s" % pduName
-            print "PDU Address     : %s" % ip
-            print "Outlet Name     : %s" % outletName
-            print "ON Value        : %s" % onValue
-            print "OFF Value       : %s" % offValue
-            print "REBOOT Value    : %s" % rebootValue
-            print "OID             : %s" % oid
-            print "Requested State : %s" % requestedState
-            print "rw community    : %s" % rw
-            print "ro community    : %s" % ro
+            print("================")
+            print("PDU Name        : %s" % pduName)
+            print("PDU Address     : %s" % ip)
+            print("Outlet Name     : %s" % outletName)
+            print("ON Value        : %s" % onValue)
+            print("OFF Value       : %s" % offValue)
+            print("REBOOT Value    : %s" % rebootValue)
+            print("OID             : %s" % oid)
+            print("Requested State : %s" % requestedState)
+            print("rw community    : %s" % rw)
+            print("ro community    : %s" % ro)
 
         if requestedState == "ON":
             tmp = onValue
@@ -167,7 +167,7 @@ def main():
         #
         cmd = "snmpset -t 10 -v1 -c %s %s %s i %d > /dev/null 2>&1" % (rw,ip,oid,tmp)
 
-        if verbose: print cmd
+        if verbose: print(cmd)
 
         res = 0
         if not test:
@@ -183,7 +183,7 @@ def main():
         else:
             cmd = "snmpget -OvQ -t 10 -v1 -c %s %s %s 2> /dev/null" % ( ro,ip,oid)
 
-            if verbose: print cmd
+            if verbose: print(cmd)
         
             if not test and res==0:
                 t = os.popen(cmd)
@@ -199,7 +199,7 @@ def main():
         if ret == tmp:
            sql = "update outlets set state='%s',requested_state='NA',touched=datetime(\'NOW\') where name = '%s';" % ( requestedState, outletName)
 
-           if verbose: print sql
+           if verbose: print(sql)
 
            cur.execute(sql)
            con.commit()
