@@ -36,8 +36,10 @@ def main():
     timeRange=None
     napTime = 0
 
+    sleepFlag = False
+
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "c:ht:vi", ["time=","config=","help","topic=","verbose","invert"])
+        opts, args = getopt.getopt(sys.argv[1:], "sc:ht:vi", ["sleep","time=","config=","help","topic=","verbose","invert"])
 
         for o,a in opts:
             if o in ["-h","--help"]:
@@ -53,6 +55,9 @@ def main():
                 timeRange=a.split("-")
             elif o in ["-i","--invert"]:
                 invert = True
+            elif o in ["-s","--sleep"] :
+                sleepFlag = True;
+
     except getopt.GetoptError as err:
         print(err)
         usage()
@@ -110,6 +115,7 @@ def main():
 
     fromSeconds = int(time.mktime(time.strptime(" ".join(fromTime), pattern)))
     toSeconds   = int(time.mktime(time.strptime(" ".join(toTime), pattern)))
+
     tts = fromSeconds - nowSeconds
     tte = toSeconds - nowSeconds
     ttm = midnight - nowSeconds
@@ -124,19 +130,27 @@ def main():
         print("Time to end     : ", tte)
         print("Time to midnight: ", ttm)
 
-        if( tts > 0 and tte >= 0):
-            print("\nStart and end both in the future")
-            napTime = abs(tts)
-            print("Sleep for",napTime , "Seconds")
-        elif ( tts < 0 and tte > 0):
-            print("\nStart in past and end in the future")
-            napTime = abs(tte)
-            print("Sleep for",napTime , "Seconds")
-        elif( tts < 0 and tte < 0):
-            print("\nStart and end both in the past")
-            napTime = abs(ttm)
-            print("Sleep for",napTime , "Seconds")
+    if( tts > 0 and tte >= 0):
+        print("\nStart and end both in the future")
+        napTime = abs(tts)
+        print("Sleep for",napTime , "Seconds")
+    elif ( tts < 0 and tte > 0):
+        print("\nStart in past and end in the future")
+        napTime = abs(tte)
+        print("Sleep for",napTime , "Seconds")
+    elif( tts < 0 and tte < 0):
+        print("\nStart and end both in the past")
+        napTime = abs(ttm)
+        print("Sleep for",napTime , "Seconds")
 
+    if sleepFlag:
+        time.sleep(napTime+1)
+
+    now = (time.strftime(pattern, time.gmtime())).split(" ")
+    nowSeconds=int(time.time())
+
+    fromSeconds = int(time.mktime(time.strptime(" ".join(fromTime), pattern)))
+    toSeconds   = int(time.mktime(time.strptime(" ".join(toTime), pattern)))
 
     flag = (nowSeconds >=fromSeconds and nowSeconds<=toSeconds)
 
