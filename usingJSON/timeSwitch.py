@@ -89,9 +89,15 @@ def main():
 
     pattern = "%Y-%m-%d %H:%M"
 
-    now = (time.strftime(pattern, time.gmtime())).split(" ")
+    currentTime = time.gmtime()
 
-    nowSeconds=int(time.time())
+    dt=datetime.datetime(currentTime.tm_year,currentTime.tm_mon,currentTime.tm_mday,23,59)
+    midnight=int(time.mktime(dt.timetuple()))
+
+
+#    now = (time.strftime(pattern, time.gmtime())).split(" ")
+    now = (time.strftime(pattern, time.gmtime())).split(" ")
+    nowSeconds=int(time.time())+120
 
     fromTime = [None] * 2
     toTime = [None] * 2
@@ -108,13 +114,32 @@ def main():
 
     fromSeconds = int(time.mktime(time.strptime(" ".join(fromTime), pattern)))
     toSeconds   = int(time.mktime(time.strptime(" ".join(toTime), pattern)))
+    tts = fromSeconds - nowSeconds
+    tte = toSeconds - nowSeconds
+    ttm = midnight - nowSeconds
 
 #    fromSeconds = (" ".join(fromTime))
 
     if verbose:
-        print("From ",fromSeconds)
-        print("Now  ",nowSeconds)
-        print("To   ",toSeconds)
+        print("From    :",fromSeconds)
+        print("Now     :",nowSeconds)
+        print("To      :",toSeconds)
+        print("Midnight:",midnight)
+
+        print("Time to start   : ", tts)
+        print("Time to end     : ", tte)
+        print("Time to midnight: ", ttm)
+
+        if( tts > 0 and tte > 0):
+            print("\nStart and end both in the future")
+            print("Sleep for", abs(tts) , "Seconds")
+        elif ( tts < 0 and tte > 0):
+            print("\nStart in past and end in the future")
+            print("Sleep for", abs(tte) , "Seconds")
+        elif( tts < 0 and tte < 0):
+            print("\nStart and end both in the past")
+            print("Sleep for", ttm)
+
 
     flag = (nowSeconds >=fromSeconds and nowSeconds<=toSeconds)
 
