@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# import configparser as cp
+import os.path
 import json
 import getopt
 import sys
@@ -63,11 +63,15 @@ def main():
         usage()
         sys.exit(1)
 
-    with open( configFile, 'r') as f:
-        cfg = json.load(f)
+    if os.path.exists(configFile):
+        with open( configFile, 'r') as f:
+            cfg = json.load(f)
 
-    mqttBroker = cfg['local']['name']
-    mqttPort   = int(cfg['local']['port'])
+        mqttBroker = cfg['local']['name']
+        mqttPort   = int(cfg['local']['port'])
+    else:
+        print(configFile + " not found..")
+        sys.exit(3)
 
     if verbose:
         print("Verbose")
