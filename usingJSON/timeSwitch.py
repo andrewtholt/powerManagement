@@ -34,6 +34,7 @@ def main():
 
     topic=None
     timeRange=None
+    napTime = 0
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "c:ht:vi", ["time=","config=","help","topic=","verbose","invert"])
@@ -92,12 +93,11 @@ def main():
     currentTime = time.gmtime()
 
     dt=datetime.datetime(currentTime.tm_year,currentTime.tm_mon,currentTime.tm_mday,23,59)
-    midnight=int(time.mktime(dt.timetuple()))
+    midnight=int(time.mktime(dt.timetuple())) + 65
 
 
-#    now = (time.strftime(pattern, time.gmtime())).split(" ")
     now = (time.strftime(pattern, time.gmtime())).split(" ")
-    nowSeconds=int(time.time())+120
+    nowSeconds=int(time.time())
 
     fromTime = [None] * 2
     toTime = [None] * 2
@@ -108,17 +108,11 @@ def main():
     toTime[0] = now[0]
     toTime[1] = timeRange[1]
 
-#    print(fromTime)
-#    print(now)
-#    print(toTime)
-
     fromSeconds = int(time.mktime(time.strptime(" ".join(fromTime), pattern)))
     toSeconds   = int(time.mktime(time.strptime(" ".join(toTime), pattern)))
     tts = fromSeconds - nowSeconds
     tte = toSeconds - nowSeconds
     ttm = midnight - nowSeconds
-
-#    fromSeconds = (" ".join(fromTime))
 
     if verbose:
         print("From    :",fromSeconds)
@@ -130,15 +124,18 @@ def main():
         print("Time to end     : ", tte)
         print("Time to midnight: ", ttm)
 
-        if( tts > 0 and tte > 0):
+        if( tts > 0 and tte >= 0):
             print("\nStart and end both in the future")
-            print("Sleep for", abs(tts) , "Seconds")
+            napTime = abs(tts)
+            print("Sleep for",napTime , "Seconds")
         elif ( tts < 0 and tte > 0):
             print("\nStart in past and end in the future")
-            print("Sleep for", abs(tte) , "Seconds")
+            napTime = abs(tte)
+            print("Sleep for",napTime , "Seconds")
         elif( tts < 0 and tte < 0):
             print("\nStart and end both in the past")
-            print("Sleep for", ttm)
+            napTime = abs(ttm)
+            print("Sleep for",napTime , "Seconds")
 
 
     flag = (nowSeconds >=fromSeconds and nowSeconds<=toSeconds)
@@ -164,11 +161,6 @@ def main():
     if verbose:
         print("Message    : " + msg)
 
-#    if nowSeconds >=fromSeconds and nowSeconds<=toSeconds:
-#        print("TRUE")
-#    else:
-#        print("FALSE")
-#
 
 
 main()
