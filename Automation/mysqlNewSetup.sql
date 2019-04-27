@@ -8,6 +8,8 @@ drop table if exists mqtt;
 drop table if exists modbus;
 drop table if exists snmp;
 drop table if exists internal;
+
+drop view if exists mqttQuery ;
 -- 
 CREATE TABLE IF NOT EXISTS io_type (
     ioType VARCHAR(32) NOT NULL UNIQUE
@@ -30,7 +32,7 @@ CREATE TABLE IF NOT EXISTS io_point (
 
 CREATE TABLE IF NOT EXISTS internal (
     idx INT NOT NULL AUTO_INCREMENT,
---    name VARCHAR(32) NOT NULL UNIQUE,
+    name VARCHAR(32) NOT NULL UNIQUE,
     on_state VARCHAR(32) NOT NULL DEFAULT 'TRUE',
     off_state VARCHAR(32) NOT NULL DEFAULT 'FALSE',
     state VARCHAR(32) NOT NULL DEFAULT 'FALSE',
@@ -39,7 +41,7 @@ CREATE TABLE IF NOT EXISTS internal (
 
 CREATE TABLE IF NOT EXISTS mqtt (
     idx INT NOT NULL AUTO_INCREMENT,
---    name VARCHAR(32) NOT NULL UNIQUE,
+    name VARCHAR(32) NOT NULL UNIQUE,
     topic VARCHAR(32) NOT NULL UNIQUE,
     on_state VARCHAR(32) NOT NULL DEFAULT 'TRUE',
     off_state VARCHAR(32) NOT NULL DEFAULT 'FALSE',
@@ -71,3 +73,12 @@ CREATE TABLE IF NOT EXISTS modbus (
     state VARCHAR(32) NOT NULL DEFAULT 'FALSE',
     PRIMARY KEY (idx)
 );
+
+CREATE VIEW mqttQuery AS
+    SELECT 
+        io_point.name, mqtt.topic,mqtt.state
+    FROM
+        io_point,mqtt;
+	WHERE io_point.name = mqtt.name;
+
+

@@ -6,11 +6,14 @@ def main():
     db = sql.connect("192.168.10.65", "automation","automation","automation")
 
     cursor = db.cursor()
-    cursor.execute("SELECT VERSION()")
+    cursor.execute("select name,direction,topic,state from mqttQuery where direction = 'OUT';")
+#    cursor.execute("SELECT VERSION()")
 #    cursor.execute("SHOW TABLES")
 
-    data = cursor.fetchone()
-    print ("Database version : %s " % data)
+    data = cursor.fetchall()
+
+    print( data )
+#    print ("Database version : %s " % data)
 
     # disconnect from server
     db.close()
