@@ -45,7 +45,7 @@ def cleanUp(dbName):
             con = sqlite.connect(dbPath)
 
     elif dbType == "MYSQL":
-        setupFile = pdir + '/' + "mySqlSetup.sql"
+        setupFile = pdir + '/' + "mysqlNewSetup.sql"
 
 
     if verbose:
@@ -193,6 +193,7 @@ def main():
 #        usage()
 #        sys.exit(0)
 #
+    pdir = "."
     if verbose:
         print("Database is " + dbName)
 
@@ -201,7 +202,8 @@ def main():
         if dbType == "MYSQL":
             print("Here")
             import pymysql as mysql
-            con = mysql.connect("localhost", "automation","automation","automation")
+#            con = mysql.connect("localhost", "automation","automation","automation")
+            con = mysql.connect("192.168.10.65", "automation","automation","automation")
         elif dbType == "SQLITE":
             import sqlite3 as sqlite
             fred = dbDir + "/" + dbName +".db" 
