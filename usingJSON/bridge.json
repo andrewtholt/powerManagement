@@ -10,5 +10,8 @@
     },
     "common": {
         "topic": "/home/office/+/power"
+    },
+    "database" : {
+        "name" : "localhost"
     }
 }
