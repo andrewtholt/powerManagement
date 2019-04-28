@@ -11,9 +11,23 @@ import time
 
 from os import getenv
 
+connectedFlag = False
+
+def on_connect(client, userdata, flags, rc):
+    global connectedFlag
+    connectedFlag = True
+    print("Connected")
+    print("=========")
+
+def on_message(client, userdata, msg):
+    print("on_message")
+
+def on_publish(client, userdata, mid):
+    print("Message "+str(mid)+" published.")
+
 def usage():
     print("")
-    print("Usage: timeSwitch.py -c|--config=<cfg> -v|--verbose --time=<ff:ff-tt:tt> -t|--topic=<mqtt topic> -i|--invert")
+    print("Usage: timeSwitch.py -c| <cfg>--config=<cfg> -v|--verbose --time=<ff:ff-tt:tt> -t|--topic=<mqtt topic> -i|--invert")
     print("\t-v\t\t\tVerbose.")
     print("\t-c|--config=<cfg>\tConfig file for MQTT broker settings.")
     print("\t--time ff:ff-tt:tt\tTime range, earlier first.")
@@ -29,7 +43,7 @@ def main():
 
     ready=False
 
-    configFile="/etc/mqtt/bridge.ini"
+    configFile="/etc/mqtt/bridge.json"
     timeRange=[]
 
     topic=None
@@ -91,7 +105,18 @@ def main():
         print()
 
     mqttClient = mqtt.Client()
+    mqttClient.on_connect = on_connect
+
     mqttClient.connect(mqttBroker, mqttPort, 60)
+
+    global connectedFlag
+
+    while not connectedFlag: #wait in loop
+        mqttClient.loop()
+        print("In wait loop")
+
+        time.sleep(0.1)
+
 
     pattern = "%Y-%m-%d %H:%M"
 
@@ -170,8 +195,19 @@ def main():
             print("OFF")
             msg="OFF"
 
-    mqttClient.publish(topic, msg, qos=0, retain=True)
-    time.sleep(0.05)
+
+    print(topic,msg)
+
+    mqttClient.publish(topic, msg, retain=True)
+
+    count=1
+
+    while count > 0:
+        print("Round and ...")
+        mqttClient.loop(5)
+        time.sleep(1)
+        count=count-1
+
     if verbose:
         print("Message    : " + msg)
 
