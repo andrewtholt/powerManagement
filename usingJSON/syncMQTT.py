@@ -9,8 +9,8 @@ import time
 import getopt
 
 db = None
-
-connected=False
+database = 'localhost'
+connected = False
 
 def usage():
     print("")
@@ -30,15 +30,24 @@ def stateToLogic( state ) :
 
 def on_message(client, userData,msg):
     print("On Message")
+    global database
+
+    print(database)
+    db = sql.connect(database, "automation","automation","automation")
 
     topic = msg.topic
     print(topic)
 
     state = (msg.payload).decode("utf-8")
     print(state)
+
+    sqlCmd = "select state from mqtt where topic = '" + topic + "';"
+    print(sqlCmd)
     cursor = db.cursor()
-    cursor.execute("select state from mqtt where topic = '" + topic + "';")
+    cursor.execute(sqlCmd)
     data = cursor.fetchone()
+    cursor.close()
+    db.close()
 
     dbState = data[0]
     devState = stateToLogic(state)
@@ -54,9 +63,13 @@ def on_message(client, userData,msg):
 
 def on_connect(client, userdata, flags, rc):
     global connected
+    global database
+
     connected=True
     print("On Connect, In ...")
+    print(database)
 
+    db = sql.connect(database, "automation","automation","automation")
     cursor = db.cursor()
     cursor.execute("select name,direction,topic,state from mqttQuery where direction = 'OUT';")
 
@@ -70,11 +83,12 @@ def on_connect(client, userdata, flags, rc):
         client.subscribe( row[2] )
 
     cursor.close()
+    db.close()
     print("... On Connect, Out")
     
 
 def main():
-    global db
+    global database
 
     try:
         opts,args = getopt.getopt(sys.argv[1:], "c:h", ["config=","help"])
@@ -88,8 +102,6 @@ def main():
         print(err)
         usage()
         sys.exit(2)
-
-#    db = sql.connect("192.168.10.65", "automation","automation","automation")
 
     database = 'localhost'
     mqttBroker = 'localhost'
@@ -111,7 +123,7 @@ def main():
 
 
     print("Database is ", database)
-    db = sql.connect(database, "automation","automation","automation")
+#    db = sql.connect(database, "automation","automation","automation")
 
     mqttClient = mqtt.Client()
     mqttClient.on_connect = on_connect

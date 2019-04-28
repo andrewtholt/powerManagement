@@ -32,15 +32,14 @@ def on_connect(client, userdata, flags, rc):
     connected=True
     print("On Connect")
 
-    cursor = db.cursor()
-    sql = "update mqtt set state = '" + payload + "' where topic = '" + topic + "';"
-    print(sql)
-    cursor.execute( sql )
-    db.commit()
+#    cursor = db.cursor()
+#    sql = "update mqtt set state = '" + payload + "' where topic = '" + topic + "';"
+#    print(sql)
+#    cursor.execute( sql )
+#    db.commit()
+#
+#    cursor.close()
 
-    cursor.close()
-
-    time.sleep(0.1)
     client.publish(topic, payload, qos=0, retain=True)
 
 def usage():
@@ -99,7 +98,15 @@ def main():
         print(".. using defaults")
 
 
+    print(database)
     db = sql.connect(database, "automation","automation","automation")
+
+    cursor = db.cursor()
+    sqlCmd = "update mqtt set state = '" + payload + "' where topic = '" + topic + "';"
+    print(sqlCmd)
+    cursor.execute( sqlCmd )
+    db.commit()
+    cursor.close()
 
     mqttClient = mqtt.Client()
     mqttClient.on_connect = on_connect
@@ -111,8 +118,8 @@ def main():
 
     while not connected:
         print("Waiting ...")
-        mqttClient.loop()
         time.sleep(0.1)
+        mqttClient.loop()
 
     # disconnect from server
     # mqttClient.loop_forever()
