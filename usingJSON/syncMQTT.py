@@ -22,10 +22,10 @@ def usage():
 def stateToLogic( state ) :
 
     if state in ["ON","TRUE"]:
-        return "TRUE"
+        return "ON"
 
     if state in ["OFF","FALSE"]:
-        return "FALSE"
+        return "ON"
 
 
 def on_message(client, userData,msg):
@@ -41,6 +41,7 @@ def on_message(client, userData,msg):
     state = (msg.payload).decode("utf-8")
     print(state)
 
+#    sqlCmd = "select name, state,direction from mqtt where topic = '" + topic + "';"
     sqlCmd = "select state from mqtt where topic = '" + topic + "';"
     print(sqlCmd)
     cursor = db.cursor()
