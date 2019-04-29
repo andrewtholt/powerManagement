@@ -33,9 +33,9 @@ CREATE TABLE IF NOT EXISTS io_point (
 CREATE TABLE IF NOT EXISTS internal (
     idx INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(32) NOT NULL UNIQUE,
-    on_state VARCHAR(32) NOT NULL DEFAULT 'TRUE',
-    off_state VARCHAR(32) NOT NULL DEFAULT 'FALSE',
-    state VARCHAR(32) NOT NULL DEFAULT 'FALSE',
+    on_state VARCHAR(32) NOT NULL DEFAULT 'ON',
+    off_state VARCHAR(32) NOT NULL DEFAULT 'OFF',
+    state VARCHAR(32) NOT NULL DEFAULT 'OFF',
     PRIMARY KEY (idx)
     );
 
@@ -43,9 +43,9 @@ CREATE TABLE IF NOT EXISTS mqtt (
     idx INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(32) NOT NULL UNIQUE,
     topic VARCHAR(32) NOT NULL UNIQUE,
-    on_state VARCHAR(32) NOT NULL DEFAULT 'TRUE',
-    off_state VARCHAR(32) NOT NULL DEFAULT 'FALSE',
-    state VARCHAR(32) NOT NULL DEFAULT 'FALSE',
+    on_state VARCHAR(32) NOT NULL DEFAULT 'ON',
+    off_state VARCHAR(32) NOT NULL DEFAULT 'OFF',
+    state VARCHAR(32) NOT NULL DEFAULT 'OFF',
     PRIMARY KEY (idx)
 );
 
@@ -55,9 +55,9 @@ create table if not exists  snmp (
     oid varchar(255) not null unique,
     ipAddress varchar(16) not null,
     port int not null,
-    on_state varchar(32) not null default 'TRUE',
-    off_state varchar(32) not null default 'FALSE',
-    state VARCHAR(32) NOT NULL DEFAULT 'FALSE',
+    on_state varchar(32) not null default 'ON',
+    off_state varchar(32) not null default 'OFF',
+    state VARCHAR(32) NOT NULL DEFAULT 'OFF',
     PRIMARY KEY (idx)
 );
 
@@ -68,9 +68,9 @@ CREATE TABLE IF NOT EXISTS modbus (
     functionCode INT NOT NULL,
     ipAddress VARCHAR(16) NOT NULL,
     port INT NOT NULL,
-    on_state VARCHAR(32) NOT NULL DEFAULT 'TRUE',
-    off_state VARCHAR(32) NOT NULL DEFAULT 'FALSE',
-    state VARCHAR(32) NOT NULL DEFAULT 'FALSE',
+    on_state VARCHAR(32) NOT NULL DEFAULT 'ON',
+    off_state VARCHAR(32) NOT NULL DEFAULT 'OFF',
+    state VARCHAR(32) NOT NULL DEFAULT 'OFF',
     PRIMARY KEY (idx)
 );
 
