@@ -3,7 +3,9 @@
 import urllib.parse
 import urllib.request
 
-import xml.etree.ElementTree as ET
+import pprint
+
+import xml.etree.cElementTree as ET
 
 password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
 
@@ -22,22 +24,24 @@ xmlData = response.read()
 
 root = ET.fromstring(xmlData)
 
-tst = root[2]
-# tst = root
+from copy import copy
 
-print(tst[0].text)
+def dictify(r,root=True):
+    if root:
+        return {r.tag : dictify(r, False)}
+    d=copy(r.attrib)
+    if r.text:
+        d["_text"]=r.text
+    for x in r.findall("./*"):
+        if x.tag not in d:
+            d[x.tag]=[]
+        d[x.tag].append(dictify(x,False))
+    return d
 
-count = 0
-for i in tst:
-    print("count ",count)
+tst = (dictify(root))
 
-    print(">" + i.tag + "=" , i.text )
-    count = count + 1
-    if i.tag == "system":
-        for j in i:
-            print("\t>" + j.tag + "=" , j.text )
-            print("\t\t>" + j[0].tag + "=", j[0].text)
-            print("\t\t>" + j[1].tag + "=", j[1].text)
+pprint.pprint(tst)
 
-    print("=====")
+# print( tst['monit']['platform'][0]['name'])
+
 
