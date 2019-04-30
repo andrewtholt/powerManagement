@@ -2,6 +2,11 @@ drop database if exists automation;
 create database automation ;
 use  automation;
 
+-- SELECT User,Host FROM mysql.user where User='automation';
+-- create user 'automation'@'%' identified by 'automation';
+-- grant all on `automation`.* TO 'automation'@'%' identified by 'automation';
+
+
 drop table if exists io_point;
 drop table if exists io_type;
 drop table if exists mqtt;
