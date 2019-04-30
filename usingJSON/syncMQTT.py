@@ -25,7 +25,7 @@ def stateToLogic( state ) :
         return "ON"
 
     if state in ["OFF","FALSE"]:
-        return "ON"
+        return "OFF"
 
 
 def on_message(client, userData,msg):
@@ -59,7 +59,7 @@ def on_message(client, userData,msg):
     if devState == dbState:
         print("OK")
     else:
-        print("Publish")
+        print("Publish:" + dbState)
         client.publish(topic, dbState, qos=0, retain=True)
 
 def on_connect(client, userdata, flags, rc):

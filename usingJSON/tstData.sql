@@ -1,6 +1,8 @@
+use automation;
 
 delete from io_point;
 delete from mqtt;
+
 
 replace into mqtt (name, topic ) values ('START','/test/start');
 replace into io_point (name,direction ) values ('START','IN');
