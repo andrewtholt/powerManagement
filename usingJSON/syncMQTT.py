@@ -32,35 +32,48 @@ def on_message(client, userData,msg):
     print("On Message")
     global database
 
-    print(database)
+    print("Database " + database)
     db = sql.connect(database, "automation","automation","automation")
 
     topic = msg.topic
-    print(topic)
 
     state = (msg.payload).decode("utf-8")
-    print(state)
 
-#    sqlCmd = "select name, state,direction from mqtt where topic = '" + topic + "';"
-    sqlCmd = "select state from mqtt where topic = '" + topic + "';"
-    print(sqlCmd)
+    sqlCmd = "select state, direction from mqttQuery where topic = '" + topic + "';"
+    print( sqlCmd )
+
     cursor = db.cursor()
     cursor.execute(sqlCmd)
+
     data = cursor.fetchone()
+
     cursor.close()
     db.close()
 
     dbState = data[0]
+    dbDirection = data[1]
     devState = stateToLogic(state)
 
     print("Device ",devState)
     print("Db     ",dbState)
+    print("Dir   >"+dbDirection+"<")
 
-    if devState == dbState:
-        print("OK")
-    else:
-        print("Publish:" + dbState)
-        client.publish(topic, dbState, qos=0, retain=True)
+    if dbDirection == "OUT":
+        print("OUT")
+        if devState == dbState:
+            print("OK")
+        else:
+            print("Publish:" + dbState)
+            client.publish(topic, dbState, qos=0, retain=True)
+    elif dbDirection == "IN":
+        db = sql.connect(database, "automation","automation","automation")
+        sqlCmd = "update mqtt set state = '" + devState + "' where topic = '" + topic + "';"
+        print( sqlCmd )
+        cursor = db.cursor()
+        cursor.execute( sqlCmd );
+        db.commit()
+        cursor.close()
+        db.close()
 
 def on_connect(client, userdata, flags, rc):
     global connected
@@ -72,7 +85,8 @@ def on_connect(client, userdata, flags, rc):
 
     db = sql.connect(database, "automation","automation","automation")
     cursor = db.cursor()
-    cursor.execute("select name,direction,topic,state from mqttQuery where direction = 'OUT';")
+#    cursor.execute("select name,direction,topic,state from mqttQuery where direction = 'OUT';")
+    cursor.execute("select name,direction,topic,state from mqttQuery ;")
 
     data = cursor.fetchall()
     for row in data:
