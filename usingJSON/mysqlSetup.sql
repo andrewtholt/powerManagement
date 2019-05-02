@@ -41,6 +41,8 @@ CREATE TABLE IF NOT EXISTS internal (
     on_state VARCHAR(32) NOT NULL DEFAULT 'ON',
     off_state VARCHAR(32) NOT NULL DEFAULT 'OFF',
     state VARCHAR(32) NOT NULL DEFAULT 'OFF',
+    old_state VARCHAR(32) NOT NULL DEFAULT 'UNKNOWN',
+    data_type ENUM('BOOL', 'STRING') NOT NULL DEFAULT 'BOOL',
     PRIMARY KEY (idx)
     );
 
@@ -51,6 +53,8 @@ CREATE TABLE IF NOT EXISTS mqtt (
     on_state VARCHAR(32) NOT NULL DEFAULT 'ON',
     off_state VARCHAR(32) NOT NULL DEFAULT 'OFF',
     state VARCHAR(32) NOT NULL DEFAULT 'OFF',
+    old_state VARCHAR(32) NOT NULL DEFAULT 'UNKNOWN',
+    data_type ENUM('BOOL', 'STRING') NOT NULL DEFAULT 'BOOL',
     PRIMARY KEY (idx)
 );
 
@@ -63,6 +67,8 @@ create table if not exists  snmp (
     on_state varchar(32) not null default 'ON',
     off_state varchar(32) not null default 'OFF',
     state VARCHAR(32) NOT NULL DEFAULT 'OFF',
+    old_state VARCHAR(32) NOT NULL DEFAULT 'UNKNOWN',
+    data_type ENUM('BOOL', 'STRING') NOT NULL DEFAULT 'BOOL',
     PRIMARY KEY (idx)
 );
 
@@ -76,6 +82,8 @@ CREATE TABLE IF NOT EXISTS modbus (
     on_state VARCHAR(32) NOT NULL DEFAULT 'ON',
     off_state VARCHAR(32) NOT NULL DEFAULT 'OFF',
     state VARCHAR(32) NOT NULL DEFAULT 'OFF',
+    old_state VARCHAR(32) NOT NULL DEFAULT 'UNKNOWN',
+    data_type ENUM('BOOL', 'STRING') NOT NULL DEFAULT 'BOOL',
     PRIMARY KEY (idx)
 );
 
@@ -85,5 +93,4 @@ CREATE VIEW mqttQuery AS
     FROM
         io_point,mqtt
 	WHERE io_point.name = mqtt.name;
-
 
