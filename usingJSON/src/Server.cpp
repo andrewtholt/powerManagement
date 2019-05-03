@@ -145,7 +145,9 @@ vector<string> handleRequest(string request) {
                 int cacheCount =  cache.count(name);
                 if( cacheCount == 0) {
                     sqlCmd = "select io_type from io_point where name='" + name + "';";
-                    cout << sqlCmd << endl;
+                    if(verbose ) {
+                        cout << sqlCmd << endl;
+                    }
                     if( mysql_query(con, sqlCmd.c_str())) {
                         cerr << "SQL Error" << endl;
                     } else {
@@ -161,10 +163,17 @@ vector<string> handleRequest(string request) {
 
                 transform(ioType.begin(), ioType.end(), ioType.begin(), ::tolower);
 
-                sqlCmd = "update io_point, " + ioType + " set " + ioType + ".state='" + value + "' where io_point.io_idx=" + ioType + ".idx and io_point.name='" + name +"';";
-                cout << sqlCmd << endl;
+                sqlCmd = "update io_point," + ioType + " set " + ioType + ".state='" + value + "' where io_point.io_idx=" + ioType + ".idx and io_point.name='" + name +"';";
+
+                if(verbose) {
+                    cout << sqlCmd << endl;
+                }
                 if( mysql_query(con, sqlCmd.c_str())) {
                     cerr << "update failed." << endl;
+                } else {
+                    if(ioType == "mqtt") {
+                        cout << "publish " + name + " " + value << endl;
+                    }
                 }
                 validCmd = true;
             }
