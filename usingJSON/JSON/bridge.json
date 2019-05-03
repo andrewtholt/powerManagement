@@ -12,6 +12,9 @@
         "topic": "/home/office/+/power"
     },
     "database" : {
-        "name" : "localhost"
+        "name"   : "localhost",
+        "db"     : "automation",
+        "user"   : "automation",
+        "passwd" : "automation"
     }
 }
