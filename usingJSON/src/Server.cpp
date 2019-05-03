@@ -28,6 +28,8 @@ using namespace std;
 
 json config ;
 bool verbose=false;
+
+map<string,string> cache ;
 /*
 Needs:
 
@@ -135,9 +137,31 @@ vector<string> handleRequest(string request) {
             break;
         case 3:
             if( stuff[0] == "SET") {
+                string sqlCmd;
                 string name = stuff[1];
                 string value = stuff[2];
-                string sqlCmd = "update io_point, mqtt set  mqtt.state='" + value + "' where io_point.io_idx=mqtt.idx and io_point.name='" + name +"';";
+                string ioType="NONE";
+
+                int cacheCount =  cache.count(name);
+                if( cacheCount == 0) {
+                    sqlCmd = "select io_type from io_point where name='" + name + "';";
+                    cout << sqlCmd << endl;
+                    if( mysql_query(con, sqlCmd.c_str())) {
+                        cerr << "SQL Error" << endl;
+                    } else {
+                        MYSQL_RES *result = mysql_store_result(con);
+                        MYSQL_ROW row = mysql_fetch_row(result);
+
+                        cache[name] = row[0];
+                        ioType = row[0];
+                    }
+                } else {
+                    ioType = cache[name];
+                }
+
+                transform(ioType.begin(), ioType.end(), ioType.begin(), ::tolower);
+
+                sqlCmd = "update io_point, " + ioType + " set " + ioType + ".state='" + value + "' where io_point.io_idx=" + ioType + ".idx and io_point.name='" + name +"';";
                 cout << sqlCmd << endl;
                 if( mysql_query(con, sqlCmd.c_str())) {
                     cerr << "update failed." << endl;
@@ -255,6 +279,38 @@ int main(int argc, char *argv[]) {
      */
     config = json::parse(cfgStream);
 
+    string dbName = config["database"]["name"];
+
+    MYSQL *con=mysql_init(NULL);
+
+    if ( con == NULL ) {
+        cerr << "DB Connect failed" << endl;
+        exit(3);
+    }
+
+    if (mysql_real_connect(con, dbName.c_str(), "automation", "automation", "automation", 0, NULL, 0) == NULL) {
+        finish_with_error(con);
+    }
+
+    string sqlCmd = "select name,io_type from io_point;";
+
+    if (mysql_query(con, sqlCmd.c_str()) ) {
+      finish_with_error(con);
+    }
+
+    MYSQL_RES *result = mysql_store_result(con);
+
+    MYSQL_ROW row;
+
+    while ((row = mysql_fetch_row(result))) {
+        cout << row[0] << endl;
+        cout << row[1] << endl;
+
+        cache[ row[0]] = row[1];
+    }
+
+
+    mysql_close(con);
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0); // Create new socket, save file descriptor
     if (sockfd < 0) {
