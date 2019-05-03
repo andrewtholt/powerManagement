@@ -1,5 +1,0 @@
-/home/andrewh/Source/Mine/powerManagement/usingJSON/Debug/CMakeFiles/rebuild_cache.dir
-/home/andrewh/Source/Mine/powerManagement/usingJSON/Debug/CMakeFiles/edit_cache.dir
-/home/andrewh/Source/Mine/powerManagement/usingJSON/Debug/src/CMakeFiles/rebuild_cache.dir
-/home/andrewh/Source/Mine/powerManagement/usingJSON/Debug/src/CMakeFiles/Server.dir
-/home/andrewh/Source/Mine/powerManagement/usingJSON/Debug/src/CMakeFiles/edit_cache.dir

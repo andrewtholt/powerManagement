@@ -1,1 +1,0 @@
-/usr/bin/c++  -g   CMakeFiles/Server.dir/Server.cpp.o  -o Server -L/usr/lib/x86_64-linux-gnu -lmysqlclient -lpthread -lz -lm -lrt -latomic -ldl 
