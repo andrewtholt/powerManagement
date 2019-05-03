@@ -70,6 +70,87 @@ void finish_with_error(MYSQL *con) {
     exit(1);
 }
 
+bool updateIO(string name, string value) {
+    bool failFlag=true;
+
+    string dbName = config["database"]["name"];
+    string db     = config["database"]["db"];
+    string user   = config["database"]["user"];
+    string passwd = config["database"]["passwd"];
+
+    string ioType;
+    string direction;
+    string sqlCmd ;
+
+    bool mqttPublish=false;
+
+    MYSQL *con=mysql_init(NULL);
+
+    if ( con == NULL ) {
+        cerr << "DB Connect failed" << endl;
+        return true;
+    }
+
+    if (mysql_real_connect(con, dbName.c_str(), "automation", "automation", "automation", 0, NULL, 0) == NULL) {
+        finish_with_error(con);
+        return(true);
+    }
+
+    sqlCmd = "select direction, io_type from io_point where name = '" + name + "';";
+
+    if( mysql_query(con, sqlCmd.c_str())) {
+        cerr << "SQL Error" << endl;
+    } else {
+        MYSQL_RES *result = mysql_store_result(con);
+        MYSQL_ROW row = mysql_fetch_row(result);
+
+        direction = row[0];
+        ioType = row[1];
+
+        transform(ioType.begin(), ioType.end(), ioType.begin(), ::tolower);
+
+        if( ioType == "mqtt") {
+            bool doUpdate=false;
+            if( direction == "IN" ) {
+                mqttPublish=false;
+                doUpdate=true;;
+            } else if( direction == "OUT" ) {
+                mqttPublish=true;
+                doUpdate=true;;
+            } else if( direction == "DISABLED" ) {
+                // 
+                // Ignore.
+                // 
+                mqttPublish=false;
+                doUpdate=false;;
+            } else if( direction == "INTERNAL" ) {
+                // 
+                // Invalid.
+                // 
+                mqttPublish=false;
+                doUpdate=true;;
+            }
+
+            if(doUpdate) {
+                sqlCmd = "update mqtt set state = '" + value + "' where name='" + name + "';";
+
+                if( mysql_query(con, sqlCmd.c_str())) {
+                    cerr << "SQL Error" << endl;
+                    cerr << sqlCmd << endl;
+                }
+            }
+            if(mqttPublish) {
+                cout << "Publish:" + name + " " + value << endl ;
+            }
+        }
+
+        mysql_free_result(result);
+    }
+
+    mysql_close( con );
+    return failFlag;
+}
+
 vector<string> handleRequest(string request) {
     vector<string> response;
     vector<string> stuff ;
@@ -128,7 +209,7 @@ vector<string> handleRequest(string request) {
                         value = row[0];
                     }
 
-//                    response.push_back(string("SQL\n")); 
+                    //                    response.push_back(string("SQL\n")); 
                     response.push_back(string(value+"\n")); 
                     mysql_free_result(result);
                 }
@@ -304,7 +385,7 @@ int main(int argc, char *argv[]) {
     string sqlCmd = "select name,io_type from io_point;";
 
     if (mysql_query(con, sqlCmd.c_str()) ) {
-      finish_with_error(con);
+        finish_with_error(con);
     }
 
     MYSQL_RES *result = mysql_store_result(con);
