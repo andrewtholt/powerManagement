@@ -31,6 +31,7 @@ insert into io_type (ioType) values ( 'SNMP');
 CREATE TABLE IF NOT EXISTS io_point (
     name VARCHAR(32) NOT NULL UNIQUE,
     direction ENUM('IN', 'OUT', 'DISABLED', 'INTERNAL') NOT NULL DEFAULT 'DISABLED',
+    io_type ENUM('INTERNAL', 'MQTT') NOT NULL DEFAULT 'MQTT',
     io_idx INT
 );
 
