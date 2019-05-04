@@ -29,12 +29,17 @@ using namespace std;
 json config ;
 bool verbose=false;
 
-map<string,string> cache ;
+struct ioDetail {
+    string ioType;
+    string direction;
+};
+
+map<string,ioDetail> cache ;
 /*
 Needs:
 
 sudo apt-get install libmysqlclient-dev
- */
+*/
 vector<string> split(const char *str, char c = ' ') {
     vector<string> result;
 
@@ -67,22 +72,62 @@ inline string &trim(string& s, const char* t = " \t\n\r\f\v") {
 void finish_with_error(MYSQL *con) {
     fprintf(stderr, "%s\n", mysql_error(con));
     mysql_close(con);
-    exit(1);
+//    exit(1);
+}
+
+bool mqttPublish(MYSQL *con, string name) {
+    cout << "Publish:" << endl;
+    cout << "\t" + name << endl;
+}
+
+struct ioDetail typeFromCache(MYSQL *con, string name) {
+    string sqlCmd;
+    string ioType;
+    struct ioDetail io;
+
+    int cacheCount =  cache.count(name);
+    if( cacheCount == 0) {
+        // 
+        // Not in the cache so go and get it.
+        //
+        sqlCmd = "select io_type,direction from io_point where name='" + name + "';";
+        if(verbose ) {
+            cout << sqlCmd << endl;
+        }
+        if( mysql_query(con, sqlCmd.c_str())) {
+            cerr << "SQL Error" << endl;
+            ioType = "<UNDEFINED>";
+        } else {
+            MYSQL_RES *result = mysql_store_result(con);
+            MYSQL_ROW row = mysql_fetch_row(result);
+
+            io.ioType = row[0];
+            io.direction = row[1];
+
+            cache[name] = io;
+            ioType = row[0];
+            mysql_free_result(result);
+        }
+    } else {
+        io = cache[name];
+    }
+
+    transform((io.ioType).begin(), (io.ioType).end(), (io.ioType).begin(), ::tolower);
+
+    return io;
 }
 
 bool updateIO(string name, string value) {
     bool failFlag=true;
+
+    struct ioDetail io;
 
     string dbName = config["database"]["name"];
     string db     = config["database"]["db"];
     string user   = config["database"]["user"];
     string passwd = config["database"]["passwd"];
 
-    string ioType;
-    string direction;
     string sqlCmd ;
-
-    bool mqttPublish=false;
 
     MYSQL *con=mysql_init(NULL);
 
@@ -90,63 +135,35 @@ bool updateIO(string name, string value) {
         cerr << "DB Connect failed" << endl;
         return true;
     }
+    io = typeFromCache(con, name) ;
 
-    if (mysql_real_connect(con, dbName.c_str(), "automation", "automation", "automation", 0, NULL, 0) == NULL) {
-        finish_with_error(con);
-        return(true);
-    }
-
-    sqlCmd = "select direction, io_type from io_point where name = '" + name + "';";
-
-    if( mysql_query(con, sqlCmd.c_str())) {
-        cerr << "SQL Error" << endl;
+    if( io.ioType == "<undefined>") {
+        failFlag=true;
     } else {
-        MYSQL_RES *result = mysql_store_result(con);
-        MYSQL_ROW row = mysql_fetch_row(result);
 
-        direction = row[0];
-        ioType = row[1];
-
-        transform(ioType.begin(), ioType.end(), ioType.begin(), ::tolower);
-
-        if( ioType == "mqtt") {
-            bool doUpdate=false;
-            if( direction == "IN" ) {
-                mqttPublish=false;
-                doUpdate=true;;
-            } else if( direction == "OUT" ) {
-                mqttPublish=true;
-                doUpdate=true;;
-            } else if( direction == "DISABLED" ) {
-                // 
-                // Ignore.
-                // 
-                mqttPublish=false;
-                doUpdate=false;;
-            } else if( direction == "INTERNAL" ) {
-                // 
-                // Invalid.
-                // 
-                mqttPublish=false;
-                doUpdate=true;;
-            }
-
-            if(doUpdate) {
-                sqlCmd = "update mqtt set state = '" + value + "' where name='" + name + "';";
-
-                if( mysql_query(con, sqlCmd.c_str())) {
-                    cerr << "SQL Error" << endl;
-                    cerr << sqlCmd << endl;
-                }
-            }
-            if(mqttPublish) {
-                cout << "Publish:" + name + " " + value << endl ;
-            }
+        if (mysql_real_connect(con, dbName.c_str(), "automation", "automation", "automation", 0, NULL, 0) == NULL) {
+            finish_with_error(con);
+            return(true);
         }
 
-        mysql_free_result(result);
+        sqlCmd = "update "+ io.ioType+" set old_state=state, state = '" + value + "' where name='" + name + "' and old_state <> '" + value + "';";
+        if( mysql_query(con, sqlCmd.c_str())) {
+            cerr << "SQL Error" << endl;
+            cerr << sqlCmd << endl;
+        } else {
+            if( mysql_affected_rows(con) > 0) {
+                mqttPublish( con, name );
+        // 
+        // Database update.
+        //
+        // I know what the io is, what direction.
+        // So if it's:
+        // MQTT OUT and it's changed something needs to publish.
+        //
+            }
+            failFlag=false;
+        }
     }
-
     mysql_close( con );
     return failFlag;
 }
@@ -209,8 +226,8 @@ vector<string> handleRequest(string request) {
                         value = row[0];
                     }
 
-                    //                    response.push_back(string("SQL\n")); 
-                    response.push_back(string(value+"\n")); 
+//                    response.push_back(string("SET " + name + " " + value +"\n")); 
+                    response.push_back(string(value +"\n")); 
                     mysql_free_result(result);
                 }
             } 
@@ -223,39 +240,8 @@ vector<string> handleRequest(string request) {
                 string value = stuff[2];
                 string ioType="NONE";
 
-                int cacheCount =  cache.count(name);
-                if( cacheCount == 0) {
-                    sqlCmd = "select io_type from io_point where name='" + name + "';";
-                    if(verbose ) {
-                        cout << sqlCmd << endl;
-                    }
-                    if( mysql_query(con, sqlCmd.c_str())) {
-                        cerr << "SQL Error" << endl;
-                    } else {
-                        MYSQL_RES *result = mysql_store_result(con);
-                        MYSQL_ROW row = mysql_fetch_row(result);
+                bool ff=updateIO( name, value) ;
 
-                        cache[name] = row[0];
-                        ioType = row[0];
-                    }
-                } else {
-                    ioType = cache[name];
-                }
-
-                transform(ioType.begin(), ioType.end(), ioType.begin(), ::tolower);
-
-                sqlCmd = "update io_point," + ioType + " set " + ioType + ".state='" + value + "' where io_point.io_idx=" + ioType + ".idx and io_point.name='" + name +"';";
-
-                if(verbose) {
-                    cout << sqlCmd << endl;
-                }
-                if( mysql_query(con, sqlCmd.c_str())) {
-                    cerr << "update failed." << endl;
-                } else {
-                    if(ioType == "mqtt") {
-                        cout << "publish " + name + " " + value << endl;
-                    }
-                }
                 validCmd = true;
             }
             break;
@@ -366,7 +352,7 @@ int main(int argc, char *argv[]) {
        ss << cfgStream.rdbuf();
 
        str = ss.str();
-     */
+       */
     config = json::parse(cfgStream);
 
     string dbName = config["database"]["name"];
@@ -382,7 +368,7 @@ int main(int argc, char *argv[]) {
         finish_with_error(con);
     }
 
-    string sqlCmd = "select name,io_type from io_point;";
+    string sqlCmd = "select name,io_type,direction from io_point;";
 
     if (mysql_query(con, sqlCmd.c_str()) ) {
         finish_with_error(con);
@@ -395,8 +381,14 @@ int main(int argc, char *argv[]) {
     while ((row = mysql_fetch_row(result))) {
         cout << row[0] << endl;
         cout << row[1] << endl;
+        cout << row[2] << endl;
+        cout << "=========" << endl;
 
-        cache[ row[0]] = row[1];
+        struct ioDetail io;
+        io.ioType = row[1];
+        io.direction = row[2];
+//        cache[ row[0]] = row[1];
+        cache[ row[0]] = io;
     }
 
 
