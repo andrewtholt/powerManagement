@@ -13,6 +13,30 @@ from time import sleep
 import curses
 
 def main():
+    database = 'localhost'
+    mqttBroker = 'localhost'
+    mqttPort = 1883
+
+
+    configFile="/etc/mqtt/bridge.json"
+
+    if os.path.exists(configFile):
+        with open( configFile, 'r') as f:
+            cfg = json.load(f)
+
+        mqttBroker = cfg['local']['name']
+        mqttPort   = int(cfg['local']['port'])
+
+        database = cfg['database']['name']
+        db       = cfg['database']['db']
+        user     = cfg['database']['user']
+        passwd   = cfg['database']['passwd']
+    else:
+        print(configFile + " not found..")
+        print(".. using defaults")
+
+    db = sql.connect(database, user, passwd,db)
+
     stdscr = curses.initscr()
 
     begin_x = 20; begin_y = 7
@@ -86,17 +110,26 @@ def main():
 
     curses.endwin()
 
-    sqlCmd = "replace into " + ioType.lower() + "(name, topic ) values ('" + name + "','"+topic+ "');"
+    cursor = db.cursor()
 
+    sqlCmd = "replace into " + ioType.lower() + "(name, topic ) values ('" + name + "','"+topic+ "');"
     print(sqlCmd)
+    cursor.execute( sqlCmd )
 
     sqlCmd = "replace into io_point (name,direction ) values ('" + name + "','"+ direction +"');"
-
     print(sqlCmd)
+    cursor.execute( sqlCmd )
 
     sqlCmd = "update io_point,mqtt set io_point.io_idx=mqtt.idx where io_point.name = mqtt.name;"
-
     print(sqlCmd)
+    cursor.execute( sqlCmd )
+
+    db.commit()
+    cursor.close()
+    db.close()
+
+
+
 
 
 main()
