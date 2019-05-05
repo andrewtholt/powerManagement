@@ -120,7 +120,7 @@ def main():
     print(sqlCmd)
     cursor.execute( sqlCmd )
 
-    sqlCmd = "replace into io_point (name,direction ) values ('" + name + "','"+ direction +"');"
+    sqlCmd = "replace into io_point (name,direction,io_type ) values ('" + name + "','"+ direction +"','" + ioType.lower() + "');"
     print(sqlCmd)
     cursor.execute( sqlCmd )
 
