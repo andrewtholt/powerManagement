@@ -146,13 +146,20 @@ bool updateIO(string name, string value) {
             return(true);
         }
 
-        sqlCmd = "update "+ io.ioType+" set old_state=state, state = '" + value + "' where name='" + name + "' and old_state <> '" + value + "';";
+//        sqlCmd = "update "+ io.ioType+" set old_state=state, state = '" + value + "' where name='" + name + "' and old_state <> '" + value + "';";
+        sqlCmd = "update "+ io.ioType+" set old_state=state, state = '" + value + "' where name='" + name + "';";
+
+        if(verbose) {
+            cout << sqlCmd << endl;
+        }
         if( mysql_query(con, sqlCmd.c_str())) {
             cerr << "SQL Error" << endl;
             cerr << sqlCmd << endl;
         } else {
             if( mysql_affected_rows(con) > 0) {
-                mqttPublish( con, name );
+                if( io.ioType == "mqtt") {
+                    mqttPublish( con, name );
+                }
         // 
         // Database update.
         //
@@ -210,7 +217,7 @@ vector<string> handleRequest(string request) {
 
                 struct ioDetail io = typeFromCache(con, name);
 
-                if ( io.ioType == "MQTT" ) {
+                if ( io.ioType == "mqtt" ) {
                     sqlCmd = "select state from mqttQuery where name='" + name + "';";
                 } else if (io.ioType == "internal") {
                     sqlCmd = "select state from internalQuery where name='" + name + "';";
