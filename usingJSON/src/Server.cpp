@@ -206,8 +206,15 @@ vector<string> handleRequest(string request) {
         case 2:
             if ( stuff[0] == "GET") { 
                 string name = stuff[1];
+                string sqlCmd;
 
-                string sqlCmd = "select state from mqttQuery where name='" + name + "';";
+                struct ioDetail io = typeFromCache(con, name);
+
+                if ( io.ioType == "MQTT" ) {
+                    sqlCmd = "select state from mqttQuery where name='" + name + "';";
+                } else if (io.ioType == "internal") {
+                    sqlCmd = "select state from internalQuery where name='" + name + "';";
+                }
 
                 if(verbose) {
                     cout << sqlCmd << endl;
