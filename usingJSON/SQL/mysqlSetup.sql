@@ -95,3 +95,10 @@ CREATE VIEW mqttQuery AS
         io_point,mqtt
 	WHERE io_point.name = mqtt.name;
 
+CREATE VIEW internalQuery AS
+    SELECT 
+        io_point.name, internal.state, io_point.direction
+    FROM
+        io_point,internal
+	WHERE io_point.name = internal.name;
+
