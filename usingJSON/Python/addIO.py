@@ -112,7 +112,11 @@ def main():
 
     cursor = db.cursor()
 
-    sqlCmd = "replace into " + ioType.lower() + "(name, topic ) values ('" + name + "','"+topic+ "');"
+    if ioType == "MQTT":
+        sqlCmd = "replace into " + ioType.lower() + "(name, topic ) values ('" + name + "','"+topic+ "');"
+    elif ioType == "INTERNAL":
+        sqlCmd = "replace into " + ioType.lower() + "(name) values ('" + name + "');"
+
     print(sqlCmd)
     cursor.execute( sqlCmd )
 
@@ -120,8 +124,10 @@ def main():
     print(sqlCmd)
     cursor.execute( sqlCmd )
 
-    sqlCmd = "update io_point,mqtt set io_point.io_idx=mqtt.idx where io_point.name = mqtt.name;"
+    sqlCmd = "update io_point," + ioType.lower() +  " set io_point.io_idx=" + ioType.lower() + ".idx where io_point.name = " + ioType.lower() + ".name;"
+
     print(sqlCmd)
+
     cursor.execute( sqlCmd )
 
     db.commit()
