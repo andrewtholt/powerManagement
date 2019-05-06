@@ -9,9 +9,14 @@
 #include <mqueue.h>
 
 #include <iostream>
+#include <fstream>
+
 #include <string>
 
+#include <nlohmann/json.hpp>
+
 using namespace std;
+using json = nlohmann::json;
 
 void usage() {
     printf("Usage: dispatch \n\n");
@@ -35,13 +40,45 @@ int main(int argc,char *argv[]) {
     bool dumpMsg=false;
     bool textFlag=false;
 
+    string cfgFile = "/etc/mqtt/bridge.json";
+
+    json config ;
+
+    if(access(cfgFile.c_str(), R_OK) < 0) {
+        cerr << "FATAL: Cannot access config file " + cfgFile << endl;
+        exit(2);
+    }
+
+    ifstream cfgStream( cfgFile );
+
+    config = json::parse(cfgStream);
+
     struct mq_attr attr;
 
+    string mosquittoHost = config["local"]["name"];
+    string mqttPortString = config["local"]["port"];
+
+    int mosquittoPort = stoi( mqttPortString );
+
+    cout << ">" + mqttName + "<" << endl;
+    cout << config["local"]["port"] << endl;
+
+    int rc;
+    struct mosquitto *mosq = mosquitto_new("dispatch", true, NULL);
+
+    if( mosq) {
+        rc=mosquitto_connect(mosq, mosquittoHost.c_str(), mosquittoPort, keepalive);
+    }
+
     memset(&attr, 0, sizeof attr);
-    //max size of a message
-    attr.mq_msgsize = 255;  //MSG_SIZE = 4096
+    // 
+    // Max size of a message
+    // 
+    attr.mq_msgsize = 255;  // MSG_SIZE = 4096
     attr.mq_flags = 0;
-    //maximum of messages on queue
+    // 
+    // Maximum of messages on queue
+    // 
     attr.mq_maxmsg = 10;
 
     mqd_t mq;
@@ -56,52 +93,8 @@ int main(int argc,char *argv[]) {
 
     int msgSize=255;
 
-    /*
-       while((opt = getopt(argc,argv,"cdhln:s:t")) != -1 ) {
-       switch (opt) {
-       case 'c':
-       mkPipe=true;
-       break;
-       case 'd':
-       dumpMsg=true;
-       break;
-       case 'h':
-       usage();
-       exit(0);
-       break;
-       case 'l':
-       runFlag=true;
-       break;
-       case 'n':
-       strncpy(qName,optarg,sizeof(qName));
-       break;
-       case 's':
-       msgSize=atoi(optarg);
-       break;
-       case 't':
-       textFlag=true;
-       break;
-       default:
-       usage();
-       exit(1);
-       break;
-       }
-       }
-
-       if(strlen(qName) == 0) {
-       usage();
-       exit(2);
-       }
-
-       if(mkPipe) {
-       attr.mq_flags=0;
-       attr.mq_maxmsg=10;
-       attr.mq_msgsize=msgSize;
-       mq=mq_open(qName, (O_RDONLY|O_CREAT),0644,&attr);
-       } else {
-       }
-       */
     printf("-%s\n", qName.c_str());
+
     mq=mq_open(qName.c_str(), O_RDONLY,0644,&attr);
     //    mq=mq_open(qName.c_str(), O_RDONLY);
 
