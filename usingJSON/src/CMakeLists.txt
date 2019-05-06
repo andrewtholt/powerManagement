@@ -8,3 +8,6 @@ file(GLOB SOURCES "*.cpp")
 add_executable(Server Server.cpp)
 target_compile_options(Server PUBLIC ${MYSQL_CFLAGS})
 target_link_libraries(Server ${MYSQL_LIBS})
+
+add_executable(dispatch dispatch.cpp)
+target_link_libraries(dispatch -lrt)
