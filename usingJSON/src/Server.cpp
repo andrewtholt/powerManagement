@@ -10,6 +10,10 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <fcntl.h>           /* For O_* constants */
+#include <sys/stat.h>        /* For mode constants */
+#include <mqueue.h>
+#include <sys/poll.h>
 
 #include <my_global.h>
 #include <mysql.h>
@@ -33,6 +37,8 @@ struct ioDetail {
     string ioType;
     string direction;
 };
+
+mqd_t toDispatcher = 0;
 
 map<string,ioDetail> cache ;
 /*
@@ -72,12 +78,7 @@ inline string &trim(string& s, const char* t = " \t\n\r\f\v") {
 void finish_with_error(MYSQL *con) {
     fprintf(stderr, "%s\n", mysql_error(con));
     mysql_close(con);
-//    exit(1);
-}
-
-bool mqttPublish(MYSQL *con, string name) {
-    cout << "Publish:" << endl;
-    cout << "\t" + name << endl;
+    //    exit(1);
 }
 
 struct ioDetail typeFromCache(MYSQL *con, string name) {
@@ -117,6 +118,84 @@ struct ioDetail typeFromCache(MYSQL *con, string name) {
     return io;
 }
 
+bool mqttPublish(MYSQL *con, string name) {
+    string sqlCmd;
+    string state;
+    string jsonOut;
+    struct mq_attr attr;
+
+    memset(&attr, 0, sizeof attr);
+    //max size of a message
+    attr.mq_msgsize = 255;  //MSG_SIZE = 4096
+    attr.mq_flags = 0;
+    //maximum of messages on queue
+    attr.mq_maxmsg = 10;
+
+    struct pollfd fds[2];
+
+    cout << "Publish:" << endl;
+
+    if( toDispatcher == 0) {
+        toDispatcher=mq_open("/toDispatcher", O_WRONLY|O_CREAT,0664, &attr);
+        if( toDispatcher == -1) {
+            perror("mq_open");
+            exit(2);
+        }
+    }
+
+    struct ioDetail io;
+    io = typeFromCache(con, name) ;
+
+    string ioType = io.ioType;
+    string dir = io.direction;
+
+    if( verbose ) {
+        cout << "Name      :" + name << endl;
+        cout << "IO Type   :" + ioType << endl;
+        cout << "Direction :" + dir  << endl;
+    }
+
+    if( ioType == "mqtt" ) {
+        sqlCmd = "select topic,state from mqttQuery where name = '" + name + "';";
+
+        if(verbose ) {
+            cout << sqlCmd << endl;
+        }
+        if( mysql_query(con, sqlCmd.c_str())) {
+            cerr << "SQL Error" << endl;
+            ioType = "<UNDEFINED>";
+        } else {
+            string topic;
+            MYSQL_RES *result = mysql_store_result(con);
+            MYSQL_ROW row = mysql_fetch_row(result);
+
+            topic = row[0];
+            state = row[1];
+            if( verbose ) {
+                cout << "Topic     :" + topic << endl;
+                cout << "State     :" + state << endl;
+            }
+
+            jsonOut = "{ \"type\" : \"" + ioType + "\",";
+            jsonOut += "\"topic\" : \"" + topic + "\",";
+            jsonOut += "\"state\" : \"" + state + "\" }\n";
+
+            cout << jsonOut << endl;
+
+            fds[1].fd = toDispatcher;
+            fds[1].events = POLLOUT;
+
+            int ret = poll(fds, 2, 0);
+
+            if (fds[1].revents & POLLOUT) {
+                if (mq_send(toDispatcher, jsonOut.c_str(), jsonOut.length(), 0) < 0) {
+                    perror("mq_send");
+                }
+            }
+        }
+    }
+}
+
 bool updateIO(string name, string value) {
     bool failFlag=true;
 
@@ -146,7 +225,7 @@ bool updateIO(string name, string value) {
             return(true);
         }
 
-//        sqlCmd = "update "+ io.ioType+" set old_state=state, state = '" + value + "' where name='" + name + "' and old_state <> '" + value + "';";
+        //        sqlCmd = "update "+ io.ioType+" set old_state=state, state = '" + value + "' where name='" + name + "' and old_state <> '" + value + "';";
         sqlCmd = "update "+ io.ioType+" set old_state=state, state = '" + value + "' where name='" + name + "';";
 
         if(verbose) {
@@ -160,13 +239,13 @@ bool updateIO(string name, string value) {
                 if( io.ioType == "mqtt") {
                     mqttPublish( con, name );
                 }
-        // 
-        // Database update.
-        //
-        // I know what the io is, what direction.
-        // So if it's:
-        // MQTT OUT and it's changed something needs to publish.
-        //
+                // 
+                // Database update.
+                //
+                // I know what the io is, what direction.
+                // So if it's:
+                // MQTT OUT and it's changed something needs to publish.
+                //
             }
             failFlag=false;
         }
@@ -240,7 +319,7 @@ vector<string> handleRequest(string request) {
                         value = row[0];
                     }
 
-//                    response.push_back(string("SET " + name + " " + value +"\n")); 
+                    //                    response.push_back(string("SET " + name + " " + value +"\n")); 
                     response.push_back(string(value +"\n")); 
                     mysql_free_result(result);
                 }
@@ -401,7 +480,7 @@ int main(int argc, char *argv[]) {
         struct ioDetail io;
         io.ioType = row[1];
         io.direction = row[2];
-//        cache[ row[0]] = row[1];
+        //        cache[ row[0]] = row[1];
         cache[ row[0]] = io;
     }
 
