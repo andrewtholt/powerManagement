@@ -472,15 +472,18 @@ int main(int argc, char *argv[]) {
     MYSQL_ROW row;
 
     while ((row = mysql_fetch_row(result))) {
-        cout << row[0] << endl;
-        cout << row[1] << endl;
-        cout << row[2] << endl;
-        cout << "=========" << endl;
+
+        if( verbose ) {
+            cout << row[0] << endl;
+            cout << row[1] << endl;
+            cout << row[2] << endl;
+            cout << "=========" << endl;
+        }
 
         struct ioDetail io;
         io.ioType = row[1];
         io.direction = row[2];
-        //        cache[ row[0]] = row[1];
+
         cache[ row[0]] = io;
     }
 
@@ -504,9 +507,12 @@ int main(int argc, char *argv[]) {
     if (bind(sockfd, (sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) // Bind socket to the address
         cerr << "ERROR on binding" << endl;
 
-    unsigned int backlogSize = 5; // Number of connections that can be waiting while another finishes
+    unsigned int backlogSize = 5; 
     listen(sockfd, backlogSize);
-    cout << "C++ server opened on port " << portNo << endl;;
+
+    if( verbose ) {
+        cout << "C++ server opened on port " << portNo << endl;;
+    }
 
     while (true) {
         int newsockfd; // New socket file descriptor
@@ -514,7 +520,8 @@ int main(int argc, char *argv[]) {
         sockaddr_in cli_addr; // Client address
 
         clilen = sizeof(sockaddr_in);
-        newsockfd = accept(sockfd, (sockaddr *) &cli_addr, &clilen); // Block until a client connects
+        newsockfd = accept(sockfd, (sockaddr *) &cli_addr, &clilen);
+
         if (newsockfd < 0)
             cerr << "ERROR on accept" << endl;
 
