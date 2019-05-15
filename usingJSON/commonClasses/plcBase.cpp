@@ -159,9 +159,7 @@ bool plcBase::setBoolOldValue(string shortName, bool v) {
  *  Params: 
  * Effects: 
  ***********************************************************************/
-plcBase::plcBase(int f) {
-
-    fd = f;
+plcBase::plcBase() {
 }
 
 

@@ -45,7 +45,8 @@ class plcBase {
 
 
 	public:
-		plcBase(int fd);
+//		plcBase(int fd);
+		plcBase();
 		~plcBase();
     	void cacheDump();
 
