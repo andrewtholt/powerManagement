@@ -27,6 +27,7 @@ string plcSocket::getValue(string shortName) {
  * Effects: 
  ***********************************************************************/
 plcSocket::plcSocket() {
+    plcBase::verbose = false;
     plcSocket("/etc/mqtt/bridge.ini");
 }
 
@@ -39,6 +40,17 @@ plcSocket::plcSocket() {
 plcSocket::plcSocket(string cfgFile) {
 
     cout << "Config :" + cfgFile << endl;
+}
+
+
+/***********************************************************************
+ *  Method: plcSocket::setVerbose
+ *  Params: bool flag
+ * Returns: void
+ * Effects: 
+ ***********************************************************************/
+void plcSocket::setVerbose(bool flag) {
+    plcBase::verbose = flag;
 }
 
 

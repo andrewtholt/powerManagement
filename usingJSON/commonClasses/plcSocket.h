@@ -1,6 +1,6 @@
 #include <nlohmann/json.hpp>
 
-class plcSocket : public plcBase {
+class plcSocket : protected plcBase {
     private:
         string cfgFile = "/etc/mqtt/bridge.json";
         string socketServer = "localhost";
@@ -9,6 +9,8 @@ class plcSocket : public plcBase {
     public:
         plcSocket();
         plcSocket(string cfgFile);
+
+        void setVerbose(bool flag);
         string getValue(string shortName);  // get from socket server defined in cfg file.
 } ; 
 

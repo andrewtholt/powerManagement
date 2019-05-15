@@ -23,7 +23,6 @@ using namespace std;
 class plcBase {
 
     private:
-		bool verbose=false;
 		stack<bool> logicStack;
 
 		int fd;
@@ -44,6 +43,8 @@ class plcBase {
         bool setBoolOldValue(string shortName, bool v );
 
 
+    protected:
+		bool verbose=false;
 	public:
 //		plcBase(int fd);
 		plcBase();
