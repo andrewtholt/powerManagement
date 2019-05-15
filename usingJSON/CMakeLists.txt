@@ -12,3 +12,4 @@ execute_process(COMMAND mysql_config --libs
 # target_link_libraries(cgm ${MYSQL_LIBS})
 
 add_subdirectory(src)
+add_subdirectory(commonClasses)
