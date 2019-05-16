@@ -1,0 +1,20 @@
+@startuml
+
+[Client] --> Mine 
+
+Mine --> [Socket Server] 
+
+[dispatch] - MQTT
+
+MySQL - [MySQL DB]
+[syncMQTT] --> [MySQL DB]
+[Socket Server] - MQ
+
+cloud {
+    [MQTT Broker]
+}
+[MQTT Broker] <--> [syncMQTT]
+MQTT --> [MQTT Broker]
+MQ --> [dispatch]
+
+@enduml
