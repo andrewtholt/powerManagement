@@ -8,6 +8,10 @@
 #include <sys/time.h>
 #include <cstddef>
 
+msTimer::msTimer(int ms) {
+    duration = ms;
+}
+
 /***********************************************************************
  *  Method: msTimer::start
  *  Params: 
@@ -21,13 +25,36 @@ void msTimer::start() {
     startTime = (startTV.tv_sec * 1000) + (startTV.tv_usec / 1000);
 }
 
+bool msTimer::run(bool runFlag) {
+    if(runFlag == false) {
+        running=false;
+        output = false;
+    } else {
+        if( running == true) {
+            int time = read();
+            if( time > duration ) {
+                output=true;
+            } else {
+                output=false;
+            }
+        } else { 
+            // Running is false
+            // 
+            start();
+            running = true;
+            output=false;
+        }
+    }
+    return output;
+}
+
 /***********************************************************************
  *  Method: msTimer::read
  *  Params: 
  * Returns: uint32_t
  * Effects: 
  ***********************************************************************/
-uint32_t msTimer::read() {
+int32_t msTimer::read() {
     struct timeval nowTV;
 
     gettimeofday(&nowTV, NULL);
