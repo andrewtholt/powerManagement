@@ -18,6 +18,9 @@ using namespace std;
  * Effects: 
  ***********************************************************************/
 string plcSocket::getValue(string shortName) {
+    string res = "UNKNOWN";
+
+    return res;
 }
 
 

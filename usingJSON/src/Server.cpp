@@ -118,7 +118,7 @@ struct ioDetail typeFromCache(MYSQL *con, string name) {
     return io;
 }
 
-bool mqttPublish(MYSQL *con, string name) {
+void mqttPublish(MYSQL *con, string name) {
     string sqlCmd;
     string state;
     string jsonOut;

@@ -5,4 +5,4 @@ find_library(MQTT mosquitto)
 
 file(GLOB SOURCES "*.cpp")
 
-add_library(baseClasses OBJECT plcBase.cpp plcSocket.cpp)
+add_library(baseClasses OBJECT plcBase.cpp plcSocket.cpp timerBase.cpp)
