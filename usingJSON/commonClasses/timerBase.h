@@ -1,4 +1,6 @@
 #include <stdint.h>
+#include <iostream>
+
 
 using namespace std;
 
@@ -12,8 +14,9 @@ class msTimer {
         bool running=false;
 
     public:
-        msTimer(int ms);
-        void start();
+//        msTimer(int ms) { cout << "Hello " << endl ;};
+        msTimer(int ms) ;
+        void timerStart(void);
         int32_t read();
         bool run(bool flag);
 };

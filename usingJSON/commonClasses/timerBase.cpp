@@ -18,7 +18,7 @@ msTimer::msTimer(int ms) {
  * Returns: void
  * Effects: 
  ***********************************************************************/
-void msTimer::start() {
+void msTimer::timerStart(void) {
     struct timeval startTV;
     gettimeofday(&startTV, NULL);
 
@@ -40,7 +40,7 @@ bool msTimer::run(bool runFlag) {
         } else { 
             // Running is false
             // 
-            start();
+            timerStart();
             running = true;
             output=false;
         }
@@ -64,4 +64,3 @@ int32_t msTimer::read() {
     return( nowTime - startTime );
 
 }
-

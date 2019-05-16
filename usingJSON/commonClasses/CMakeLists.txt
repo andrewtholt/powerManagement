@@ -5,4 +5,10 @@ find_library(MQTT mosquitto)
 
 file(GLOB SOURCES "*.cpp")
 
-add_library(baseClasses OBJECT plcBase.cpp plcSocket.cpp timerBase.cpp)
+message( ${CMAKE_SOURCE_DIR}/commonClasses )
+
+add_library(baseClasses OBJECT plcBase.cpp plcSocket.cpp timerBase.cpp timerBase.h )
+
+include_directories("${CMAKE_SOURCE_DIR}/commonClasses")
+add_executable(tstTimer tstTimer.cpp timerBase.cpp)
+
