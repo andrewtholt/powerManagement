@@ -43,6 +43,13 @@ plcSocket::plcSocket() {
 plcSocket::plcSocket(string cfgFile) {
 
     cout << "Config :" + cfgFile << endl;
+
+    if(access(cfgFile.c_str(), R_OK) < 0) {
+        cerr << "FATAL: Cannot access config file " + cfgFile << endl;
+
+        instanceFailed = true;
+
+    }
 }
 
 
@@ -54,6 +61,18 @@ plcSocket::plcSocket(string cfgFile) {
  ***********************************************************************/
 void plcSocket::setVerbose(bool flag) {
     plcBase::verbose = flag;
+}
+
+
+/***********************************************************************
+ *  Method: plcSocket::setValue
+ *  Params: string shortName, string value
+ * Returns: void
+ * Effects: 
+ ***********************************************************************/
+void
+plcSocket::setValue(string shortName, string value)
+{
 }
 
 
