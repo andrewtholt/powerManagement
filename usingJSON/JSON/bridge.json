@@ -16,5 +16,10 @@
         "db"     : "automation",
         "user"   : "automation",
         "passwd" : "automation"
+    },
+
+    "socket" : {
+        "name" : "localhost",
+        "port" : "9191"
     }
 }
