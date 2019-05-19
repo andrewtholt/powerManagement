@@ -11,4 +11,5 @@ add_library(baseClasses OBJECT plcBase.cpp plcSocket.cpp timerBase.cpp timerBase
 
 include_directories("${CMAKE_SOURCE_DIR}/commonClasses")
 add_executable(tstTimer tstTimer.cpp timerBase.cpp)
+add_executable(tstPlc tstPlc.cpp plcBase.cpp plcSocket.cpp )
 

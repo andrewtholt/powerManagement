@@ -160,6 +160,7 @@ bool plcBase::setBoolOldValue(string shortName, bool v) {
  * Effects: 
  ***********************************************************************/
 plcBase::plcBase() {
+    cout << "PLC Base" << endl;
 }
 
 
