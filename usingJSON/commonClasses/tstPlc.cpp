@@ -1,12 +1,19 @@
 #include <plcBase.h>
 #include <plcSocket.h>
+#include "alarmBase.h"
 
 #include <iostream>
 
 using namespace std;
 
 int main() {
+
+    alarmBase *t = new alarmBase();
     plcSocket *plc = new plcSocket();
+
+    t->setStartTime("05:30");
+
+    cout << t->checkTime();
 
     plc->dump();
 

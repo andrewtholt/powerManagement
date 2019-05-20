@@ -22,6 +22,7 @@ using namespace std;
 
 class alarmBase {
     private:
+        int32_t startTime=-1;
         uint32_t duration=0;
         int32_t dom=-1;
         int32_t mon=-1;
@@ -36,6 +37,8 @@ class alarmBase {
         bool setStartTime(string Time); // Time is hh:mm
         bool setEndTime(string Time); // Time is hh:mm
         bool setDuration(uint32_t duration); // in minutes.
+
+        bool checkTime();
 };
 
 
