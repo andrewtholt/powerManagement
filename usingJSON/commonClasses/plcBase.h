@@ -23,13 +23,18 @@ using namespace std;
 class plcBase {
 
     private:
+		int fd;
+
 		stack<bool> logicStack;
 
-		int fd;
 		map<string, string> ioPoint;   // name, value
 
 		bool cacheHit = true;
 
+    protected:
+		bool verbose=false;
+	public:
+//		plcBase(int fd);
         string getValue( string shortName);
         string getOldValue( string );
         void setValue(string shortName, string v );
@@ -41,12 +46,6 @@ class plcBase {
         bool setBoolValue(string shortName, bool v );
         bool getBoolOldValue( string );
         bool setBoolOldValue(string shortName, bool v );
-
-
-    protected:
-		bool verbose=false;
-	public:
-//		plcBase(int fd);
 		plcBase();
 		~plcBase();
     	void cacheDump();

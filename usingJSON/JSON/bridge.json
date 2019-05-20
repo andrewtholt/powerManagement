@@ -5,16 +5,21 @@
         "prefix": "andrewtholt60@gmail.com"
     },
     "local": {
-        "name": "localhost",
+        "name": "192.168.0.65",
         "port": "1883"
     },
     "common": {
         "topic": "/home/office/+/power"
     },
     "database" : {
-        "name"   : "localhost",
+        "name"   : "192.168.10.65",
         "db"     : "automation",
         "user"   : "automation",
         "passwd" : "automation"
+    },
+
+    "socket" : {
+        "name" : "localhost",
+        "port" : "9191"
     }
 }

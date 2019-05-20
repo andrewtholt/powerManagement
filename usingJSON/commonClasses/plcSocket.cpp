@@ -6,6 +6,13 @@
  ***********************************************************************/
 #include "plcBase.h"
 #include "plcSocket.h"
+#include <string.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <strings.h>
+
+#include <fstream>
 
 using json = nlohmann::json;
 
@@ -19,6 +26,17 @@ using namespace std;
  ***********************************************************************/
 string plcSocket::getValue(string shortName) {
     string res = "UNKNOWN";
+    char buffer[64];
+
+    bzero(buffer, sizeof(buffer));
+
+    string cmd = "GET " + shortName + "\r\n";
+
+    if( serverSock > 0) {
+        int len  = write(serverSock, (char *)cmd.c_str(), (int)cmd.length());
+
+        len = read(serverSock, buffer, sizeof(buffer));
+    }
 
     return res;
 }
@@ -31,7 +49,7 @@ string plcSocket::getValue(string shortName) {
  ***********************************************************************/
 plcSocket::plcSocket() {
     plcBase::verbose = false;
-    plcSocket("/etc/mqtt/bridge.ini");
+    plcSocket("/etc/mqtt/bridge.json");
 }
 
 
@@ -41,6 +59,9 @@ plcSocket::plcSocket() {
  * Effects: 
  ***********************************************************************/
 plcSocket::plcSocket(string cfgFile) {
+    struct sockaddr_in si_other;
+    socklen_t slen=sizeof(si_other);
+    int sock;
 
     cout << "Config :" + cfgFile << endl;
 
@@ -49,6 +70,34 @@ plcSocket::plcSocket(string cfgFile) {
 
         instanceFailed = true;
 
+    } else {
+        int status=-1;
+        ifstream cfgStream( cfgFile );
+
+        config = json::parse(cfgStream);
+
+        socketServer = config["socket"]["name"];
+        string portNoString =  config["socket"]["port"] ;
+
+        portNo = stoi( portNoString );
+
+        sock = socket(AF_INET , SOCK_STREAM , 0);
+        if ( sock == -1) {
+            instanceFailed = true;
+        } else {
+            memset((char *) &si_other, 0, sizeof(si_other));
+            si_other.sin_addr.s_addr = inet_addr( (char *)socketServer.c_str() );
+            si_other.sin_family = AF_INET;
+            si_other.sin_port = htons(portNo);
+
+            if ( connect(sock , (struct sockaddr *)&si_other , sizeof(si_other)) < 0) {
+                cerr << "Connect failed" << endl;
+                instanceFailed = true;
+            } else {
+                instanceFailed = false;
+                serverSock=sock;
+            }
+        }
     }
 }
 
@@ -73,6 +122,16 @@ void plcSocket::setVerbose(bool flag) {
 void
 plcSocket::setValue(string shortName, string value)
 {
+}
+
+void plcSocket::dump() {
+    cout << "Socket Server:" + socketServer << endl;
+    cout << "Socket Fd    :" << serverSock << endl;
+    cout << "Port         :" << portNo << endl;
+}
+
+void plcSocket::setServerSock(int fd) {
+    serverSock = fd;
 }
 
 
