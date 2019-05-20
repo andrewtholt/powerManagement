@@ -159,6 +159,13 @@ void plcSocket::setValue(string shortName, string value) {
     fsync( serverSock );
 }
 
+void plcSocket::setBoolValue(string shortName, bool flag) {
+    string value = (flag) ? "ON" : "OFF";
+
+    setValue(shortName, value);
+
+}
+
 void plcSocket::dump() {
     cout << "Socket Server:" + socketServer << endl;
     cout << "Socket Fd    :" << serverSock << endl;
@@ -169,4 +176,12 @@ void plcSocket::setServerSock(int fd) {
     serverSock = fd;
 }
 
+void plcSocket::Ld(string symbol) {
+    Push( getBoolValue(symbol));
+}
+
+void plcSocket::Out(string symbol) {
+
+    setBoolValue(symbol, Pop());
+}
 

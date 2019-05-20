@@ -173,6 +173,10 @@ bool plcBase::Pop() {
     return a;
 }
 
+void plcBase::Push(bool flag) {
+    logicStack.push( flag );
+}
+
 void plcBase::Ld(string symbol) {
     try {
         cacheHit = true;
@@ -244,15 +248,15 @@ void plcBase::Out(string symbol) {
 
 /***********************************************************************
  *  Method: plcBase::End
- *  Params: int delay
+ *  Params: int delay (in mS)
  * Returns: void
  * Effects: 
  ***********************************************************************/
 void plcBase::End(int delay) {
-
+    while ( ! logicStack.empty() ) {
+        logicStack.pop();
+    }
 }
-
-
 
 #ifdef __cplusplus
 extern "C" {
