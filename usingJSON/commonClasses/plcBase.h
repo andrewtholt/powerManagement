@@ -47,7 +47,7 @@ class plcBase {
         bool getBoolOldValue( string );
         bool setBoolOldValue(string shortName, bool v );
 		plcBase();
-		~plcBase();
+
     	void cacheDump();
 
     	void setVerbose(bool );

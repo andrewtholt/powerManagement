@@ -9,9 +9,11 @@ class plcSocket : public plcBase {
 
         bool instanceFailed = true;
         json config;
+        int serverSock;
+
+        void plcSetup(string cfg);
 
     public:
-        int serverSock;
         plcSocket();
         plcSocket(string cfgFile);
 

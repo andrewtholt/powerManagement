@@ -162,16 +162,6 @@ bool plcBase::setBoolOldValue(string shortName, bool v) {
 plcBase::plcBase() {
     cout << "PLC Base" << endl;
 }
-
-
-/***********************************************************************
- *  Method: plcBase::~plcBase
- *  Params: 
- * Effects: 
- ***********************************************************************/
-plcBase::~plcBase()
-{
-}
 //
 // return the value TOS and
 // remove it from the stack.
@@ -182,7 +172,6 @@ bool plcBase::Pop() {
 
     return a;
 }
-
 
 void plcBase::Ld(string symbol) {
     try {

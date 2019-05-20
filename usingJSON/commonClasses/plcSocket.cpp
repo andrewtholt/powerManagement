@@ -36,29 +36,14 @@ string plcSocket::getValue(string shortName) {
         int len  = write(serverSock, (char *)cmd.c_str(), (int)cmd.length());
 
         len = read(serverSock, buffer, sizeof(buffer));
+        res=buffer;
     }
 
     return res;
 }
 
-
-/***********************************************************************
- *  Method: plcSocket::plcSocket
- *  Params: 
- * Effects: 
- ***********************************************************************/
-plcSocket::plcSocket() {
+void plcSocket::plcSetup(string cfgFile) {
     plcBase::verbose = false;
-    plcSocket("/etc/mqtt/bridge.json");
-}
-
-
-/***********************************************************************
- *  Method: plcSocket::plcSocket
- *  Params: string cfgFile
- * Effects: 
- ***********************************************************************/
-plcSocket::plcSocket(string cfgFile) {
     struct sockaddr_in si_other;
     socklen_t slen=sizeof(si_other);
     int sock;
@@ -99,6 +84,25 @@ plcSocket::plcSocket(string cfgFile) {
             }
         }
     }
+}
+
+/***********************************************************************
+ *  Method: plcSocket::plcSocket
+ *  Params: 
+ * Effects: 
+ ***********************************************************************/
+plcSocket::plcSocket() {
+    plcSetup("/etc/mqtt/bridge.json");
+}
+
+
+/***********************************************************************
+ *  Method: plcSocket::plcSocket
+ *  Params: string cfgFile
+ * Effects: 
+ ***********************************************************************/
+plcSocket::plcSocket(string cfgFile) {
+    plcSetup(cfgFile);
 }
 
 
