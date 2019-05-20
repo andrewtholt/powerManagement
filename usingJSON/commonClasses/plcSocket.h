@@ -20,7 +20,10 @@ class plcSocket : public plcBase {
         void setServerSock(int);
 
         void setVerbose(bool flag);
+
         string getValue(string shortName);  // get from socket server defined in cfg file.
+        bool getBoolValue(string name);
+
         void setValue(string shortName, string value);
 
         void dump();

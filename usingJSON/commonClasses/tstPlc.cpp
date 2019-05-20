@@ -10,8 +10,11 @@ int main() {
 
     plc->dump();
 
-    string v=plc->getValue("START");
+//    string v=plc->getValue("START");
+    bool v=plc->getBoolValue("START");
 
-    cout << "START = " + v << endl;
+//    cout << "START = " + v << endl;
+
+    plc->setValue("START", "ON");
 }
 

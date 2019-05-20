@@ -18,6 +18,21 @@ using json = nlohmann::json;
 
 using namespace std;
 
+inline string &ltrim(string& s, const char* t = " \t\n\r\f\v") {
+    s.erase(0, s.find_first_not_of(t));
+    return s;
+}
+
+inline string &rtrim(string& s, const char* t = " \t\n\r\f\v") {
+    s.erase(s.find_last_not_of(t) + 1);
+    return s;
+}
+
+inline string &trim(string& s, const char* t = " \t\n\r\f\v") {
+    return ltrim(rtrim(s, t), t);
+}
+
+
 /***********************************************************************
  *  Method: plcSocket::getValue
  *  Params: string shortName
@@ -40,6 +55,21 @@ string plcSocket::getValue(string shortName) {
     }
 
     return res;
+}
+
+bool plcSocket::getBoolValue(string shortName) {
+    string tmp = getValue(shortName);
+
+    string res = rtrim(tmp);
+    bool v = false ;
+
+    if ( res == "ON" || res == "TRUE" ) {
+        v = true;
+    } else {
+        v = false ;
+    }
+
+    return v;
 }
 
 void plcSocket::plcSetup(string cfgFile) {
@@ -116,16 +146,17 @@ void plcSocket::setVerbose(bool flag) {
     plcBase::verbose = flag;
 }
 
-
 /***********************************************************************
  *  Method: plcSocket::setValue
  *  Params: string shortName, string value
  * Returns: void
  * Effects: 
  ***********************************************************************/
-void
-plcSocket::setValue(string shortName, string value)
-{
+void plcSocket::setValue(string shortName, string value) {
+    string cmd = "SET " + shortName + " " + value + "\r" ;
+
+    int len = write(serverSock, cmd.c_str(), cmd.length() );
+    fsync( serverSock );
 }
 
 void plcSocket::dump() {
