@@ -170,6 +170,10 @@ bool alarmBase::checkTime() {
                 }
                 break;
             case ALL:
+                run=true;
+                break;
+            default:
+                run=false;
                 break;
         }
 
