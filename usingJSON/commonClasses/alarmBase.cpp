@@ -80,7 +80,7 @@ bool alarmBase::setEndTime(string Time) {
         duration = 0;
         failFlag = true;
     } else {
-        duration = et;
+        duration = et - startTime;
         failFlag = false;
     }
 
@@ -113,18 +113,35 @@ bool alarmBase::setDuration(uint32_t dur) {
  * Effects: 
  ***********************************************************************/
 bool alarmBase::checkTime() {
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
 
-    int now =( tm.tm_hour * 60) + tm.tm_min ;
-
-    if( duration == 0) {
-        state = ( now == startTime ) ? true : false ;
+    if ( startTime < 0 && dow == ALL ) {
+        state=true;
     } else {
-        state = ( (now >= startTime) && ( now <= (startTime + duration) ) );
+        time_t t = time(NULL);
+        struct tm tm = *localtime(&t);
+
+        int now =( tm.tm_hour * 60) + tm.tm_min ;
+
+        if( duration == 0) {
+            state = ( now == startTime ) ? true : false ;
+        } else {
+            state = ( (now >= startTime) && ( now <= (startTime + duration) ) );
+        }
     }
     return state;
+}
 
+
+/***********************************************************************
+ *  Method: alarmBase::dump
+ *  Params: 
+ * Returns: void
+ * Effects: 
+ ***********************************************************************/
+void alarmBase::dump() {
+    cout << "Start Time : " + startTime << endl;
+    cout << "Duration   : " + to_string(duration) << endl;
+    cout << "State      : " + to_string(state) << endl;
 }
 
 

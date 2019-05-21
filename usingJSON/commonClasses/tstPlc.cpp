@@ -11,9 +11,9 @@ int main() {
     alarmBase *t = new alarmBase();
     plcSocket *plc = new plcSocket();
 
-    t->setStartTime("05:30");
-
     cout << t->checkTime();
+
+    t->setStartTime("05:30");
 
     plc->dump();
 

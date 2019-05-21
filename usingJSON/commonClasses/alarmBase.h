@@ -39,6 +39,8 @@ class alarmBase {
         bool setDuration(uint32_t duration); // in minutes.
 
         bool checkTime();
+
+        void dump();
 };
 
 
