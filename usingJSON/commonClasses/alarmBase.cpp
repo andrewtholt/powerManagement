@@ -113,19 +113,74 @@ bool alarmBase::setDuration(uint32_t dur) {
  * Effects: 
  ***********************************************************************/
 bool alarmBase::checkTime() {
+    bool run=false;
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    int now =( tm.tm_hour * 60) + tm.tm_min ;
 
     if ( startTime < 0 && dow == ALL ) {
         state=true;
     } else {
-        time_t t = time(NULL);
-        struct tm tm = *localtime(&t);
+        int today=tm.tm_wday;
 
-        int now =( tm.tm_hour * 60) + tm.tm_min ;
+        switch( dow ) {
+            case SUNDAY:
+                if( today == 0) {
+                    run = true;
+                }
+                break;
+            case MONDAY:
+                if( today == 1) {
+                    run = true;
+                }
+                break;
+            case TUESDAY:
+                if( today == 2) {
+                    run = true;
+                }
+                break;
+            case WEDNESDAY:
+                if( today == 3) {
+                    run = true;
+                }
+                break;
+            case THURSDAY:
+                if( today == 4) {
+                    run = true;
+                }
+                break;
+            case FRIDAY:
+                if( today == 5) {
+                    run = true;
+                }
+                break;
+            case SATURDAY:
+                if( today == 6) {
+                    run = true;
+                }
+                break;
+            case WORKDAY:
+                if( today == 0 || today == 6 ) {
+                    run = true;
+                }
+                break;
+            case WEEKEND:
+                if (today > 0 && today < 6) {
+                    run = true;
+                }
+                break;
+            case ALL:
+                break;
+        }
 
-        if( duration == 0) {
-            state = ( now == startTime ) ? true : false ;
+        if( run ) {
+            if( duration == 0) {
+                state = ( now == startTime ) ? true : false ;
+            } else {
+                state = ( (now >= startTime) && ( now <= (startTime + duration) ) );
+            }
         } else {
-            state = ( (now >= startTime) && ( now <= (startTime + duration) ) );
+            state=false;
         }
     }
     return state;

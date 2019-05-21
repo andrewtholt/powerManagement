@@ -6,7 +6,8 @@
     When an instance is created the times are set to wildcards, so the state
     is true, since it matches all times.
 */
-enum dow_t { SUNDAY=0,
+enum dow_t { 
+    SUNDAY=0,
     MONDAY,
     TUESDAY,
     WEDNESDAY,

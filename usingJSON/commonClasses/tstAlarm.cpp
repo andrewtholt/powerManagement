@@ -14,7 +14,7 @@ int main() {
 
     cout << "Unset " << t->checkTime() << endl;;
 
-    alarmTime="08:30";
+    alarmTime="13:00";
     t->setStartTime(alarmTime);
 
     cout << "Set time " + alarmTime + "\t" << t->checkTime() << endl;;
@@ -23,11 +23,16 @@ int main() {
     t->setDuration(duration);
     cout << "Set duration " + to_string(duration) + "\t" << t->checkTime() << endl;;
 
-    endTime = "08:56";
+    endTime = "13:30";
     t->setEndTime(endTime);
 
     t->dump();
     cout << "Set end time " + endTime + "\t" << t->checkTime() << endl;;
+
+    t->setDow(TUESDAY);
+
+    t->dump();
+    cout << "Set dow " + endTime + "\t" << t->checkTime() << endl;;
 
 }
 
