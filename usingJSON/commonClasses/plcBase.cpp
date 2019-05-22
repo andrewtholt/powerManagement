@@ -256,6 +256,14 @@ void plcBase::End(int delay) {
     while ( ! logicStack.empty() ) {
         logicStack.pop();
     }
+
+    // 
+    // Simple, but niave solution.
+    // 
+    // First time through wait delay ms then get time
+    // second time
+    // 
+    usleep( delay * 1000);
 }
 
 #ifdef __cplusplus
