@@ -15,6 +15,7 @@ connected=False
 start_topic = "/test/#"
 data = {}
 verbose = True
+Epoc=False
 
 logFd = None
 
@@ -32,6 +33,7 @@ def usage():
 def on_message(client, userData,msg):
     global data
     global logFd
+    global Epoc
     
     shortName = ""
 
@@ -43,11 +45,16 @@ def on_message(client, userData,msg):
     # Update storage here
     # 
     if logFd == None:
-#        print(theTime,shortName + " : ",msg.topic, result);
-        print(aTime,shortName + " : ",msg.topic, result);
+        if Epoc:
+            print(aTime,shortName + " : ",msg.topic, result);
+        else:
+            print(theTime,shortName + " : ",msg.topic, result);
     else:
-#        logFd.write(theTime + ":")
-        logFd.write(aTime + ":")
+        if Epoc:
+            logFd.write(aTime + ":")
+        else:
+            logFd.write(theTime + ":")
+
         logFd.write(msg.topic + " ")
         logFd.write(result )
         
@@ -68,12 +75,16 @@ def on_connect(client, userdata, flags, rc):
 def main():
 #    global db
     global logFd
+    global verbose
+    global Epoc
+
+    verbose=False
 
     configFile="/etc/mqtt/bridge.json"
     logFile = None
 
     try:
-        opts,args = getopt.getopt(sys.argv[1:], "c:hl:", ["config=","help","logfile="])
+        opts,args = getopt.getopt(sys.argv[1:], "evc:hl:", ["Epoc","verbose","config=","help","logfile="])
         for o,a in opts:
             if o in ["-h","--help"]:
                 usage()
@@ -83,6 +94,10 @@ def main():
             elif o in ["-l","--logfile"]:
                 logFile = a
                 print(logFile)
+            elif o in ["-v","--verbose"]:
+                verbose=True
+            elif o in ["-e","--Epoc"]:
+                Epoc = True
                 
     except getopt.GetoptError as err:
         print(err)
