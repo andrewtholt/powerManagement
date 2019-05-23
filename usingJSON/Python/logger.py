@@ -12,7 +12,8 @@ import getopt
 db = None
 
 connected=False
-start_topic = "/test/#"
+# start_topic = "/test/#"
+start_topic = set()
 data = {}
 verbose = True
 Epoc=False
@@ -65,18 +66,22 @@ def on_message(client, userData,msg):
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     global connected
+    global start_topic
+
     connected=True
     #
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     #
-    client.subscribe(start_topic)
+    for topic in start_topic:
+        client.subscribe(topic)
 
 def main():
 #    global db
     global logFd
     global verbose
     global Epoc
+    global start_topic
 
     verbose=False
 
@@ -84,7 +89,7 @@ def main():
     logFile = None
 
     try:
-        opts,args = getopt.getopt(sys.argv[1:], "evc:hl:", ["Epoc","verbose","config=","help","logfile="])
+        opts,args = getopt.getopt(sys.argv[1:], "t:evc:hl:", ["Epoc","verbose","config=","help","logfile="])
         for o,a in opts:
             if o in ["-h","--help"]:
                 usage()
@@ -98,11 +103,17 @@ def main():
                 verbose=True
             elif o in ["-e","--Epoc"]:
                 Epoc = True
+            elif o in ["-t","--topic"]:
+                start_topic.add(a)
                 
     except getopt.GetoptError as err:
         print(err)
         usage()
         sys.exit(2)
+
+    if len(start_topic) == 0:
+        print("\nNeed a topic to monitor\n")
+        sys.exit(1)
 
     mqttBroker = 'localhost'
     mqttPort = 1883
