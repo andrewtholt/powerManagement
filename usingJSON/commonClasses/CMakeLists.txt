@@ -9,10 +9,20 @@ file(GLOB SOURCES "*.cpp")
 
 message( ${CMAKE_SOURCE_DIR}/commonClasses )
 
-add_library(baseClasses OBJECT plcBase.cpp plcSocket.cpp timerBase.cpp timerBase.h )
+add_library(aseClasses SHARED alarmBase.cpp plcBase.cpp plcSocket.cpp timerBase.cpp timerBase.h )
 
 include_directories("${CMAKE_SOURCE_DIR}/commonClasses")
-add_executable(tstTimer tstTimer.cpp timerBase.cpp)
-add_executable(tstPlc tstPlc.cpp plcBase.cpp plcSocket.cpp alarmBase.cpp)
-add_executable(tstAlarm tstAlarm.cpp alarmBase.cpp)
+SET (BASE_LIB_OUT_PATH "${CMAKE_SOURCE_DIR}/commonClasses")
+link_directories( "${CMAKE_SOURCE_DIR}/commonClasses" )
+
+# add_executable(tstTimer tstTimer.cpp timerBase.cpp)
+add_executable(tstTimer tstTimer.cpp )
+target_link_libraries(tstTimer aseClasses )
+
+# add_executable(tstPlc tstPlc.cpp plcBase.cpp plcSocket.cpp alarmBase.cpp)
+add_executable(tstPlc tstPlc.cpp )
+target_link_libraries(tstPlc aseClasses )
+
+add_executable(tstAlarm tstAlarm.cpp )
+target_link_libraries(tstAlarm aseClasses )
 
