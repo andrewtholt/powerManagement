@@ -14,7 +14,7 @@ connected = False
 
 def usage():
     print("")
-    print("Usage: timeSwitch.py -h|--help -c <cfg>|--config=<cfg>")
+    print("Usage: syncMQTT.py -h|--help -c <cfg>|--config=<cfg>")
     print("\t-h|--help\t\tHelp.")
     print("\t-c <cfg>|--config=<cfg>\tConfig file")
     print("")
