@@ -13,8 +13,7 @@ class MySocket:
 
     def __init__(self, sock=None):
         if sock is None:
-            self.sock = socket.socket(
-                            socket.AF_INET, socket.SOCK_STREAM)
+            self.sock = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
         else:
             self.sock = sock
 
@@ -30,12 +29,6 @@ class MySocket:
 
         return
 
-        while totalsent < len(m) :
-            sent = self.sock.send(msg[totalsent:])
-            if sent == 0:
-                raise RuntimeError("socket connection broken")
-            totalsent = totalsent + sent
-
     def myreceive(self):
         buff = StringIO()
         chunks = []
@@ -48,15 +41,36 @@ class MySocket:
 
             if b'\n' in data:
                 break
-        return data.decode('utf-8')
+        return (data.decode('utf-8')).strip()
 
-#        while bytes_recd < MSGLEN:
-#           chunk = self.sock.recv(min(MSGLEN - bytes_recd, 2048))
-#            if chunk == b'':
-#                raise RuntimeError("socket connection broken")
-#            chunks.append(chunk)
-#            bytes_recd = bytes_recd + len(chunk)
-#        return b''.join(chunks)
+    def set(self,name, value):
+        cmd = "SET " + name + " " + value + "\n"
+        self.mysend( cmd )
+        
+    def get(self,name):
+        cmd = "GET " + name + "\n"
+        self.mysend( cmd )
+
+        return( self.myreceive())
+
+    def getBoolean(self,name):
+        val = False
+        res = self.get(name)
+
+        if res in ['ON','TRUE']:
+            val = True
+
+        return val
+
+    def setBoolean(self, name, value):
+        v = "FALSE"
+
+        if value:
+            v = "ON"
+        else:
+            v="OFF"
+
+        self.set(name, v)
 
 
 if __name__ == "__main__" :
@@ -64,9 +78,9 @@ if __name__ == "__main__" :
 
     tst.connect("127.0.0.1", 9191)
 
-    tst.mysend("SET TEST OK\n")
+    tst.setBoolean("TEST",True)
 
     time.sleep(1)
 
-    print( tst.myreceive())
+    print( tst.getBoolean("TEST"))
 
