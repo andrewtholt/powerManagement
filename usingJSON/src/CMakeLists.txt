@@ -21,3 +21,6 @@ target_link_libraries(dispatch ${MQTT} -lrt)
 add_executable(plc plc.cpp )
 target_link_libraries(plc aseClasses )
 
+add_executable(lights lights.cpp )
+target_link_libraries(lights aseClasses )
+

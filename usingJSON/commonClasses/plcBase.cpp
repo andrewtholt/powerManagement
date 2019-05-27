@@ -21,6 +21,16 @@ using json = nlohmann::json;
 
 using namespace std;
 
+void plcBase::display() {
+    bool flag = logicStack.top( );
+
+    if( flag ) {
+        cout << "\tON" << endl;
+    } else {
+        cout << "\tOFF" << endl;
+    }
+
+}
 void plcBase::setVerbose(bool flag) {
 	verbose = flag;
 }

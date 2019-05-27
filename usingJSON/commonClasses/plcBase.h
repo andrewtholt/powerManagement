@@ -54,6 +54,7 @@ class plcBase {
 
 		bool Pop();     // Remove and return top stack entry
         void Push(bool v); // Push to stack.
+        void display();     // Display tos
 		void Ld(string symbol);
 		void Or();
 		void And();
