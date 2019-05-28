@@ -1,21 +1,3 @@
-/* +++Date last modified: 05-Jul-1997 */
-/* Updated comments, 05-Aug-2013 */
-
-/*
-
-   SUNRISET.C - computes Sun rise/set times, start/end of twilight, and
-   the length of the day at any date and latitude
-
-   Written as DAYLEN.C, 1989-08-16
-
-   Modified to SUNRISET.C, 1992-12-01
-
-   (c) Paul Schlyter, 1989, 1992
-
-   Released to the public domain by Paul Schlyter, December 1992
-
- */
-
 
 #include <stdio.h>
 #include <math.h>
@@ -147,8 +129,8 @@ int main(int argc, char *argv[]) {
     int year,month,day;
     double lon, lat;
     double daylen, civlen, nautlen, astrlen;
-    double rise, set, civ_start, civ_end, naut_start, naut_end,
-           astr_start, astr_end;
+    double rise, set, civ_start, civ_end, naut_start, naut_end;
+    double astr_start, astr_end;
     int    rs, civ, naut, astr;
     char buf[80];
 
