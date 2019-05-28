@@ -187,6 +187,25 @@ int main(int argc, char *argv[]) {
     string mqttPortString = config["local"]["port"];
     int mosquittoPort = stoi( mqttPortString );
 
+    string sunriseTopic ;
+    string sunsetTopic  ;
+
+    try {
+        sunriseTopic = config["topics"]["sunrise"];
+    } catch (json::type_error &e) {
+        cout << "message: "    << e.what() << '\n'
+                                    << "exception id: " << e.id << endl;
+        sunriseTopic = "/test/sunrise";
+    }
+
+    try {
+        sunsetTopic = config["topics"]["sunset"];
+    } catch (json::type_error &e) {
+        cout << "message: "    << e.what() << '\n'
+                                    << "exception id: " << e.id << endl;
+        sunsetTopic = "/test/sunset";
+    }
+
     if( verbose ) {
         cout << "MQTT Broker : " << mosquittoHost << endl;
         cout << "MQTT Port   : " << mosquittoPort << endl;
@@ -251,12 +270,12 @@ int main(int argc, char *argv[]) {
     bzero(msg, sizeof(msg));
 
     sprintf( msg, "%02d:%02d", riseHH, riseMM);
-    mosquitto_publish(mosq, NULL, (char *)SUNRISE, strlen(msg) , (char *)msg, 1,true) ;
+    mosquitto_publish(mosq, NULL, (char *)sunriseTopic.c_str(), strlen(msg) , (char *)msg, 1,true) ;
 
     bzero(msg, sizeof(msg));
 
     sprintf( msg, "%02d:%02d", setHH, setMM);
-    mosquitto_publish(mosq, NULL, (char *)SUNSET, strlen(msg) , (char *)msg, 1,true) ;
+    mosquitto_publish(mosq, NULL, (char *)sunsetTopic.c_str(), strlen(msg) , (char *)msg, 1,true) ;
 
     return 0;
 }
