@@ -20,6 +20,19 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+#include <unistd.h>
+#include <mosquitto.h>
+
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <nlohmann/json.hpp>
+
+#define SUNRISE "/test/sunrise"
+#define SUNSET  "/test/sunset"
+
+using namespace std;
+using json = nlohmann::json;
 
 /* A macro to compute the number of days elapsed since 2000 Jan 0.0 */
 /* (which is equal to 1999 Dec 31, 0h UT)                           */
@@ -125,10 +138,11 @@ double rev180( double x );
 double GMST0( double d );
 
 
+void usage() {
+}
 
-/* A small test program */
-
-int main() {
+int main(int argc, char *argv[]) {
+    int opt;
     int year,month,day;
     double lon, lat;
     double daylen, civlen, nautlen, astrlen;
@@ -140,11 +154,59 @@ int main() {
     int riseHH, riseMM;
     int setHH, setMM;
 
-    // -2.71315 53.664258
+    bool verbose=false;
+
+    string cfgFile = "/etc/mqtt/bridge.json";
+    json config ;
+
+    while((opt = getopt(argc, argv, "c:hv")) != -1) {
+        switch(opt) {
+            case 'c':
+                cfgFile = optarg;
+                break;
+            case 'h':
+                usage();
+                exit(1);
+                break;
+            case 'v':
+                verbose=true;
+                break;
+        }
+    }
+
+    if(access(cfgFile.c_str(), R_OK) < 0) {
+        cerr << "FATAL: Cannot access config file " + cfgFile << endl;
+        exit(2);
+    }
+
+    ifstream cfgStream( cfgFile );
+    config = json::parse(cfgStream);
+
+    string mosquittoHost = config["local"]["name"];
+    string mqttPortString = config["local"]["port"];
+    int mosquittoPort = stoi( mqttPortString );
+
+    if( verbose ) {
+        cout << "MQTT Broker : " << mosquittoHost << endl;
+        cout << "MQTT Port   : " << mosquittoPort << endl;
+    }
+
+    int rc=-1;
+    int keepalive=0;
+
+    struct mosquitto *mosq = mosquitto_new("dispatch", true, NULL);
+
+    if( mosq) {
+        rc=mosquitto_connect(mosq, mosquittoHost.c_str(), mosquittoPort, keepalive);
+    } else {
+        cerr << "FATAL: Failed to connect to MQTT Broker" << endl;
+        exit(3);
+    }
+
+    // My hosuse is close to -2.71315 53.664258
 
     lon = -2.71315;
     lat =53.664258;
-
     /*
        printf( "Longitude (+ is east) and latitude (+ is north) : " );
        fgets(buf, 80, stdin);
@@ -160,101 +222,37 @@ int main() {
 
     printf("Day=%d\nMonth=%d\nYear=%d\n", day, month, year);
 
-    for(;;) {
-        /*
-        printf( "Input date ( yyyy mm dd ) (ctrl-C exits): " );
-        fgets(buf, 80, stdin);
-        sscanf(buf, "%d %d %d", &year, &month, &day );
-        */
+    daylen  = day_length(year,month,day,lon,lat);
+    civlen  = day_civil_twilight_length(year,month,day,lon,lat);
+    nautlen = day_nautical_twilight_length(year,month,day,lon,lat);
+    astrlen = day_astronomical_twilight_length(year,month,day, lon,lat);
 
-        daylen  = day_length(year,month,day,lon,lat);
-        civlen  = day_civil_twilight_length(year,month,day,lon,lat);
-        nautlen = day_nautical_twilight_length(year,month,day,lon,lat);
-        astrlen = day_astronomical_twilight_length(year,month,day, lon,lat);
 
-        /*
-        printf( "Day length:                 %5.2f hours\n", daylen );
-        printf( "With civil twilight         %5.2f hours\n", civlen );
-        printf( "With nautical twilight      %5.2f hours\n", nautlen );
-        printf( "With astronomical twilight  %5.2f hours\n", astrlen );
-        printf( "Length of twilight: civil   %5.2f hours\n", (civlen-daylen)/2.0);
-        printf( "                  nautical  %5.2f hours\n", (nautlen-daylen)/2.0);
-        printf( "              astronomical  %5.2f hours\n",
-                (astrlen-daylen)/2.0);
-        */
+    rs   = sun_rise_set( year, month, day, lon, lat, &rise, &set );
 
-        rs   = sun_rise_set( year, month, day, lon, lat, &rise, &set );
-        civ  = civil_twilight( year, month, day, lon, lat, &civ_start, &civ_end );
-        naut = nautical_twilight( year, month, day, lon, lat, &naut_start, &naut_end );
-        astr = astronomical_twilight( year, month, day, lon, lat, &astr_start, &astr_end );
+    riseHH=(int)rise ;
+    riseMM=(int)((rise - riseHH) * 60);
 
-//        printf( "Sun at south %5.2fh UT\n", (rise+set)/2.0 );
+    setHH=(int)set ;
+    setMM=(int)((set - setHH) * 60);
 
-        switch( rs ) {
-            case 0:
-                riseHH=(int)rise ;
-                riseMM=(int)((rise - riseHH) * 60);
+    printf("====================\n");
+    printf("Sunrise %02d:%02d\n", riseHH, riseMM);
+    printf("Sunset  %02d:%02d\n", setHH, setMM);
+    printf("====================\n");
 
-                setHH=(int)set ;
-                setMM=(int)((set - setHH) * 60);
+    char msg[255];
+    bzero(msg, sizeof(msg));
 
-                printf("====================\n");
-                printf("Sunrise %02d:%02d\n", riseHH, riseMM);
-                printf("Sunset  %02d:%02d\n", setHH, setMM);
-                printf("====================\n");
+    sprintf( msg, "%02d:%02d", riseHH, riseMM);
+    mosquitto_publish(mosq, NULL, (char *)SUNRISE, strlen(msg) , (char *)msg, 1,true) ;
 
-//                printf( "Sun rises %5.2fh UT, sets %5.2fh UT\n", rise, set );
-                break;
-            case +1:
-                printf( "Sun above horizon\n" );
-                break;
-            case -1:
-                printf( "Sun below horizon\n" );
-                break;
-        }
+    bzero(msg, sizeof(msg));
 
-        /*
-        switch( civ ) {
-            case 0:
-                printf( "Civil twilight starts %5.2fh, "
-                        "ends %5.2fh UT\n", civ_start, civ_end );
-                break;
-            case +1:
-                printf( "Never darker than civil twilight\n" );
-                break;
-            case -1:
-                printf( "Never as bright as civil twilight\n" );
-                break;
-        }
+    sprintf( msg, "%02d:%02d", setHH, setMM);
+    mosquitto_publish(mosq, NULL, (char *)SUNSET, strlen(msg) , (char *)msg, 1,true) ;
 
-        switch( naut ) {
-            case 0:
-                printf( "Nautical twilight starts %5.2fh, "
-                        "ends %5.2fh UT\n", naut_start, naut_end );
-                break;
-            case +1:
-                printf( "Never darker than nautical twilight\n" );
-                break;
-            case -1:
-                printf( "Never as bright as nautical twilight\n" );
-                break;
-        }
-
-        switch( astr ) {
-            case 0:
-                printf( "Astronomical twilight starts %5.2fh, "
-                        "ends %5.2fh UT\n", astr_start, astr_end );
-                break;
-            case +1:
-                printf( "Never darker than astronomical twilight\n" );
-                break;
-            case -1:
-                printf( "Never as bright as astronomical twilight\n" );
-                break;
-        }
-        */
-        return 0;
-    }
+    return 0;
 }
 
 

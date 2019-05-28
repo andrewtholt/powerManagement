@@ -24,5 +24,5 @@ target_link_libraries(plc aseClasses )
 add_executable(lights lights.cpp )
 target_link_libraries(lights aseClasses )
 
-add_executable(pubSunRiset pubSunRiset.c)
-target_link_libraries(pubSunRiset m )
+add_executable(pubSunRiset pubSunRiset.cpp)
+target_link_libraries(pubSunRiset m ${MQTT} -lrt)
