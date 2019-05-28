@@ -22,7 +22,7 @@ using json = nlohmann::json;
 using namespace std;
 
 void plcBase::display() {
-    bool flag = logicStack.top( );
+    bool flag = logicStack.back( );
 
     if( flag ) {
         cout << "\tON" << endl;
@@ -30,6 +30,12 @@ void plcBase::display() {
         cout << "\tOFF" << endl;
     }
 
+}
+
+void plcBase::displayStack() {
+    for(size_t i = logicStack.size(); i--;) {
+        cout << logicStack[i] << endl;
+    }
 }
 void plcBase::setVerbose(bool flag) {
 	verbose = flag;
@@ -177,14 +183,14 @@ plcBase::plcBase() {
 // remove it from the stack.
 //
 bool plcBase::Pop() {
-    bool a = logicStack.top();
-    logicStack.pop();
+    bool a = logicStack.back();
+    logicStack.pop_back();
 
     return a;
 }
 
 void plcBase::Push(bool flag) {
-    logicStack.push( flag );
+    logicStack.push_back( flag );
 }
 
 void plcBase::Ld(string symbol) {
@@ -195,10 +201,10 @@ void plcBase::Ld(string symbol) {
         }
 
         bool v=getBoolValue( symbol );
-        logicStack.push( v );
+        logicStack.push_back( v );
 
         if(verbose) {
-            cout << "   TOS: " << logicStack.top() << endl;
+            cout << "   TOS: " << logicStack.back() << endl;
         }
     } catch(int e) {
         cerr << symbol + ":Undefined " << e << endl;
@@ -214,10 +220,10 @@ void plcBase::And() {
     bool b = Pop()  ;
 
     bool v = a&b;
-    logicStack.push(v);
+    logicStack.push_back(v);
 
     if(verbose) {
-        cout << "   TOS: " << logicStack.top() << endl;
+        cout << "   TOS: " << logicStack.back() << endl;
     }
 }
 
@@ -230,10 +236,10 @@ void plcBase::Or() {
     bool b = Pop()  ;
 
     bool v = a|b;
-    logicStack.push(v);
+    logicStack.push_back(v);
 
     if(verbose) {
-        cout << "   TOS: " << logicStack.top() << endl;
+        cout << "   TOS: " << logicStack.back() << endl;
     }
 }
 
@@ -245,10 +251,10 @@ void plcBase::Invert() {
     bool a = Pop()  ;
 
     bool v = !a;
-    logicStack.push(v);
+    logicStack.push_back(v);
 
     if(verbose) {
-        cout << "   TOS: " << logicStack.top() << endl;
+        cout << "   TOS: " << logicStack.back() << endl;
     }
 }
 
@@ -264,7 +270,7 @@ void plcBase::Out(string symbol) {
  ***********************************************************************/
 void plcBase::End(int delay) {
     while ( ! logicStack.empty() ) {
-        logicStack.pop();
+        logicStack.pop_back();
     }
 
     // 

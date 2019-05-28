@@ -2,7 +2,8 @@
 
 #include <iostream>
 #include <string>
-#include <stack>
+// #include <stack>
+#include <vector>
 #include <map>
 
 #include <nlohmann/json.hpp>
@@ -25,7 +26,7 @@ class plcBase {
     private:
 		int fd;
 
-		stack<bool> logicStack;
+		vector<bool> logicStack;
 
 		map<string, string> ioPoint;   // name, value
 
@@ -55,6 +56,7 @@ class plcBase {
 		bool Pop();     // Remove and return top stack entry
         void Push(bool v); // Push to stack.
         void display();     // Display tos
+        void displayStack();    // Display stack
 		void Ld(string symbol);
 		void Or();
 		void And();
