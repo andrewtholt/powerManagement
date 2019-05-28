@@ -220,7 +220,6 @@ int main(int argc, char *argv[]) {
     month = tm->tm_mon+1;
     day = tm->tm_mday;
 
-    printf("Day=%d\nMonth=%d\nYear=%d\n", day, month, year);
 
     daylen  = day_length(year,month,day,lon,lat);
     civlen  = day_civil_twilight_length(year,month,day,lon,lat);
@@ -236,10 +235,16 @@ int main(int argc, char *argv[]) {
     setHH=(int)set ;
     setMM=(int)((set - setHH) * 60);
 
+    if(verbose) {
     printf("====================\n");
+    printf("Day     %02d\n", day);
+    printf("Month   %02d\n", month);
+    printf("Year    %4d\n\n", year);
+
     printf("Sunrise %02d:%02d\n", riseHH, riseMM);
     printf("Sunset  %02d:%02d\n", setHH, setMM);
     printf("====================\n");
+    }
 
     char msg[255];
     bzero(msg, sizeof(msg));
