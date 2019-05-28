@@ -29,13 +29,10 @@ int main() {
 
 
     while( true ) {
-        plc->Push(t1->checkTime());
         plc->Ld("MORNING");
+        plc->Push(t1->checkTime());
 
-        /*
-           cout << "MORNING" ;
-           plc->display() ;
-           */
+        plc->displayStack();
 
         plc->Or();
         plc->Push(t2->checkTime());
