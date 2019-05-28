@@ -139,6 +139,7 @@ double GMST0( double d );
 
 
 void usage() {
+    printf("pubSunRiset -h|-v -c <cfgFile>\n\n");
 }
 
 int main(int argc, char *argv[]) {
