@@ -15,7 +15,7 @@
 #include <mqueue.h>
 #include <sys/poll.h>
 
-#include <mysql.h>
+#include <mysql/mysql.h>
 
 #include <thread>
 #include <algorithm>
