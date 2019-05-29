@@ -218,9 +218,18 @@ int main(int argc, char *argv[]) {
     sunriseTopic=getFromJson(config, { "topics","sunrise" }, "/test/SUNRISE") ;
     sunsetTopic =getFromJson(config, { "topics","sunset" }, "/test/SUNSET") ;
 
+    string longString = getFromJson(config, { "location","long" }, "0.48650" ) ;
+    string latString  = getFromJson(config, { "location","lat"  }, "0.163598" ) ;
+
+    lon = stod( longString );
+    lat = stod( latString );
+
     if( verbose ) {
+        cout << "Config File : " << cfgFile << endl;
         cout << "MQTT Broker : " << mosquittoHost << endl;
         cout << "MQTT Port   : " << mosquittoPort << endl;
+        cout << "Longtitude  : " << longString << endl;
+        cout << "Latitude    : " << latString << endl;
     }
 
     int rc=-1;
@@ -234,11 +243,6 @@ int main(int argc, char *argv[]) {
         cerr << "FATAL: Failed to connect to MQTT Broker" << endl;
         exit(3);
     }
-
-    // My hosuse is close to -2.71315 53.664258
-
-    lon = -2.71315;
-    lat =53.664258;
 
     time_t now = time(NULL);
     struct tm *tm = localtime( &now );
