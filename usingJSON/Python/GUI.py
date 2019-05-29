@@ -35,6 +35,7 @@ def main():
     print('Startup up...')
     # Very basic window.  Return values as a list      
     
+    sg.ChangeLookAndFeel('Dark')
     layout = [      
             [sg.Text('Create IO Point')],      
             [sg.Text('Name', size=(10, 1)), sg.InputText()],
