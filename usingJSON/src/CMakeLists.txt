@@ -22,7 +22,7 @@ link_directories( "${CMAKE_SOURCE_DIR}/commonClasses" )
 
 add_executable(Server Server.cpp)
 target_compile_options(Server PUBLIC ${MYSQL_CFLAGS})
-target_link_libraries(Server ${MYSQL_LIBS})
+target_link_libraries(Server ${MYSQL_LIBS} -lrt )
 
 add_executable(dispatch dispatch.cpp ${MQTT})
 target_link_libraries(dispatch ${MQTT} -lrt)
