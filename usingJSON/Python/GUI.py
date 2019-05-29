@@ -39,7 +39,7 @@ def main():
     layout = [      
             [sg.Text('Create IO Point')],      
             [sg.Text('Name', size=(10, 1)), sg.InputText()],
-            [sg.Text('MQTT Topic', size=(10, 1)), sg.InputText('TEST')],
+            [sg.Text('MQTT Topic', size=(10, 1)), sg.InputText()],
             [sg.Text('Direction', size=(10, 1))],
             [sg.InputCombo(('IN', 'OUT','INTERNAL','DISABLED'), size=(20, 5))],
             [sg.Text('Type', size=(10, 1))],
@@ -51,6 +51,8 @@ def main():
     runFlag = True
     while runFlag:
         event, values = window.Read()
+
+        tst= tst + 1
     
         if event == 'Cancel':
             runFlag = False
