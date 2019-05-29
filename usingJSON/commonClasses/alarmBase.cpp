@@ -48,6 +48,9 @@ bool alarmBase::setStartTime(string Time) {
     bool failFlag=true;
 
     vector<string> results;
+    /*
+        TODO: Replace the boost stuff with strtok
+    */
     results=boost::split(results, Time, [](char c){return c == ':';});
 
     int hh = stoi(results[0]); 
