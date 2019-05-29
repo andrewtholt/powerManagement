@@ -15,7 +15,7 @@ if [ ! -d ./Debug ]; then
     exit 1
 fi
 
-BINS="dispatch Server"
+BINS="pubSunRiset dispatch Server"
 
 for b in $BINS; do
     echo $b
