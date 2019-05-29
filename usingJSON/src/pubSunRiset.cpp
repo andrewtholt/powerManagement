@@ -8,6 +8,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <vector>
 #include <nlohmann/json.hpp>
 
 #define SUNRISE "/test/sunrise"
@@ -123,6 +124,46 @@ double GMST0( double d );
 void usage() {
     printf("pubSunRiset -h|-v -c <cfgFile>\n\n");
 }
+/*
+   try {
+   sunriseTopic = config["topics"]["sunrise"];
+   } catch (json::type_error &e) {
+   cout << "message: "    << e.what() << '\n'
+   << "exception id: " << e.id << endl;
+   sunriseTopic = "/test/sunrise";
+   }
+ */
+
+string getFromJson(json j, vector<string> p, string defaultValue) {
+
+    string value="";
+    string t;
+    int len = p.size();
+
+    try {
+        switch(len) {
+            case 0:
+                break;
+            case 1:
+                value=j[ p[0]  ];
+                break;
+            case 2:
+                value=j[p[0]][p[1]];
+                break;
+            case 3:
+                value=j[p[0]] [p[1]] [p[2]];
+                break;
+            default:
+                cerr << "getFromJson:FATAL Error, too many parameters, Max is 3" << endl;
+                exit(4);
+                break;
+        }
+    } catch (json::type_error &e) {
+        value=defaultValue;
+    }
+
+    return value;
+}
 
 int main(int argc, char *argv[]) {
     int opt;
@@ -165,28 +206,17 @@ int main(int argc, char *argv[]) {
     ifstream cfgStream( cfgFile );
     config = json::parse(cfgStream);
 
-    string mosquittoHost = config["local"]["name"];
-    string mqttPortString = config["local"]["port"];
+    string mosquittoHost  = getFromJson(config, {"local","name"}, "127.0.0.1");
+    string mqttPortString = getFromJson(config, {"local","port"}, "1883");
     int mosquittoPort = stoi( mqttPortString );
 
-    string sunriseTopic ;
-    string sunsetTopic  ;
+    vector<string> jsonParams;
 
-    try {
-        sunriseTopic = config["topics"]["sunrise"];
-    } catch (json::type_error &e) {
-        cout << "message: "    << e.what() << '\n'
-                                    << "exception id: " << e.id << endl;
-        sunriseTopic = "/test/sunrise";
-    }
+    string sunriseTopic;
+    string sunsetTopic;
 
-    try {
-        sunsetTopic = config["topics"]["sunset"];
-    } catch (json::type_error &e) {
-        cout << "message: "    << e.what() << '\n'
-                                    << "exception id: " << e.id << endl;
-        sunsetTopic = "/test/sunset";
-    }
+    sunriseTopic=getFromJson(config, { "topics","sunrise" }, "/test/SUNRISE") ;
+    sunsetTopic =getFromJson(config, { "topics","sunset" }, "/test/SUNSET") ;
 
     if( verbose ) {
         cout << "MQTT Broker : " << mosquittoHost << endl;
@@ -209,11 +239,6 @@ int main(int argc, char *argv[]) {
 
     lon = -2.71315;
     lat =53.664258;
-    /*
-       printf( "Longitude (+ is east) and latitude (+ is north) : " );
-       fgets(buf, 80, stdin);
-       sscanf(buf, "%lf %lf", &lon, &lat );
-     */
 
     time_t now = time(NULL);
     struct tm *tm = localtime( &now );
@@ -238,14 +263,14 @@ int main(int argc, char *argv[]) {
     setMM=(int)((set - setHH) * 60);
 
     if(verbose) {
-    printf("====================\n");
-    printf("Day     %02d\n", day);
-    printf("Month   %02d\n", month);
-    printf("Year    %4d\n\n", year);
+        printf("====================\n");
+        printf("Day     %02d\n", day);
+        printf("Month   %02d\n", month);
+        printf("Year    %4d\n\n", year);
 
-    printf("Sunrise %02d:%02d\n", riseHH, riseMM);
-    printf("Sunset  %02d:%02d\n", setHH, setMM);
-    printf("====================\n");
+        printf("Sunrise %02d:%02d\n", riseHH, riseMM);
+        printf("Sunset  %02d:%02d\n", setHH, setMM);
+        printf("====================\n");
     }
 
     char msg[255];
