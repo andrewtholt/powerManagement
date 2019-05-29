@@ -15,3 +15,6 @@ replace into io_point (name,direction ) values ('MOTOR','OUT');
 
 update io_point,mqtt set io_point.io_idx=mqtt.idx where io_point.name = mqtt.name;
 
+replace into internal (name, data_type ) values ('TEST_LOCAL','STRING');
+replace into io_point (name,direction,io_type ) values ('TEST_LOCAL','INTERNAL','INTERNAL');
+update io_point,internal set io_point.io_idx=internal.idx where io_point.name = internal.name;
