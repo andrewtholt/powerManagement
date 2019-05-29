@@ -25,5 +25,9 @@
     "topics" : {
         "sunrise" : "/home/environment/SUNRISE",
         "sunset"  : "/home/environment/SUNSET"
+    },
+    "location" : {
+        "long" : -2.71315,
+        "lat"  : 53.664258
     }
 }
