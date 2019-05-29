@@ -70,6 +70,7 @@ def main():
                     runFlag = False
                 else:
                     runFlag = True
+                    sg.Popup('Error\nIf INTERNAL no need to define a topic')
         
             print(event)
     
