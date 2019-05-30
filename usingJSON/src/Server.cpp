@@ -413,7 +413,6 @@ int main(int argc, char *argv[]) {
 
     sockaddr_in serv_addr; // Server address
 
-    //    string listenOn = "127.0.0.1";
     int portNo = 9191;
     bool fg = false;
 
@@ -437,6 +436,16 @@ int main(int argc, char *argv[]) {
                 break;
         }
     }
+
+    /*
+    bool iamRoot=false ;
+    if( getuid() !=0) {
+        cerr << "Not root so running in the foreground\n" << endl;
+        fg=true;
+
+        iamRoot = true;
+    }
+    */
 
     if(verbose) {
         printf("MySQL client version: %s\n", mysql_get_client_info());
@@ -526,7 +535,7 @@ int main(int argc, char *argv[]) {
         cout << "C++ server opened on port " << portNo << endl;;
     }
     //
-    // If we get this far we ar good to go.
+    // If we get this far we are good to go.
     // Check if running in foreground
     //
     int rc=-1;
