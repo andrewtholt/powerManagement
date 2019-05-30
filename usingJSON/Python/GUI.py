@@ -44,6 +44,8 @@ def main():
             [sg.InputCombo(('IN', 'OUT','INTERNAL','DISABLED'), size=(20, 5))],
             [sg.Text('Type', size=(10, 1))],
             [sg.InputCombo(('MQTT', 'INTERNAL'), size=(20, 5))],
+            [sg.Text('Data Type', size=(10, 1))],
+            [sg.InputCombo(('BOOL', 'STRING'), size=(20, 5))],
             [sg.Submit(), sg.Cancel()]      
             ]      
     window = sg.Window('Simple data entry window', layout)
@@ -51,8 +53,6 @@ def main():
     runFlag = True
     while runFlag:
         event, values = window.Read()
-
-        tst= tst + 1
     
         if event == 'Cancel':
             runFlag = False
@@ -61,6 +61,7 @@ def main():
             topic     = values[1]
             direction = values[2]
             ioType    = values[3]
+            dataType  = values[4]
         
         # Need a name
             if name == '':
@@ -84,7 +85,8 @@ def main():
         exit(0)
     
     if ioType == 'MQTT':
-        sqlCmd = "replace into " + ioType.lower() + "(name, topic ) values ('" + name + "','"+topic+ "');"
+#        sqlCmd = "replace into " + ioType.lower() + "(name, topic ) values ('" + name + "','"+topic+ "');"
+        sqlCmd = "replace into " + ioType.lower() + "(name, topic, data_type ) values ('" + name + "','"+topic+ "','" + dataType + "');"
         print(sqlCmd)
         cursor.execute( sqlCmd )
     elif ioType == 'INTERNAL':
@@ -92,7 +94,7 @@ def main():
         print(sqlCmd)
         cursor.execute( sqlCmd )
     
-    sqlCmd = "replace into io_point (name,direction,io_type ) values ('" + name + "','"+ direction +"','" + ioType.lower() + "');"
+    sqlCmd = "replace into io_point (name,direction,io_type ) values ('" + name + "','"+ direction +"','" + ioType + "');"
     
     print(sqlCmd)
     cursor.execute( sqlCmd )
