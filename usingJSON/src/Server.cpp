@@ -394,6 +394,14 @@ void handleConnection(int newsockfd, sockaddr_in* cli_addr) {
 }
 
 void usage() {
+    cout << endl;
+    cout << "Usage: Server -h|-c <cfg file> -v -f -p <port>" << endl;
+    cout << "\t-h\t\tHelp." << endl;
+    cout << "\t-c <cfg>\tGet config from specified file." << endl;
+    cout << "\t-v\t\tVerbose." << endl;
+    cout << "\t-f\t\tRun in foreground." << endl;
+    cout << "\t-p <port>\tListen omn specified port." << endl;
+    cout << endl;
 }
 
 int main(int argc, char *argv[]) {
@@ -407,11 +415,15 @@ int main(int argc, char *argv[]) {
 
     //    string listenOn = "127.0.0.1";
     int portNo = 9191;
+    bool fg = false;
 
-    while( (opt = getopt(argc, argv, "c:hi:p:v")) != -1) {
+    while( (opt = getopt(argc, argv, "c:fhp:v")) != -1) {
         switch(opt) {
             case 'c':
                 cfgFile = optarg;
+                break;
+            case 'f':
+                fg=true;
                 break;
             case 'h':
                 usage();
@@ -425,6 +437,7 @@ int main(int argc, char *argv[]) {
                 break;
         }
     }
+
     if(verbose) {
         printf("MySQL client version: %s\n", mysql_get_client_info());
     }
@@ -512,7 +525,15 @@ int main(int argc, char *argv[]) {
     if( verbose ) {
         cout << "C++ server opened on port " << portNo << endl;;
     }
+    //
+    // If we get this far we ar good to go.
+    // Check if running in foreground
+    //
+    int rc=-1;
 
+    if (fg == false) {
+        rc = daemon(true,false);
+    }
     while (true) {
         int newsockfd; // New socket file descriptor
         unsigned int clilen; // Client address size

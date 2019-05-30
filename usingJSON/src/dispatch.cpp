@@ -25,6 +25,7 @@ void usage() {
        printf("\t-c <cfg>\tUse config file.\n");
 //       printf("\t-d\t\tDisplay received message.\n");
        printf("\t-h\t\tHelp.\n");
+       printf("\t-f\t\tRun in foreground..\n");
        printf("\t-v\t\tVerbose.\n");
 //       printf("\t-l\t\tLoop around for next message(s).\n");
 //       printf("\t-n <name>\tThe name of the queue to open/create.\n");
@@ -39,6 +40,7 @@ int main(int argc,char *argv[]) {
     bool dumpMsg=false;
     bool textFlag=false;
     bool verbose=false;
+    bool fg=false;
 
     string cfgFile = "/etc/mqtt/bridge.json";
 
@@ -52,6 +54,9 @@ int main(int argc,char *argv[]) {
                 break;
             case 'c':
                 cfgFile = optarg;
+                break;
+            case 'f':
+                fg=true;
                 break;
             case 'v':
                 verbose=true;
@@ -120,6 +125,10 @@ int main(int argc,char *argv[]) {
 
     json inJson;
     string type;
+
+    if (fg == false ) {
+        rc = daemon(true,false);
+    }
 
     do {
         bzero(msg,msgSize);
