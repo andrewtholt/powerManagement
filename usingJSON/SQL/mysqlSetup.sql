@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS modbus (
 
 CREATE VIEW mqttQuery AS
     SELECT 
-        io_point.name, mqtt.topic,mqtt.state, io_point.direction
+        io_point.name, mqtt.topic,mqtt.state, io_point.direction,mqtt.data_type
     FROM
         io_point,mqtt
 	WHERE io_point.name = mqtt.name;
