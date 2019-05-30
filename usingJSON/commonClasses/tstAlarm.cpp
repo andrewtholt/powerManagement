@@ -14,7 +14,7 @@ int main() {
 
     cout << "Unset " << t->checkTime() << endl;;
 
-    alarmTime="13:00";
+    alarmTime="13:10";
     t->setStartTime(alarmTime);
 
     cout << "Set time " + alarmTime + "\t" << t->checkTime() << endl;;

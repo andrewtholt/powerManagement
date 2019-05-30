@@ -40,6 +40,9 @@ class alarmBase {
         bool setEndTime(string Time); // Time is hh:mm
         bool setDuration(uint32_t duration); // in minutes.
 
+        void adjStartTime(int d);
+        void adjEndTime(int d);
+
         bool checkTime();
 
         void dump();

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 14) 
 find_library(MQTT mosquitto)
 
-find_package(Boost)
+# find_package(Boost)
 
 file(GLOB SOURCES "*.cpp")
 

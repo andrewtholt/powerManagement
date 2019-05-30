@@ -6,7 +6,6 @@
  ***********************************************************************/
 #include "alarmBase.h"
 #include <time.h>
-#include <boost/algorithm/string.hpp>
 
 /***********************************************************************
  *  Method: alarmBase::alarmBase
@@ -47,14 +46,30 @@ bool alarmBase::setDow(dow_t day) {
 bool alarmBase::setStartTime(string Time) {
     bool failFlag=true;
 
-    vector<string> results;
+    char buffer[16];
+    char *ptr;
+    char *tok;
+    char *rest = buffer;
+
+    int hh, mm;
+
+    bzero(buffer,sizeof(buffer));
+
+    strcpy( buffer, Time.c_str() ) ;
+
+    tok = strtok_r(rest,":", &rest);
+    hh = atoi(tok);
+
+    tok = strtok_r(rest,":", &rest);
+    mm = atoi(tok);
+
     /*
-        TODO: Replace the boost stuff with strtok
-    */
+    vector<string> results;
     results=boost::split(results, Time, [](char c){return c == ':';});
 
     int hh = stoi(results[0]); 
     int mm = stoi(results[1]);
+    */
 
     startTime =  (hh*60) + mm;
 
@@ -204,6 +219,45 @@ void alarmBase::dump() {
     cout << "Start Time : " + startTime << endl;
     cout << "Duration   : " + to_string(duration) << endl;
     cout << "State      : " + to_string(state) << endl;
+}
+
+
+/***********************************************************************
+ *  Method: alarmBase::adjStartTime
+ *  Params: int d
+ * Returns: void
+ * Effects: 
+ ***********************************************************************/
+void alarmBase::adjStartTime(int d) {
+    int tmp = startTime ;
+    tmp += d;
+
+    if( d < 0 ) {
+        d = 0;
+    } else if ( d > (( 23 *60 ) + 59 ) ) {
+        d = (( 23 *60 ) + 59 ) ;
+    }
+
+    startTime = d;
+}
+
+
+/***********************************************************************
+ *  Method: alarmBase::adjEndTime
+ *  Params: int d
+ * Returns: void
+ * Effects: 
+ ***********************************************************************/
+void alarmBase::adjEndTime(int d) {
+    int tmp = duration;
+
+    tmp += d;
+
+    if ( tmp < 0) {
+        tmp = 0;
+    }
+
+    duration = tmp;
 }
 
 
