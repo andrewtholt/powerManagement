@@ -39,7 +39,7 @@ def on_message(client, userData,msg):
 
     state = (msg.payload).decode("utf-8")
 
-    sqlCmd = "select state, direction from mqttQuery where topic = '" + topic + "';"
+    sqlCmd = "select state, direction, data_type from mqttQuery where topic = '" + topic + "';"
     print( sqlCmd )
 
     cursor = db.cursor()
@@ -52,7 +52,15 @@ def on_message(client, userData,msg):
 
     dbState = data[0]
     dbDirection = data[1]
-    devState = stateToLogic(state)
+    dataType = data[2]
+#
+# Test for type and if bool
+#
+    print("Data Type : " + dataType)
+    if dataType == 'BOOL':
+        devState = stateToLogic(state)
+    elif dataType == 'STRING':
+        devState = state
 
     print("Device ",devState)
     print("Db     ",dbState)
@@ -68,7 +76,7 @@ def on_message(client, userData,msg):
     elif dbDirection == "IN":
         db = sql.connect(database, "automation","automation","automation")
         sqlCmd = "update mqtt set state = '" + devState + "' where topic = '" + topic + "';"
-        print( sqlCmd )
+        print("+++++" +  sqlCmd )
         cursor = db.cursor()
         cursor.execute( sqlCmd );
         db.commit()
