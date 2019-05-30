@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+# set -x
 
 TARGET=./output
 if [ ! -d $TARGET ]; then
@@ -22,7 +22,7 @@ for b in $BINS; do
     cp ./Debug/src/${b} $TARGET/bin
 done
 
-PYTHON="syncMQTT.py"
+PYTHON="syncMQTT.py logger.py rmIO.py GUI.py"
 
 for p in $PYTHON; do
     echo $p
