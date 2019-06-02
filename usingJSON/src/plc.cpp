@@ -17,12 +17,27 @@ int main() {
 
     plc->dump();
 
-    plc->Ld("START");
-    plc->Ld("MOTOR");
-    plc->Or();
-    plc->Ld("STOP");
-    plc->Invert();
-    plc->And();
-    plc->End( 150 );
+    while( 1 ) {
+        plc->Ld("START");
+        plc->displayStack();
+
+        plc->Ld("MOTOR");
+        plc->displayStack();
+
+        plc->Or();
+        plc->displayStack();
+
+        plc->Ld("STOP");
+        plc->displayStack();
+
+        plc->Invert();
+        plc->displayStack();
+
+        plc->And();
+        plc->displayStack();
+
+        plc->Out("MOTOR");
+        plc->End( 150 );
+    }
 }
 

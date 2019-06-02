@@ -14,6 +14,7 @@
 #include <sys/stat.h>        /* For mode constants */
 #include <mqueue.h>
 #include <sys/poll.h>
+#include <pthread.h>
 
 #include <mysql/mysql.h>
 
@@ -349,19 +350,35 @@ vector<string> handleRequest(string request) {
     return response;
 }
 
-void handleConnection(int newsockfd, sockaddr_in* cli_addr) {
+struct toThread {
+    int newsockfd;
+    sockaddr_in* cli_addr;
+};
+
+// void handleConnection(int newsockfd, sockaddr_in* cli_addr) {
+void *handleConnection(void *xfer) {
+
+    struct toThread *ptr = (struct toThread *)xfer ;
+    int newsockfd; 
+    sockaddr_in *cli_addr;
+
     char buffer[256]; // Initialize buffer to zeros
-    bzero(buffer, 256);
+    bzero(buffer, sizeof(buffer));
+
+    newsockfd = ptr->newsockfd;
+    cli_addr = ptr->cli_addr;
 
     while (true) {
         int n = read(newsockfd, buffer, 255);
         if (n == 0) {
             cout << inet_ntoa(cli_addr->sin_addr) << ":" << ntohs(cli_addr->sin_port)
                 << " connection closed by client" << endl;
-            return;
+//            return;
+            break;;
         }
-        else if (n < 0)
+        else if (n < 0) {
             cerr << "ERROR reading from socket" << endl;
+        }
 
         stringstream stream;
         stream << buffer << flush;
@@ -385,12 +402,13 @@ void handleConnection(int newsockfd, sockaddr_in* cli_addr) {
                         close(newsockfd); // Close the connection if response line == "CLOSE"
                         cout << inet_ntoa(cli_addr->sin_addr) << ":" << ntohs(cli_addr->sin_port)
                             << " connection terminated" << endl;
-                        return;
+                        break;
                     }
                 }
             }
         }
     }
+    free(ptr);
 }
 
 void usage() {
@@ -438,14 +456,14 @@ int main(int argc, char *argv[]) {
     }
 
     /*
-    bool iamRoot=false ;
-    if( getuid() !=0) {
-        cerr << "Not root so running in the foreground\n" << endl;
-        fg=true;
+       bool iamRoot=false ;
+       if( getuid() !=0) {
+       cerr << "Not root so running in the foreground\n" << endl;
+       fg=true;
 
-        iamRoot = true;
-    }
-    */
+       iamRoot = true;
+       }
+       */
 
     if(verbose) {
         printf("MySQL client version: %s\n", mysql_get_client_info());
@@ -543,6 +561,7 @@ int main(int argc, char *argv[]) {
     if (fg == false) {
         rc = daemon(true,false);
     }
+    pthread_t thread_id;
     while (true) {
         int newsockfd; // New socket file descriptor
         unsigned int clilen; // Client address size
@@ -557,7 +576,20 @@ int main(int argc, char *argv[]) {
         cout << inet_ntoa(cli_addr.sin_addr) << ":" << ntohs(cli_addr.sin_port)
             << " connected" << endl;
 
-        handleConnection(newsockfd, &cli_addr); // Handle the connection
+        struct toThread *ptr = (struct toThread *) calloc(1, sizeof(struct toThread));
+
+        //        handleConnection(newsockfd, &cli_addr); // Handle the connection
+
+        ptr->newsockfd = newsockfd;
+        ptr->cli_addr = &cli_addr;
+
+        if( pthread_create( &thread_id , NULL ,  handleConnection , (void *)ptr) < 0) {
+            perror("could not create thread");
+            return 1;
+        }
     }
     return 0;
 }
+
+
+
