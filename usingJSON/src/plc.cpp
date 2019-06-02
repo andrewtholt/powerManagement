@@ -15,26 +15,21 @@ int main() {
 
     t->setStartTime("05:30");
 
+    plc->setVerbose(true);
     plc->dump();
 
     while( 1 ) {
         plc->Ld("START");
-        plc->displayStack();
 
         plc->Ld("MOTOR");
-        plc->displayStack();
 
         plc->Or();
-        plc->displayStack();
 
         plc->Ld("STOP");
-        plc->displayStack();
 
         plc->Invert();
-        plc->displayStack();
 
         plc->And();
-        plc->displayStack();
 
         plc->Out("MOTOR");
         plc->End( 150 );

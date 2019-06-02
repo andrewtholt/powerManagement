@@ -142,9 +142,11 @@ plcSocket::plcSocket(string cfgFile) {
  * Returns: void
  * Effects: 
  ***********************************************************************/
-void plcSocket::setVerbose(bool flag) {
-    plcBase::verbose = flag;
-}
+/*
+   void plcSocket::setVerbose(bool flag) {
+   plcBase::verbose = flag;
+   }
+   */
 
 /***********************************************************************
  *  Method: plcSocket::setValue
@@ -177,7 +179,15 @@ void plcSocket::setServerSock(int fd) {
 }
 
 void plcSocket::Ld(string symbol) {
+    if(verbose) {
+        cout << "plcBase::Ld " << symbol ;
+    }
+
     Push( getBoolValue(symbol));
+
+    if(verbose) {
+        cout << "   TOS: " << logicStack.back() << endl;
+    }
 }
 
 void plcSocket::Out(string symbol) {

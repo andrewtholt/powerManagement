@@ -34,11 +34,15 @@ void plcBase::display() {
 
 void plcBase::displayStack() {
     for(size_t i = logicStack.size(); i--;) {
-        cout << logicStack[i] << endl;
+        cout << "\t" << logicStack[i] << endl;
     }
 }
 void plcBase::setVerbose(bool flag) {
 	verbose = flag;
+
+    if(verbose) {
+        cout << "Verbose" << endl;
+    }
 }
 /***********************************************************************
  *  Method: plcBase::getValue
@@ -223,7 +227,7 @@ void plcBase::And() {
     logicStack.push_back(v);
 
     if(verbose) {
-        cout << "   TOS: " << logicStack.back() << endl;
+        cout << "          TOS: " << logicStack.back() << endl;
     }
 }
 
@@ -297,3 +301,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+
+

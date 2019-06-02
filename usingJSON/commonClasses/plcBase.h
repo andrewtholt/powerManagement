@@ -26,13 +26,13 @@ class plcBase {
     private:
 		int fd;
 
-		vector<bool> logicStack;
 
 		map<string, string> ioPoint;   // name, value
 
 		bool cacheHit = true;
 
     protected:
+		vector<bool> logicStack;
 		bool verbose=false;
 	public:
 //		plcBase(int fd);
