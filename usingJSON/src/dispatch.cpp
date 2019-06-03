@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <mqueue.h>
 #include <mosquitto.h>
+#include <sys/types.h>
+#include <pwd.h>
 
 #include <iostream>
 #include <fstream>
@@ -32,6 +34,15 @@ void usage() {
 //       printf("\t-s nn \t\tMessage size.\n");
 //       printf("\t-t\t\tMessage is text.\n");
 }
+
+uid_t getUserIdByName(const char *name) {
+    struct passwd *pwd = getpwnam(name); /* don't free, see getpwnam() for details */
+    if(pwd == NULL) {
+        throw runtime_error(string("Failed to get userId from username : ") + name);
+    }
+    return pwd->pw_uid;
+}
+
 
 int main(int argc,char *argv[]) {
     int opt;
@@ -80,8 +91,16 @@ int main(int argc,char *argv[]) {
 
     int mosquittoPort = stoi( mqttPortString );
 
-//    cout << ">" + mosquittoHost + "<" << endl;
-//    cout << config["local"]["port"] << endl;
+    bool iamRoot=false;
+
+    if( getuid() !=0) {
+        cerr << "Not root so running in the foreground\n" << endl;
+        fg=true;
+
+        iamRoot = false;
+    } else {
+        iamRoot = true;
+    }
 
     int rc;
     int keepalive=0;
@@ -128,6 +147,20 @@ int main(int argc,char *argv[]) {
 
     if (fg == false ) {
         rc = daemon(true,false);
+
+        if(iamRoot) {
+            FILE *run=fopen("/var/run/dispatch.pid", "w");
+            fprintf(run,"%d\n", getpid());
+            fclose(run);
+        }
+    }
+
+    if(iamRoot) {
+        uid_t powerUser = getUserIdByName("power");
+        if(setuid(powerUser) != 0) {
+            perror("setuid");
+            exit(1);
+        }
     }
 
     do {
