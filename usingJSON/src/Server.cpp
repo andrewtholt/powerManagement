@@ -17,6 +17,8 @@
 #include <pthread.h>
 
 #include <mysql/mysql.h>
+#include <pwd.h>
+#include <grp.h>
 
 #include <thread>
 #include <algorithm>
@@ -41,11 +43,19 @@ struct ioDetail {
 mqd_t toDispatcher = 0;
 
 map<string,ioDetail> cache ;
+
+uid_t getUserIdByName(const char *name) {
+    struct passwd *pwd = getpwnam(name); /* don't free, see getpwnam() for details */
+    if(pwd == NULL) {
+        throw runtime_error(string("Failed to get userId from username : ") + name);
+    }
+    return pwd->pw_uid;
+}
 /*
 Needs:
 
 sudo apt-get install libmysqlclient-dev
-*/
+ */
 vector<string> split(const char *str, char c = ' ') {
     vector<string> result;
 
@@ -373,7 +383,7 @@ void *handleConnection(void *xfer) {
         if (n == 0) {
             cout << inet_ntoa(cli_addr->sin_addr) << ":" << ntohs(cli_addr->sin_port)
                 << " connection closed by client" << endl;
-//            return;
+            //            return;
             break;;
         }
         else if (n < 0) {
@@ -409,6 +419,7 @@ void *handleConnection(void *xfer) {
         }
     }
     free(ptr);
+    return((void *)NULL);
 }
 
 void usage() {
@@ -455,15 +466,13 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    /*
-       bool iamRoot=false ;
-       if( getuid() !=0) {
-       cerr << "Not root so running in the foreground\n" << endl;
-       fg=true;
+    bool iamRoot=false ;
+    if( getuid() !=0) {
+        cerr << "Not root so running in the foreground\n" << endl;
+        fg=true;
 
-       iamRoot = true;
-       }
-       */
+        iamRoot = true;
+    }
 
     if(verbose) {
         printf("MySQL client version: %s\n", mysql_get_client_info());
@@ -484,7 +493,7 @@ int main(int argc, char *argv[]) {
        ss << cfgStream.rdbuf();
 
        str = ss.str();
-       */
+     */
     config = json::parse(cfgStream);
 
     string dbName = config["database"]["name"];
@@ -526,7 +535,6 @@ int main(int argc, char *argv[]) {
         cache[ row[0]] = io;
     }
 
-
     mysql_close(con);
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0); // Create new socket, save file descriptor
@@ -559,7 +567,29 @@ int main(int argc, char *argv[]) {
     int rc=-1;
 
     if (fg == false) {
-        rc = daemon(true,false);
+          rc = daemon(true,false);
+//        rc = daemon(true,true);
+    }
+
+    cout << getpid() << endl;
+
+    FILE *run=fopen("/var/run/Server.pid", "w");
+
+    if( run == NULL) {
+        perror("PID File");
+        exit(2);
+    }
+
+    fprintf(run,"%d\n", getpid());
+
+    fclose(run);
+    run=NULL;
+
+    uid_t powerUser = getUserIdByName("power");
+
+    if(setuid(powerUser) != 0) {
+        perror("setuid");
+        exit(1);
     }
     pthread_t thread_id;
     while (true) {
@@ -590,6 +620,5 @@ int main(int argc, char *argv[]) {
     }
     return 0;
 }
-
 
 
