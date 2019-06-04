@@ -422,14 +422,14 @@ void *handleConnection(void *xfer) {
     return((void *)NULL);
 }
 
-void usage() {
+void usage(string name) {
     cout << endl;
-    cout << "Usage: Server -h|-c <cfg file> -v -f -p <port>" << endl;
+    cout << "Usage: " + name + " -h|-c <cfg file> -v -f -p <port>" << endl;
     cout << "\t-h\t\tHelp." << endl;
     cout << "\t-c <cfg>\tGet config from specified file." << endl;
     cout << "\t-v\t\tVerbose." << endl;
     cout << "\t-f\t\tRun in foreground." << endl;
-    cout << "\t-p <port>\tListen omn specified port." << endl;
+    cout << "\t-p <port>\tListen on specified port." << endl;
     cout << endl;
 }
 
@@ -444,7 +444,9 @@ int main(int argc, char *argv[]) {
 
     int portNo = 9191;
     bool fg = false;
-
+    
+    string svcName = basename(argv[0]) ;
+    
     while( (opt = getopt(argc, argv, "c:fhp:v")) != -1) {
         switch(opt) {
             case 'c':
@@ -454,7 +456,7 @@ int main(int argc, char *argv[]) {
                 fg=true;
                 break;
             case 'h':
-                usage();
+                usage(svcName);
                 exit(1);
                 break;
             case 'p':
@@ -486,14 +488,7 @@ int main(int argc, char *argv[]) {
     }
 
     ifstream cfgStream( cfgFile );
-    /*
-       string str;
-       ostringstream ss;
 
-       ss << cfgStream.rdbuf();
-
-       str = ss.str();
-     */
     config = json::parse(cfgStream);
 
     string dbName = config["database"]["name"];
@@ -573,7 +568,10 @@ int main(int argc, char *argv[]) {
 
     cout << getpid() << endl;
 
-    FILE *run=fopen("/var/run/Server.pid", "w");
+    string pidFile = "/var/run/" + svcName + ".pid";
+    
+//    FILE *run=fopen("/var/run/Server.pid", "w");
+    FILE *run=fopen(pidFile.c_str(), "w");
 
     if( run == NULL) {
         perror("PID File");
