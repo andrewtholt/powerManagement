@@ -35,3 +35,7 @@ target_link_libraries(lights aseClasses )
 
 add_executable(pubSunRiset pubSunRiset.cpp)
 target_link_libraries(pubSunRiset m ${MQTT} -lrt)
+
+add_executable(syncMQTT syncMQTT.cpp)
+target_compile_options(syncMQTT PUBLIC ${MYSQL_CFLAGS})
+target_link_libraries(syncMQTT ${MQTT} ${MYSQL_LIBS} -lrt )
