@@ -6,7 +6,7 @@ PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 PATH="/home/andrewh/Source/Mine/powerManagement/usingJSON/output/bin:${PATH}"
 export PATH
 
-NAME="Server"
+NAME="dispatch"
 CONFIG=""
 ARGS=""
 HOSTNAME=$(hostname)
