@@ -13,16 +13,19 @@ int main() {
 
     plcSocket *plc = new plcSocket();
 
-    cout << plc->getValue("SUNRISE");
-    cout << t1->checkTime();
+    string sunRise = plc->getValue("SUNRISE");
+    cout << sunRise << endl ;
 
-    t1->setStartTime("04:30");
+    t1->setStartTime(sunRise);
     t1->setEndTime("23:30");
+
+    t1->dump();
+    cout << t1->checkTime();
 
     plc->dump();
 
-    /*  04:30     17:30    DAY
-     * --][--------]/[-----()
+    /*    04:30-23:30   DAY
+     * ----][------------()
      */
 
 
