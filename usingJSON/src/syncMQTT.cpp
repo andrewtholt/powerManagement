@@ -89,7 +89,7 @@ void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_messag
     if( mysqlStatus) {
         cerr << "SQL Error" << endl;
     } else {
-//        result = mysql_store_result(con);
+        //        result = mysql_store_result(con);
         result = mysql_use_result(con);
         MYSQL_ROW row;
         
@@ -218,6 +218,14 @@ int main(int argc, char *argv[]) {
                 break;
         }
     }
+    bool iamRoot=false;
+    if( getuid() !=0) {
+        cerr << "Not root so running in the foreground\n" << endl;
+        fg=true;
+        
+        iamRoot = true;
+    }
+    
     if(access(cfgFile.c_str(), R_OK) < 0) {
         cerr << "FATAL: Cannot access config file " + cfgFile << endl;
         exit(2);
@@ -268,7 +276,24 @@ if (mysql_real_connect(con, dbName.c_str(), "automation", "automation", "automat
         }
     }
     
-    bool iamRoot=false;
+    if( fg == false) {
+        rc=daemon(true,false);
+        //        rc=daemon(true, true);
+        string pidFile = "/var/run/" + svcName + ".pid";
+        
+        FILE *run=fopen(pidFile.c_str(), "w");
+        
+        if( run == NULL) {
+            perror("PID File");
+            exit(2);
+        }
+        
+        fprintf(run,"%d\n", getpid());
+        
+        fclose(run);
+        run=NULL;
+        
+    }
     mosquitto_loop_forever(mosq, 0,1);
 }
 
