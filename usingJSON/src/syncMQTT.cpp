@@ -40,9 +40,9 @@ string dbName;
 
 string stateToLogic(string st) {
     string v="OFF";
-        
+    
     if( st == "ON" || st == "TRUE") {
-        v = "OF";
+        v = "ON";
     }
     
     if( st == "OFF" || st == "FALSE") {
@@ -62,10 +62,10 @@ void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_messag
     con=mysql_init(NULL);
     string sqlCmd;
     
-    cout << "\nmessage_callback" << endl;
+    cout << "\non_message" << endl;
     
-	string topic = (char *)mqttMsg->topic;
-	string state = (char *)mqttMsg->payload;
+    string topic = (char *)mqttMsg->topic;
+    string state = (char *)mqttMsg->payload;
     
     cout << "Topic : " << topic << endl;
     cout << "Msg   : " << state << endl;
@@ -79,22 +79,39 @@ void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_messag
         finish_with_error(con);
     }
     // state = (msg.payload).decode("utf-8")
-
+    
     sqlCmd = "select state, direction, data_type from mqttQuery where topic = '" + topic + "';";
     
-    if( mysql_query(con, sqlCmd.c_str())) {
+    cout << sqlCmd << endl;
+    
+    MYSQL_RES *result = NULL;
+    int mysqlStatus=mysql_query(con, sqlCmd.c_str());
+    if( mysqlStatus) {
         cerr << "SQL Error" << endl;
     } else {
-        MYSQL_RES *result = mysql_store_result(con);
+//        result = mysql_store_result(con);
+        result = mysql_use_result(con);
         MYSQL_ROW row;
         
-        string devState = row[0];
+        int numFields = mysql_field_count(con);
+        
+        cout << "Number of fields = " << numFields << endl;
+        
+        row = mysql_fetch_row( result );
+        
+        string dbState = row[0];
         string dbDirection = row[1];
         string dataType = row[2];
+        string devState;
         
-        cout << topic << endl;
-        cout << dbDirection  << endl;
-        cout << devState  << endl;
+        cout << "=======" << endl;
+        cout << "Topic     :" + topic << endl;
+        cout << "Direction :" + dbDirection  << endl;
+        cout << "Type      :" + dataType  << endl;
+        cout << "DB State  :" + dbState   << endl;
+        cout << "MQTT State:" + state   << endl;
+        cout << "=======" << endl;
+        
         
         if( dataType == "BOOL") {
             devState = stateToLogic(state);
@@ -103,21 +120,22 @@ void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_messag
         }
         
         if( dbDirection == "OUT" ) {
-            if(devState != state) {
+            if(devState != dbState) {
                 // Publish
+                mosquitto_publish(mosq, NULL, (char *)topic.c_str(), dbState.length() , (char *)dbState.c_str(), 1,true) ;
             }
         } else if ( dbDirection == "IN" ) {
             // Update the db
             sqlCmd = "update mqtt set state = '" + devState + "' where topic = '" + topic + "';";
-        }
+            cout << sqlCmd << endl;
             
-        sqlCmd = "update mqtt set state = '" + devState + "' where topic = '" + topic + "';";
-        
-        if( mysql_query(con, sqlCmd.c_str())) {
-            cerr << "SQL Error" << endl;
-            cerr << sqlCmd << endl;
+            if( mysql_query(con, sqlCmd.c_str())) {
+                cerr << "SQL Error" << endl;
+            }
         }
     }
+    mysql_free_result(result);
+    result = NULL;
     
     mysql_close(con);
 }
@@ -136,6 +154,7 @@ void on_connect(struct mosquitto *mosq, void *obj, int result) {
         finish_with_error(con);
     }
     sqlCmd="select name,direction,topic,state from mqttQuery ;";
+    cout << sqlCmd << endl;
     
     if( mysql_query(con, sqlCmd.c_str())) {
         cerr << "SQL Error" << endl;
@@ -150,6 +169,7 @@ void on_connect(struct mosquitto *mosq, void *obj, int result) {
             mosquitto_subscribe(mosq,NULL, row[2],1);
         }
         mysql_free_result(result);
+        result = NULL;
     }
     mysql_close(con);
 }
