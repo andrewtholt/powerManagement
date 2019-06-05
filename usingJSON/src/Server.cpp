@@ -111,12 +111,17 @@ struct ioDetail typeFromCache(MYSQL *con, string name) {
         } else {
             MYSQL_RES *result = mysql_store_result(con);
             MYSQL_ROW row = mysql_fetch_row(result);
+            int rowsReturned = mysql_num_rows( result );
             
-            io.ioType = row[0];
-            io.direction = row[1];
+            if (rowsReturned == 0) {
+                io.ioType = "<UNDEFINED>";
+                io.direction = "<UNDEFINED>";
+            } else {
+                io.ioType = row[0];
+                io.direction = row[1];
             
-            cache[name] = io;
-            ioType = row[0];
+                cache[name] = io;
+            }
             mysql_free_result(result);
         }
     } else {
@@ -203,6 +208,8 @@ void mqttPublish(MYSQL *con, string name) {
                 }
             }
         }
+    } else if ( ioType == "<undefined>" ) {
+        cout << "Undefined" << endl;
     }
 }
 
@@ -321,6 +328,7 @@ vector<string> handleRequest(string request) {
                 } else {
                     MYSQL_RES *result = mysql_store_result(con);
                     MYSQL_ROW row = mysql_fetch_row(result);
+                    int rowsReturned = mysql_num_rows( result );
                     
                     string value = "<UNDEFINED>";
                     

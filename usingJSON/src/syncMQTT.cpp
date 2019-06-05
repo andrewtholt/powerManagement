@@ -126,16 +126,18 @@ void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_messag
             }
         } else if ( dbDirection == "IN" ) {
             // Update the db
+            mysql_free_result(result);
             sqlCmd = "update mqtt set state = '" + devState + "' where topic = '" + topic + "';";
             cout << sqlCmd << endl;
             
             if( mysql_query(con, sqlCmd.c_str())) {
                 cerr << "SQL Error" << endl;
+                cerr << mysql_error(con) << endl;
             }
         }
-    }
     mysql_free_result(result);
     result = NULL;
+    }
     
     mysql_close(con);
 }
