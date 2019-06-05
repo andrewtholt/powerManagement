@@ -15,17 +15,20 @@ if [ ! -d ./Debug ]; then
     exit 1
 fi
 
-BINS="pubSunRiset dispatch Server"
+BINS="syncMQTT pubSunRiset dispatch Server"
 
 for b in $BINS; do
     echo $b
+    rm -f $b
     cp ./Debug/src/${b} $TARGET/bin
 done
 
-PYTHON="syncMQTT.py logger.py rmIO.py GUI.py"
+# PYTHON="syncMQTT.py logger.py rmIO.py GUI.py"
+PYTHON="logger.py rmIO.py GUI.py"
 
 for p in $PYTHON; do
     echo $p
+    rm -f $p
     cp ./Python/${p} $TARGET/bin
 done
 
