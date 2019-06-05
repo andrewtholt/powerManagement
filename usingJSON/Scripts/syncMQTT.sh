@@ -20,7 +20,7 @@ getPid() {
 
 pubStatus() {
     if [ ! -z "$TOPIC" ]; then
-        mosquitto_pub -r -t $TOPIC -m $1
+        mosquitto_pub -r -t $TOPIC -m $1 -r
     fi
 }
 
