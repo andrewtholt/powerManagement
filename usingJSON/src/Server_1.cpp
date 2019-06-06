@@ -547,7 +547,6 @@ int main(int argc, char *argv[]) {
     }
     
     ifstream cfgStream( cfgFile );
-    
     config = json::parse(cfgStream);
     
     string dbName = config["database"]["name"];
@@ -661,8 +660,6 @@ int main(int argc, char *argv[]) {
         << " connected" << endl;
         
         struct toThread *ptr = (struct toThread *) calloc(1, sizeof(struct toThread));
-        
-        //        handleConnection(newsockfd, &cli_addr); // Handle the connection
         
         ptr->newsockfd = newsockfd;
         ptr->cli_addr = &cli_addr;

@@ -1,22 +1,39 @@
-#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
-#include <string>
-#include <sstream>
-#include <vector>
+#include <mysql/mysql.h>
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <mqueue.h>
+#include <poll.h>
+
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <vector>
 #include <thread>
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 using namespace std;
+
+mqd_t toDispatcher = 0;
 
 struct toThread {
     int newsockfd;
     sockaddr_in* cli_addr;
+    string cfgFile;
+};
+
+struct ioDetail {
+    string ioType;
+    string direction;
 };
 
 vector<string> split(const char *str, char c = ' ') {
@@ -48,9 +65,8 @@ inline string &trim(string& s, const char* t = " \t\n\r\f\v") {
     return ltrim(rtrim(s, t), t); 
 }
 
-/*
-map<string,string> getFromMqttQuery(string name) {
-// void getFromMqttQuery(string name) {
+map<string,string> getFromMqttQuery(MYSQL *conn, string name) {
+    // void getFromMqttQuery(string name) {
     map<string,string> data;
     
     MYSQL_FIELD *field;
@@ -78,11 +94,104 @@ map<string,string> getFromMqttQuery(string name) {
     mysql_free_result( result );
     return data;
 }
-*/
 
-vector<string> handleRequest(string request) {
+struct ioDetail typeFromCache(MYSQL *conn, string name) {
+}
+
+map<string,string> getFromIoPoint(MYSQL *conn, string name) {
+    // void getFromMqttQuery(string name) {
+    map<string,string> data;
+    
+    MYSQL_FIELD *field;
+    string sqlCmd = "select * from io_point where name='" + name + "';";
+    
+    cout << sqlCmd << endl;
+    
+    int rc = mysql_query(conn, sqlCmd.c_str());
+    
+    MYSQL_RES *result = mysql_store_result( conn );
+    MYSQL_ROW row = mysql_fetch_row(result);
+    
+    unsigned int num_fields = mysql_num_fields(result);
+    
+    cout << rc << endl;
+    char *headers[num_fields];
+    for(unsigned int i = 0; (field = mysql_fetch_field(result)); i++) {
+        cout << field->name ;
+        cout << ":" << row[i] << endl;
+        
+        data[ field->name ] = row[i];
+        
+    }
+    mysql_free_result( result );
+    return data;
+}
+
+void mqttPublish(string topic, string msg) {
+    struct mq_attr attr;
+    string jsonOut;
+    
+    memset(&attr, 0, sizeof attr);
+    //max size of a message
+    attr.mq_msgsize = 255;  //MSG_SIZE = 4096
+    attr.mq_flags = 0;
+    //maximum of messages on queue
+    attr.mq_maxmsg = 10;
+    
+    struct pollfd fds[2];
+    
+    cout << "Publish:" << endl;
+    
+    if( toDispatcher == 0) {
+        toDispatcher=mq_open("/toDispatcher", O_WRONLY|O_CREAT,0664, &attr);
+        if( toDispatcher == -1) {
+            perror("mq_open");
+            exit(2);
+        }
+    }
+    
+    jsonOut = "{ \"type\" : \"mqtt \",";
+    jsonOut += "\"topic\" : \"" + topic + "\",";
+    jsonOut += "\"state\" : \"" + msg+ "\" }\n";
+    
+    cout << jsonOut << endl;
+                if (mq_send(toDispatcher, jsonOut.c_str(), jsonOut.length(), 0) < 0) {
+                    perror("mq_send");
+                }
+}
+
+void updateIO(MYSQL *conn, map<string, string>row) {
+    
+    string name = row["name"];
+    
+    transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
+    string sqlCmd = "update "+ row["io_type"] +" set old_state=state, state = '" + row["state"] + "' where name='" + name + "';";
+    
+    int rc = mysql_query(conn, sqlCmd.c_str());
+    
+    cout << "updateIO:" << rc << endl;
+    cout << sqlCmd << endl;
+    
+    if( row["io_type"] == "mqtt" ) {
+        map<string,string> mqttQuery = getFromMqttQuery(conn, name) ;
+        
+        string topic = mqttQuery["topic"];
+        string state = mqttQuery["state"];
+        
+        mqttPublish( topic, state) ;
+    }
+    
+}
+
+vector<string> handleRequest(MYSQL *conn, string request) {
     vector<string> response;
     vector<string> cmd;
+    
+    map<string,ioDetail> cache ;
+    map<string, string>row;
+    
+    string name;
+    string value;
     
     //    string cmd = trim(request);
     cmd = split( (trim(request).c_str())) ;
@@ -96,19 +205,33 @@ vector<string> handleRequest(string request) {
                 response.push_back(string("Pong!\n")); // Respond with "Pong!" 
             } else if( cmd[0] == "CLOSE" ) {
                 response.push_back(string("CLOSE")); // Close the connection with poison pill
-            } else {
-                response.push_back(string("What?\n")); // Respond with "Pong!" 
+                //            } else {
+                //                response.push_back(string("What?\n")); 
             }
             //    response.push_back(string("CLOSE")); // Close the connection with poison pill
             break;
         case 2:
             if( cmd[0] == "GET" ) {
                 cout << "GET " << cmd[1] << endl;
+                row=getFromIoPoint(conn, cmd[1]);
+                
+                transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
+                
+                if( row["io_type"] == "mqtt" ) {
+                    cout << "I'm MQTT" << endl;
+                    row = getFromMqttQuery(conn, cmd[1]) ;
+                    
+                    response.push_back(string(row["state"] +"\n")); 
+                }
             }
             break;
         case 3:
             if( cmd[0] == "SET" ) {
                 cout << "SET " << cmd[1] + " to " + cmd[2] << endl;
+                row=getFromIoPoint(conn, cmd[1]);
+                
+                row["state"] = cmd[2];
+                updateIO(conn, row);
             }
             break;
     }
@@ -116,7 +239,6 @@ vector<string> handleRequest(string request) {
     return response;
 }
 
-// void handleConnection(int newsockfd, sockaddr_in* cli_addr) {
 void *handleConnection(void *xfer) {
     struct toThread *ptr = (struct toThread *)xfer ;
     int newsockfd; 
@@ -127,27 +249,50 @@ void *handleConnection(void *xfer) {
     
     char buffer[256]; // Initialize buffer to zeros
     bzero(buffer, 256);
+    MYSQL *conn;
     
-    while (true) {
+    ifstream cfgStream( ptr->cfgFile );
+    json config = json::parse(cfgStream);
+    
+    string dbName = config["database"]["name"];
+    string db     = config["database"]["db"];
+    string user   = config["database"]["user"];
+    string passwd = config["database"]["passwd"];
+    
+    conn=mysql_init(NULL);
+    
+    /* Connect to database */
+    if (!mysql_real_connect(conn, dbName.c_str(), user.c_str(), passwd.c_str(), db.c_str(), 0, NULL, 0)) {
+        fprintf(stderr, "%s\n", mysql_error(conn));
+        return (void*)NULL;
+    }
+    
+    bool runFlag = true ;
+    while (runFlag) {
         int n = read(newsockfd, buffer, 255);
         if (n == 0) {
             cout << inet_ntoa(cli_addr->sin_addr) << ":" << ntohs(cli_addr->sin_port)
             << " connection closed by client" << endl;
-            return (void *)NULL;
+            runFlag=false;
+            /*
+             *            break;
+             *            return (void *)NULL;
+             */
         }
         else if (n < 0)
             cerr << "ERROR reading from socket" << endl;
         
         stringstream stream;
         stream << buffer << flush;
-        while (stream.good()) {
+        
+        while ( stream.good() && runFlag ) {
             string request;
             getline(stream, request); // Get and print request by lines
             if (request.length() > 0) {
                 cout << inet_ntoa(cli_addr->sin_addr) << ":" << ntohs(cli_addr->sin_port)
                 << ": " << request << endl;
                 
-                vector<string> response = handleRequest(request); // Get the response
+                vector<string> response = handleRequest(conn, request); // Get the response
                 
                 for (int i = 0; i < response.size(); i++) {
                     string output = response[i];
@@ -161,12 +306,13 @@ void *handleConnection(void *xfer) {
                         close(newsockfd); // Close the connection if response line == "CLOSE"
                         cout << inet_ntoa(cli_addr->sin_addr) << ":" << ntohs(cli_addr->sin_port)
                         << " connection terminated" << endl;
-                        return (void *)NULL;
+                        runFlag = false;
                     }
                 }
             }
         }
     }
+    cout << "Bye" << endl;
     return (void *)NULL;
 }
 
@@ -204,7 +350,7 @@ int main(int argc, const char *argv[]) {
     cout << "C++ server opened on port " << portno << endl;;
     
     pthread_t thread_id;
-
+    
     while (true) {
         int newsockfd; // New socket file descriptor
         unsigned int clilen; // Client address size
@@ -222,8 +368,10 @@ int main(int argc, const char *argv[]) {
         
         ptr->newsockfd = newsockfd;
         ptr->cli_addr = &cli_addr;
+        ptr->cfgFile = "/etc/mqtt/bridge.json";
         
-//        handleConnection(ptr); // Handle the connection
+        
+        //        handleConnection(ptr); // onne
         if( pthread_create( &thread_id , NULL ,  handleConnection , (void *)ptr) < 0) {
             perror("could not create thread");
             return 1;
