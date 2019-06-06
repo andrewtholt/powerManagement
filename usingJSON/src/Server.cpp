@@ -150,7 +150,7 @@ void mqttPublish(string topic, string msg) {
         }
     }
     
-    jsonOut = "{ \"type\" : \"mqtt \",";
+    jsonOut = "{ \"type\" : \"mqtt\",";
     jsonOut += "\"topic\" : \"" + topic + "\",";
     jsonOut += "\"state\" : \"" + msg+ "\" }\n";
     
