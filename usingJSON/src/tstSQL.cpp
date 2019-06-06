@@ -13,9 +13,37 @@ using namespace std;
 
 json config ;
 bool verbose=false;
+MYSQL *conn;
+
+map<string,string> getFromMqttQuery(string name) {
+// void getFromMqttQuery(string name) {
+    map<string,string> data;
+    
+    MYSQL_FIELD *field;
+    string sqlCmd = "select * from mqttQuery where name='" + name + "';";
+    
+    int rc = mysql_query(conn, sqlCmd.c_str());
+    
+    MYSQL_RES *result = mysql_store_result( conn );
+    MYSQL_ROW row = mysql_fetch_row(result);
+    
+    unsigned int num_fields = mysql_num_fields(result);
+    
+    cout << rc << endl;
+    char *headers[num_fields];
+    for(unsigned int i = 0; (field = mysql_fetch_field(result)); i++) {
+        cout << field->name ;
+        cout << ":" << row[i] << endl;
+        
+        data[ field->name ] = row[i];
+        
+    }
+    
+    mysql_free_result( result );
+    return data;
+}
 
 int main() {
-    MYSQL *conn;
     MYSQL_RES *res;
     MYSQL_ROW row;
     
@@ -51,20 +79,25 @@ int main() {
         exit(1);
     }
     
-    /* send SQL query */
-    if (mysql_query(conn, "show tables")) {
-        fprintf(stderr, "%s\n", mysql_error(conn));
-        exit(1);
-    }
+    map<string, string>retData =  getFromMqttQuery("MOTOR"); 
     
-    res = mysql_use_result(conn);
-    
-    /* output table name */
-    printf("MySQL Tables in mysql database:\n");
-    while ((row = mysql_fetch_row(res)) != NULL)
-        printf("%s \n", row[0]);
-    
-    /* close connection */
-    mysql_free_result(res);
+    cout << "=== " << retData["name"] << endl;
+    /*
+     *    // send SQL query 
+     *    if (mysql_query(conn, "show tables")) {
+     *        fprintf(stderr, "%s\n", mysql_error(conn));
+     *        exit(1);
+}
+
+res = mysql_use_result(conn);
+
+// output table name
+printf("MySQL Tables in mysql database:\n");
+while ((row = mysql_fetch_row(res)) != NULL)
+    printf("%s \n", row[0]);
+
+// close connection 
+mysql_free_result(res);
+*/
     mysql_close(conn);
 }
