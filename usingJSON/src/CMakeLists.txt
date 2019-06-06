@@ -39,3 +39,7 @@ target_link_libraries(pubSunRiset m ${MQTT} -lrt)
 add_executable(syncMQTT syncMQTT.cpp)
 target_compile_options(syncMQTT PUBLIC ${MYSQL_CFLAGS})
 target_link_libraries(syncMQTT ${MQTT} ${MYSQL_LIBS} -lrt )
+
+add_executable(tstSQL tstSQL.cpp)
+target_compile_options(tstSQL PUBLIC ${MYSQL_CFLAGS})
+target_link_libraries(tstSQL ${MYSQL_LIBS} -lrt )
