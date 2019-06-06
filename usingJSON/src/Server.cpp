@@ -155,9 +155,9 @@ void mqttPublish(string topic, string msg) {
     jsonOut += "\"state\" : \"" + msg+ "\" }\n";
     
     cout << jsonOut << endl;
-                if (mq_send(toDispatcher, jsonOut.c_str(), jsonOut.length(), 0) < 0) {
-                    perror("mq_send");
-                }
+    if (mq_send(toDispatcher, jsonOut.c_str(), jsonOut.length(), 0) < 0) {
+        perror("mq_send");
+    }
 }
 
 void updateIO(MYSQL *conn, map<string, string>row) {
@@ -204,11 +204,8 @@ vector<string> handleRequest(MYSQL *conn, string request) {
             if( cmd[0] == "PING" ) {
                 response.push_back(string("Pong!\n")); // Respond with "Pong!" 
             } else if( cmd[0] == "CLOSE" ) {
-                response.push_back(string("CLOSE")); // Close the connection with poison pill
-                //            } else {
-                //                response.push_back(string("What?\n")); 
+                response.push_back(string("CLOSE")); 
             }
-            //    response.push_back(string("CLOSE")); // Close the connection with poison pill
             break;
         case 2:
             if( cmd[0] == "GET" ) {
