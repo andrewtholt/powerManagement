@@ -4,6 +4,7 @@
 #include <mysql/mysql.h>
 
 #include <sys/types.h>
+#include <pwd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -35,6 +36,14 @@ struct ioDetail {
     string ioType;
     string direction;
 };
+
+uid_t getUserIdByName(const char *name) {
+    struct passwd *pwd = getpwnam(name); /* don't free, see getpwnam() for details */
+    if(pwd == NULL) {
+        throw runtime_error(string("Failed to get userId from username : ") + name);
+    }
+    return pwd->pw_uid;
+}
 
 vector<string> split(const char *str, char c = ' ') {
     vector<string> result;
@@ -264,6 +273,7 @@ void *handleConnection(void *xfer) {
         return (void*)NULL;
     }
     
+    
     bool runFlag = true ;
     while (runFlag) {
         int n = read(newsockfd, buffer, 255);
@@ -313,15 +323,78 @@ void *handleConnection(void *xfer) {
     return (void *)NULL;
 }
 
-int main(int argc, const char *argv[]) {
+void usage(string svcName){
+}
+
+int main(int argc,  char *argv[]) {
     int sockfd; // Socket file descriptor
-    int portno; // Port number
+    int portNo=9191; // Port number
+    int opt;
+    bool fg=false;
+    bool verbose=false;
     
     sockaddr_in serv_addr; // Server address
+    string svcName = basename(argv[0]) ;
+    string cfgFile = "/etc/mqtt/bridge.json";
     
-    if (argc < 2) {
-        cerr << "ERROR no port provided" << endl;
-        exit(1);
+    while( (opt = getopt(argc, argv, "c:fhp:v")) != -1) {
+        switch(opt) {
+            case 'c':
+                cfgFile = optarg;
+                break;
+            case 'f':
+                fg=true;
+                break;
+            case 'h':
+                usage(svcName);
+                exit(1);
+                break;
+            case 'p':
+                portNo = atoi(optarg);
+                break;
+            case 'v':
+                verbose = true;
+                break;
+        }
+    }
+    bool iamRoot=false ;
+    if( getuid() !=0) {
+        cerr << "Not root so running in the foreground\n" << endl;
+        fg=true;
+        
+        iamRoot = true;
+        verbose = true;
+    }
+    
+    
+    int rc=0;
+    
+    if (fg == false) {
+        rc = daemon(true,false);
+        //        rc = daemon(true,true);
+        
+        string pidFile = "/var/run/" + svcName + ".pid";
+        
+        FILE *run=fopen(pidFile.c_str(), "w");
+        
+        if( run == NULL) {
+            perror("PID File");
+            exit(2);
+        }
+        
+        fprintf(run,"%d\n", getpid());
+        
+        fclose(run);
+        run=NULL;
+    }
+    
+    uid_t powerUser = getUserIdByName("power");
+    
+    if( iamRoot == false) {
+        if(setuid(powerUser) != 0) {
+            perror("setuid");
+            exit(1);
+        }
     }
     
     sockfd = socket(AF_INET, SOCK_STREAM, 0); // Create new socket, save file descriptor
@@ -333,10 +406,10 @@ int main(int argc, const char *argv[]) {
     setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT, &reusePort, sizeof(reusePort));
     
     bzero((char *) &serv_addr, sizeof(serv_addr)); // Initialize serv_addr to zeros
-    portno = atoi(argv[1]); // Reads port number from char* array
+    //    portno = atoi(argv[1]); // Reads port number from char* array
     
     serv_addr.sin_family = AF_INET; // Sets the address family
-    serv_addr.sin_port = htons(portno); // Converts number from host byte order to network byte order
+    serv_addr.sin_port = htons(portNo); // Converts number from host byte order to network byte order
     serv_addr.sin_addr.s_addr = INADDR_ANY; // Sets the IP address of the machine on which this server is running
     
     if (bind(sockfd, (sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) // Bind the socket to the address
@@ -344,7 +417,7 @@ int main(int argc, const char *argv[]) {
     
     unsigned int backlogSize = 5; // Number of connections that can be waiting while another finishes
     listen(sockfd, backlogSize);
-    cout << "C++ server opened on port " << portno << endl;;
+    cout << "C++ server opened on port " << portNo << endl;;
     
     pthread_t thread_id;
     
@@ -365,7 +438,8 @@ int main(int argc, const char *argv[]) {
         
         ptr->newsockfd = newsockfd;
         ptr->cli_addr = &cli_addr;
-        ptr->cfgFile = "/etc/mqtt/bridge.json";
+        //        ptr->cfgFile = "/etc/mqtt/bridge.json";
+        ptr->cfgFile = cfgFile ;
         
         
         //        handleConnection(ptr); // onne
