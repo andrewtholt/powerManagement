@@ -15,7 +15,7 @@ TOPIC="/home/office/$HOSTNAME/$NAME"
 MQTT="127.0.0.1"
 
 if [ -x "/usr/bin/jq" ]; then
-    MQTT=$(cat /etc/mqtt/bridge.json | jq .local.name | sed 's/\"//g')
+    MQTT=$(cat /etc/mqtt/bridge.json | jq -r .local.name )
 fi
 
 getPid() {
