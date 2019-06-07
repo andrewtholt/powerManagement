@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+# set -x
 
 LEN=`getconf LONG_BIT`
 
@@ -11,8 +11,9 @@ fi
 
 PRODUCTION="NO"
 DEBUG="NO"
+TEST="NO"
 
-while getopts ":hdp" opt; do
+while getopts ":hdpt" opt; do
   case ${opt} in
     h ) echo "Usage: cmd [-h] [-t]"
       ;;
@@ -22,6 +23,8 @@ while getopts ":hdp" opt; do
     p ) PRODUCTION="YES"
         DEBUG="NO"
       ;;
+    t ) TEST="YES"
+        ;;
     \? ) echo "Usage: cmd [-h] [-t]"
       ;;
   esac
@@ -31,6 +34,7 @@ if [  $PRODUCTION = "NO" ] && [ $DEBUG = "NO"  ]; then
     echo "Invalid, choose either production or debug."
     exit 1
 fi
+
 
 echo "Build debian package"
 echo "First make everything."
@@ -50,14 +54,18 @@ MONIT="${BASE}/etc/monit"
 
 
 if [ "$DEBUG" == "YES" ]; then
-#    ./buildDebug.sh
     echo "./buildDebug.sh"
+    if [ "$TEST" == "NO" ]; then
+        ./buildDebug.sh
+    fi
     PLACE="Debug/src"
 fi
 
 if [ "$PRODUCTION" == "YES" ]; then
-#    ./buildRelease.sh
     echo "./buildRelease.sh"
+    if [ "$TEST" == "NO" ]; then
+        ./buildRelease.sh
+    fi
 
     PLACE="Release/src"
 fi
@@ -95,5 +103,7 @@ for C in $MONIT_CFG; do
 done
 
 echo "Make package"
-dpkg -b ./debian-x86_64 .
+if [ "$TEST" == "NO" ]; then
+    dpkg -b ./debian-x86_64 .
+fi
 echo "Done"
