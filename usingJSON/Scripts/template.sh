@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# set -x
+
 PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 export PATH
 
@@ -38,7 +40,6 @@ if [  $# -ne 1 ]; then
     echo "Usage: $NAME status|start|stop"
     exit 0
 fi
-set -x
 
 
 case "$1" in

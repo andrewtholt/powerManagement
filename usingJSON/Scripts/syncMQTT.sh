@@ -2,8 +2,7 @@
 
 # set -x
 
-PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-PATH="/home/andrewh/Source/Mine/powerManagement/usingJSON/output/bin:${PATH}"
+PATH="/opt/homeControl/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 export PATH
 
 NAME="syncMQTT"
@@ -53,8 +52,6 @@ if [  $# -ne 1 ]; then
     echo "Usage: $NAME status|start|stop"
     exit 0
 fi
-set -x
-
 
 case "$1" in
     status)
