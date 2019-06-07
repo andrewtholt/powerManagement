@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+# set -x
 
 LEN=$(getconf LONG_BIT)
 
@@ -11,8 +11,9 @@ fi
 
 PRODUCTION="NO"
 DEBUG="NO"
+TEST="NO"
 
-while getopts ":hdp" opt; do
+while getopts ":hdpt" opt; do
   case ${opt} in
     h ) echo "Usage: cmd [-h] [-t]"
       ;;
@@ -21,6 +22,8 @@ while getopts ":hdp" opt; do
       ;;
     p ) PRODUCTION="YES"
         DEBUG="NO"
+      ;;
+    t ) TEST="YES"
       ;;
     \? ) echo "Usage: cmd [-h] [-t]"
       ;;
@@ -37,7 +40,9 @@ echo "First make everything."
 
 HERE=$(pwd)
 
-BASE="./debian-x86_64"
+BASE="./debian-armv7l"
+./mkControl.sh > ${BASE}/DEBIAN/control
+
 
 DEST="${BASE}/opt/homeControl/bin"
 LIBS="${BASE}/opt/homeControl/lib"
@@ -49,13 +54,18 @@ MONIT="${BASE}/etc/monit"
 
 if [ "$DEBUG" == "YES" ]; then
     echo "./buildDebug.sh"
-    ./buildDebug.sh
+    if [ "$TEST" == "NO" ]; then
+        ./buildDebug.sh
+    fi
     PLACE="Debug/src"
 fi
 
 if [ "$PRODUCTION" == "YES" ]; then
-    ./buildRelease.sh
     echo "./buildRelease.sh"
+
+    if [ "$TEST" == "NO" ]; then
+        ./buildRelease.sh
+    fi
     PLACE="Release/src"
 fi
 
@@ -92,5 +102,7 @@ for C in $MONIT_CFG; do
 done
 
 echo "Make package"
-dpkg -b ./debian-x86_64 .
+if [ "$TEST" == "NO" ]; then
+    dpkg -b ./debian-armv7l .
+fi
 echo "Done"
