@@ -1,2 +1,7 @@
 Debug
+Release
 output
+
+debian-x86_64/opt
+debian-x86_64/etc
+*.deb
