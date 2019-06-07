@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# set -x
+set -x
 
 LEN=$(getconf LONG_BIT)
 
@@ -52,6 +52,9 @@ ETC="${BASE}/opt/homeControl/etc"
 SCRIPTS="${BASE}/opt/homeControl/Scripts"
 DATA="${BASE}/opt/homeControl/data"
 MONIT="${BASE}/etc/monit"
+
+rm -rf $BASE/etc
+rm -rf $BASE/opt
 
 mkdir -p $DEST
 
