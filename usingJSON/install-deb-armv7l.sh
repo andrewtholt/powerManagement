@@ -35,6 +35,7 @@ if [  $PRODUCTION = "NO" ] && [ $DEBUG = "NO"  ]; then
     exit 1
 fi
 
+
 echo "Build debian package"
 echo "First make everything."
 
@@ -51,6 +52,7 @@ SCRIPTS="${BASE}/opt/homeControl/Scripts"
 DATA="${BASE}/opt/homeControl/data"
 MONIT="${BASE}/etc/monit"
 
+mkdir -p $DEST
 
 if [ "$DEBUG" == "YES" ]; then
     echo "./buildDebug.sh"
@@ -66,6 +68,7 @@ if [ "$PRODUCTION" == "YES" ]; then
     if [ "$TEST" == "NO" ]; then
         ./buildRelease.sh
     fi
+
     PLACE="Release/src"
 fi
 
@@ -83,7 +86,9 @@ for B in $BINS; do
     cp $PLACE/${B} $DEST
 done
 
-SCRIPTS="dispatch.sh  Server.sh  setup.sh  syncMQTT.sh"
+cp Scripts/setup.sh  $DEST
+
+SCRIPTS="dispatch.sh  Server.sh syncMQTT.sh"
 
 if [ ! -d $MONIT ]; then
     mkdir -p $MONIT
@@ -102,7 +107,7 @@ for C in $MONIT_CFG; do
 done
 
 echo "Make package"
-if [ "$TEST" == "NO" ]; then
+# if [ "$TEST" == "NO" ]; then
     dpkg -b ./debian-armv7l .
-fi
+# fi
 echo "Done"

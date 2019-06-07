@@ -2,7 +2,7 @@
 
 # set -x
 
-LEN=`getconf LONG_BIT`
+LEN=$(getconf LONG_BIT)
 
 if [ $LEN -ne 64 ]; then
     echo "Attempting to build on wrong platform."
@@ -24,7 +24,7 @@ while getopts ":hdpt" opt; do
         DEBUG="NO"
       ;;
     t ) TEST="YES"
-        ;;
+      ;;
     \? ) echo "Usage: cmd [-h] [-t]"
       ;;
   esac
@@ -45,6 +45,7 @@ BASE="./debian-x86_64"
 
 ./mkControl.sh > ${BASE}/DEBIAN/control
 
+
 DEST="${BASE}/opt/homeControl/bin"
 LIBS="${BASE}/opt/homeControl/lib"
 ETC="${BASE}/opt/homeControl/etc"
@@ -52,6 +53,7 @@ SCRIPTS="${BASE}/opt/homeControl/Scripts"
 DATA="${BASE}/opt/homeControl/data"
 MONIT="${BASE}/etc/monit"
 
+mkdir -p $DEST
 
 if [ "$DEBUG" == "YES" ]; then
     echo "./buildDebug.sh"
@@ -63,6 +65,7 @@ fi
 
 if [ "$PRODUCTION" == "YES" ]; then
     echo "./buildRelease.sh"
+
     if [ "$TEST" == "NO" ]; then
         ./buildRelease.sh
     fi
@@ -84,7 +87,9 @@ for B in $BINS; do
     cp $PLACE/${B} $DEST
 done
 
-SCRIPTS="dispatch.sh  Server.sh  setup.sh  syncMQTT.sh"
+cp Scripts/setup.sh  $DEST
+
+SCRIPTS="dispatch.sh  Server.sh syncMQTT.sh"
 
 if [ ! -d $MONIT ]; then
     mkdir -p $MONIT
@@ -103,7 +108,7 @@ for C in $MONIT_CFG; do
 done
 
 echo "Make package"
-if [ "$TEST" == "NO" ]; then
+# if [ "$TEST" == "NO" ]; then
     dpkg -b ./debian-x86_64 .
-fi
+# fi
 echo "Done"

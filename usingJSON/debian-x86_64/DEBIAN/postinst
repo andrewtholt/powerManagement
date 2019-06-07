@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# set -x
+
+SETUP="/opt/homeControl/bin/setup.sh"
+
+if [ -x $SETUP ]; then
+    $SETUP
+fi
+
+monit -t
+if [ $? -eq 0 ]; then
+    monit reload
+    monit -g CONTROL start
+else
+    echo "Monit config test failed."
+fi
