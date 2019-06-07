@@ -12,6 +12,12 @@ HOSTNAME=$(hostname)
 PIDFILE="/var/run/$NAME.pid"
 TOPIC="/home/office/$HOSTNAME/$NAME"
 
+MQTT="127.0.0.1"
+
+if [ -x "/usr/bin/jq" ]; then
+    MQTT=$(cat /etc/mqtt/bridge.json | jq .local.name | sed 's/\"//g')
+fi
+
 getPid() {
     PID=$(ps -ef | grep $1 | grep -v grep | awk '{ print $2 }')
     return $PID
@@ -19,7 +25,7 @@ getPid() {
 
 pubStatus() {
     if [ ! -z "$TOPIC" ]; then
-        mosquitto_pub -r -t $TOPIC -m $1 -r
+        mosquitto_pub -h $MQTT -t $TOPIC -m $1 -r
     fi
 }
 
