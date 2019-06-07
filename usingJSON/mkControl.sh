@@ -8,6 +8,11 @@ if [ $HW = "x86_64" ]; then
     HW=amd64
 fi
 
+if [ $HW = "armv7l" ]; then
+    HW=armhf
+fi
+
+
 echo "Package: home-control"
 echo "Section: misc"
 echo "Priority: extra"
