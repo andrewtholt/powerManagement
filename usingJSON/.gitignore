@@ -2,6 +2,11 @@ Debug
 Release
 output
 
+*.deb
 debian-x86_64/opt
 debian-x86_64/etc
-*.deb
+debian-x86_64/DEBIAN/control
+
+debian-armv7l/opt
+debian-armv7l/etc
+debian-armv7l/DEBIAN/control

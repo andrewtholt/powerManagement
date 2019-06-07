@@ -39,6 +39,8 @@ HERE=$(pwd)
 
 BASE="./debian-x86_64"
 
+./mkControl.sh > ${BASE}/DEBIAN/control
+
 DEST="${BASE}/opt/homeControl/bin"
 LIBS="${BASE}/opt/homeControl/lib"
 ETC="${BASE}/opt/homeControl/etc"
@@ -54,7 +56,9 @@ if [ "$DEBUG" == "YES" ]; then
 fi
 
 if [ "$PRODUCTION" == "YES" ]; then
-    ./buildRelease.sh
+#    ./buildRelease.sh
+    echo "./buildRelease.sh"
+
     PLACE="Release/src"
 fi
 
