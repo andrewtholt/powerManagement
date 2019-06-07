@@ -5,7 +5,7 @@
 SCRIPTS="dispatch.sh  Server.sh syncMQTT.sh"
 MONIT="/etc/monit"
 
-if [!  -d "$MONIT" ]; then
+if [ ! -d "$MONIT" ]; then
     echo "No monit folder in  $MONIT"
     exit 1
 fi

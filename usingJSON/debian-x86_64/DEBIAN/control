@@ -1,9 +1,0 @@
-Package: home-control
-Section: misc
-Priority: extra
-Maintainer: Andrew Holt
-Architecture: amd64
-Version: 0.01
-Depends: monit
-Description: Home control daemon.
-
