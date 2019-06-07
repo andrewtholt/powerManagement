@@ -74,6 +74,32 @@ inline string &trim(string& s, const char* t = " \t\n\r\f\v") {
     return ltrim(rtrim(s, t), t); 
 }
 
+map<string,string> getFromInternalQuery(MYSQL *conn, string name) {
+    map<string,string> data;
+    
+    MYSQL_FIELD *field;
+    string sqlCmd = "select * from internalQuery where name='" + name + "';";
+    
+    cout << sqlCmd << endl;
+    
+    int rc = mysql_query(conn, sqlCmd.c_str());
+    
+    MYSQL_RES *result = mysql_store_result( conn );
+    MYSQL_ROW row = mysql_fetch_row(result);
+    
+    unsigned int num_fields = mysql_num_fields(result);
+    
+    cout << rc << endl;
+    char *headers[num_fields];
+    for(unsigned int i = 0; (field = mysql_fetch_field(result)); i++) {
+        cout << field->name ;
+        cout << ":" << row[i] << endl;
+        
+        data[ field->name ] = row[i];
+    }
+    return data;
+}
+
 map<string,string> getFromMqttQuery(MYSQL *conn, string name) {
     // void getFromMqttQuery(string name) {
     map<string,string> data;
@@ -227,6 +253,10 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                     cout << "I'm MQTT" << endl;
                     row = getFromMqttQuery(conn, cmd[1]) ;
                     
+                    response.push_back(string(row["state"] +"\n")); 
+                } else if( row["io_type"] == "internal" ) {
+                    cout << "I'm Internal" << endl;
+                    row = getFromInternalQuery(conn, cmd[1]) ;
                     response.push_back(string(row["state"] +"\n")); 
                 }
             }
