@@ -86,16 +86,17 @@ map<string,string> getFromInternalQuery(MYSQL *conn, string name) {
     
     MYSQL_RES *result = mysql_store_result( conn );
     MYSQL_ROW row = mysql_fetch_row(result);
-    
     unsigned int num_fields = mysql_num_fields(result);
+    unsigned int num_rows   = mysql_num_rows(result);
     
-    cout << rc << endl;
-    char *headers[num_fields];
-    for(unsigned int i = 0; (field = mysql_fetch_field(result)); i++) {
-        cout << field->name ;
-        cout << ":" << row[i] << endl;
-        
-        data[ field->name ] = row[i];
+    if( num_rows > 0 ) {
+        char *headers[num_fields];
+        for(unsigned int i = 0; (field = mysql_fetch_field(result)); i++) {
+            cout << field->name ;
+            cout << ":" << row[i] << endl;
+            
+            data[ field->name ] = row[i];
+        }
     }
     return data;
 }
@@ -113,17 +114,19 @@ map<string,string> getFromMqttQuery(MYSQL *conn, string name) {
     
     MYSQL_RES *result = mysql_store_result( conn );
     MYSQL_ROW row = mysql_fetch_row(result);
+    unsigned int num_rows   = mysql_num_rows(result);
     
     unsigned int num_fields = mysql_num_fields(result);
     
-    cout << rc << endl;
-    char *headers[num_fields];
-    for(unsigned int i = 0; (field = mysql_fetch_field(result)); i++) {
-        cout << field->name ;
-        cout << ":" << row[i] << endl;
-        
-        data[ field->name ] = row[i];
-        
+    if( num_rows > 0 ) {
+        char *headers[num_fields];
+        for(unsigned int i = 0; (field = mysql_fetch_field(result)); i++) {
+            cout << field->name ;
+            cout << ":" << row[i] << endl;
+            
+            data[ field->name ] = row[i];
+            
+        }
     }
     
     mysql_free_result( result );
@@ -148,15 +151,18 @@ map<string,string> getFromIoPoint(MYSQL *conn, string name) {
     MYSQL_ROW row = mysql_fetch_row(result);
     
     unsigned int num_fields = mysql_num_fields(result);
-    
+    unsigned int num_rows   = mysql_num_rows(result);
     cout << rc << endl;
-    char *headers[num_fields];
-    for(unsigned int i = 0; (field = mysql_fetch_field(result)); i++) {
-        cout << field->name ;
-        cout << ":" << row[i] << endl;
-        
-        data[ field->name ] = row[i];
-        
+    
+    if( num_rows  > 0 ) {
+        char *headers[num_fields];
+        for(unsigned int i = 0; (field = mysql_fetch_field(result)); i++) {
+            cout << field->name ;
+            cout << ":" << row[i] << endl;
+            
+            data[ field->name ] = row[i];
+            
+        }
     }
     mysql_free_result( result );
     return data;
@@ -253,11 +259,20 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                     cout << "I'm MQTT" << endl;
                     row = getFromMqttQuery(conn, cmd[1]) ;
                     
-                    response.push_back(string(row["state"] +"\n")); 
+                    if( row.size() == 0 ) {
+                        response.push_back("<UNDEFINED>");
+                    } else {
+                        response.push_back(string(row["state"] +"\n")); 
+                    }
+                    
                 } else if( row["io_type"] == "internal" ) {
                     cout << "I'm Internal" << endl;
                     row = getFromInternalQuery(conn, cmd[1]) ;
-                    response.push_back(string(row["state"] +"\n")); 
+                    if( row.size() == 0 ) {
+                        response.push_back("<UNDEFINED>");
+                    } else {
+                        response.push_back(string(row["state"] +"\n")); 
+                    }
                 }
             }
             break;
@@ -266,8 +281,10 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                 cout << "SET " << cmd[1] + " to " + cmd[2] << endl;
                 row=getFromIoPoint(conn, cmd[1]);
                 
-                row["state"] = cmd[2];
-                updateIO(conn, row);
+                if( row.size() > 0 ) {
+                    row["state"] = cmd[2];
+                    updateIO(conn, row);
+                }
             }
             break;
     }

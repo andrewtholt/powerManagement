@@ -136,22 +136,34 @@ void usage() {
 
 string getFromJson(json j, vector<string> p, string defaultValue) {
 
-    string value="";
+    string v;
     string t;
     int len = p.size();
+    
+    string dump = j.dump(4);
+    
+    
+    cout << dump << endl;
 
     try {
         switch(len) {
             case 0:
                 break;
             case 1:
-                value=j[ p[0]  ];
+                v=j[ p[0]  ];
                 break;
             case 2:
-                value=j[p[0]][p[1]];
+                
+            {
+                string a = p[0];
+                string b = p[1];
+                
+                v=j[a][b];
+            }
+                
                 break;
             case 3:
-                value=j[p[0]] [p[1]] [p[2]];
+                v=j[p[0]] [p[1]] [p[2]];
                 break;
             default:
                 cerr << "getFromJson:FATAL Error, too many parameters, Max is 3" << endl;
@@ -159,10 +171,10 @@ string getFromJson(json j, vector<string> p, string defaultValue) {
                 break;
         }
     } catch (json::type_error &e) {
-        value=defaultValue;
+        v = defaultValue;
     }
 
-    return value;
+    return v;
 }
 
 int main(int argc, char *argv[]) {

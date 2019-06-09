@@ -62,6 +62,8 @@ void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_messag
     con=mysql_init(NULL);
     string sqlCmd;
     
+    bool queryCleared = false;
+    
     cout << "\non_message" << endl;
     
     string topic = (char *)mqttMsg->topic;
@@ -127,6 +129,7 @@ void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_messag
         } else if ( dbDirection == "IN" ) {
             // Update the db
             mysql_free_result(result);
+            queryCleared = true;
             sqlCmd = "update mqtt set state = '" + devState + "' where topic = '" + topic + "';";
             cout << sqlCmd << endl;
             
@@ -135,8 +138,10 @@ void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_messag
                 cerr << mysql_error(con) << endl;
             }
         }
-    mysql_free_result(result);
-    result = NULL;
+        if( queryCleared == false ) {
+            mysql_free_result(result);
+        }
+        result = NULL;
     }
     
     mysql_close(con);
