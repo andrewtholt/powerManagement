@@ -27,7 +27,7 @@
         "sunset"  : "/home/environment/SUNSET"
     },
     "location" : {
-        "long" : -2.71315,
-        "lat"  : 53.664258
+        "long" : "-2.71315",
+        "lat"  : "53.664258"
     }
 }
