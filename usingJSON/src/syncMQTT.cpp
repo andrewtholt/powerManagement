@@ -163,21 +163,21 @@ void on_connect(struct mosquitto *mosq, void *obj, int result) {
     sqlCmd="select name,direction,topic,state from mqttQuery ;";
     cout << sqlCmd << endl;
     
+    MYSQL_RES *res = NULL;
     if( mysql_query(con, sqlCmd.c_str())) {
         cerr << "SQL Error" << endl;
     } else {
-        MYSQL_RES *result = mysql_store_result(con);
+        res = mysql_store_result(con);
         MYSQL_ROW row;
         
-        while ((row = mysql_fetch_row(result))) {
+        while ((row = mysql_fetch_row(res))) {
             cout << row[0] << endl;
             cout << row[2] << endl;
             
             mosquitto_subscribe(mosq,NULL, row[2],1);
         }
-        mysql_free_result(result);
-        result = NULL;
     }
+    mysql_free_result(res);
     mysql_close(con);
 }
 

@@ -133,9 +133,6 @@ map<string,string> getFromMqttQuery(MYSQL *conn, string name) {
     return data;
 }
 
-struct ioDetail typeFromCache(MYSQL *conn, string name) {
-}
-
 map<string,string> getFromIoPoint(MYSQL *conn, string name) {
     // void getFromMqttQuery(string name) {
     map<string,string> data;
