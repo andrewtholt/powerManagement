@@ -1,0 +1,11 @@
+#!/bin/bash 
+
+set -x
+
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+if [ -x /usr/bin/monit ]; then
+    echo "Found"
+fi
+
+
