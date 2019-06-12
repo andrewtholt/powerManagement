@@ -84,7 +84,13 @@ for S in $SO; do
     cp $PLACE/../commonClasses/$S $LIBS
 done
 
-BINS="dispatch pubSunRiset  Server  syncMQTT"
+PYTHON="syncMQTT.py"
+PYTH_DIR="Python"
+for B in $PYTHON; do
+    cp $PYTH_DIR/${B} $DEST
+done
+
+BINS="dispatch pubSunRiset Server"
 
 for B in $BINS; do
     cp $PLACE/${B} $DEST

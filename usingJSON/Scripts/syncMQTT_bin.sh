@@ -5,7 +5,7 @@
 PATH="/opt/homeControl/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 export PATH
 
-NAME="syncMQTT.py"
+NAME="syncMQTT"
 CONFIG=""
 ARGS=""
 HOSTNAME=$(hostname)
@@ -68,9 +68,7 @@ case "$1" in
         status
         if [  $RET -eq 1 ]; then
             echo "START"
-            nohup $NAME > /dev/null 2>&1 &
-            echo $!
-            echo $! > $PIDFILE
+            $NAME
             sleep 1
         else
             echo "RUNNING"
