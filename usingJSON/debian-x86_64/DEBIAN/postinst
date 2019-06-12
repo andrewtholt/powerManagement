@@ -10,8 +10,13 @@ fi
 
 monit -t
 if [ $? -eq 0 ]; then
+    echo "Restart CONTROL"
     monit reload
+    monit
+    sleep 1
     monit -g CONTROL start
+    sleep 1
+    echo "... Done."
 else
     echo "Monit config test failed."
 fi
