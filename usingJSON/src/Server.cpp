@@ -203,21 +203,25 @@ void updateIO(MYSQL *conn, map<string, string>row) {
     string name = row["name"];
     
     transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
-    string sqlCmd = "update "+ row["io_type"] +" set old_state=state, state = '" + row["state"] + "' where name='" + name + "';";
-    
-    int rc = mysql_query(conn, sqlCmd.c_str());
-    
-    cout << "updateIO:" << rc << endl;
-    cout << sqlCmd << endl;
     
     if( row["io_type"] == "mqtt" ) {
         map<string,string> mqttQuery = getFromMqttQuery(conn, name) ;
         
         string topic = mqttQuery["topic"];
         string state = mqttQuery["state"];
+        string oldState = mqttQuery["old_state"];
         
-        mqttPublish( topic, state) ;
+        if( state != oldState ) {
+            mqttPublish( topic, state) ;
+        }
     }
+
+    string sqlCmd = "update "+ row["io_type"] +" set old_state=state, state = '" + row["state"] + "' where name='" + name + "';";
+    
+    int rc = mysql_query(conn, sqlCmd.c_str());
+
+    cout << "updateIO:" << rc << endl;
+    cout << sqlCmd << endl;
     
 }
 
