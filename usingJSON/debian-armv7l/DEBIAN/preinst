@@ -1,0 +1,14 @@
+#!/bin/bash 
+
+set -x
+
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+if [ -x /usr/bin/monit ]; then
+    echo "Found, Stopping services"
+    monit -g CONTROL stop
+    monit
+    sleep 1
+fi
+
+
