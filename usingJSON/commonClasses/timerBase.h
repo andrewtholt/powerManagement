@@ -12,6 +12,8 @@ class msTimer {
 
         bool output=false;
         bool running=false;
+        bool oneShot = false;
+        bool triggered = false;
 
     public:
 //        msTimer(int ms) { cout << "Hello " << endl ;};
@@ -19,4 +21,6 @@ class msTimer {
         void timerStart(void);
         int32_t read();
         bool run(bool flag);
+
+        void setOneShot(bool flag);
 };

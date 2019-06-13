@@ -36,6 +36,7 @@ bool msTimer::run(bool runFlag) {
                 output=true;
             } else {
                 output=false;
+                triggered=false;
             }
         } else { 
             // Running is false
@@ -43,8 +44,21 @@ bool msTimer::run(bool runFlag) {
             timerStart();
             running = true;
             output=false;
+            triggered=false;
+        }
+
+        if(output) {
+            if( oneShot) {
+                if(triggered) {
+                    output=false;
+                } else {
+                    triggered = true;
+                }
+            }
         }
     }
+
+    cout << "Flag : " << output << endl;
     return output;
 }
 
@@ -64,3 +78,15 @@ int32_t msTimer::read() {
     return( nowTime - startTime );
 
 }
+/***********************************************************************
+ *  Method: msTimer::setOneShot
+ *  Params: bool flag
+ * Returns: void
+ * Effects: 
+ ***********************************************************************/
+void msTimer::setOneShot(bool flag) {
+    oneShot = flag;
+    triggered = false;
+}
+
+
