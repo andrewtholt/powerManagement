@@ -201,6 +201,7 @@ void mqttPublish(string topic, string msg) {
 void updateIO(MYSQL *conn, map<string, string>row) {
     
     string name = row["name"];
+    string state = row["state"];
     
     transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
     
@@ -208,7 +209,7 @@ void updateIO(MYSQL *conn, map<string, string>row) {
         map<string,string> mqttQuery = getFromMqttQuery(conn, name) ;
         
         string topic = mqttQuery["topic"];
-        string state = mqttQuery["state"];
+//        string state = mqttQuery["state"];
         string oldState = mqttQuery["old_state"];
         
         if( state != oldState ) {
