@@ -14,10 +14,13 @@ int main() {
     plcSocket *plc = new plcSocket();
 
     string sunRise = plc->getValue("SUNRISE");
+    string sunSet = plc->getValue("SUNSET");
+
     cout << sunRise << endl ;
+    cout << sunSet << endl ;
 
     t1->setStartTime(sunRise);
-    t1->setEndTime("23:30");
+    t1->setEndTime(sunSet);
 
     t1->dump();
     cout << t1->checkTime();
