@@ -122,7 +122,13 @@ double GMST0( double d );
 
 
 void usage() {
-    printf("pubSunRiset -h|-v -c <cfgFile>\n\n");
+    printf("pubSunRiset -h|-v -c <cfgFile> -r <sunrise topic> -s <sunset topic>\n\n");
+    printf("\t-h\t\tHelp.\n");
+    printf("\t-v\t\tVerbose.\n");
+    printf("\t-c <cfgFile>\tUse config file.\n");
+    printf("\t-r <topic>\tOverride config file sunrise topic..\n");
+    printf("\t-s <topic>\tOverride config file sunset topic..\n");
+
 }
 /*
    try {
@@ -195,7 +201,10 @@ int main(int argc, char *argv[]) {
     string cfgFile = "/etc/mqtt/bridge.json";
     json config ;
 
-    while((opt = getopt(argc, argv, "c:hv")) != -1) {
+    string sunriseTopic;
+    string sunsetTopic;
+
+    while((opt = getopt(argc, argv, "c:hvr:s:")) != -1) {
         switch(opt) {
             case 'c':
                 cfgFile = optarg;
@@ -206,6 +215,12 @@ int main(int argc, char *argv[]) {
                 break;
             case 'v':
                 verbose=true;
+                break;
+            case 'r':   // Sunrise
+                sunriseTopic=optarg;
+                break;
+            case 's':   // Sunset
+                sunsetTopic=optarg;
                 break;
         }
     }
@@ -224,11 +239,14 @@ int main(int argc, char *argv[]) {
 
     vector<string> jsonParams;
 
-    string sunriseTopic;
-    string sunsetTopic;
+    if ( sunriseTopic == "" ) {
+        sunriseTopic=getFromJson(config, { "topics","sunrise" }, "/test/SUNRISE") ;
+    }
 
-    sunriseTopic=getFromJson(config, { "topics","sunrise" }, "/test/SUNRISE") ;
-    sunsetTopic =getFromJson(config, { "topics","sunset" }, "/test/SUNSET") ;
+
+    if ( sunsetTopic == "" ) {
+        sunsetTopic =getFromJson(config, { "topics","sunset" }, "/test/SUNSET") ;
+    }
 
     string longString = getFromJson(config, { "location","long" }, "0.48650" ) ;
     string latString  = getFromJson(config, { "location","lat"  }, "0.163598" ) ;
@@ -300,7 +318,9 @@ int main(int argc, char *argv[]) {
     sprintf( msg, "%02d:%02d", setHH, setMM);
     mosquitto_publish(mosq, NULL, (char *)sunsetTopic.c_str(), strlen(msg) , (char *)msg, 1,true) ;
 
-    return 0;
+    rc=mosquitto_loop(mosq,-1,1);
+
+    return rc;
 }
 
 
