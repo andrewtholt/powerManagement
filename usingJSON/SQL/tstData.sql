@@ -18,3 +18,8 @@ update io_point,mqtt set io_point.io_idx=mqtt.idx where io_point.name = mqtt.nam
 replace into internal (name, data_type ) values ('TEST_LOCAL','STRING');
 replace into io_point (name,direction,io_type ) values ('TEST_LOCAL','INTERNAL','INTERNAL');
 update io_point,internal set io_point.io_idx=internal.idx where io_point.name = internal.name;
+
+replace into mqtt(name, topic, data_type ) values ('SUNRISE','/test/SUNRISE','STRING');
+replace into io_point (name,direction,io_type ) values ('SUNRISE','IN','MQTT');
+update io_point,mqtt set io_point.io_idx=mqtt.idx where io_point.name = mqtt.name;
+
