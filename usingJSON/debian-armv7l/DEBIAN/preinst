@@ -9,6 +9,10 @@ if [ -x /usr/bin/monit ]; then
     monit -g CONTROL stop
     monit
     sleep 1
+
+    if [ ! -d "/etc/monit/conf.d" ]; then
+        mkdir /etc/monit/conf.d
+    fi
 fi
 
 
