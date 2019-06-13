@@ -9,6 +9,13 @@ if [ -x /usr/bin/monit ]; then
     monit -g CONTROL stop
     monit
     sleep 1
+
+    if [ ! -d "/etc/monit/conf.d" ]; then
+        mkdir /etc/monit/conf.d
+    fi
+else
+    echo "Fail, monit not found."
+    exit 1
 fi
 
 

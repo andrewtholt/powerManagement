@@ -13,6 +13,9 @@ if [ -x /usr/bin/monit ]; then
     if [ ! -d "/etc/monit/conf.d" ]; then
         mkdir /etc/monit/conf.d
     fi
+else
+    echo "Fail, monit not found."
+    exit 1
 fi
 
 
