@@ -194,6 +194,11 @@ int main(int argc,char *argv[]) {
                 }
 
                 mosquitto_publish(mosq, NULL, (char *)topic.c_str(), msg.length() , (char *)msg.c_str(), 1,true) ;
+                rc=mosquitto_loop(mosq,-1,1);
+
+                if( rc != MOSQ_ERR_SUCCESS) {
+                    cerr << "mosquitto_loop error:" << rc << endl;
+                }
             }
 
         }
