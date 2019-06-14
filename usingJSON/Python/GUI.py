@@ -22,7 +22,7 @@ def main():
             cfg = json.load(f)
 
         database = cfg['database']['name']
-        db       = cfg['database']['db']
+        dbName       = cfg['database']['db']
         user     = cfg['database']['user']
         passwd   = cfg['database']['passwd']
     else:
@@ -48,9 +48,14 @@ def main():
     window = sg.Window('Simple data entry window', layout)
     
     runFlag = True
+    valid = False
+
+    db = None
     while runFlag:
-        db = sql.connect(database, user, passwd,db)
-        cursor = db.cursor()
+
+        if db == None:
+            db = sql.connect(database, user, passwd,dbName)
+            cursor = db.cursor()
 
         event, values = window.Read()
     
@@ -68,45 +73,49 @@ def main():
                 runFlag = True
             else:
                 if topic != '' and ioType == 'MQTT':
-                    runFlag = False
+#                    runFlag = False
+                    valid = True
                 elif topic == '' and ioType == 'INTERNAL':
-                    runFlag = False
+#                    runFlag = False
+                    valid = True
                 else:
-                    runFlag = True
+#                    runFlag = True
+                    valid = False
                     sg.Popup('Error\nIf INTERNAL no need to define a topic')
         
-            print(event)
+        print("HERE",event, values[0], values[1], values[2])  
     
-    print(event, values[0], values[1], values[2])  
-    
-    window.Close()
+#    window.Close()
 
-    if event == 'Cancel':
-        exit(0)
+        if event == 'Cancel':
+            window.Close()
+            exit(0)
     
-    if event == 'Submit':
-        if ioType == 'MQTT':
+        print("Valid = ", valid)
+        if event == 'Submit' and valid :
+            if ioType == 'MQTT':
     #        sqlCmd = "replace into " + ioType.lower() + "(name, topic ) values ('" + name + "','"+topic+ "');"
-            sqlCmd = "replace into " + ioType.lower() + "(name, topic, data_type ) values ('" + name + "','"+topic+ "','" + dataType + "');"
+                sqlCmd = "replace into " + ioType.lower() + "(name, topic, data_type ) values ('" + name + "','"+topic+ "','" + dataType + "');"
+                print(sqlCmd)
+                cursor.execute( sqlCmd )
+            elif ioType == 'INTERNAL':
+                sqlCmd = "replace into " + ioType.lower() + "(name) values ('" + name + "');"
+                print(sqlCmd)
+                cursor.execute( sqlCmd )
+        
+            sqlCmd = "replace into io_point (name,direction,io_type ) values ('" + name + "','"+ direction +"','" + ioType + "');"
+        
             print(sqlCmd)
             cursor.execute( sqlCmd )
-        elif ioType == 'INTERNAL':
-            sqlCmd = "replace into " + ioType.lower() + "(name) values ('" + name + "');"
-            print(sqlCmd)
-            cursor.execute( sqlCmd )
-        
-        sqlCmd = "replace into io_point (name,direction,io_type ) values ('" + name + "','"+ direction +"','" + ioType + "');"
-        
-        print(sqlCmd)
-        cursor.execute( sqlCmd )
     
-        sqlCmd = "update io_point," + ioType.lower() +  " set io_point.io_idx=" + ioType.lower() + ".idx where io_point.name = " + ioType.lower() + ".name;"
-        print(sqlCmd)
-        cursor.execute( sqlCmd )
+            sqlCmd = "update io_point," + ioType.lower() +  " set io_point.io_idx=" + ioType.lower() + ".idx where io_point.name = " + ioType.lower() + ".name;"
+            print(sqlCmd)
+            cursor.execute( sqlCmd )
 
-    db.commit()
-    cursor.close()
-    db.close()
+        db.commit()
+        cursor.close()
+        db.close()
+        db = None
 
 
 
