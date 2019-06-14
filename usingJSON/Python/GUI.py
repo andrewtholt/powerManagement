@@ -29,16 +29,13 @@ def main():
         print(configFile + " not found..")
         print(".. using defaults")
 
-    db = sql.connect(database, user, passwd,db)
-    cursor = db.cursor()
-
     print('Startup up...')
     # Very basic window.  Return values as a list      
     
     sg.ChangeLookAndFeel('Dark')
     layout = [      
             [sg.Text('Create IO Point')],      
-            [sg.Text('Name', size=(10, 1)), sg.InputText()],
+            [sg.Text('Name', size=(10, 1)), sg.InputText(do_not_clear=False)],
             [sg.Text('MQTT Topic', size=(10, 1)), sg.InputText()],
             [sg.Text('Direction', size=(10, 1))],
             [sg.InputCombo(('IN', 'OUT','INTERNAL','DISABLED'), size=(20, 5))],
@@ -52,11 +49,14 @@ def main():
     
     runFlag = True
     while runFlag:
+        db = sql.connect(database, user, passwd,db)
+        cursor = db.cursor()
+
         event, values = window.Read()
     
         if event == 'Cancel':
             runFlag = False
-        else:
+        elif event == 'Submit':
             name      = values[0]
             topic     = values[1]
             direction = values[2]
@@ -84,24 +84,25 @@ def main():
     if event == 'Cancel':
         exit(0)
     
-    if ioType == 'MQTT':
-#        sqlCmd = "replace into " + ioType.lower() + "(name, topic ) values ('" + name + "','"+topic+ "');"
-        sqlCmd = "replace into " + ioType.lower() + "(name, topic, data_type ) values ('" + name + "','"+topic+ "','" + dataType + "');"
-        print(sqlCmd)
-        cursor.execute( sqlCmd )
-    elif ioType == 'INTERNAL':
-        sqlCmd = "replace into " + ioType.lower() + "(name) values ('" + name + "');"
+    if event == 'Submit':
+        if ioType == 'MQTT':
+    #        sqlCmd = "replace into " + ioType.lower() + "(name, topic ) values ('" + name + "','"+topic+ "');"
+            sqlCmd = "replace into " + ioType.lower() + "(name, topic, data_type ) values ('" + name + "','"+topic+ "','" + dataType + "');"
+            print(sqlCmd)
+            cursor.execute( sqlCmd )
+        elif ioType == 'INTERNAL':
+            sqlCmd = "replace into " + ioType.lower() + "(name) values ('" + name + "');"
+            print(sqlCmd)
+            cursor.execute( sqlCmd )
+        
+        sqlCmd = "replace into io_point (name,direction,io_type ) values ('" + name + "','"+ direction +"','" + ioType + "');"
+        
         print(sqlCmd)
         cursor.execute( sqlCmd )
     
-    sqlCmd = "replace into io_point (name,direction,io_type ) values ('" + name + "','"+ direction +"','" + ioType + "');"
-    
-    print(sqlCmd)
-    cursor.execute( sqlCmd )
-
-    sqlCmd = "update io_point," + ioType.lower() +  " set io_point.io_idx=" + ioType.lower() + ".idx where io_point.name = " + ioType.lower() + ".name;"
-    print(sqlCmd)
-    cursor.execute( sqlCmd )
+        sqlCmd = "update io_point," + ioType.lower() +  " set io_point.io_idx=" + ioType.lower() + ".idx where io_point.name = " + ioType.lower() + ".name;"
+        print(sqlCmd)
+        cursor.execute( sqlCmd )
 
     db.commit()
     cursor.close()
