@@ -25,12 +25,8 @@ class plcBase {
 
     private:
 		int fd;
-
-
 		map<string, string> ioPoint;   // name, value
-
 		bool cacheHit = true;
-
     protected:
 		vector<bool> logicStack;
 		bool verbose=false;

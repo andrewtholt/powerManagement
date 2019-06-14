@@ -14,7 +14,6 @@ class msTimer {
         bool running=false;
         bool oneShot = false;
         bool triggered = false;
-
     public:
 //        msTimer(int ms) { cout << "Hello " << endl ;};
         msTimer(int ms) ;

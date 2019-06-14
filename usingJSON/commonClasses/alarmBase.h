@@ -32,7 +32,6 @@ class alarmBase {
         bool state = true;
 
         dow_t dow=ALL;
-
     public:
         alarmBase();
         bool setDow(dow_t day);

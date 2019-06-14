@@ -72,7 +72,7 @@ bool plcSocket::getBoolValue(string shortName) {
     return v;
 }
 
-void plcSocket::plcSetup(string cfgFile) {
+const void plcSocket::plcSetup(string cfgFile) {
     plcBase::verbose = false;
     struct sockaddr_in si_other;
     socklen_t slen=sizeof(si_other);

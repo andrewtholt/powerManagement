@@ -11,8 +11,7 @@ class plcSocket : public plcBase {
         json config;
         int serverSock;
 
-        void plcSetup(string cfg);
-
+        const void plcSetup(string cfg);
     public:
         plcSocket();
         plcSocket(string cfgFile);
