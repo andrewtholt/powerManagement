@@ -14,9 +14,10 @@
 #include <time.h>
 
 #include <iostream>
-#include <string>
 #include <fstream>
 #include <sstream>
+
+#include <string>
 #include <vector>
 #include <thread>
 
@@ -229,9 +230,9 @@ void updateIO(MYSQL *conn, map<string, string>row) {
         //        string state = mqttQuery["state"];
         string oldState = mqttQuery["old_state"];
 
-        if( state != oldState ) {
+//        if( state != oldState ) {
             mqttPublish( topic, state) ;
-        }
+//        }
     }
 
     string sqlCmd = "update "+ row["io_type"] +" set old_state=state, state = '" + row["state"] + "' where name='" + name + "';";
