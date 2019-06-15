@@ -23,3 +23,7 @@ replace into mqtt(name, topic, data_type ) values ('SUNRISE','/test/SUNRISE','ST
 replace into io_point (name,direction,io_type ) values ('SUNRISE','IN','MQTT');
 update io_point,mqtt set io_point.io_idx=mqtt.idx where io_point.name = mqtt.name;
 
+
+replace into mqtt(name, topic, data_type ) values ('SUNSET','/test/SUNSET','STRING');
+replace into io_point (name,direction,io_type ) values ('SUNSET','IN','MQTT');
+update io_point,mqtt set io_point.io_idx=mqtt.idx where io_point.name = mqtt.name;
