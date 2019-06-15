@@ -29,7 +29,7 @@ def stateToLogic( state ) :
         return "FALSE"
 
 def usage():
-    print("Usage: logger.py -h|-l <file>| -c <cfg file>")
+    print("Usage: logger.py -h| -t <topic> -l <file> -c <cfg file>")
 
 def on_message(client, userData,msg):
     global data
