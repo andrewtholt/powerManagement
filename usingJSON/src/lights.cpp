@@ -22,23 +22,37 @@ int main() {
     t1->setStartTime(sunRise);
     t1->setEndTime(sunSet);
 
-    t1->dump();
     cout << t1->checkTime();
 
-    plc->dump();
 
     /*    04:30-23:30   DAY
      * ----][------------()
      */
 
 
+    cout << endl;
+
+    bool tState=false;
+    int count=0;
+
     while( true ) {
         plc->Push(t1->checkTime());
 
+        tState = t1->checkTime();
+
         plc->Invert();
+
+        count++;
+        cout << "======" << endl; ;
+        cout << "Count : "<< count << endl;
+        cout << "Stack " ;
         plc->displayStack();
+        cout << endl;
 
         plc->Out("MOTOR");
+
+        plc->dump();
+
         plc->End(30000 );
     }
 }

@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <mqueue.h>
 #include <poll.h>
+#include <time.h>
 
 #include <iostream>
 #include <string>
@@ -25,6 +26,7 @@ using json = nlohmann::json;
 using namespace std;
 
 mqd_t toDispatcher = 0;
+fstream toLog;
 
 struct toThread {
     int newsockfd;
@@ -193,6 +195,21 @@ void mqttPublish(string topic, string msg) {
     jsonOut += "\"state\" : \"" + msg+ "\" }\n";
 
     cout << jsonOut << endl;
+
+    time_t now ;
+    struct tm tmNow;
+    char timeBuffer[255];
+
+    if ( toLog ) {
+        now = time(NULL);
+        tmNow = *localtime(&now);
+
+        sprintf(timeBuffer, "%d:%d:%d ", tmNow.tm_hour, tmNow.tm_min, tmNow.tm_sec);
+
+        toLog << timeBuffer << " " ;
+        toLog << jsonOut << endl << flush;
+    }
+
     if (mq_send(toDispatcher, jsonOut.c_str(), jsonOut.length(), 0) < 0) {
         perror("mq_send");
     }
@@ -404,8 +421,10 @@ int main(int argc,  char *argv[]) {
     sockaddr_in serv_addr; // Server address
     string svcName = basename(argv[0]) ;
     string cfgFile = "/etc/mqtt/bridge.json";
+    string logFile = "";
 
-    while( (opt = getopt(argc, argv, "c:fhp:v")) != -1) {
+
+    while( (opt = getopt(argc, argv, "c:fhp:vl:")) != -1) {
         switch(opt) {
             case 'c':
                 cfgFile = optarg;
@@ -422,6 +441,9 @@ int main(int argc,  char *argv[]) {
                 break;
             case 'v':
                 verbose = true;
+                break;
+            case 'l':
+                logFile = optarg;
                 break;
         }
     }
@@ -454,6 +476,13 @@ int main(int argc,  char *argv[]) {
 
         fclose(run);
         run=NULL;
+    }
+
+    if( logFile != "") {
+        toLog.open(logFile,ios::out);
+        if( !toLog ) {
+            cerr << "Failed to create "+ logFile << endl;
+        }
     }
 
     uid_t powerUser = getUserIdByName("power");
