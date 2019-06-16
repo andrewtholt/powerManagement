@@ -216,6 +216,24 @@ void mqttPublish(string topic, string msg) {
     }
 }
 
+void dbReset(MYSQL *conn) {
+    int rc;
+    string sqlCmd;
+
+    sqlCmd = "update internal set old_state = state;";
+    rc = mysql_query(conn, sqlCmd.c_str());
+
+    sqlCmd = "update modbus set old_state = state;";
+    rc = mysql_query(conn, sqlCmd.c_str());
+
+    sqlCmd = "update mqtt set old_state = state;";
+    rc = mysql_query(conn, sqlCmd.c_str());
+
+    sqlCmd = "update snmp set old_state = state;";
+    rc = mysql_query(conn, sqlCmd.c_str());
+
+}
+
 void updateIO(MYSQL *conn, map<string, string>row) {
 
     string name = row["name"];
@@ -270,6 +288,8 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                 response.push_back(string("Pong!\n")); // Respond with "Pong!" 
             } else if( cmd[0] == "CLOSE" ) {
                 response.push_back(string("CLOSE")); 
+            } else if(cmd[0] == "RESET" ) {
+                dbReset(conn);
             }
             break;
         case 2:
@@ -315,7 +335,6 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                 if( cmd[1].at(0) == '$') {
                     string tmp = cmd[1];
                     localVariable[tmp ] = cmd[2];
-
                 } else {
                     row=getFromIoPoint(conn, cmd[1]);
 
