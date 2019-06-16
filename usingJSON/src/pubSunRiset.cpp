@@ -122,12 +122,13 @@ double GMST0( double d );
 
 
 void usage() {
-    printf("pubSunRiset -h|-v -c <cfgFile> -r <sunrise topic> -s <sunset topic>\n\n");
+    printf("pubSunRiset -h|-v -o <offset> -c <cfgFile> -r <sunrise topic> -s <sunset topic>\n\n");
     printf("\t-h\t\tHelp.\n");
     printf("\t-v\t\tVerbose.\n");
     printf("\t-c <cfgFile>\tUse config file.\n");
-    printf("\t-r <topic>\tOverride config file sunrise topic..\n");
-    printf("\t-s <topic>\tOverride config file sunset topic..\n");
+    printf("\t-o <offset>\tAdd offset (minutes) to sun rise time, and subtract from sunrise time.\n");
+    printf("\t-r <topic>\tOverride config file sunrise topic.\n");
+    printf("\t-s <topic>\tOverride config file sunset topic.\n");
 
 }
 /*
@@ -138,17 +139,17 @@ void usage() {
    << "exception id: " << e.id << endl;
    sunriseTopic = "/test/sunrise";
    }
- */
+   */
 
 string getFromJson(json j, vector<string> p, string defaultValue) {
 
     string v;
     string t;
     int len = p.size();
-    
+
     string dump = j.dump(4);
-    
-    
+
+
     cout << dump << endl;
 
     try {
@@ -159,14 +160,14 @@ string getFromJson(json j, vector<string> p, string defaultValue) {
                 v=j[ p[0]  ];
                 break;
             case 2:
-                
-            {
-                string a = p[0];
-                string b = p[1];
-                
-                v=j[a][b];
-            }
-                
+
+                {
+                    string a = p[0];
+                    string b = p[1];
+
+                    v=j[a][b];
+                }
+
                 break;
             case 3:
                 v=j[p[0]] [p[1]] [p[2]];
@@ -183,9 +184,25 @@ string getFromJson(json j, vector<string> p, string defaultValue) {
     return v;
 }
 
+string addOffset(int hh, int mm, int off) {
+
+    int ahh, amm;
+
+    int minutes = (hh * 60) + mm;
+
+    minutes += off;
+
+    ahh = minutes / 60;
+    amm = minutes % 60;
+
+    string res = to_string(ahh) + ":" + to_string(amm);
+
+    return res;
+}
+
 int main(int argc, char *argv[]) {
     int opt;
-    int year,month,day;
+    int year,month,day, dst;
     double lon, lat;
     double daylen, civlen, nautlen, astrlen;
     double rise, set, civ_start, civ_end, naut_start, naut_end;
@@ -204,7 +221,10 @@ int main(int argc, char *argv[]) {
     string sunriseTopic;
     string sunsetTopic;
 
-    while((opt = getopt(argc, argv, "c:hvr:s:")) != -1) {
+    bool useGMT = true;
+    int offset=0;
+
+    while((opt = getopt(argc, argv, "c:hvr:s:o:")) != -1) {
         switch(opt) {
             case 'c':
                 cfgFile = optarg;
@@ -221,6 +241,9 @@ int main(int argc, char *argv[]) {
                 break;
             case 's':   // Sunset
                 sunsetTopic=optarg;
+                break;
+            case 'o':
+                offset = atoi(optarg);
                 break;
         }
     }
@@ -280,6 +303,16 @@ int main(int argc, char *argv[]) {
     year = tm->tm_year + 1900 ;
     month = tm->tm_mon+1;
     day = tm->tm_mday;
+    dst = tm->tm_isdst;
+
+    /*
+
+    time_t rawtime;
+    struct tm timeinfo;  // get date and time info
+    time(&rawtime);
+    localtime_s(&timeinfo, &rawtime);
+    int isdaylighttime = timeinfo.tm_isdst;
+    */
 
 
     daylen  = day_length(year,month,day,lon,lat);
@@ -296,27 +329,43 @@ int main(int argc, char *argv[]) {
     setHH=(int)set ;
     setMM=(int)((set - setHH) * 60);
 
+
+    string sunRise;
+    string sunSet;
+
+    if( dst == 1 ) {
+        riseHH++;
+        setHH++;
+    }
+
+    if(offset > 0) {
+        sunRise = addOffset(riseHH, riseMM, offset);
+        sunSet = addOffset(setHH, setMM, offset);
+    } else {
+        sunRise = to_string(riseHH) + ":" + to_string(riseMM) ;
+        sunSet  = to_string(setHH) + ":" + to_string(setMM) ;
+    }
+
     if(verbose) {
         printf("====================\n");
         printf("Day     %02d\n", day);
         printf("Month   %02d\n", month);
         printf("Year    %4d\n\n", year);
 
-        printf("Sunrise %02d:%02d\n", riseHH, riseMM);
-        printf("Sunset  %02d:%02d\n", setHH, setMM);
+        printf("Offset           : %02d\n", offset);
+        cout <<"Sunrise :" << sunRise << endl; 
+        cout <<"Sunset  :" << sunSet  << endl; 
+
+        //        printf("Sunrise %02d:%02d\n", riseHH, riseMM);
+        //        printf("Sunset  %02d:%02d\n", setHH, setMM);
         printf("====================\n");
     }
 
-    char msg[255];
-    bzero(msg, sizeof(msg));
+    mosquitto_publish(mosq, NULL, (char *)sunriseTopic.c_str(), sunRise.length(),
+            (char *)sunRise.c_str(), 1,true) ;
 
-    sprintf( msg, "%02d:%02d", riseHH, riseMM);
-    mosquitto_publish(mosq, NULL, (char *)sunriseTopic.c_str(), strlen(msg) , (char *)msg, 1,true) ;
-
-    bzero(msg, sizeof(msg));
-
-    sprintf( msg, "%02d:%02d", setHH, setMM);
-    mosquitto_publish(mosq, NULL, (char *)sunsetTopic.c_str(), strlen(msg) , (char *)msg, 1,true) ;
+    mosquitto_publish(mosq, NULL, (char *)sunsetTopic.c_str(), sunSet.length(),
+            (char *)sunSet.c_str(), 1,true) ;
 
     rc=mosquitto_loop(mosq,-1,1);
 
