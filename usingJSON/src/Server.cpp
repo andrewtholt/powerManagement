@@ -216,6 +216,17 @@ void mqttPublish(string topic, string msg) {
     }
 }
 
+void dbReset(MYSQL *conn, string name) {
+    map<string, string>row;
+
+    row=getFromIoPoint(conn, name);
+    transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
+    string dataType = row["io_type"];
+
+    string sqlCmd = "update " + dataType + " set old_state = state where name='" + name + "';";
+    int rc = mysql_query(conn, sqlCmd.c_str());
+}
+
 void dbReset(MYSQL *conn) {
     int rc;
     string sqlCmd;
@@ -293,7 +304,9 @@ vector<string> handleRequest(MYSQL *conn, string request) {
             }
             break;
         case 2:
-            if( cmd[0] == "GET" ) {
+            if( cmd[0] == "RESET" ) {
+                dbReset(conn, cmd[1]);
+            } else if( cmd[0] == "GET" ) {
                 cout << "GET " << cmd[1] << endl;
 
                 if( cmd[1].at(0) == '$' ) {
