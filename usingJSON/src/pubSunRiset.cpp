@@ -131,15 +131,6 @@ void usage() {
     printf("\t-s <topic>\tOverride config file sunset topic.\n");
 
 }
-/*
-   try {
-   sunriseTopic = config["topics"]["sunrise"];
-   } catch (json::type_error &e) {
-   cout << "message: "    << e.what() << '\n'
-   << "exception id: " << e.id << endl;
-   sunriseTopic = "/test/sunrise";
-   }
-   */
 
 string getFromJson(json j, vector<string> p, string defaultValue) {
 
@@ -147,10 +138,8 @@ string getFromJson(json j, vector<string> p, string defaultValue) {
     string t;
     int len = p.size();
 
-    string dump = j.dump(4);
-
-
-    cout << dump << endl;
+//    string dump = j.dump(4);
+//    cout << dump << endl;
 
     try {
         switch(len) {
@@ -340,7 +329,7 @@ int main(int argc, char *argv[]) {
 
     if(offset > 0) {
         sunRise = addOffset(riseHH, riseMM, offset);
-        sunSet = addOffset(setHH, setMM, offset);
+        sunSet = addOffset(setHH, setMM, -offset);
     } else {
         sunRise = to_string(riseHH) + ":" + to_string(riseMM) ;
         sunSet  = to_string(setHH) + ":" + to_string(setMM) ;
@@ -356,8 +345,8 @@ int main(int argc, char *argv[]) {
         cout <<"Sunrise :" << sunRise << endl; 
         cout <<"Sunset  :" << sunSet  << endl; 
 
-        //        printf("Sunrise %02d:%02d\n", riseHH, riseMM);
-        //        printf("Sunset  %02d:%02d\n", setHH, setMM);
+                printf("Sunrise %02d:%02d\n", riseHH, riseMM);
+                printf("Sunset  %02d:%02d\n", setHH, setMM);
         printf("====================\n");
     }
 
