@@ -10,6 +10,7 @@
 #include <mosquitto.h>
 #include <sys/types.h>
 #include <pwd.h>
+#include <time.h>
 
 #include <iostream>
 #include <fstream>
@@ -18,6 +19,8 @@
 
 #include <nlohmann/json.hpp>
 
+#define LOG_FILE "/tmp/dispatch.log"
+
 using namespace std;
 using json = nlohmann::json;
 
@@ -25,7 +28,7 @@ void usage() {
     printf("Usage: dispatch -h | -c <cfg> -v \n\n");
 
        printf("\t-c <cfg>\tUse config file.\n");
-//       printf("\t-d\t\tDisplay received message.\n");
+       printf("\t-l\t\tLog received message.\n");
        printf("\t-h\t\tHelp.\n");
        printf("\t-f\t\tRun in foreground..\n");
        printf("\t-v\t\tVerbose.\n");
@@ -48,16 +51,21 @@ int main(int argc,char *argv[]) {
     int opt;
     bool mkPipe=false;
     bool runFlag=false;
-    bool dumpMsg=false;
+    bool logMsg=false;
     bool textFlag=false;
     bool verbose=false;
     bool fg=false;
+
+    string logFile = LOG_FILE;
 
     string cfgFile = "/etc/mqtt/bridge.json";
 
     json config ;
 
-    while ((opt = getopt(argc, argv, "hc:vf")) != -1) {
+    ofstream outfile;
+
+
+    while ((opt = getopt(argc, argv, "lhc:vf")) != -1) {
         switch(opt) {
             case 'h':
                 usage();
@@ -71,6 +79,9 @@ int main(int argc,char *argv[]) {
                 break;
             case 'v':
                 verbose=true;
+                break;
+            case 'l':
+                logMsg = true;
                 break;
         }
     }
@@ -163,6 +174,13 @@ int main(int argc,char *argv[]) {
         }
     }
 
+    if( logMsg) {
+        outfile.open(LOG_FILE, ios_base::app);
+    }
+
+    time_t t ;
+    struct tm now ;
+    char timeBuff[255];
     do {
         bzero(msg,msgSize);
         rc = mq_receive(mq, msg, msgSize, 0);
@@ -171,6 +189,18 @@ int main(int argc,char *argv[]) {
             perror("mq_receive");
             runFlag=false;
         } else {
+            if (logMsg){
+
+                bzero(timeBuff, 255);
+                t = time(NULL);
+                now = *localtime(&t);
+
+                sprintf(timeBuff,"%02d:%02d:%02d - ", now.tm_hour, now.tm_min, now.tm_sec);
+
+                outfile << timeBuff << msg << endl << flush;
+
+            }
+
             if(verbose) {
                 printf("%d bytes read\n",rc);
                 printf("%s\n", msg);
