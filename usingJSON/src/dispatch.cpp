@@ -228,6 +228,7 @@ int main(int argc,char *argv[]) {
 
                 if( rc != MOSQ_ERR_SUCCESS) {
                     cerr << "mosquitto_loop error:" << rc << endl;
+                    perror("mosquitt_loop:");
                 }
             }
 
