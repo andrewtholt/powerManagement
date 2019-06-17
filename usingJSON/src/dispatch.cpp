@@ -57,7 +57,7 @@ int main(int argc,char *argv[]) {
 
     json config ;
 
-    while ((opt = getopt(argc, argv, "hc:v")) != -1) {
+    while ((opt = getopt(argc, argv, "hc:vf")) != -1) {
         switch(opt) {
             case 'h':
                 usage();
