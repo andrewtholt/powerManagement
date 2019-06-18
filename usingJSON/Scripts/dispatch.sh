@@ -68,7 +68,7 @@ case "$1" in
         status
         if [  $RET -eq 1 ]; then
             echo "START"
-            $NAME
+            $NAME $ARGS
             sleep 1
         else
             echo "RUNNING"
