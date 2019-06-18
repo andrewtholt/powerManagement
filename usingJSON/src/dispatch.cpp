@@ -24,18 +24,32 @@
 using namespace std;
 using json = nlohmann::json;
 
+bool connected=false;
+
+void on_connect(struct mosquitto *mosq, void *obj, int result) {
+    connected=true;
+
+    cerr << "on_connect called, connected" << endl;
+}
+
+void on_disconnect(struct mosquitto *mosq, void *obj, int result) {
+    connected=false;
+
+    cerr << "on_disconnect called, disconnected" << endl;
+}
+
 void usage() {
     printf("Usage: dispatch -h | -c <cfg> -v \n\n");
 
-       printf("\t-c <cfg>\tUse config file.\n");
-       printf("\t-l\t\tLog received message.\n");
-       printf("\t-h\t\tHelp.\n");
-       printf("\t-f\t\tRun in foreground..\n");
-       printf("\t-v\t\tVerbose.\n");
-//       printf("\t-l\t\tLoop around for next message(s).\n");
-//       printf("\t-n <name>\tThe name of the queue to open/create.\n");
-//       printf("\t-s nn \t\tMessage size.\n");
-//       printf("\t-t\t\tMessage is text.\n");
+    printf("\t-c <cfg>\tUse config file.\n");
+    printf("\t-l\t\tLog received message.\n");
+    printf("\t-h\t\tHelp.\n");
+    printf("\t-f\t\tRun in foreground..\n");
+    printf("\t-v\t\tVerbose.\n");
+    //       printf("\t-l\t\tLoop around for next message(s).\n");
+    //       printf("\t-n <name>\tThe name of the queue to open/create.\n");
+    //       printf("\t-s nn \t\tMessage size.\n");
+    //       printf("\t-t\t\tMessage is text.\n");
 }
 
 uid_t getUserIdByName(const char *name) {
@@ -55,6 +69,9 @@ int main(int argc,char *argv[]) {
     bool textFlag=false;
     bool verbose=false;
     bool fg=false;
+
+    int rc;
+    int keepalive=0;
 
     string logFile = LOG_FILE;
 
@@ -113,14 +130,6 @@ int main(int argc,char *argv[]) {
         iamRoot = true;
     }
 
-    int rc;
-    int keepalive=0;
-    struct mosquitto *mosq = mosquitto_new("dispatch", true, NULL);
-
-    if( mosq) {
-        rc=mosquitto_connect(mosq, mosquittoHost.c_str(), mosquittoPort, keepalive);
-    }
-
     memset(&attr, 0, sizeof attr);
     // 
     // Max size of a message
@@ -136,15 +145,11 @@ int main(int argc,char *argv[]) {
 
     char msg[255];
 
-    //    char qName[255];
     string qName = "/toDispatcher";
-
-//    cout << qName << endl;
 
     int msgSize=255;
 
     mq=mq_open(qName.c_str(), O_RDONLY,0644,&attr);
-    //    mq=mq_open(qName.c_str(), O_RDONLY);
 
     if(mq == -1) {
         perror("mq_open");
@@ -178,19 +183,60 @@ int main(int argc,char *argv[]) {
         outfile.open(LOG_FILE, ios_base::app);
     }
 
+
+    struct mosquitto *mosq = mosquitto_new("dispatch", true, NULL);
+
+    if( !mosq) {
+        cerr << "Failed to create mosquitto." << endl;
+        exit(3);
+    }
+
+    /*
+    if( connected == false ) {
+        rc=mosquitto_connect(mosq, mosquittoHost.c_str(), mosquittoPort, keepalive);
+
+        mosquitto_connect_callback_set(mosq, on_connect);
+        mosquitto_disconnect_callback_set(mosq, on_disconnect);
+        rc=mosquitto_loop_start(mosq);
+
+        if( rc != MOSQ_ERR_SUCCESS) {
+            cerr << "mosquitto_loop_start error:" << rc << endl;
+            perror("mosquitt_loop_start:");
+            exit(2);
+        }
+    }
+    */
+
+
     time_t t ;
     struct tm now ;
     char timeBuff[255];
+    int len = 0;
+
     do {
         bzero(msg,msgSize);
-        rc = mq_receive(mq, msg, msgSize, 0);
+        len = mq_receive(mq, msg, msgSize, 0);
 
-        if ( rc < 0) {
+        if ( len < 0) {
             perror("mq_receive");
             runFlag=false;
         } else {
-            if (logMsg){
 
+            if( connected == false ) {
+                rc=mosquitto_connect(mosq, mosquittoHost.c_str(), mosquittoPort, keepalive);
+
+                mosquitto_connect_callback_set(mosq, on_connect);
+                mosquitto_disconnect_callback_set(mosq, on_disconnect);
+                rc=mosquitto_loop_start(mosq);
+
+                if( rc != MOSQ_ERR_SUCCESS) {
+                    cerr << "mosquitto_loop_start error:" << rc << endl;
+                    perror("mosquitt_loop_start:");
+                    exit(2);
+                }
+            }
+
+            if (logMsg){
                 bzero(timeBuff, 255);
                 t = time(NULL);
                 now = *localtime(&t);
@@ -202,7 +248,7 @@ int main(int argc,char *argv[]) {
             }
 
             if(verbose) {
-                printf("%d bytes read\n",rc);
+                printf("%d bytes read\n",len);
                 printf("%s\n", msg);
             }
 
@@ -224,12 +270,14 @@ int main(int argc,char *argv[]) {
                 }
 
                 mosquitto_publish(mosq, NULL, (char *)topic.c_str(), msg.length() , (char *)msg.c_str(), 1,true) ;
-                rc=mosquitto_loop(mosq,-1,1);
+                /*
+                   rc=mosquitto_loop(mosq,-1,1);
 
-                if( rc != MOSQ_ERR_SUCCESS) {
-                    cerr << "mosquitto_loop error:" << rc << endl;
-                    perror("mosquitt_loop:");
-                }
+                   if( rc != MOSQ_ERR_SUCCESS) {
+                   cerr << "mosquitto_loop error:" << rc << endl;
+                   perror("mosquitt_loop:");
+                   }
+                   */
             }
 
         }
