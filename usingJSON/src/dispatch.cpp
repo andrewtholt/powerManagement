@@ -46,10 +46,6 @@ void usage() {
     printf("\t-h\t\tHelp.\n");
     printf("\t-f\t\tRun in foreground..\n");
     printf("\t-v\t\tVerbose.\n");
-    //       printf("\t-l\t\tLoop around for next message(s).\n");
-    //       printf("\t-n <name>\tThe name of the queue to open/create.\n");
-    //       printf("\t-s nn \t\tMessage size.\n");
-    //       printf("\t-t\t\tMessage is text.\n");
 }
 
 uid_t getUserIdByName(const char *name) {
@@ -191,16 +187,15 @@ int main(int argc,char *argv[]) {
         exit(3);
     }
 
-        mosquitto_connect_callback_set(mosq, on_connect);
-        mosquitto_disconnect_callback_set(mosq, on_disconnect);
-        rc=mosquitto_connect(mosq, mosquittoHost.c_str(), mosquittoPort, keepalive);
+    mosquitto_connect_callback_set(mosq, on_connect);
+    mosquitto_disconnect_callback_set(mosq, on_disconnect);
+    rc=mosquitto_connect(mosq, mosquittoHost.c_str(), mosquittoPort, keepalive);
 
-        if( rc != MOSQ_ERR_SUCCESS) {
-            cerr << "mosquitto_connect error:" << rc << endl;
-            perror("mosquitt_connect:");
-            exit(2);
-        }
-//        rc=mosquitto_loop_start(mosq);
+    if( rc != MOSQ_ERR_SUCCESS) {
+        cerr << "mosquitto_connect error:" << rc << endl;
+        perror("mosquitt_connect:");
+        exit(2);
+    }
 
     time_t t ;
     struct tm now ;
@@ -215,25 +210,6 @@ int main(int argc,char *argv[]) {
             perror("mq_receive");
             runFlag=false;
         } else {
-
-            if( connected == false ) {
-
-                /*
-                mosquitto_connect_callback_set(mosq, on_connect);
-                mosquitto_disconnect_callback_set(mosq, on_disconnect);
-
-                rc=mosquitto_connect(mosq, mosquittoHost.c_str(), mosquittoPort, keepalive);
-//                rc=mosquitto_loop_start(mosq);
-
-                if( rc == MOSQ_ERR_SUCCESS) {
-                    connected = true;
-                } else {
-                    cerr << "mosquitto_loop_start error:" << rc << endl;
-                    perror("mosquitt_loop_start:");
-                    exit(2);
-                }
-                */
-            }
 
             if (logMsg){
                 bzero(timeBuff, 255);
