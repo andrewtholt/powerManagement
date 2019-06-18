@@ -210,7 +210,6 @@ int main(int argc,char *argv[]) {
             perror("mq_receive");
             runFlag=false;
         } else {
-
             if (logMsg){
                 bzero(timeBuff, 255);
                 t = time(NULL);
