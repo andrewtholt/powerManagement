@@ -22,6 +22,9 @@ int main() {
     t1->setStartTime(sunRise);
     t1->setEndTime(sunSet);
 
+//    t1->setStartTime("10:15");
+//    t1->setEndTime("10:37");
+
     cout << t1->checkTime();
 
 
