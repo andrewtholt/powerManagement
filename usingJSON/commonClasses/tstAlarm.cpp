@@ -5,7 +5,13 @@
 using namespace std;
 
 void usage() {
-    cout << "Help" << endl;
+    cout << "Usage: tstAlarm -h| -v -i -s <start time> -e <end-time>" << endl;
+    cout <<"\t-h\t\tHelp" << endl;
+    cout <<"\t-v\t\tVerbose." << endl;
+    cout <<"\t-i\t\tInvert.  State goes false between start and end time." << endl;
+    cout <<"\t-s <start>\tStart time, format hh:mm" << endl;
+    cout <<"\t-e <end>\tEnd time, format hh:mm" << endl;
+
 }
 
 int main(int argc, char *argv[]) {
