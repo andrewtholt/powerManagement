@@ -191,22 +191,16 @@ int main(int argc,char *argv[]) {
         exit(3);
     }
 
-    /*
-    if( connected == false ) {
-        rc=mosquitto_connect(mosq, mosquittoHost.c_str(), mosquittoPort, keepalive);
-
         mosquitto_connect_callback_set(mosq, on_connect);
         mosquitto_disconnect_callback_set(mosq, on_disconnect);
-        rc=mosquitto_loop_start(mosq);
+        rc=mosquitto_connect(mosq, mosquittoHost.c_str(), mosquittoPort, keepalive);
 
         if( rc != MOSQ_ERR_SUCCESS) {
-            cerr << "mosquitto_loop_start error:" << rc << endl;
-            perror("mosquitt_loop_start:");
+            cerr << "mosquitto_connect error:" << rc << endl;
+            perror("mosquitt_connect:");
             exit(2);
         }
-    }
-    */
-
+//        rc=mosquitto_loop_start(mosq);
 
     time_t t ;
     struct tm now ;
@@ -223,17 +217,22 @@ int main(int argc,char *argv[]) {
         } else {
 
             if( connected == false ) {
-                rc=mosquitto_connect(mosq, mosquittoHost.c_str(), mosquittoPort, keepalive);
 
+                /*
                 mosquitto_connect_callback_set(mosq, on_connect);
                 mosquitto_disconnect_callback_set(mosq, on_disconnect);
-                rc=mosquitto_loop_start(mosq);
 
-                if( rc != MOSQ_ERR_SUCCESS) {
+                rc=mosquitto_connect(mosq, mosquittoHost.c_str(), mosquittoPort, keepalive);
+//                rc=mosquitto_loop_start(mosq);
+
+                if( rc == MOSQ_ERR_SUCCESS) {
+                    connected = true;
+                } else {
                     cerr << "mosquitto_loop_start error:" << rc << endl;
                     perror("mosquitt_loop_start:");
                     exit(2);
                 }
+                */
             }
 
             if (logMsg){
@@ -270,14 +269,14 @@ int main(int argc,char *argv[]) {
                 }
 
                 mosquitto_publish(mosq, NULL, (char *)topic.c_str(), msg.length() , (char *)msg.c_str(), 1,true) ;
-                /*
-                   rc=mosquitto_loop(mosq,-1,1);
+                rc=mosquitto_loop(mosq,-1,1);
 
-                   if( rc != MOSQ_ERR_SUCCESS) {
-                   cerr << "mosquitto_loop error:" << rc << endl;
-                   perror("mosquitt_loop:");
-                   }
-                   */
+                if( rc != MOSQ_ERR_SUCCESS) {
+                    cerr << "mosquitto_loop error:" << rc << endl;
+                    perror("mosquitto_loop:");
+                    sleep(10);
+                    mosquitto_reconnect(mosq);
+                }
             }
 
         }
