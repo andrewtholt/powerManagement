@@ -31,6 +31,11 @@ class alarmBase {
         int32_t year=-1;
         bool state = true;
 
+        bool triggered = false; // if duration is set to 0, and now is start time then set
+                                // state true, and this too.
+                                // Next pass, this will be true, so set to false.
+                                // When we are pass the start time set this false.
+
         dow_t dow=ALL;
     public:
         alarmBase();

@@ -5,8 +5,9 @@
 using namespace std;
 
 void usage() {
-    cout << "Usage: tstAlarm -h| -v -i -s <start time> -e <end-time>" << endl;
+    cout << "Usage: tstAlarm -h| -d <duration> -v -i -s <start time> -e <end-time>" << endl;
     cout <<"\t-h\t\tHelp" << endl;
+    cout <<"\t-d <duration>\tDuration, in minutes.  If 0 output is true first time it's checked." << endl;
     cout <<"\t-v\t\tVerbose." << endl;
     cout <<"\t-i\t\tInvert.  State goes false between start and end time." << endl;
     cout <<"\t-s <start>\tStart time, format hh:mm" << endl;
@@ -27,8 +28,11 @@ int main(int argc, char *argv[]) {
 
     int opt;
 
-    while((opt = getopt(argc, argv, "hvis:e:")) != -1) {
+    while((opt = getopt(argc, argv, "d:hvis:e:")) != -1) {
         switch( opt ) {
+            case 'd':
+                duration = atoi(optarg);
+                break;
             case 'h':
                 usage();
                 exit(1);
@@ -48,8 +52,8 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    if( (startTime == "") || (endTime == "")) {
-        cerr << "Need start and end times." << endl;
+    if( startTime == "" ) {
+        cerr << "Need start time." << endl;
         usage();
         exit(1);
     }
@@ -58,21 +62,19 @@ int main(int argc, char *argv[]) {
 
     cout << "Unset " << t->checkTime() << endl;;
 
-//    alarmTime="13:10";
     t->setStartTime(startTime);
 
     cout << "Set time " + startTime + "\t" << t->checkTime() << endl;;
 
-    /*
-    duration=10;
-    t->setDuration(duration);
-    cout << "Set duration " + to_string(duration) + "\t" << t->checkTime() << endl;;
-    */
+    if( endTime == "" ) {
+        t->setDuration(duration);
+        cout << "Set duration " + to_string(duration) << endl;;
+    } else {
+        endTime = endTime ;
+        t->setEndTime(endTime);
 
-    endTime = endTime ;
-    t->setEndTime(endTime);
-
-    cout << "Set end time " + endTime + "\t" << t->checkTime() << endl;;
+        cout << "Set end time " + endTime + "\t" << t->checkTime() << endl;;
+    }
 
     t->setDow(ALL);
 

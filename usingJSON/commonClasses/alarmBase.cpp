@@ -64,12 +64,12 @@ bool alarmBase::setStartTime(string Time) {
     mm = atoi(tok);
 
     /*
-    vector<string> results;
-    results=boost::split(results, Time, [](char c){return c == ':';});
+       vector<string> results;
+       results=boost::split(results, Time, [](char c){return c == ':';});
 
-    int hh = stoi(results[0]); 
-    int mm = stoi(results[1]);
-    */
+       int hh = stoi(results[0]); 
+       int mm = stoi(results[1]);
+       */
 
     startTime =  (hh*60) + mm;
 
@@ -198,8 +198,18 @@ bool alarmBase::checkTime() {
         if( run ) {
             if( duration == 0) {
                 state = ( now == startTime ) ? true : false ;
+
+                if( state == true ) {
+                    if( triggered == false ) {
+                        triggered = true;
+                    } else {
+                        state = false;
+                    }
+                } else {
+                    triggered = false;
+                }
             } else {
-                state = ( (now >= startTime) && ( now <= (startTime + duration) ) );
+                state = ( (now >= startTime) && ( now < (startTime + duration) ) );
             }
         } else {
             state=false;
