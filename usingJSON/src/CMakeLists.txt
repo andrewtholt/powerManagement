@@ -24,6 +24,10 @@ add_executable(Server Server.cpp)
 target_compile_options(Server PUBLIC ${MYSQL_CFLAGS})
 target_link_libraries(Server ${MYSQL_LIBS} -lrt )
 
+add_executable(notify notify.cpp)
+target_compile_options(notify PUBLIC ${MYSQL_CFLAGS})
+target_link_libraries(notify ${MYSQL_LIBS} -lrt )
+
 add_executable(dispatch dispatch.cpp ${MQTT})
 target_link_libraries(dispatch ${MQTT} -lrt)
 
