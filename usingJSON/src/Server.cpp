@@ -399,13 +399,9 @@ void *handleConnection(void *xfer) {
             cout << inet_ntoa(cli_addr->sin_addr) << ":" << ntohs(cli_addr->sin_port)
                 << " connection closed by client" << endl;
             runFlag=false;
-            /*
-             *            break;
-             *            return (void *)NULL;
-             */
-        }
-        else if (n < 0)
+        } else if (n < 0) {
             cerr << "ERROR reading from socket" << endl;
+        }
 
         stringstream stream;
         stream << buffer << flush;
