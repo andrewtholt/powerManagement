@@ -30,8 +30,11 @@ target_link_libraries(dispatch ${MQTT} -lrt)
 add_executable(plc plc.cpp )
 target_link_libraries(plc aseClasses )
 
-add_executable(lights lights.cpp )
-target_link_libraries(lights aseClasses )
+add_executable(backLights backLights.cpp )
+target_link_libraries(backLights aseClasses )
+
+add_executable(porchLights porchLights.cpp )
+target_link_libraries(porchLights aseClasses )
 
 add_executable(pubSunRiset pubSunRiset.cpp)
 target_link_libraries(pubSunRiset m ${MQTT} -lrt)
