@@ -69,7 +69,6 @@ int main() {
         plc->Push(sunState->checkTime());
         plc->Invert();
 
-        plc->Push(lightsMorning->checkTime());
         plc->And();
 
         count++;
