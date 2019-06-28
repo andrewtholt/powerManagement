@@ -17,6 +17,7 @@ else
     # 
     # Append to cron powerCron.txt
     #
+    # sudo crontab -u power powerCron.txt
     echo "... done."
 fi
 
