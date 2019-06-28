@@ -13,7 +13,10 @@ if [ $? -eq 0  ]; then
     echo "User $USER exists"
 else
     echo "User $USER does not exist, create ..."
-    sudo useradd --system power
+    sudo useradd --create-home --system power
+    # 
+    # Append to cron powerCron.txt
+    #
     echo "... done."
 fi
 
