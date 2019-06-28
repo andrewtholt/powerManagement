@@ -1,0 +1,2 @@
+00  03  *   *   *   /opt/homeControl/bin/pubSunRiset -o 30
+
