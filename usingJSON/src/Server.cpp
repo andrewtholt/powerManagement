@@ -24,6 +24,7 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
+json config;
 using namespace std;
 
 mqd_t toDispatcher = 0;
@@ -379,8 +380,11 @@ void *handleConnection(void *xfer) {
     bzero(buffer, 256);
     MYSQL *conn;
 
+    /*
     ifstream cfgStream( ptr->cfgFile );
-    json config = json::parse(cfgStream);
+//    json config = json::parse(cfgStream);
+    config = json::parse(cfgStream);
+    */
 
     string dbName = config["database"]["name"];
     string db     = config["database"]["db"];
@@ -488,6 +492,9 @@ int main(int argc,  char *argv[]) {
         iamRoot = true;
         verbose = true;
     }
+
+    ifstream cfgStream( cfgFile );
+    config = json::parse(cfgStream);
 
 
     int rc=0;
