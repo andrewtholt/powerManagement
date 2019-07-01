@@ -215,7 +215,9 @@ void mqttPublish(string topic, string msg) {
         perror("mq_send");
     }
 }
-
+//
+// Set old=new for given value
+//
 void dbReset(MYSQL *conn, string name) {
     map<string, string>row;
 
@@ -226,7 +228,9 @@ void dbReset(MYSQL *conn, string name) {
     string sqlCmd = "update " + dataType + " set old_state = state where name='" + name + "';";
     int rc = mysql_query(conn, sqlCmd.c_str());
 }
-
+// 
+// Set old=new for all values
+//
 void dbReset(MYSQL *conn) {
     int rc;
     string sqlCmd;
