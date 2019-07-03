@@ -1,0 +1,7 @@
+
+Server depends on mysql and dispatch
+dispatch depends on mysql
+syncMQTT depends on mysql
+
+Applications depend on Server
+
