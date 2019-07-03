@@ -311,6 +311,18 @@ vector<string> handleRequest(MYSQL *conn, string request) {
         case 2:
             if( cmd[0] == "RESET" ) {
                 dbReset(conn, cmd[1]);
+            } else if( cmd[0] == "TOGGLE" ) {
+                row=getFromIoPoint(conn, cmd[1]);
+
+                if( row.size() > 0 ) {
+                    if( cmd[2] == "ON" ) {
+                        row["state"] = "OFF";
+                    } else {
+                        row["state"] = "ON";
+                    }
+                    updateIO(conn, row);
+                }
+
             } else if( cmd[0] == "GET" ) {
                 cout << "GET " << cmd[1] << endl;
 
