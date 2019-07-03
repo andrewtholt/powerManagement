@@ -9,7 +9,7 @@ file(GLOB SOURCES "*.cpp")
 
 message( ${CMAKE_SOURCE_DIR}/commonClasses )
 
-add_library(aseClasses SHARED alarmBase.cpp plcBase.cpp plcSocket.cpp timerBase.cpp timerBase.h toggle.cpp)
+add_library(aseClasses SHARED alarmBase.cpp plcBase.cpp plcSocket.cpp timerBase.cpp timerBase.h toggle.cpp edge.cpp)
 
 include_directories("${CMAKE_SOURCE_DIR}/commonClasses")
 SET (BASE_LIB_OUT_PATH "${CMAKE_SOURCE_DIR}/commonClasses")
@@ -28,4 +28,7 @@ target_link_libraries(tstAlarm aseClasses )
 
 add_executable(tstToggle tstToggle.cpp )
 target_link_libraries(tstToggle aseClasses )
+
+add_executable(tstEdge tstEdge.cpp )
+target_link_libraries(tstEdge aseClasses )
 

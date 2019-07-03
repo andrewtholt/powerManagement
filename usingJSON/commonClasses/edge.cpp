@@ -19,6 +19,7 @@ bool edge::run(bool in) {
             output=positive(in);
             break;
     }
+    return output;
 }
 
 
