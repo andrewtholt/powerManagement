@@ -46,12 +46,13 @@
     1+ out-buffer swap ( addr len )
 
     sid socket-send abort" socket-send" drop
-\    10 ms 
 
     begin
         in-buffer /buffer sid socket-recv 
         0 >
     until
+
+    in-buffer 16 dump
 ;
 
 
@@ -61,7 +62,6 @@
 
     s" GET SUNRISE" cmd
 
-    in-buffer 16 dump
 
 ;
 
