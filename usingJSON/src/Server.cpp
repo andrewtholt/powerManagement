@@ -303,7 +303,7 @@ vector<string> handleRequest(MYSQL *conn, string request) {
             if( cmd[0] == "PING" ) {
                 response.push_back(string("Pong!\n")); // Respond with "Pong!" 
             } else if( cmd[0] == "CLOSE" ) {
-                response.push_back(string("CLOSE")); 
+                response.push_back(string("CLOSE\n")); 
             } else if(cmd[0] == "RESET" ) {
                 dbReset(conn);
             }
@@ -330,6 +330,7 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                         row["state"] = "ON";
                     }
                     updateIO(conn, row);
+                    response.push_back( row["state"]+ "\n");
                 }
 
             } else if( cmd[0] == "GET" ) {
@@ -380,6 +381,7 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                     if( row.size() > 0 ) {
                         row["state"] = cmd[2];
                         updateIO(conn, row);
+                        response.push_back(string(row["state"] +"\n")); 
                     }
                 }
             }
@@ -446,13 +448,11 @@ void *handleConnection(void *xfer) {
 
                 for (int i = 0; i < response.size(); i++) {
                     string output = response[i];
-                    if (output != "CLOSE") {
-                        n = write(newsockfd, output.c_str(), output.length()); // Write response by line
-                        if (n < 0) {
-                            cerr << "ERROR writing to socket" << endl;
-                        }
+                    n = write(newsockfd, output.c_str(), output.length()); // Write response by line
+                    if (n < 0) {
+                        cerr << "ERROR writing to socket" << endl;
                     }
-                    else {
+                    if (output == "CLOSE\n") {
                         close(newsockfd); // Close the connection if response line == "CLOSE"
                         cout << inet_ntoa(cli_addr->sin_addr) << ":" << ntohs(cli_addr->sin_port)
                             << " connection terminated" << endl;
