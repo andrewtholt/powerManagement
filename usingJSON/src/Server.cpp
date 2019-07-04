@@ -313,9 +313,18 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                 dbReset(conn, cmd[1]);
             } else if( cmd[0] == "TOGGLE" ) {
                 row=getFromIoPoint(conn, cmd[1]);
+                transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
+
+                string ioType = row["io_type"] ;
+
+                if( ioType == "mqtt" ) {
+                    cout << "I'm MQTT" << endl;
+                    row = getFromMqttQuery(conn, cmd[1]) ;
+                    row["io_type"] = ioType;
+                }
 
                 if( row.size() > 0 ) {
-                    if( cmd[2] == "ON" ) {
+                    if( row["state"] == "ON" ) {
                         row["state"] = "OFF";
                     } else {
                         row["state"] = "ON";
@@ -507,7 +516,6 @@ int main(int argc,  char *argv[]) {
 
     ifstream cfgStream( cfgFile );
     config = json::parse(cfgStream);
-
 
     int rc=0;
 
