@@ -19,8 +19,10 @@ int main() {
     bool in=false;
     bool out=false;
     edge *t = new edge(RISING);
+    edge *t1 = new edge(FALLING);
 
 
+    cout << "POSITIVE EDGE" << endl;
     out=t->run( in ) ;
     cout << "In   : " << in  << endl;
     outputLogic(out) ;
@@ -55,5 +57,44 @@ int main() {
     cout << "In   : " << in  << endl;
     outputLogic(out) ;
     cout << "======" <<endl;
+
+    cout << "NEGATIVE EDGE" << endl;
+
+    in = false;
+    out=t1->run( in ) ;
+    cout << "In   : " << in  << endl;
+    outputLogic(out) ;
+    cout << "======" <<endl;
+
+    in = true;
+    out=t1->run( in ) ;
+    cout << "In   : " << in  << endl;
+    outputLogic(out) ;
+    cout << "======" <<endl;
+
+    in = true;
+    out=t1->run( in ) ;
+    cout << "In   : " << in  << endl;
+    outputLogic(out) ;
+    cout << "======" <<endl;
+
+    in = false;
+    out=t1->run( in ) ;
+    cout << "In   : " << in  << endl;
+    outputLogic(out) ;
+    cout << "======" <<endl;
+
+    in = false;
+    out=t1->run( in ) ;
+    cout << "In   : " << in  << endl;
+    outputLogic(out) ;
+    cout << "======" <<endl;
+
+    in = true;
+    out=t1->run( in ) ;
+    cout << "In   : " << in  << endl;
+    outputLogic(out) ;
+    cout << "======" <<endl;
+
 }
 

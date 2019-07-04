@@ -18,6 +18,9 @@ bool edge::run(bool in) {
         case RISING:
             output=positive(in);
             break;
+        case FALLING:
+            output=negative(in);
+            break;
     }
     return output;
 }
@@ -65,6 +68,25 @@ bool edge::positive(bool in) {
  * Effects: 
  ***********************************************************************/
 bool edge::negative(bool in) {
+    if( (in == false) && (flag == false) ) {
+        flag = in;
+        return false;
+    }
+
+    if( (in == false) && (flag == true) ) {
+        flag = in;
+        return true;
+    }
+
+    if( (in == true) && (flag == false )) {
+        flag = in;
+        return false;
+    }
+
+    if( (in == true) && (flag == true) ) {
+        flag = in;
+        return false;
+    }
 }
 
 
