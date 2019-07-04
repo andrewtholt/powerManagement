@@ -233,7 +233,9 @@ int main(int argc,char *argv[]) {
             if(verbose) {
                 cout << "Type : " + type << endl;
             }
-
+            //
+            // ********** Refactor each type into a function.
+            //
             if ( type == "mqtt" ) {
                 string topic = inJson["topic"];
                 string msg   = inJson["state"];
@@ -253,7 +255,9 @@ int main(int argc,char *argv[]) {
                     mosquitto_reconnect(mosq);
                 }
             }
-
+            // 
+            // ***********************
+            //
         }
     } while(runFlag);
 
