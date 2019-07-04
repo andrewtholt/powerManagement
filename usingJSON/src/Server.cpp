@@ -288,6 +288,7 @@ vector<string> handleRequest(MYSQL *conn, string request) {
     thread_local map<string, string> localVariable;
 
     localVariable["$TEST"] = "default";
+    localVariable["$PROTOCOL"] = "default";  // Set protocol.
 
     string name;
     string value;
@@ -306,6 +307,7 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                 response.push_back(string("CLOSE\n")); 
             } else if(cmd[0] == "RESET" ) {
                 dbReset(conn);
+                response.push_back(string("RESET\n")); 
             }
             break;
         case 2:
@@ -340,7 +342,14 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                     cout << "Local " << endl;
 
                     string tmp = cmd[1];
-                    response.push_back( localVariable[ tmp ] + "\n");
+                    string out;
+
+                    if ( localVariable[ tmp ] == "" ) {
+                        out = "<UNDEFIND>";
+                    } else {
+                        out = localVariable[ tmp ];
+                    }
+                    response.push_back( out + "\n");
                 } else {
                     row=getFromIoPoint(conn, cmd[1]);
 
@@ -384,6 +393,7 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                         response.push_back(string(row["state"] +"\n")); 
                     }
                 }
+                response.push_back(string(cmd[2] +"\n")); 
             }
             break;
     }
