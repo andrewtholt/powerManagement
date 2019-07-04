@@ -10,17 +10,17 @@ def usage(name):
     print("Usage: " + name)
 
 def main():
-    verbose=False
+    verbose=True
     data=None
 
-    HOST, PORT = "localhost", 9999
+    HOST, PORT = "localhost", 9191
     configFile="/etc/mqtt/bridge.json"
 
-    if len(sys.argv) != 3:
-        print("Usage: setPower.py <name> <value>")
+    if len(sys.argv) != 2:
+        print("Usage: togglePower.py <name>")
         exit(1)
 
-    data = "SET " + sys.argv[1] + " " + sys.argv[2] + "\n"
+    data = "TOGGLE " + sys.argv[1] + "\n"
 
     if os.path.exists(configFile):
         with open( configFile, 'r') as f:
