@@ -4,7 +4,7 @@
 
 0 value init-run
 
-0 value count
+\ 0 value count
 
 2048 constant O_NONBLOCK \ 04000 in ocatl
 
@@ -15,6 +15,9 @@
 4 constant F_SETFL ( Set file status flags.  )
 
 255 constant /buffer
+
+0 constant OFF
+-1 constant ON
 
 : init ( addr len port )
     init-run 0= if
@@ -35,7 +38,8 @@
     then
 ;
 
-: cmd ( addr len ) 
+\ : cmd ( addr len ) 
+: cmd { | size }
     out-buffer /buffer erase
     out-buffer /buffer erase
 
@@ -48,13 +52,17 @@
     sid socket-send abort" socket-send" drop
 
     begin
-        in-buffer /buffer sid socket-recv 
+        in-buffer 1+ /buffer sid socket-recv 
+        dup to size
         0 >
     until
 
-    in-buffer 16 dump
+    size in-buffer c!
 ;
 
+: boolCmd 
+    cmd in-buffer count evaluate
+;
 
 : main
     s" localhost" 9191 init
@@ -66,4 +74,3 @@
 ;
 
 \ main
-
