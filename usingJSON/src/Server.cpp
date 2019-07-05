@@ -390,7 +390,7 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                     if( row.size() > 0 ) {
                         row["state"] = cmd[2];
                         updateIO(conn, row);
-                        response.push_back(string(row["state"] +"\n")); 
+//                        response.push_back(string(row["state"] +"\n")); 
                     }
                 }
                 response.push_back(string(cmd[2] +"\n")); 

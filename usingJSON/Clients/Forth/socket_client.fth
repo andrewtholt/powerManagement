@@ -82,30 +82,35 @@
 \ main
 
 : t1
-    flush
-    s" GET START" boolCmd
-    in-buffer 10 dump
-    ." START " depth  . cr
-    s" GET MOTOR" boolCmd
-    ." MOTOR " depth  . cr
-    or 
-    ." OR    " depth  . cr
-
-    s" GET STOP" boolCmd
-    ." STOP " depth  . cr
-    invert and
-    ." INVERT and " depth  . cr
-
-    .s
-
-    if
-        s" SET MOTOR ON" 
-        boolCmd drop
-        ." MOTOR ON " depth  . cr
-    else
-        s" SET MOTOR OFF" 
-        boolCmd drop
-        ." MOTOR OFF" depth  . cr
-    then
+    s" localhost" 9191 init
+    begin
+//        flush
+        s" GET START" boolCmd
+        in-buffer 10 dump
+        ." START " depth  . cr
+        s" GET MOTOR" boolCmd
+        ." MOTOR " depth  . cr
+        or 
+        ." OR    " depth  . cr
+    
+        s" GET STOP" boolCmd
+        ." STOP " depth  . cr
+        invert and
+        ." INVERT and " depth  . cr
+    
+        .s
+    
+        if
+            s" SET MOTOR ON" 
+            boolCmd drop
+            ." MOTOR ON " depth  . cr
+        else
+            s" SET MOTOR OFF" 
+            boolCmd drop
+            ." MOTOR OFF" depth  . cr
+        then
+    
+        100 ms
+    again
 ;
 
