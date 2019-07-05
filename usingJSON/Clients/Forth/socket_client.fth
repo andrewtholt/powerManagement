@@ -38,10 +38,18 @@
     then
 ;
 
+: flush
+    begin
+        in-buffer 1+ /buffer sid socket-recv 
+        0 <
+    until
+    in-buffer /buffer erase
+;
+
 \ : cmd ( addr len ) 
 : cmd { | size }
     out-buffer /buffer erase
-    out-buffer /buffer erase
+    in-buffer /buffer erase
 
     dup -rot
 
@@ -57,7 +65,7 @@
         0 >
     until
 
-    size in-buffer c!
+    size 1- in-buffer c!
 ;
 
 : boolCmd 
@@ -68,9 +76,36 @@
     s" localhost" 9191 init
 \    s" 192.168.10.124" 9191 init
 
-    s" GET SUNRISE" cmd
-
-
+    s" GET SUNRISE" cmd in-buffer count type
 ;
 
 \ main
+
+: t1
+    flush
+    s" GET START" boolCmd
+    in-buffer 10 dump
+    ." START " depth  . cr
+    s" GET MOTOR" boolCmd
+    ." MOTOR " depth  . cr
+    or 
+    ." OR    " depth  . cr
+
+    s" GET STOP" boolCmd
+    ." STOP " depth  . cr
+    invert and
+    ." INVERT and " depth  . cr
+
+    .s
+
+    if
+        s" SET MOTOR ON" 
+        boolCmd drop
+        ." MOTOR ON " depth  . cr
+    else
+        s" SET MOTOR OFF" 
+        boolCmd drop
+        ." MOTOR OFF" depth  . cr
+    then
+;
+
