@@ -46,6 +46,7 @@ class MySocket:
     def set(self,name, value):
         cmd = "SET " + name + " " + value + "\n"
         self.mysend( cmd )
+        self.myreceive()
         
     def get(self,name):
         cmd = "GET " + name + "\n"
@@ -78,9 +79,9 @@ if __name__ == "__main__" :
 
     tst.connect("127.0.0.1", 9191)
 
-    tst.setBoolean("TEST",True)
+    tst.setBoolean("START",True)
 
     time.sleep(1)
 
-    print( tst.getBoolean("TEST"))
+    print( tst.getBoolean("START"))
 
