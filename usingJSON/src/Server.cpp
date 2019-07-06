@@ -527,6 +527,10 @@ int main(int argc,  char *argv[]) {
     ifstream cfgStream( cfgFile );
     config = json::parse(cfgStream);
 
+    if( verbose ) {
+        cout << "Using config file : " << cfgFile << endl;
+    }
+
     int rc=0;
 
     if (fg == false) {
