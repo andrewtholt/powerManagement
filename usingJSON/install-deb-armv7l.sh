@@ -49,6 +49,7 @@ DEST="${BASE}/opt/homeControl/bin"
 LIBS="${BASE}/opt/homeControl/lib"
 ETC="${BASE}/opt/homeControl/etc"
 SCRIPTS="${BASE}/opt/homeControl/Scripts"
+CLIENTS="${BASE}/opt/homeControl/Clients"
 DATA="${BASE}/opt/homeControl/data"
 MONIT="${BASE}/etc/monit"
 
@@ -83,13 +84,13 @@ for S in $SO; do
     cp $PLACE/../commonClasses/$S $LIBS
 done
 
-PYTHON="syncMQTT.py"
+PYTHON="pbNotify.py syncMQTT.py"
 PYTH_DIR="Python"
 for B in $PYTHON; do
     cp $PYTH_DIR/${B} $DEST
 done
 
-BINS="dispatch pubSunRiset Server"
+BINS="porchLights backLights dispatch pubSunRiset Server"
 
 for B in $BINS; do
     cp $PLACE/${B} $DEST
@@ -97,7 +98,7 @@ done
 
 cp Scripts/setup.sh  $DEST
 
-SCRIPTS="dispatch.sh  Server.sh syncMQTT.sh"
+SCRIPT_LIST="dispatch.sh Server.sh syncMQTT.sh"
 
 if [ ! -d $MONIT ]; then
     mkdir -p $MONIT
@@ -105,9 +106,14 @@ if [ ! -d $MONIT ]; then
     mkdir -p $MONIT/conf.d
 fi
 
-for S in $SCRIPTS; do
+for S in $SCRIPTS_LIST; do
     cp Scripts/$S  $MONIT/Scripts
 done
+
+mkdir -p $CLIENTS
+mkdir -p $CLIENTS/Forth
+
+cp $PLACE/../../Clients/Forth/*.fth $CLIENTS/Forth
 
 MONIT_CFG="dispatch.monitrc  Server.monitrc  syncMQTT.monitrc"
 pwd
