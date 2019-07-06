@@ -106,7 +106,7 @@ if [ ! -d $MONIT ]; then
     mkdir -p $MONIT/conf.d
 fi
 
-for S in $SCRIPTS_LIST; do
+for S in $SCRIPT_LIST; do
     cp Scripts/$S  $MONIT/Scripts
 done
 
