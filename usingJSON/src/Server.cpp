@@ -105,6 +105,37 @@ map<string,string> getFromInternalQuery(MYSQL *conn, string name) {
     return data;
 }
 
+map<string,string> getFromSnmpQuery(MYSQL *conn, string name) {
+    map<string,string> data;
+
+    MYSQL_FIELD *field;
+    string sqlCmd = "select * from snmpQuery where name='" + name + "';";
+
+    cout << sqlCmd << endl;
+
+    int rc = mysql_query(conn, sqlCmd.c_str());
+
+    MYSQL_RES *result = mysql_store_result( conn );
+    MYSQL_ROW row = mysql_fetch_row(result);
+    unsigned int num_rows   = mysql_num_rows(result);
+
+    unsigned int num_fields = mysql_num_fields(result);
+
+    if( num_rows > 0 ) {
+        char *headers[num_fields];
+        for(unsigned int i = 0; (field = mysql_fetch_field(result)); i++) {
+            cout << field->name ;
+            cout << ":" << row[i] << endl;
+
+            data[ field->name ] = row[i];
+
+        }
+    }
+
+    mysql_free_result( result );
+    return data;
+}
+
 map<string,string> getFromMqttQuery(MYSQL *conn, string name) {
     // void getFromMqttQuery(string name) {
     map<string,string> data;
@@ -373,7 +404,15 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                         } else {
                             response.push_back(string(row["state"] +"\n")); 
                         }
-                    }
+                    } else if( row["io_type"] == "snmp" ) {
+                        cout << "I'm SNMP" << endl;
+                        row = getFromSnmpQuery(conn, cmd[1]) ;
+                        if( row.size() == 0 ) {
+                            response.push_back("<UNDEFINED>");
+                        } else {
+                            response.push_back(string(row["state"] +"\n")); 
+                        }
+                    } 
                 }
             }
             break;
