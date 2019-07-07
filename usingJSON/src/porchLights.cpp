@@ -83,7 +83,9 @@ int main() {
 
         plc->Out("PORCH_LIGHTS");
 
-        plc->dump();
+        if( verbose ) {
+            plc->dump();
+        }
 
         plc->End(30000 );
     }
