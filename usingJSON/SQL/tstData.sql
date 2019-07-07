@@ -27,3 +27,12 @@ update io_point,mqtt set io_point.io_idx=mqtt.idx where io_point.name = mqtt.nam
 replace into mqtt(name, topic, data_type ) values ('SUNSET','/test/SUNSET','STRING');
 replace into io_point (name,direction,io_type ) values ('SUNSET','IN','MQTT');
 update io_point,mqtt set io_point.io_idx=mqtt.idx where io_point.name = mqtt.name;
+-- 
+-- SNMP table
+--
+replace into snmp (name,oid,ipAddress) values ('FANS','.1.3.6.1.4.1.318.1.1.4.4.2.1.3.8','192.168.10.51');
+replace into io_point (name,direction,io_type ) values ('FANS','OUT','SNMP');
+update io_point,snmp set io_point.io_idx=snmp.idx where io_point.name = snmp.name;
+
+
+

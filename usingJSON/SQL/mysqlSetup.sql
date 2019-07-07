@@ -16,6 +16,7 @@ drop table if exists internal;
 
 drop view if exists mqttQuery ;
 drop view if exists internalQuery ;
+drop view if exists snmpQuery ;
 -- 
 CREATE TABLE IF NOT EXISTS io_type (
     ioType VARCHAR(32) NOT NULL UNIQUE
@@ -32,7 +33,7 @@ insert into io_type (ioType) values ( 'SNMP');
 CREATE TABLE IF NOT EXISTS io_point (
     name VARCHAR(32) NOT NULL UNIQUE,
     direction ENUM('IN', 'OUT', 'DISABLED', 'INTERNAL') NOT NULL DEFAULT 'DISABLED',
-    io_type ENUM('INTERNAL', 'MQTT') NOT NULL DEFAULT 'MQTT',
+    io_type ENUM('INTERNAL', 'MQTT','SNMP') NOT NULL DEFAULT 'MQTT',
     io_idx INT
 );
 
@@ -67,7 +68,21 @@ create table if not exists  snmp (
     name varchar(32) not null unique,
     oid varchar(255) not null unique,
     ipAddress varchar(16) not null,
-    port int not null,
+    port int not null default 161,
+    ro_community varchar(32) not null default 'public',
+    rw_community varchar(32) not null default 'private',
+    -- 
+    --  Default values for APC MasterSwitch
+    -- 
+    on_value  int not null default 1,
+    off_value int not null default 2,
+    -- 
+    -- Hopefully invalid 
+    -- 
+    value int null default 3,
+    -- 
+    -- 
+    -- 
     on_state varchar(32) not null default 'ON',
     off_state varchar(32) not null default 'OFF',
     state VARCHAR(32) NOT NULL DEFAULT 'OFF',
@@ -106,4 +121,12 @@ CREATE VIEW internalQuery AS
     FROM
         io_point,internal
 	WHERE io_point.name = internal.name;
+
+CREATE VIEW snmpQuery AS
+    SELECT 
+        io_point.name, snmp.oid, value, on_value, off_value, 
+        snmp.state,snmp.old_state,io_point.direction,snmp.data_type,snmp.logtime
+    FROM
+        io_point,snmp
+	WHERE io_point.name = snmp.name;
 
