@@ -51,7 +51,9 @@ string plcSocket::getValue(string shortName) {
         int len  = write(serverSock, (char *)cmd.c_str(), (int)cmd.length());
 
         len = read(serverSock, buffer, sizeof(buffer));
-        res=buffer;
+        if( len > 0) {
+            res=buffer;
+        }
     }
 
     return res;
@@ -158,7 +160,9 @@ void plcSocket::setValue(string shortName, string value) {
     string cmd = "SET " + shortName + " " + value + "\r" ;
 
     int len = write(serverSock, cmd.c_str(), cmd.length() );
-    fsync( serverSock );
+    if( len > 0 ) {
+        fsync( serverSock );
+    }
 }
 
 void plcSocket::setBoolValue(string shortName, bool flag) {
