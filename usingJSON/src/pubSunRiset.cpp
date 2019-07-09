@@ -11,6 +11,8 @@
 #include <vector>
 #include <nlohmann/json.hpp>
 
+#include "utils.h"
+
 #define SUNRISE "/test/sunrise"
 #define SUNSET  "/test/sunset"
 
@@ -130,63 +132,6 @@ void usage() {
     printf("\t-r <topic>\tOverride config file sunrise topic.\n");
     printf("\t-s <topic>\tOverride config file sunset topic.\n");
 
-}
-
-string getFromJson(json j, vector<string> p, string defaultValue) {
-
-    string v;
-    string t;
-    int len = p.size();
-
-//    string dump = j.dump(4);
-//    cout << dump << endl;
-
-    try {
-        switch(len) {
-            case 0:
-                break;
-            case 1:
-                v=j[ p[0]  ];
-                break;
-            case 2:
-
-                {
-                    string a = p[0];
-                    string b = p[1];
-
-                    v=j[a][b];
-                }
-
-                break;
-            case 3:
-                v=j[p[0]] [p[1]] [p[2]];
-                break;
-            default:
-                cerr << "getFromJson:FATAL Error, too many parameters, Max is 3" << endl;
-                exit(4);
-                break;
-        }
-    } catch (json::type_error &e) {
-        v = defaultValue;
-    }
-
-    return v;
-}
-
-string addOffset(int hh, int mm, int off) {
-
-    int ahh, amm;
-
-    int minutes = (hh * 60) + mm;
-
-    minutes += off;
-
-    ahh = minutes / 60;
-    amm = minutes % 60;
-
-    string res = to_string(ahh) + ":" + to_string(amm);
-
-    return res;
 }
 
 int main(int argc, char *argv[]) {

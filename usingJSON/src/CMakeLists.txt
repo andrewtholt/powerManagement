@@ -29,7 +29,7 @@ target_compile_options(notify PUBLIC ${MYSQL_CFLAGS})
 target_link_libraries(notify ${MYSQL_LIBS} -lrt )
 
 add_executable(dispatch dispatch.cpp ${MQTT})
-target_link_libraries(dispatch ${MQTT} -lrt)
+target_link_libraries(dispatch ${MQTT} aseClasses -lrt)
 
 add_executable(plc plc.cpp )
 target_link_libraries(plc aseClasses )
@@ -41,7 +41,7 @@ add_executable(porchLights porchLights.cpp )
 target_link_libraries(porchLights aseClasses )
 
 add_executable(pubSunRiset pubSunRiset.cpp)
-target_link_libraries(pubSunRiset m ${MQTT} -lrt)
+target_link_libraries(pubSunRiset m ${MQTT} aseClasses -lrt)
 
 add_executable(syncMQTT syncMQTT.cpp)
 target_compile_options(syncMQTT PUBLIC ${MYSQL_CFLAGS})
