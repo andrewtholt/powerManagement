@@ -596,11 +596,11 @@ int main(int argc,  char *argv[]) {
 
     pthread_t thread_id;
 
-    while (true) {
-        int newsockfd; // New socket file descriptor
-        unsigned int clilen; // Client address size
-        sockaddr_in cli_addr; // Client address
+    int newsockfd; // New socket file descriptor
+    unsigned int clilen; // Client address size
+    sockaddr_in cli_addr; // Client address
 
+    while (true) {
         clilen = sizeof(sockaddr_in);
         newsockfd = accept(sockfd, (sockaddr *) &cli_addr, &clilen); // Block until a client connects
         if (newsockfd < 0)
@@ -616,8 +616,6 @@ int main(int argc,  char *argv[]) {
         //        ptr->cfgFile = "/etc/mqtt/bridge.json";
         ptr->cfgFile = cfgFile ;
 
-
-        //        handleConnection(ptr); // onne
         if( pthread_create( &thread_id , NULL ,  handleConnection , (void *)ptr) < 0) {
             perror("could not create thread");
             return 1;
