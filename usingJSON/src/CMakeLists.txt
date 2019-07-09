@@ -22,7 +22,7 @@ link_directories( "${CMAKE_SOURCE_DIR}/commonClasses" )
 
 add_executable(Server Server.cpp)
 target_compile_options(Server PUBLIC ${MYSQL_CFLAGS})
-target_link_libraries(Server ${MYSQL_LIBS} -lrt )
+target_link_libraries(Server ${MYSQL_LIBS} aseClasses -lrt )
 
 add_executable(notify notify.cpp)
 target_compile_options(notify PUBLIC ${MYSQL_CFLAGS})

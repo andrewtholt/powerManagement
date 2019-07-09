@@ -21,6 +21,8 @@
 #include <vector>
 #include <thread>
 
+#include "utils.h"
+
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
@@ -40,43 +42,6 @@ struct ioDetail {
     string ioType;
     string direction;
 };
-
-uid_t getUserIdByName(const char *name) {
-    struct passwd *pwd = getpwnam(name); /* don't free, see getpwnam() for details */
-    if(pwd == NULL) {
-        throw runtime_error(string("Failed to get userId from username : ") + name);
-    }
-    return pwd->pw_uid;
-}
-
-vector<string> split(const char *str, char c = ' ') {
-    vector<string> result;
-
-    do {
-        const char *begin = str;
-
-        while(*str != c && *str)
-            str++;
-
-        result.push_back(string(begin, str));
-    } while (0 != *str++);
-
-    return result;
-}
-
-inline string &ltrim(string& s, const char* t = " \t\n\r\f\v") {
-    s.erase(0, s.find_first_not_of(t));
-    return s;
-}
-
-inline string &rtrim(string& s, const char* t = " \t\n\r\f\v") {
-    s.erase(s.find_last_not_of(t) + 1); 
-    return s;
-}
-
-inline string &trim(string& s, const char* t = " \t\n\r\f\v") {
-    return ltrim(rtrim(s, t), t); 
-}
 
 map<string,string> getFromInternalQuery(MYSQL *conn, string name) {
     map<string,string> data;
