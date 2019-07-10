@@ -1,7 +1,9 @@
 #include <stdint.h>
 #include <iostream>
 #include <vector>
-#include <boost/algorithm/string.hpp>
+#include <strings.h>
+#include <string.h>
+// #include <boost/algorithm/string.hpp>
 
 /*
     When an instance is created the times are set to wildcards, so the state
