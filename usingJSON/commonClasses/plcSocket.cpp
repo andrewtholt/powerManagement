@@ -155,10 +155,15 @@ plcSocket::plcSocket(string cfgFile) {
  * Effects: 
  ***********************************************************************/
 void plcSocket::setValue(string shortName, string value) {
+    char buffer[64];
     string cmd = "SET " + shortName + " " + value + "\r" ;
 
     int len = write(serverSock, cmd.c_str(), cmd.length() );
     fsync( serverSock );
+    //
+    //  This read could be used to verify that the write took place.
+    //
+    len = read(serverSock, buffer, sizeof(buffer));
 }
 
 void plcSocket::setBoolValue(string shortName, bool flag) {

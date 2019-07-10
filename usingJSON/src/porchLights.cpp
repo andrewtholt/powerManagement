@@ -1,10 +1,21 @@
 #include <plcBase.h>
 #include <plcSocket.h>
+#include <time.h>
+
 #include "alarmBase.h"
 
 #include <iostream>
 
 using namespace std;
+
+void displayTime () {
+    time_t rawtime;
+    struct tm * timeinfo;
+
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+    printf ( "\n%s", asctime (timeinfo) );
+}
 
 int main() {
     bool verbose=true;
@@ -58,6 +69,10 @@ int main() {
             sunRise = plc->getValue("SUNRISE");
             sunSet = plc->getValue("SUNSET");
 
+            displayTime();
+            cout << "Sunrise : " << sunRise ;
+            cout << "Sunset  : " << sunSet ;
+
             sunState->setStartTime(sunRise);
             sunState->setEndTime(sunSet);
         }
@@ -74,11 +89,11 @@ int main() {
         count++;
 
         if( verbose ) {
-        	cout << "======" << endl; ;
-        	cout << "Count : "<< count << endl;
-        	cout << "Stack " ;
-        	plc->displayStack();
-        	cout << endl;
+            cout << "======" << endl; ;
+            cout << "Count : "<< count << endl;
+            cout << "Stack " ;
+            plc->displayStack();
+            cout << endl;
         }
 
         plc->Out("PORCH_LIGHTS");
