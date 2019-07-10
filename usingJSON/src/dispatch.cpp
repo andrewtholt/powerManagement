@@ -17,6 +17,7 @@
 
 #include <string>
 
+#include "utils.h"
 #include <nlohmann/json.hpp>
 
 #define LOG_FILE "/tmp/dispatch.log"
@@ -46,14 +47,6 @@ void usage() {
     printf("\t-h\t\tHelp.\n");
     printf("\t-f\t\tRun in foreground..\n");
     printf("\t-v\t\tVerbose.\n");
-}
-
-uid_t getUserIdByName(const char *name) {
-    struct passwd *pwd = getpwnam(name); /* don't free, see getpwnam() for details */
-    if(pwd == NULL) {
-        throw runtime_error(string("Failed to get userId from username : ") + name);
-    }
-    return pwd->pw_uid;
 }
 
 

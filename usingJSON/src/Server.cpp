@@ -21,6 +21,8 @@
 #include <vector>
 #include <thread>
 
+#include "utils.h"
+
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
@@ -40,43 +42,6 @@ struct ioDetail {
     string ioType;
     string direction;
 };
-
-uid_t getUserIdByName(const char *name) {
-    struct passwd *pwd = getpwnam(name); /* don't free, see getpwnam() for details */
-    if(pwd == NULL) {
-        throw runtime_error(string("Failed to get userId from username : ") + name);
-    }
-    return pwd->pw_uid;
-}
-
-vector<string> split(const char *str, char c = ' ') {
-    vector<string> result;
-
-    do {
-        const char *begin = str;
-
-        while(*str != c && *str)
-            str++;
-
-        result.push_back(string(begin, str));
-    } while (0 != *str++);
-
-    return result;
-}
-
-inline string &ltrim(string& s, const char* t = " \t\n\r\f\v") {
-    s.erase(0, s.find_first_not_of(t));
-    return s;
-}
-
-inline string &rtrim(string& s, const char* t = " \t\n\r\f\v") {
-    s.erase(s.find_last_not_of(t) + 1); 
-    return s;
-}
-
-inline string &trim(string& s, const char* t = " \t\n\r\f\v") {
-    return ltrim(rtrim(s, t), t); 
-}
 
 map<string,string> getFromInternalQuery(MYSQL *conn, string name) {
     map<string,string> data;
@@ -631,11 +596,11 @@ int main(int argc,  char *argv[]) {
 
     pthread_t thread_id;
 
-    while (true) {
-        int newsockfd; // New socket file descriptor
-        unsigned int clilen; // Client address size
-        sockaddr_in cli_addr; // Client address
+    int newsockfd; // New socket file descriptor
+    unsigned int clilen; // Client address size
+    sockaddr_in cli_addr; // Client address
 
+    while (true) {
         clilen = sizeof(sockaddr_in);
         newsockfd = accept(sockfd, (sockaddr *) &cli_addr, &clilen); // Block until a client connects
         if (newsockfd < 0)
@@ -651,8 +616,6 @@ int main(int argc,  char *argv[]) {
         //        ptr->cfgFile = "/etc/mqtt/bridge.json";
         ptr->cfgFile = cfgFile ;
 
-
-        //        handleConnection(ptr); // onne
         if( pthread_create( &thread_id , NULL ,  handleConnection , (void *)ptr) < 0) {
             perror("could not create thread");
             return 1;
