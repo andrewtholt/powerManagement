@@ -63,14 +63,6 @@ bool alarmBase::setStartTime(string Time) {
     tok = strtok_r(rest,":", &rest);
     mm = atoi(tok);
 
-    /*
-       vector<string> results;
-       results=boost::split(results, Time, [](char c){return c == ':';});
-
-       int hh = stoi(results[0]); 
-       int mm = stoi(results[1]);
-       */
-
     startTime =  (hh*60) + mm;
 
     return failFlag;
@@ -86,11 +78,28 @@ bool alarmBase::setStartTime(string Time) {
 bool alarmBase::setEndTime(string Time) {
     bool failFlag=true;
 
+    char buffer[16];
+    char *ptr;
+    char *tok;
+    char *rest = buffer;
+
+    bzero(buffer,sizeof(buffer));
+
+    strcpy( buffer, Time.c_str() ) ;
+
+    tok = strtok_r(rest,":", &rest);
+    int hh = atoi(tok);
+
+    tok = strtok_r(rest,":", &rest);
+    int mm = atoi(tok);
+
+    /*
     vector<string> results;
     results=boost::split(results, Time, [](char c){return c == ':';});
 
     int hh = stoi(results[0]); 
     int mm = stoi(results[1]);
+    */
 
     int et =  (hh*60) + mm;
 
