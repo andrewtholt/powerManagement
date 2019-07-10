@@ -1,24 +1,26 @@
 #!/bin/sh
 
-# set -x
+set -x
 
-PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+PATH="/opt/homeControl/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 export PATH
 
-NAME="fred"
+NAME="porchLights"
 CONFIG=""
-ARGS="-x -y -z"
+ARGS=""
 HOSTNAME=$(hostname)
 PIDFILE="/var/run/$NAME.pid"
 TOPIC="/home/office/$HOSTNAME/$NAME"
+MQTT=$(cat /etc/mqtt/bridge.json | jq -r .local.name)
 
 getPid() {
     PID=$(ps -ef | grep $1 | grep -v grep | awk '{ print $2 }')
     return $PID
 }
+
 pubStatus() {
     if [ ! -z "$TOPIC" ]; then
-        mosquitto_pub -r -h picobob -t $TOPIC -m $1
+        mosquitto_pub -r -h ${MQTT} -t $TOPIC -m $1
     fi
 }
 
@@ -26,8 +28,16 @@ status() {
     RET=1
 
     if [ -f "$PIDFILE" ]; then
-        pubStatus "UP"
-        RET=0
+        PID=$(cat ${PIDFILE})
+
+        kill -0 $PID
+        if [ $? -eq 0 ]; then
+            pubStatus "UP"
+            RET=0
+        else
+            pubStatus "DOWN"
+            RET=1
+        fi
     else
         pubStatus "DOWN"
         RET=1
@@ -62,13 +72,12 @@ case "$1" in
                 echo "Already running with pid $TPID"
             fi
         else
-            $NAME $ARGS
-        fi
+            nohup $NAME $ARGS > /dev/null 2>&1 &
 
-        nohup $NAME > /dev/null 2>&1  &
-        sleep 1
-        getPid $NAME
-        echo $? > $PIDFILE
+            sleep 1
+            getPid $NAME
+            echo $? > $PIDFILE
+        fi
         ;;
     stop)
         echo "Stop"

@@ -5,6 +5,7 @@ check program Server with path "/etc/monit/Scripts/Server.sh status"
 
     start program = "/etc/monit/Scripts/Server.sh start"
     stop program  = "/etc/monit/Scripts/Server.sh stop"
+    depends on dispatch
 
     if 5 restarts within 5 cycles then timeout
 
