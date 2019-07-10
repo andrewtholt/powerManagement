@@ -41,6 +41,7 @@ inline string &trim(string& s, const char* t = " \t\n\r\f\v") {
  ***********************************************************************/
 string plcSocket::getValue(string shortName) {
     string res = "UNKNOWN";
+    string tmp;
     char buffer[64];
 
     bzero(buffer, sizeof(buffer));
@@ -51,7 +52,8 @@ string plcSocket::getValue(string shortName) {
         int len  = write(serverSock, (char *)cmd.c_str(), (int)cmd.length());
 
         len = read(serverSock, buffer, sizeof(buffer));
-        res=buffer;
+        tmp=buffer;
+        string res = rtrim(tmp);
     }
 
     return res;
