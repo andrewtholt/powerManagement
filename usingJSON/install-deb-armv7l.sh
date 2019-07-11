@@ -90,6 +90,15 @@ for B in $PYTHON; do
     cp $PYTH_DIR/${B} $DEST
 done
 
+CFG=${PLACE}/../../JSON
+if [ ! -d $CFG ]; then
+    echo "No folder $PLACE"
+    exit 1
+fi
+
+mkdir -p ${BASE}/etc/mqtt
+cp ${CFG}/*.json ${BASE}/etc/mqtt
+
 BINS="porchLights backLights dispatch pubSunRiset Server"
 
 for B in $BINS; do
