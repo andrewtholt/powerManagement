@@ -8,7 +8,10 @@ import time
 import getopt
 
 def usage(name):
-    print("Usage: " + name)
+    print("Usage: " + name + "  -c <file>|--config <file> -n <name>|--name <name> -v|--verbose")
+    print("\t-c <file>\tConfig file, default is /etc/mqtt/bridge.json")
+    print("\t-n <name>\tThe name of tha data to read.")
+    print("\t-v\t\tVerbose.")
 
 def main():
     verbose=False
@@ -25,7 +28,7 @@ def main():
 
         for o,a in opts:
             if o in ["-h","--help" ]:
-                usage()
+                usage(sys.argv[0])
                 sys.exit()
             elif o in ["-c", "--config"]:
                 configFile = a
@@ -36,7 +39,7 @@ def main():
 
     except getopt.GetoptError as err:
         print(err)
-        usage()
+        usage(sys.argv[0])
         sys.exit(2)
 
 #    if len(sys.argv) != 2:
