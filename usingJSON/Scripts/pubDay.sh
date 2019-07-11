@@ -11,7 +11,7 @@ if [ $# -gt 0 ]; then
     TOPIC=$1
 fi
 
-mosquitto_pub -t $TOPIC -m $(date "+%j") -h $MQTT
+mosquitto_pub -t $TOPIC -m $(date "+%j") -h $MQTT -r
 
 
 
