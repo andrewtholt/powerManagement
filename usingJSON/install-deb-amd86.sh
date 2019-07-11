@@ -84,6 +84,12 @@ for S in $SO; do
     cp $PLACE/../commonClasses/$S $LIBS
 done
 
+mkdir -p $SCRIPTS 
+SCR="pubTime.sh pubDay.sh alarm.sh"
+for S in $SCR; do
+    cp ${HERE}/Scripts/${S} $SCRIPTS
+done
+
 PYTHON="pbNotify.py syncMQTT.py"
 PYTH_DIR="Python"
 for B in $PYTHON; do
