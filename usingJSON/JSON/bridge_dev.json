@@ -12,7 +12,7 @@
         "topic": "/home/office/+/power"
     },
     "database" : {
-        "name"   : "127.0.0.1",
+        "name"   : "192.168.10.124",
         "db"     : "automation",
         "user"   : "automation",
         "passwd" : "automation"

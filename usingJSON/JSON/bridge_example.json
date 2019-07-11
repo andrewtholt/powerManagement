@@ -2,7 +2,7 @@
     "remote": {
         "name": "test",
         "port": "1883",
-        "prefix": "andrewtholt60@gmail.com"
+        "prefix": "fred.smith@somewhere.com"
     },
     "local": {
         "name": "127.0.0.1",
