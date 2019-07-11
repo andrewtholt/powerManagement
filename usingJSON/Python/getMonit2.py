@@ -4,6 +4,7 @@ import urllib.parse
 import urllib.request
 
 import pprint
+import json
 
 import xml.etree.cElementTree as ET
 
@@ -40,7 +41,8 @@ def dictify(r,root=True):
 
 tst = (dictify(root))
 
-pprint.pprint(tst)
+# pprint.pprint(tst)
+print(json.dumps(tst))
 
 # print( tst['monit']['platform'][0]['name'])
 
