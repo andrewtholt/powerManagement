@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# This shell script if placed in /etc/apcupsd
+# will be called by /etc/apcupsd/apccontrol when the UPS
+# goes on batteries.
+# We send an email message to root to notify him.
+#
+
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/etc/apcupsd
+export PATH
+
+MQTT=$(cat /etc/mqtt/bridge.json | jq -r .local.name )
+
+mosquitto_pub -h $MQTT -t "/home/office/ups/STATUS" -m "ONBATT" -r
+
+pubStuff.sh
+
+# HOSTNAME=`hostname`
+# MSG="$HOSTNAME UPS $1 Power Failure !!!"
+# #
+# (
+#    echo "Subject: $MSG"
+#    echo " "
+#    echo "$MSG"
+#    echo " "
+#    /sbin/apcaccess status
+# ) | $APCUPSD_MAIL -s "$MSG" $SYSADMIN
+exit 0

@@ -1,2 +1,8 @@
+#
+# m h  dom mon dow   command
+
 00  03  *   *   *   /opt/homeControl/bin/pubSunRiset -o 30
+* *           * * * PT=/opt/homeControl/Scripts/pubTime.sh ; [ -x $PT ] && $PT
+0,15,30,45 04 * * * PD=/opt/homeControl/Scripts/pubDay.sh ;  [ -x $PD ] && $PD
+
 

@@ -4,6 +4,8 @@
 # 
 # Check if user 'power' exists, if not create.
 #
+
+echo "Running setup ...."
 USER="power"
 QUEUE="toDispatcher"
 

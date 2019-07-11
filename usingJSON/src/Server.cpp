@@ -481,6 +481,19 @@ void *handleConnection(void *xfer) {
 }
 
 void usage(string svcName){
+    cout << "Usage: Server -h|-c <cfg file> -f -p <port no> -v -l <log file>" << endl;
+    cout << endl;
+
+    cout << "\t-h\t\tHelp." << endl;
+    cout << "\t-c <cfg>\tUse specified config file." << endl;
+    cout << "\t-f\t\tRun in the foreground." << endl;
+    cout << "\t-p <port no>\tListen on this port." << endl;
+    cout << "\t-v\t\tVerbose." << endl;
+    cout << "\t-l <file name>\tLog to this file." << endl;
+    cout << endl;
+
+    cout << "\tDefault is equivalent to:" << endl;
+    cout << "\t\t Server -c /etc/mqtt/bridge.json -p 9191" << endl << endl ;
 }
 
 int main(int argc,  char *argv[]) {
@@ -494,7 +507,6 @@ int main(int argc,  char *argv[]) {
     string svcName = basename(argv[0]) ;
     string cfgFile = "/etc/mqtt/bridge.json";
     string logFile = "";
-
 
     while( (opt = getopt(argc, argv, "c:fhp:vl:")) != -1) {
         switch(opt) {
@@ -527,6 +539,7 @@ int main(int argc,  char *argv[]) {
         iamRoot = true;
         verbose = true;
     }
+
 
     ifstream cfgStream( cfgFile );
     config = json::parse(cfgStream);

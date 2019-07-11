@@ -1,0 +1,98 @@
+
+
+2016-06-01 17:39:58 apctest 3.14.12 (29 March 2014) debian
+Checking configuration ...
+sharenet.type = Network & ShareUPS Disabled
+cable.type = Custom Cable Smart
+mode.type = APC Smart UPS (any)
+Setting up the port ...
+Doing prep_device() ...
+
+You are using a SMART cable type, so I'm entering SMART test mode
+Hello, this is the apcupsd Cable Test program.
+This part of apctest is for testing Smart UPSes.
+Please select the function you want to perform.
+
+1) Query the UPS for all known values
+2) Perform a Battery Runtime Calibration
+3) Abort Battery Calibration
+4) Monitor Battery Calibration progress
+5) Program EEPROM
+6) Enter TTY mode communicating with UPS
+Q) Quit
+
+Select function number: 1
+
+I am going to run through the series of queries of the UPS
+that are used in initializing apcupsd.
+
+Simulating UPSlinkCheck ...
+Wrote: Y Got: SM
+Attempting to use smart_poll() ...
+Sent: Y Got: SM  Good -- smart_poll() works!.
+
+Going to ask for valid commands...
+Wrote: a Got: 3.?=.')-89@ABDEFGKLMNOPQRSUVWXYZabcdefgjklmnopqrsuxyz~
+Protocol version is: 3
+Alert characters are: ?=
+Command characters are: ^A^N^Z')-89@ABDEFGKLMNOPQRSUVWXYZabcdefgjklmnopqrsuxyz~
+
+Now running through apcupsd get_UPS capabilities().
+NA  indicates that the feature is Not Available
+
+UPS Status: 08
+Line quality: FF
+Reason for last transfer to batteries: S
+Self-Test Status: NO
+Line Voltage: 243.3
+Line Voltage Max: 243.3
+Line Voltage Min: 239.0
+Output Voltage: 243.3
+Batt level percent: 100.0
+Batt voltage: 13.69
+UPS Load: 009.7
+Line freq: 49.75
+Runtime left: 0047
+UPS Internal temp: NA
+Dip switch settings: NA
+Register 1: 00
+Register 2: 00
+Register 3: 00
+Sensitivity: H
+Wakeup delay: 060
+Sleep delay: 060
+Low transfer voltage: 208
+High transfer voltage: 253
+Batt charge for return: 15
+Alarm status: N
+Low battery shutdown level: 02
+UPS Name: ANDREW  
+UPS Self test interval: 336
+UPS manufacture date: 08/01/03
+UPS serial number: QS0331241606
+Date battery replaced: 24/11/08
+Output voltage when on batteries: 230
+Nominal battery voltage: 012
+Percent humidity: NA
+Ambient temperature: NA
+Firmware revision: 22.7.I
+Number of external batteries installed: NA
+Number of bad batteries installed: NA
+UPS model as defined by UPS: Smart-UPS 620   
+UPS EPROM capabilities string: uD43127130133136uA43108110112114uI43253257261265lD43106103100097lA43092090088086lI43208204200196e44200155090oD13115oA13100oI13230s441HMLLq44202050710p443060180300600k4410TLNr443000060180300E443336168ON OFF
+The EPROM string is 205 characters long!
+Hours since last self test: 008.9
+
+That is all for now.
+
+1) Query the UPS for all known values
+2) Perform a Battery Runtime Calibration
+3) Abort Battery Calibration
+4) Monitor Battery Calibration progress
+5) Program EEPROM
+6) Enter TTY mode communicating with UPS
+Q) Quit
+
+Select function number: q
+
+2016-06-01 17:40:31 End apctest.

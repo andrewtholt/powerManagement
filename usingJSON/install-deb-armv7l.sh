@@ -84,11 +84,26 @@ for S in $SO; do
     cp $PLACE/../commonClasses/$S $LIBS
 done
 
+mkdir -p $SCRIPTS 
+SCR="pubTime.sh pubDay.sh alarm.sh"
+for S in $SCR; do
+    cp ${HERE}/Scripts/${S} $SCRIPTS
+done
+
 PYTHON="pbNotify.py syncMQTT.py"
 PYTH_DIR="Python"
 for B in $PYTHON; do
     cp $PYTH_DIR/${B} $DEST
 done
+
+CFG=${PLACE}/../../JSON
+if [ ! -d $CFG ]; then
+    echo "No folder $PLACE"
+    exit 1
+fi
+
+mkdir -p ${BASE}/etc/mqtt
+cp ${CFG}/*.json ${BASE}/etc/mqtt
 
 BINS="porchLights backLights dispatch pubSunRiset Server"
 
