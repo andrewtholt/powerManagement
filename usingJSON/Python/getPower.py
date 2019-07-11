@@ -76,8 +76,6 @@ def main():
     
         # Receive data from the server and shut down
         received = str(sock.recv(1024), "utf-8")
-    if verbose:
-        print("Sent:     {}".format(data))
         
     print("{}".format(received),end="")
 
