@@ -1,0 +1,7 @@
+#!/bin/sh
+
+
+# 
+# Prevent apcupsd from shutting me down.
+#
+exit 99

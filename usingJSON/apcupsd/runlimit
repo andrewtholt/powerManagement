@@ -1,0 +1,25 @@
+#!/bin/sh
+#
+# This shell script if placed in /etc/apcupsd
+# will be called by /etc/apcupsd/apccontrol when the    
+# UPS goes back on to the mains after a power failure.
+# We send an email message to root to notify him.
+#
+PATH=/opt/power/apps:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export PATH
+
+/opt/power/apps/dPower.py -t proliant -o OFF
+/opt/power/apps/dPower.py -t MainFeed -o OFF
+
+
+# HOSTNAME=`hostname`
+# MSG="$HOSTNAME UPS $1 Power has returned"
+#
+# (
+#    echo "Subject: $MSG"
+#    echo " "
+#    echo "$MSG"
+#    echo " "
+#    /sbin/apcaccess status
+# ) | $APCUPSD_MAIL -s "$MSG" $SYSADMIN
+exit 0
