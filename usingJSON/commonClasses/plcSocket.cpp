@@ -51,9 +51,14 @@ string plcSocket::getValue(string shortName) {
     if( serverSock > 0) {
         int len  = write(serverSock, (char *)cmd.c_str(), (int)cmd.length());
 
+        errno = 0;
         len = read(serverSock, buffer, sizeof(buffer));
-        tmp=buffer;
-        string res = rtrim(tmp);
+        if( len > 0) {
+            tmp=buffer;
+            res = rtrim(tmp);
+        } else {
+            perror( "plcSocket::getValue");
+        }
     }
 
     return res;
