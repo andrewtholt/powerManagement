@@ -5,22 +5,48 @@ import sys
 import os.path
 import json
 import time
+import getopt
 
 def usage(name):
-    print("Usage: " + name)
+    print("Usage: setPower.py" + name)
+
 
 def main():
     verbose=False
     data=None
 
-    HOST, PORT = "localhost", 9999
+    HOST, PORT = "localhost", 9191
     configFile="/etc/mqtt/bridge.json"
 
-    if len(sys.argv) != 3:
-        print("Usage: setPower.py <name> <value>")
-        exit(1)
+    dataName = ""
+    dataValue=""
 
-    data = "SET " + sys.argv[1] + " " + sys.argv[2] + "\n"
+    try:
+        opts,args = getopt.getopt(sys.argv[1:],"c:d:hn:v", ["config=","def=","help","name=","verbose"])
+
+        for o,a in opts:
+            if o in ["-h","--help" ]:
+                usage()
+                sys.exit()
+            elif o in ["-c", "--config"]:
+                configFile = a 
+            elif o in ["-d","--def"]:
+                dataValue=a
+            elif o in ["-n","--name"]:
+                dataName = a 
+            elif o in ["-v","--verbose"]:
+                verbose=True
+
+    except getopt.GetoptError as err:
+        print(err)
+        usage()
+        sys.exit(2)
+
+    if dataName=="" and dataValue=="":
+        usage()
+        sys.exit()
+
+    cmd = "SET " + dataName + " " + dataValue
 
     if os.path.exists(configFile):
         with open( configFile, 'r') as f:
@@ -35,14 +61,14 @@ def main():
     if verbose:
         print("Host    : " + HOST)
         print("Port    : " , PORT)
-        print("Command : " + data)
+        print("Command : " + cmd)
 
 
     # Create a socket (SOCK_STREAM means a TCP socket)
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         # Connect to server and send data
         sock.connect((HOST, PORT))
-        sock.sendall(bytes(data + "\n", "utf-8"))
+        sock.sendall(bytes(cmd + "\n", "utf-8"))
     
 main()
 

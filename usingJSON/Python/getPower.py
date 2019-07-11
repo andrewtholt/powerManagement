@@ -5,6 +5,7 @@ import sys
 import os.path
 import json
 import time
+import getopt
 
 def usage(name):
     print("Usage: " + name)
@@ -13,16 +14,40 @@ def main():
     verbose=False
     data=None
 
-    HOST, PORT = "localhost", 9999
+    portSet=False
+    hostSet=False
+
+    HOST, PORT = "localhost", 9191
     configFile="/etc/mqtt/bridge.json"
 
-    if len(sys.argv) != 2:
-        print("Usage: getPower.py <name>")
-        exit(1)
+    try:
+        opts,args = getopt.getopt(sys.argv[1:],"c:hn:v", ["config=","help","name=","verbose"])
 
-    data = "GET " + sys.argv[1] + "\n"
+        for o,a in opts:
+            if o in ["-h","--help" ]:
+                usage()
+                sys.exit()
+            elif o in ["-c", "--config"]:
+                configFile = a
+            elif o in ["-n","--name"]:
+                data = "GET " + a
+            elif o in ["-v","--verbose"]:
+                verbose=True
 
-#    print(data)
+    except getopt.GetoptError as err:
+        print(err)
+        usage()
+        sys.exit(2)
+
+#    if len(sys.argv) != 2:
+#        print("Usage: getPower.py <name>")
+#        exit(1)
+#
+#    data = "GET " + sys.argv[1] + "\n"
+
+    if verbose:
+        print("Config file:" + configFile)
+        print("Data name  :" + data)
 
     if os.path.exists(configFile):
         with open( configFile, 'r') as f:
