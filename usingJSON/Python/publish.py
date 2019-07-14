@@ -34,11 +34,11 @@ def on_connect(client, userdata, flags, rc):
     client.publish(topic, payload, qos=0, retain=True)
 
 def usage(name):
-    print("Usage:" + name + " -v|--verbose -c <cfg>|--config <cfg> -t <topic>|--topic <topic> -p <msg>|--payload <msg>")
+    print("Usage:" + name + " -v|--verbose -c <cfg>|--config <cfg> -t <topic>|--topic <topic> -m <msg>|--msg <msg>")
     print("\t-v\t\tVerbose.")
     print("\t-c <cfg>\tLoad config file.  Default is /etrc/mqtt/bridge.json")
     print("\t-t <topic>\tPublish to topic.")
-    print("\t-p <msg>\tMsg to publish.")
+    print("\t-m <msg>\tMsg to publish.")
 
 def main():
     global db
@@ -46,8 +46,9 @@ def main():
     global topic
     global payload
 
+    configFile="/etc/mqtt/bridge.json"
     try:
-        opts,args = getopt.getopt(sys.argv[1:], "vc:hp:t:", ["verbose","config=","help","payload=","topic="])
+        opts,args = getopt.getopt(sys.argv[1:], "vc:hm:t:", ["verbose","config=","help","msg=","topic="])
         for o,a in opts:
             if o in ["-h","--help"]:
                 usage(sys.argv[0])
@@ -58,7 +59,7 @@ def main():
                 verbose = True
             elif o in ["-t","--topic"]:
                 topic = a
-            elif o in ["-p","--payload"]:
+            elif o in ["-m","--msg"]:
                 payload = a
 
     except getopt.GetoptError as err:
@@ -78,7 +79,6 @@ def main():
     mqttBroker = 'localhost'
     mqttPort = 1883
 
-    configFile="/etc/mqtt/bridge.json"
 
     if os.path.exists(configFile):
         with open( configFile, 'r') as f:
@@ -94,7 +94,7 @@ def main():
 
 
     if verbose:
-        print(database)
+        print("Database: " + database)
 
     db = sql.connect(database, "automation","automation","automation")
 

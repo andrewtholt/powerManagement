@@ -29,6 +29,9 @@ def on_connect(client, userdata, flags, rc):
     connected=True
     print("On Connect")
 
+def usage(name):
+    print("Usage: " + name + " ")
+
 def main():
     global db
 
@@ -36,7 +39,7 @@ def main():
         opts,args = getopt.getopt(sys.argv[1:], "c:h", ["config=","help"])
         for o,a in opts:
             if o in ["-h","--help"]:
-                usage()
+                usage(sys.argv[0])
                 sys.exit()
             elif o in ["-c","--config"]:
                 configFile = a
