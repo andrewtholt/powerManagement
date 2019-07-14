@@ -42,8 +42,12 @@ def on_connect(client, userdata, flags, rc):
 
     client.publish(topic, payload, qos=0, retain=True)
 
-def usage():
-    print("Help")
+def usage(name):
+    print("Usage:" + name + " -v|--verbose -c <cfg>|--config <cfg> -t <topic>|--topic <topic> -p <msg>|--payload <msg>")
+    print("\t-v\t\tVerbose.")
+    print("\t-c <cfg>\tLoad config file.  Default is /etrc/mqtt/bridge.json")
+    print("\t-t <topic>\tPublish to topic.")
+    print("\t-p <msg>\tMsg to publish.")
 
 def main():
     global db
@@ -55,7 +59,7 @@ def main():
         opts,args = getopt.getopt(sys.argv[1:], "vc:hp:t:", ["verbose","config=","help","payload=","topic="])
         for o,a in opts:
             if o in ["-h","--help"]:
-                usage()
+                usage(sys.argv[0])
                 sys.exit()
             elif o in ["-c","--config"]:
                 configFile = a
@@ -68,7 +72,7 @@ def main():
 
     except getopt.GetoptError as err:
         print(err)
-        usage()
+        usage(sys.argv[0])
         sys.exit(2)
 
     if verbose:
@@ -76,7 +80,7 @@ def main():
         print("Payload :" + payload)
 
     if topic == "" or payload == "":
-        usage()
+        usage(sys.argv[0])
         sys.exit(2)
 
     database = 'localhost'
