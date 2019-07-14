@@ -107,7 +107,10 @@ def main():
 
     cursor = db.cursor()
     sqlCmd = "update mqtt set state = '" + payload + "' where topic = '" + topic + "';"
-    print(sqlCmd)
+
+    if verbose:
+        print(sqlCmd)
+
     cursor.execute( sqlCmd )
     db.commit()
     cursor.close()
@@ -121,7 +124,7 @@ def main():
     global connected
 
     while not connected:
-        print("Waiting ...")
+#        print("Waiting ...")
         time.sleep(0.1)
         mqttClient.loop()
 
