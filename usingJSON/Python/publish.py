@@ -30,15 +30,6 @@ def on_message(client, userData,msg):
 def on_connect(client, userdata, flags, rc):
     global connected
     connected=True
-    print("On Connect")
-
-#    cursor = db.cursor()
-#    sql = "update mqtt set state = '" + payload + "' where topic = '" + topic + "';"
-#    print(sql)
-#    cursor.execute( sql )
-#    db.commit()
-#
-#    cursor.close()
 
     client.publish(topic, payload, qos=0, retain=True)
 
@@ -102,7 +93,9 @@ def main():
         print(".. using defaults")
 
 
-    print(database)
+    if verbose:
+        print(database)
+
     db = sql.connect(database, "automation","automation","automation")
 
     cursor = db.cursor()
