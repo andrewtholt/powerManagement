@@ -40,7 +40,7 @@ def usage(name):
     print("\t-h\t\tHelp.")
     print("\t-c <cfg>\tUse config file.  Default is /etc/mqtt/bridge.json")
     print("\t-t <topic>\tTopic of interest, no wild cards.")
-    print("\t-m <msg>\tWhen message conten matches this exit with status 0.")
+    print("\t-m <msg>\tWhen message content matches this exit with status 0.")
 
 def main():
     global db
