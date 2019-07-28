@@ -18,17 +18,17 @@ drop view if exists mqttQuery ;
 drop view if exists internalQuery ;
 drop view if exists snmpQuery ;
 -- 
-CREATE TABLE IF NOT EXISTS io_type (
-    ioType VARCHAR(32) NOT NULL UNIQUE
-);
+-- CREATE TABLE IF NOT EXISTS io_type (
+--    ioType VARCHAR(32) NOT NULL UNIQUE
+-- );
 
 --
 -- Note these will become the names of tables.
 --
-insert into io_type (ioType) values ( 'INTERNAL');
-insert into io_type (ioType) values ( 'MQTT');
-insert into io_type (ioType) values ( 'MODBUS');
-insert into io_type (ioType) values ( 'SNMP');
+-- insert into io_type (ioType) values ( 'INTERNAL');
+-- insert into io_type (ioType) values ( 'MQTT');
+-- insert into io_type (ioType) values ( 'MODBUS');
+-- insert into io_type (ioType) values ( 'SNMP');
 
 CREATE TABLE IF NOT EXISTS io_point (
     name VARCHAR(32) NOT NULL UNIQUE,
