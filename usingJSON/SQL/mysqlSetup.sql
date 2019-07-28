@@ -63,10 +63,10 @@ CREATE TABLE IF NOT EXISTS mqtt (
     PRIMARY KEY (idx)
 );
 
-create table if not exists  snmp ( 
+create table if not exists snmp ( 
     idx INT NOT NULL AUTO_INCREMENT,
     name varchar(32) not null unique,
-    oid varchar(255) not null unique,
+    oid varchar(128) not null unique,
     ipAddress varchar(16) not null,
     port int not null default 161,
     ro_community varchar(32) not null default 'public',
