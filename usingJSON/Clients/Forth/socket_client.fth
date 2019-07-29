@@ -45,8 +45,11 @@
     until
     in-buffer /buffer erase
 ;
-
-\ : cmd ( addr len ) 
+\ 
+\ Takes a command as a addr count and sends it,
+\ The response is a counted string in the in-buffer.
+\ 
+\ stack addr len 
 : cmd { | size }
     out-buffer /buffer erase
     in-buffer /buffer erase
