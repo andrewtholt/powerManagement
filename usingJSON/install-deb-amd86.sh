@@ -90,7 +90,7 @@ for S in $SCR; do
     cp ${HERE}/Scripts/${S} $SCRIPTS
 done
 
-PYTHON="pbNotify.py syncMQTT.py"
+PYTHON="pbNotify.py syncMQTT.py mqtt.py snmp.py"
 PYTH_DIR="Python"
 for B in $PYTHON; do
     cp $PYTH_DIR/${B} $DEST
@@ -105,7 +105,7 @@ fi
 mkdir -p ${BASE}/etc/mqtt
 cp ${CFG}/*.json ${BASE}/etc/mqtt
 
-BINS="porchLights backLights dispatch pubSunRiset Server"
+BINS="porchLights backLights tDispatch pubSunRiset Server"
 
 for B in $BINS; do
     cp $PLACE/${B} $DEST
