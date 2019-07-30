@@ -124,7 +124,9 @@ CREATE VIEW internalQuery AS
 
 CREATE VIEW snmpQuery AS
     SELECT 
-        io_point.name, snmp.oid, value, on_value, off_value, 
+        io_point.name, snmp.ipAddress, snmp.port,
+        snmp.oid, value, on_value, off_value, 
+        snmp.ro_community, snmp.rw_community,
         snmp.state,snmp.old_state,io_point.direction,snmp.data_type,snmp.logtime
     FROM
         io_point,snmp

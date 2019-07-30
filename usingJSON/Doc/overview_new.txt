@@ -1,0 +1,28 @@
+@startuml
+left to right direction
+
+[Client] --> Mine 
+
+Mine --> [Socket Server] 
+
+frame Dispatcher as dispatcher {
+[dispatch]
+[dispatch] --> MSG_MQTT
+[dispatch] --> MSG_SNMP
+MSG_SNMP --> [SNMP]
+MSG_MQTT --> [MQTT]
+}
+MQ --> [dispatch]
+
+MySQL - [MySQL DB]
+[syncMQTT] --> [MySQL DB]
+[Socket Server] --> MQ
+[Socket Server] --> MySQL
+
+cloud {
+    [MQTT Broker]
+}
+[MQTT Broker] <--> [syncMQTT]
+MQTT --> [MQTT Broker]
+
+@enduml

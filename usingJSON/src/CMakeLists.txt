@@ -31,6 +31,9 @@ target_link_libraries(notify ${MYSQL_LIBS} -lrt )
 add_executable(dispatch dispatch.cpp ${MQTT})
 target_link_libraries(dispatch ${MQTT} aseClasses -lrt)
 
+add_executable(tDispatch tDispatch.cpp ${MQTT})
+target_link_libraries(tDispatch ${MQTT} aseClasses -lrt)
+
 add_executable(plc plc.cpp )
 target_link_libraries(plc aseClasses )
 

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-set -x
+# set -x
 
-USER="change me"
-PASS="change me"
-DBNAME="change me"
+USER="automation"
+PASS="automation"
+DBNAME="automation"
 
 DATE=$(date "+%Y%m%d")
 

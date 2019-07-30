@@ -165,6 +165,59 @@ map<string,string> getFromIoPoint(MYSQL *conn, string name) {
     return data;
 }
 
+void snmpPublish(map<string,string> in) {
+    struct mq_attr attr;
+    string jsonOut;
+
+    string outState;
+
+    char outBuffer[255];
+    bzero(outBuffer,255);
+
+    cout << "SNMP Publish" << endl;
+
+    jsonOut = "{ ";
+
+    jsonOut += "\"type\" : \"snmp\","  ;
+
+    jsonOut += "\"ip\" : \"" + in["ipAddress"] + "\",";
+    jsonOut += "\"port\" : \"" + in["port"] + "\",";
+
+    jsonOut += "\"ro_community\" : \"" + in["ro_community"] + "\",";
+    jsonOut += "\"rw_community\" : \"" + in["rw_community"] + "\",";
+
+    jsonOut += "\"oid\" : \"" + in["oid"] + "\",";
+
+    if ( in["state"] == "ON" ) {
+        outState = in["on_value"];
+    } else if ( in["state"] == "OFF" ) {
+        outState = in["off_value"];
+    } else {
+        outState = "0";
+    }
+
+    jsonOut += "\"state\" : \"" + outState + "\"";
+
+    jsonOut += " }";
+
+    cout << jsonOut << endl;
+
+    if( toDispatcher == 0) {
+        toDispatcher=mq_open("/toDispatcher", O_WRONLY|O_CREAT,0664, &attr);
+        if( toDispatcher == -1) {
+            perror("mq_open");
+            exit(2);
+        }
+    }
+
+    strncpy(outBuffer, jsonOut.c_str(), jsonOut.length());
+
+    if (mq_send(toDispatcher, outBuffer, strlen(outBuffer), 0) < 0) {
+        perror("mq_send");
+    }
+
+}
+
 void mqttPublish(string topic, string msg) {
     struct mq_attr attr;
     string jsonOut;
@@ -253,6 +306,12 @@ void updateIO(MYSQL *conn, map<string, string>row) {
 
     transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
 
+    string sqlCmd = "update "+ row["io_type"] +" set old_state=state, state = '" + row["state"] + "' where name='" + name + "';";
+
+    int rc = mysql_query(conn, sqlCmd.c_str());
+
+    cout << "updateIO:" << rc << endl;
+    cout << sqlCmd << endl;
     if( row["io_type"] == "mqtt" ) {
         map<string,string> mqttQuery = getFromMqttQuery(conn, name) ;
 
@@ -263,14 +322,19 @@ void updateIO(MYSQL *conn, map<string, string>row) {
 //        if( state != oldState ) {
             mqttPublish( topic, state) ;
 //        }
+    } else if( row["io_type"] == "snmp" ) {
+        map<string,string> snmpQuery = getFromSnmpQuery(conn, name) ;
+        snmpPublish(snmpQuery);
     }
 
+    /*
     string sqlCmd = "update "+ row["io_type"] +" set old_state=state, state = '" + row["state"] + "' where name='" + name + "';";
 
     int rc = mysql_query(conn, sqlCmd.c_str());
 
     cout << "updateIO:" << rc << endl;
     cout << sqlCmd << endl;
+    */
 
 }
 
@@ -319,6 +383,10 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                     cout << "I'm MQTT" << endl;
                     row = getFromMqttQuery(conn, cmd[1]) ;
                     row["io_type"] = ioType;
+                }
+                if( ioType == "snmp" ) {
+                    cout << "I'm SNMP" << endl;
+                    row = getFromSnmpQuery(conn, cmd[1]) ;
                 }
 
                 if( row.size() > 0 ) {
