@@ -113,7 +113,7 @@ done
 
 cp Scripts/setup.sh  $DEST
 
-SCRIPT_LIST="dispatch.sh Server.sh syncMQTT.sh"
+SCRIPT_LIST="dispatch.sh Server.sh syncMQTT.sh mqtt.sh snmp.sh"
 
 if [ ! -d $MONIT ]; then
     mkdir -p $MONIT
@@ -130,7 +130,7 @@ mkdir -p $CLIENTS/Forth
 
 cp $PLACE/../../Clients/Forth/*.fth $CLIENTS/Forth
 
-MONIT_CFG="dispatch.monitrc  Server.monitrc  syncMQTT.monitrc"
+MONIT_CFG="dispatch.monitrc  Server.monitrc  syncMQTT.monitrc snmp.monitrc mqtt.monitrc"
 pwd
 for C in $MONIT_CFG; do
     cp Monit/$C  $MONIT/conf.d

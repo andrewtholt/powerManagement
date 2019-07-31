@@ -35,6 +35,7 @@ status() {
             pubStatus "UP"
             RET=0
         else
+            rm -f $PIDFILE
             pubStatus "DOWN"
             RET=1
         fi

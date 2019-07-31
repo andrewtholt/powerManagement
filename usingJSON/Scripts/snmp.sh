@@ -3,10 +3,9 @@
 # set -x
 
 PATH="/opt/homeControl/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-
 export PATH
 
-NAME="tDispatch"
+NAME="snmp.py"
 CONFIG=""
 ARGS=""
 HOSTNAME=$(hostname)
@@ -14,6 +13,7 @@ PIDFILE="/var/run/$NAME.pid"
 TOPIC="/home/office/$HOSTNAME/$NAME"
 
 MQTT="127.0.0.1"
+
 if [ -x "/usr/bin/jq" ]; then
     MQTT=$(cat /etc/mqtt/bridge.json | jq -r .local.name )
 fi
@@ -68,8 +68,9 @@ case "$1" in
         status
         if [  $RET -eq 1 ]; then
             echo "START"
-            setup.sh
-            $NAME $ARGS
+            nohup $NAME > /dev/null 2>&1 &
+            echo $!
+            echo $! > $PIDFILE
             sleep 1
         else
             echo "RUNNING"

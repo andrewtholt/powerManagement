@@ -8,6 +8,8 @@
 
 #include <unistd.h>
 #include <mqueue.h>
+#include "utils.h"
+
 #include <nlohmann/json.hpp>
 
 using namespace std;
@@ -19,6 +21,10 @@ using json = nlohmann::json;
 
 #define MSG_SIZE (255)
 
+void usage() {
+    printf("Usage : \n");
+}
+
 mqd_t mkQueue(string name, int dir) {
 
     mqd_t mq;
@@ -28,7 +34,7 @@ mqd_t mkQueue(string name, int dir) {
     attr->mq_maxmsg=10;
     attr->mq_msgsize=MSG_SIZE;
 
-//    mq=mq_open(name.c_str(), (O_RDONLY|O_CREAT),0644, attr);
+    //    mq=mq_open(name.c_str(), (O_RDONLY|O_CREAT),0644, attr);
     mq=mq_open(name.c_str(), (dir|O_CREAT),0644, attr);
 
     if(mq == -1) {
@@ -41,9 +47,12 @@ mqd_t mkQueue(string name, int dir) {
 int main(int argc,char *argv[]) {
     int opt;
 
-    bool runFlag=true;
-    bool dumpMsg=false;
-    bool textFlag=true;
+    bool runFlag  = true;
+    bool dumpMsg  = false;
+    bool textFlag = true;
+    bool verbose  = false;
+    bool fg       = false;
+    bool iamRoot  = false;
 
     struct mq_attr attr;
     json inJson;
@@ -51,6 +60,22 @@ int main(int argc,char *argv[]) {
     mqd_t mqDispatch;
     mqd_t mqMQTT;
     mqd_t mqSNMP;
+
+    while ((opt = getopt(argc, argv, "hvf")) != -1) {
+        switch(opt) {
+            case 'h':
+                usage();
+                exit(1);
+                break;
+            case 'v':
+                verbose = true;
+                break;
+            case 'f':
+                fg = true;
+                break;
+        }
+
+    }
 
     mqDispatch = mkQueue(TO_DISPATCHER,O_RDONLY);
 
@@ -76,6 +101,34 @@ int main(int argc,char *argv[]) {
     char msg[MSG_SIZE];
     int rc=0;
     string type = "UNKNOWN";
+
+    if( getuid() !=0) {
+        cerr << "Not root so running in the foreground\n" << endl;
+        fg=true;
+
+        iamRoot = false;
+    } else {
+        iamRoot = true;
+    }
+
+    if (fg == false ) {
+        rc = daemon(true,false);
+
+        if(iamRoot) {
+            FILE *run=fopen("/var/run/tDispatch.pid", "w");
+            fprintf(run,"%d\n", getpid());
+            fclose(run);
+        }
+    }
+
+    if(iamRoot) {
+        uid_t powerUser = getUserIdByName("power");
+        if(setuid(powerUser) != 0) {
+            perror("setuid");
+            exit(1);
+        }
+    }
+
 
     do {
         bzero(msg, MSG_SIZE);
