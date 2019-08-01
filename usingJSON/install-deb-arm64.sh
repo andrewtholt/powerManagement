@@ -91,7 +91,7 @@ for S in $SCR; do
     cp ${HERE}/Scripts/${S} $SCRIPTS
 done
 
-PYTHON="pbNotify.py syncMQTT.py mqtt.py snmp.py"
+PYTHON="pbNotify.py syncMQTT.py mqtt.py snmp.py getPower.py setPower.py"
 PYTH_DIR="Python"
 for B in $PYTHON; do
     cp $PYTH_DIR/${B} $DEST
