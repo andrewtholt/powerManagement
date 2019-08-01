@@ -1,5 +1,5 @@
 check program syncMQTT with path "/etc/monit/Scripts/syncMQTT.sh status"
-    if status != 0 then alert
+    if status != 0 then restart
 
     group CONTROL
 

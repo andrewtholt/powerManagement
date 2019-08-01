@@ -1,5 +1,5 @@
 check program dispatch with path "/etc/monit/Scripts/dispatch.sh status"
-    if status != 0 then alert
+    if status != 0 then restart
 
     group CONTROL
 

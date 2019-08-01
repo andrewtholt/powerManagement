@@ -1,5 +1,5 @@
 check program mqtt with path "/etc/monit/Scripts/mqtt.sh status"
-    if status != 0 then alert
+    if status != 0 then restart
 
     group CONTROL
 
