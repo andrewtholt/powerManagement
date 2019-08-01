@@ -85,12 +85,12 @@ for S in $SO; do
 done
 
 mkdir -p $SCRIPTS 
-SCR="pubTime.sh pubDay.sh alarm.sh"
+SCR="pubTime.sh pubDay.sh alarm.sh powerCron.txt"
 for S in $SCR; do
     cp ${HERE}/Scripts/${S} $SCRIPTS
 done
 
-PYTHON="pbNotify.py syncMQTT.py mqtt.py snmp.py"
+PYTHON="pbNotify.py syncMQTT.py mqtt.py snmp.py getPower.py setPower.py"
 PYTH_DIR="Python"
 for B in $PYTHON; do
     cp $PYTH_DIR/${B} $DEST
@@ -113,12 +113,13 @@ done
 
 cp Scripts/setup.sh  $DEST
 
-SCRIPT_LIST="dispatch.sh Server.sh syncMQTT.sh mqtt.sh snmp.sh"
+SCRIPT_LIST="dispatch.sh Server.sh syncMQTT.sh mqtt.sh snmp.sh backLights.sh porchLight.sh"
 
 if [ ! -d $MONIT ]; then
     mkdir -p $MONIT
     mkdir -p $MONIT/Scripts
     mkdir -p $MONIT/conf.d
+    mkdir -p $MONIT/conf-enabled
 fi
 
 for S in $SCRIPT_LIST; do
@@ -130,11 +131,14 @@ mkdir -p $CLIENTS/Forth
 
 cp $PLACE/../../Clients/Forth/*.fth $CLIENTS/Forth
 
-MONIT_CFG="dispatch.monitrc  Server.monitrc  syncMQTT.monitrc snmp.monitrc mqtt.monitrc"
+MONIT_CFG="dispatch.monitrc Server.monitrc  syncMQTT.monitrc snmp.monitrc mqtt.monitrc backLights.monitrc porchLight.monitrc"
 pwd
 for C in $MONIT_CFG; do
     cp Monit/$C  $MONIT/conf.d
 done
+cp $HERE/Monit/monitrc $MONIT
+chmod 0600 $MONIT/monitrc
+set +x
 
 echo "Make package"
 # if [ "$TEST" == "NO" ]; then

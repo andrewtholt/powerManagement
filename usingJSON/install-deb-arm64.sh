@@ -40,7 +40,6 @@ echo "Build debian package"
 echo "First make everything."
 
 HERE=$(pwd)
-echo $HERE
 
 BASE="./debian-arm64"
 ./mkControl.sh > ${BASE}/DEBIAN/control
@@ -116,14 +115,12 @@ cp Scripts/setup.sh  $DEST
 
 SCRIPT_LIST="dispatch.sh Server.sh syncMQTT.sh mqtt.sh snmp.sh backLights.sh porchLight.sh"
 
-set -x
 if [ ! -d $MONIT ]; then
     mkdir -p $MONIT
     mkdir -p $MONIT/Scripts
     mkdir -p $MONIT/conf.d
     mkdir -p $MONIT/conf-enabled
 fi
-
 
 for S in $SCRIPT_LIST; do
     cp Scripts/$S  $MONIT/Scripts
@@ -133,7 +130,7 @@ mkdir -p $CLIENTS
 mkdir -p $CLIENTS/Forth
 
 cp $PLACE/../../Clients/Forth/*.fth $CLIENTS/Forth
-set -x
+
 MONIT_CFG="dispatch.monitrc Server.monitrc  syncMQTT.monitrc snmp.monitrc mqtt.monitrc backLights.monitrc porchLight.monitrc"
 pwd
 for C in $MONIT_CFG; do
