@@ -12,6 +12,9 @@ if [ $HW = "armv7l" ]; then
     HW=armhf
 fi
 
+if [ $HW = "aarch64" ]; then
+    HW=arm64
+fi
 
 echo "Package: home-control"
 echo "Section: misc"

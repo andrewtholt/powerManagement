@@ -1,0 +1,21 @@
+#!/bin/bash 
+
+# set -x
+
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+if [ -x /usr/bin/monit -o -x /usr/local/bin/monit ]; then
+    echo "Found, Stopping services"
+    monit -g CONTROL stop
+    monit
+    sleep 1
+
+    if [ ! -d "/etc/monit/conf.d" ]; then
+        mkdir /etc/monit/conf.d
+    fi
+else
+    echo "Fail, monit not found."
+    exit 1
+fi
+
+
