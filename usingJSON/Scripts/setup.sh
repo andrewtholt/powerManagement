@@ -8,6 +8,7 @@
 echo "Running setup ...."
 USER="power"
 QUEUE="toDispatcher"
+CRONTAB="/opt/homeControl/Scripts/powerCron.txt"
 
 getent passwd $USER > /dev/null 2&>1
 
@@ -19,7 +20,11 @@ else
     # 
     # Append to cron powerCron.txt
     #
-    sudo crontab -u power powerCron.txt
+    if [ -f $CRONTAB ]; then
+        sudo crontab -u power $CRONTAB
+    else
+        echo "Can't find $CRONTAB"
+    fi
     echo "... done."
 fi
 

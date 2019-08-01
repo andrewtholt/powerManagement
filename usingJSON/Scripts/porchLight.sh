@@ -73,10 +73,10 @@ case "$1" in
             fi
         else
             nohup $NAME $ARGS > /dev/null 2>&1 &
+            echo $!
+            echo $! > $PIDFILE
 
             sleep 1
-            getPid $NAME
-            echo $? > $PIDFILE
         fi
         ;;
     stop)
