@@ -66,6 +66,27 @@ variable sid
     clear
 ;
 
+: t3
+    "192.168.10.124" 9191 init
+
+    begin
+        "START" sid @ cmd-get
+        "FANS"  sid @ cmd-get
+        or
+        "STOP" sid @ cmd-get
+        not and
+    
+        if 
+            "FANS" "ON"
+        else
+            "FANS" "OFF"
+        then
+    
+        sid @ cmd-set
+        500 ms
+    again
+;
+
 : t2
     "192.168.10.124" 9191 init
     begin
