@@ -1,0 +1,79 @@
+
+255 constant /buffer
+
+/buffer string in-buffer
+/buffer string out-buffer
+
+variable init-run
+variable sid
+
+
+: init ( add port )
+    init-run @ 0= if
+        socket-connect 0< if 
+            abort" "Socket-connect:"
+        then
+        sid !
+        -1 init-run !
+    then
+    clear
+;
+
+\ Stack: addr 
+: cmd
+    add-eol dup strlen sid @ socket-send 0<> if
+        abort" "socket-send:"
+    else
+        drop
+    then
+
+    in-buffer /buffer sid @ socket-recv 0= if
+        abort" "socket-recv:"
+    then
+    in-buffer 10 strsep drop
+;
+
+\ 
+\ Stack: cmd -- state (0|-1)
+: bool-cmd
+    cmd 
+\    in-buffer evaluate 0<> if abort" "evaluate:" then
+    in-buffer "ON" strcmp 0=
+;
+
+: .status 
+    "Fans  : " type "GET FANS" bool-cmd . cr
+;
+
+
+: t1
+\    "192.168.10.124" 9191 init
+
+    "GET FANS" bool-cmd 
+    "GET START" bool-cmd 
+    or
+    "GET STOP" bool-cmd 
+    not and
+
+    .s cr
+
+    if 
+        "SET FANS ON" bool-cmd
+    else
+        "SET FANS OFF" bool-cmd
+    then
+
+    clear
+;
+
+: t2
+    "192.168.10.124" 9191 init
+    begin
+        in-buffer /buffer erase
+        t1
+        500 ms
+    again
+;
+
+
+

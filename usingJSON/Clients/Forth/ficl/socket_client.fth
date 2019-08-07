@@ -84,34 +84,44 @@
 
 \ main
 
+: logicToText
+    dup
+    0= if
+        ." FALSE"
+    else
+        ." TRUE"
+    then
+
+    cr
+;
+
 : t1
     s" localhost" 9191 init
     begin
-//        flush
-        s" GET START" boolCmd
-        in-buffer 10 dump
-        ." START " depth  . cr
-        s" GET MOTOR" boolCmd
-        ." MOTOR " depth  . cr
+\         flush
+        s" GET START" boolCmd 
+        ." START     :" logicToText
+        s" GET FANS" boolCmd
+        ." FANS      :" logicToText
         or 
-        ." OR    " depth  . cr
+        ." OR        :" logicToText
     
         s" GET STOP" boolCmd
-        ." STOP " depth  . cr
+        ." STOP      :" logicToText
         invert and
-        ." INVERT and " depth  . cr
-    
-        .s
+        ." INVERT AND:" logicToText
     
         if
-            s" SET MOTOR ON" 
+            s" SET FANS ON" 
             boolCmd drop
-            ." MOTOR ON " depth  . cr
+            ." FANS ON" cr
         else
-            s" SET MOTOR OFF" 
+            s" SET FANS OFF" 
             boolCmd drop
-            ." MOTOR OFF" depth  . cr
+            ." FANS OFF" cr
         then
+
+        ." ======" cr
     
         100 ms
     again
