@@ -304,9 +304,11 @@ void updateIO(MYSQL *conn, map<string, string>row) {
     string name = row["name"];
     string state = row["state"];
 
+    string sqlCmd;
+
     transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
 
-    string sqlCmd = "update "+ row["io_type"] +" set old_state=state, state = '" + row["state"] + "' where name='" + name + "';";
+    sqlCmd = "update "+ row["io_type"] +" set old_state=state, state = '" + row["state"] + "' where name='" + name + "';";
 
     int rc = mysql_query(conn, sqlCmd.c_str());
 
@@ -319,12 +321,21 @@ void updateIO(MYSQL *conn, map<string, string>row) {
         //        string state = mqttQuery["state"];
         string oldState = mqttQuery["old_state"];
 
-//        if( state != oldState ) {
+        if( state != oldState ) {
             mqttPublish( topic, state) ;
-//        }
+            sqlCmd = "update mqtt set old_state=state where name='" + name + "';";
+            cout << sqlCmd << endl;
+            rc = mysql_query(conn, sqlCmd.c_str());
+        }
     } else if( row["io_type"] == "snmp" ) {
         map<string,string> snmpQuery = getFromSnmpQuery(conn, name) ;
-        snmpPublish(snmpQuery);
+        string oldState = snmpQuery["old_state"];
+        if( state != oldState ) {
+            snmpPublish(snmpQuery);
+            sqlCmd = "update snmp set old_state=state where name='" + name + "';";
+            cout << sqlCmd << endl;
+            rc = mysql_query(conn, sqlCmd.c_str());
+        }
     }
 
     /*
