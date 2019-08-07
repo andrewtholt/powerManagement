@@ -28,6 +28,7 @@ using json = nlohmann::json;
 
 json config;
 using namespace std;
+bool verbose=false;
 
 mqd_t toDispatcher = 0;
 fstream toLog;
@@ -49,7 +50,9 @@ map<string,string> getFromInternalQuery(MYSQL *conn, string name) {
     MYSQL_FIELD *field;
     string sqlCmd = "select * from internalQuery where name='" + name + "';";
 
+    if( verbose ) {
     cout << sqlCmd << endl;
+    }
 
     int rc = mysql_query(conn, sqlCmd.c_str());
 
@@ -61,8 +64,10 @@ map<string,string> getFromInternalQuery(MYSQL *conn, string name) {
     if( num_rows > 0 ) {
         char *headers[num_fields];
         for(unsigned int i = 0; (field = mysql_fetch_field(result)); i++) {
-            cout << field->name ;
-            cout << ":" << row[i] << endl;
+            if(verbose) {
+                cout << field->name ;
+                cout << ":" << row[i] << endl;
+            }
 
             data[ field->name ] = row[i];
         }
@@ -76,7 +81,9 @@ map<string,string> getFromSnmpQuery(MYSQL *conn, string name) {
     MYSQL_FIELD *field;
     string sqlCmd = "select * from snmpQuery where name='" + name + "';";
 
+    if(verbose) {
     cout << sqlCmd << endl;
+    }
 
     int rc = mysql_query(conn, sqlCmd.c_str());
 
@@ -89,8 +96,10 @@ map<string,string> getFromSnmpQuery(MYSQL *conn, string name) {
     if( num_rows > 0 ) {
         char *headers[num_fields];
         for(unsigned int i = 0; (field = mysql_fetch_field(result)); i++) {
-            cout << field->name ;
-            cout << ":" << row[i] << endl;
+            if(verbose) {
+                cout << field->name ;
+                cout << ":" << row[i] << endl;
+            }
 
             data[ field->name ] = row[i];
 
@@ -108,7 +117,9 @@ map<string,string> getFromMqttQuery(MYSQL *conn, string name) {
     MYSQL_FIELD *field;
     string sqlCmd = "select * from mqttQuery where name='" + name + "';";
 
+    if(verbose) {
     cout << sqlCmd << endl;
+    }
 
     int rc = mysql_query(conn, sqlCmd.c_str());
 
@@ -121,8 +132,10 @@ map<string,string> getFromMqttQuery(MYSQL *conn, string name) {
     if( num_rows > 0 ) {
         char *headers[num_fields];
         for(unsigned int i = 0; (field = mysql_fetch_field(result)); i++) {
-            cout << field->name ;
-            cout << ":" << row[i] << endl;
+            if(verbose) {
+                cout << field->name ;
+                cout << ":" << row[i] << endl;
+            }
 
             data[ field->name ] = row[i];
 
@@ -140,7 +153,9 @@ map<string,string> getFromIoPoint(MYSQL *conn, string name) {
     MYSQL_FIELD *field;
     string sqlCmd = "select * from io_point where name='" + name + "';";
 
+    if(verbose) {
     cout << sqlCmd << endl;
+    }
 
     int rc = mysql_query(conn, sqlCmd.c_str());
 
@@ -149,13 +164,15 @@ map<string,string> getFromIoPoint(MYSQL *conn, string name) {
 
     unsigned int num_fields = mysql_num_fields(result);
     unsigned int num_rows   = mysql_num_rows(result);
-    cout << rc << endl;
+//    cout << rc << endl;
 
     if( num_rows  > 0 ) {
         char *headers[num_fields];
         for(unsigned int i = 0; (field = mysql_fetch_field(result)); i++) {
-            cout << field->name ;
-            cout << ":" << row[i] << endl;
+            if(verbose) {
+                cout << field->name ;
+                cout << ":" << row[i] << endl;
+            }
 
             data[ field->name ] = row[i];
 
@@ -231,7 +248,7 @@ void mqttPublish(string topic, string msg) {
 
     struct pollfd fds[2];
 
-    cout << "Publish:" << endl;
+    cout << "MQTT Publish:" << endl;
 
     if( toDispatcher == 0) {
         toDispatcher=mq_open("/toDispatcher", O_WRONLY|O_CREAT,0664, &attr);
@@ -312,8 +329,11 @@ void updateIO(MYSQL *conn, map<string, string>row) {
 
     int rc = mysql_query(conn, sqlCmd.c_str());
 
-    cout << "updateIO:" << rc << endl;
-    cout << sqlCmd << endl;
+    if(verbose) {
+        cout << "updateIO:" << rc << endl;
+        cout << sqlCmd << endl;
+    }
+
     if( row["io_type"] == "mqtt" ) {
         map<string,string> mqttQuery = getFromMqttQuery(conn, name) ;
 
@@ -580,7 +600,7 @@ int main(int argc,  char *argv[]) {
     int portNo=9191; // Port number
     int opt;
     bool fg=false;
-    bool verbose=false;
+    verbose=false;
 
     sockaddr_in serv_addr; // Server address
     string svcName = basename(argv[0]) ;
@@ -616,7 +636,7 @@ int main(int argc,  char *argv[]) {
         fg=true;
 
         iamRoot = true;
-        verbose = true;
+//        verbose = true;
     }
 
 
