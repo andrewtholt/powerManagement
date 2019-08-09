@@ -127,9 +127,11 @@ for S in $SCRIPT_LIST; do
 done
 
 mkdir -p $CLIENTS
-mkdir -p $CLIENTS/Forth
+mkdir -p $CLIENTS/Forth/ficl
+mkdir -p $CLIENTS/Forth/atlast
 
-cp $PLACE/../../Clients/Forth/*.fth $CLIENTS/Forth
+cp $PLACE/../../Clients/Forth/ficl/*.fth $CLIENTS/Forth/ficl
+cp $PLACE/../../Clients/Forth/atlast/*.fth $CLIENTS/Forth/atlast
 
 MONIT_CFG="dispatch.monitrc Server.monitrc  syncMQTT.monitrc snmp.monitrc mqtt.monitrc backLights.monitrc porchLight.monitrc"
 pwd
