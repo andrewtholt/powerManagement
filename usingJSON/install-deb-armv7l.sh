@@ -136,8 +136,8 @@ pwd
 for C in $MONIT_CFG; do
     cp Monit/$C  $MONIT/conf.d
 done
-cp $HERE/Monit/monitrc $MONIT
-chmod 0600 $MONIT/monitrc
+cp $HERE/Monit/monitrc $MONIT/monitrc.example
+# chmod 0600 $MONIT/monitrc
 set +x
 
 echo "Make package"
