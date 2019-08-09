@@ -342,7 +342,9 @@ void updateIO(MYSQL *conn, map<string, string>row) {
         string oldState = mqttQuery["old_state"];
 
         if( state != oldState ) {
-            mqttPublish( topic, state) ;
+            if( row["direction"] == "OUT" ) {
+                mqttPublish( topic, state) ;
+            }
             sqlCmd = "update mqtt set old_state=state where name='" + name + "';";
             cout << sqlCmd << endl;
             rc = mysql_query(conn, sqlCmd.c_str());
@@ -351,7 +353,9 @@ void updateIO(MYSQL *conn, map<string, string>row) {
         map<string,string> snmpQuery = getFromSnmpQuery(conn, name) ;
         string oldState = snmpQuery["old_state"];
         if( state != oldState ) {
-            snmpPublish(snmpQuery);
+            if( row["direction"] == "OUT" ) {
+                snmpPublish(snmpQuery);
+            }
             sqlCmd = "update snmp set old_state=state where name='" + name + "';";
             cout << sqlCmd << endl;
             rc = mysql_query(conn, sqlCmd.c_str());
