@@ -131,6 +131,8 @@ void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_messag
             mysql_free_result(result);
             queryCleared = true;
             sqlCmd = "update mqtt set state = '" + devState + "' where topic = '" + topic + "';";
+            sqlCmd = "update io_point,mqtt set io_point.state='" + devState + "' where io_point.name=mqtt.name and mqtt.topic = '" + topic + "';";
+
             cout << sqlCmd << endl;
             
             if( mysql_query(con, sqlCmd.c_str())) {

@@ -292,7 +292,8 @@ void dbReset(MYSQL *conn, string name) {
     transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
     string dataType = row["io_type"];
 
-    string sqlCmd = "update " + dataType + " set old_state = state where name='" + name + "';";
+//    string sqlCmd = "update " + dataType + " set old_state = state where name='" + name + "';";
+    string sqlCmd = "update io_point set old_state = state where name='" + name + "';";
     int rc = mysql_query(conn, sqlCmd.c_str());
 }
 // 
@@ -302,9 +303,10 @@ void dbReset(MYSQL *conn) {
     int rc;
     string sqlCmd;
 
-    sqlCmd = "update internal set old_state = state;";
+    sqlCmd = "update io_point set old_state = state;";
     rc = mysql_query(conn, sqlCmd.c_str());
 
+    /*
     sqlCmd = "update modbus set old_state = state;";
     rc = mysql_query(conn, sqlCmd.c_str());
 
@@ -313,6 +315,7 @@ void dbReset(MYSQL *conn) {
 
     sqlCmd = "update snmp set old_state = state;";
     rc = mysql_query(conn, sqlCmd.c_str());
+    */
 
 }
 
@@ -325,7 +328,8 @@ void updateIO(MYSQL *conn, map<string, string>row) {
 
     transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
 
-    sqlCmd = "update "+ row["io_type"] +" set old_state=state, state = '" + row["state"] + "' where name='" + name + "';";
+//    sqlCmd = "update "+ row["io_type"] +" set old_state=state, state = '" + row["state"] + "' where name='" + name + "';";
+    sqlCmd = "update io_point set old_state=state, state = '" + row["state"] + "' where name='" + name + "';";
 
     int rc = mysql_query(conn, sqlCmd.c_str());
 
@@ -460,7 +464,9 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                     if(  row.size() == 0) {
                         response.push_back("<UNDEFINED>\n");
                     } else {
+                        response.push_back(string(row["state"] +"\n")); 
 
+                        /*
                         transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
 
                         if( row["io_type"] == "mqtt" ) {
@@ -490,6 +496,7 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                                 response.push_back(string(row["state"] +"\n")); 
                             }
                         } 
+                        */
                     }
                 }
             }
