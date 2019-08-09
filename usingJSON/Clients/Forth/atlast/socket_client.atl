@@ -70,6 +70,7 @@ variable sid
     "192.168.10.124" 9191 init
 
     begin
+        500 ms
         "START" sid @ cmd-get
         "FANS"  sid @ cmd-get
         or
@@ -82,9 +83,9 @@ variable sid
             "FANS" "OFF"
         then
     
-        sid @ cmd-set
-        500 ms
-    again
+        sid @ cmd-set 0<
+    until
+    "recv error, exited" type cr
 ;
 
 : t2
