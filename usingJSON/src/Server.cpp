@@ -410,28 +410,33 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                 dbReset(conn, cmd[1]);
             } else if( cmd[0] == "TOGGLE" ) {
                 row=getFromIoPoint(conn, cmd[1]);
-                transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
 
-                string ioType = row["io_type"] ;
+                if( row.size() == 0) {
+                    response.push_back( "<UNDEFINED>\n");
+                } else {
+                    transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
 
-                if( ioType == "mqtt" ) {
-                    cout << "I'm MQTT" << endl;
-                    row = getFromMqttQuery(conn, cmd[1]) ;
-                    row["io_type"] = ioType;
-                }
-                if( ioType == "snmp" ) {
-                    cout << "I'm SNMP" << endl;
-                    row = getFromSnmpQuery(conn, cmd[1]) ;
-                }
+                    string ioType = row["io_type"] ;
 
-                if( row.size() > 0 ) {
-                    if( row["state"] == "ON" ) {
-                        row["state"] = "OFF";
-                    } else {
-                        row["state"] = "ON";
+                    if( ioType == "mqtt" ) {
+                        cout << "I'm MQTT" << endl;
+                        row = getFromMqttQuery(conn, cmd[1]) ;
+                        row["io_type"] = ioType;
                     }
-                    updateIO(conn, row);
-                    response.push_back( row["state"]+ "\n");
+                    if( ioType == "snmp" ) {
+                        cout << "I'm SNMP" << endl;
+                        row = getFromSnmpQuery(conn, cmd[1]) ;
+                    }
+
+                    if( row.size() > 0 ) {
+                        if( row["state"] == "ON" ) {
+                            row["state"] = "OFF";
+                        } else {
+                            row["state"] = "ON";
+                        }
+                        updateIO(conn, row);
+                        response.push_back( row["state"]+ "\n");
+                    }
                 }
 
             } else if( cmd[0] == "GET" ) {
@@ -507,7 +512,7 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                         response.push_back(string("<UNDEFINED>\n")); 
                     }
                 }
-//                response.push_back(string(cmd[2] +"\n")); 
+                //                response.push_back(string(cmd[2] +"\n")); 
             }
             break;
     }
