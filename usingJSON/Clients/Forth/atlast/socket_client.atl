@@ -7,7 +7,6 @@
 variable init-run
 variable sid
 
-
 : init ( add port )
     init-run @ 0= if
         socket-connect 0< if 
@@ -68,6 +67,7 @@ variable sid
 
 : t3
     "192.168.10.124" 9191 init
+\    "127.0.0.1" 9191 init
 
     begin
         500 ms
