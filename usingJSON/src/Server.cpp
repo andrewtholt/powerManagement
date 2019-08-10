@@ -51,7 +51,7 @@ map<string,string> getFromInternalQuery(MYSQL *conn, string name) {
     string sqlCmd = "select * from internalQuery where name='" + name + "';";
 
     if( verbose ) {
-    cout << sqlCmd << endl;
+        cout << sqlCmd << endl;
     }
 
     int rc = mysql_query(conn, sqlCmd.c_str());
@@ -82,7 +82,7 @@ map<string,string> getFromSnmpQuery(MYSQL *conn, string name) {
     string sqlCmd = "select * from snmpQuery where name='" + name + "';";
 
     if(verbose) {
-    cout << sqlCmd << endl;
+        cout << sqlCmd << endl;
     }
 
     int rc = mysql_query(conn, sqlCmd.c_str());
@@ -118,7 +118,7 @@ map<string,string> getFromMqttQuery(MYSQL *conn, string name) {
     string sqlCmd = "select * from mqttQuery where name='" + name + "';";
 
     if(verbose) {
-    cout << sqlCmd << endl;
+        cout << sqlCmd << endl;
     }
 
     int rc = mysql_query(conn, sqlCmd.c_str());
@@ -154,7 +154,7 @@ map<string,string> getFromIoPoint(MYSQL *conn, string name) {
     string sqlCmd = "select * from io_point where name='" + name + "';";
 
     if(verbose) {
-    cout << sqlCmd << endl;
+        cout << sqlCmd << endl;
     }
 
     int rc = mysql_query(conn, sqlCmd.c_str());
@@ -164,7 +164,7 @@ map<string,string> getFromIoPoint(MYSQL *conn, string name) {
 
     unsigned int num_fields = mysql_num_fields(result);
     unsigned int num_rows   = mysql_num_rows(result);
-//    cout << rc << endl;
+    //    cout << rc << endl;
 
     if( num_rows  > 0 ) {
         char *headers[num_fields];
@@ -363,13 +363,13 @@ void updateIO(MYSQL *conn, map<string, string>row) {
     }
 
     /*
-    string sqlCmd = "update "+ row["io_type"] +" set old_state=state, state = '" + row["state"] + "' where name='" + name + "';";
+       string sqlCmd = "update "+ row["io_type"] +" set old_state=state, state = '" + row["state"] + "' where name='" + name + "';";
 
-    int rc = mysql_query(conn, sqlCmd.c_str());
+       int rc = mysql_query(conn, sqlCmd.c_str());
 
-    cout << "updateIO:" << rc << endl;
-    cout << sqlCmd << endl;
-    */
+       cout << "updateIO:" << rc << endl;
+       cout << sqlCmd << endl;
+       */
 
 }
 
@@ -410,28 +410,33 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                 dbReset(conn, cmd[1]);
             } else if( cmd[0] == "TOGGLE" ) {
                 row=getFromIoPoint(conn, cmd[1]);
-                transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
 
-                string ioType = row["io_type"] ;
+                if( row.size() == 0) {
+                    response.push_back( "<UNDEFINED>\n");
+                } else {
+                    transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
 
-                if( ioType == "mqtt" ) {
-                    cout << "I'm MQTT" << endl;
-                    row = getFromMqttQuery(conn, cmd[1]) ;
-                    row["io_type"] = ioType;
-                }
-                if( ioType == "snmp" ) {
-                    cout << "I'm SNMP" << endl;
-                    row = getFromSnmpQuery(conn, cmd[1]) ;
-                }
+                    string ioType = row["io_type"] ;
 
-                if( row.size() > 0 ) {
-                    if( row["state"] == "ON" ) {
-                        row["state"] = "OFF";
-                    } else {
-                        row["state"] = "ON";
+                    if( ioType == "mqtt" ) {
+                        cout << "I'm MQTT" << endl;
+                        row = getFromMqttQuery(conn, cmd[1]) ;
+                        row["io_type"] = ioType;
                     }
-                    updateIO(conn, row);
-                    response.push_back( row["state"]+ "\n");
+                    if( ioType == "snmp" ) {
+                        cout << "I'm SNMP" << endl;
+                        row = getFromSnmpQuery(conn, cmd[1]) ;
+                    }
+
+                    if( row.size() > 0 ) {
+                        if( row["state"] == "ON" ) {
+                            row["state"] = "OFF";
+                        } else {
+                            row["state"] = "ON";
+                        }
+                        updateIO(conn, row);
+                        response.push_back( row["state"]+ "\n");
+                    }
                 }
 
             } else if( cmd[0] == "GET" ) {
@@ -452,35 +457,40 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                 } else {
                     row=getFromIoPoint(conn, cmd[1]);
 
-                    transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
+                    if(  row.size() == 0) {
+                        response.push_back("<UNDEFINED>\n");
+                    } else {
 
-                    if( row["io_type"] == "mqtt" ) {
-                        cout << "I'm MQTT" << endl;
-                        row = getFromMqttQuery(conn, cmd[1]) ;
+                        transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
 
-                        if( row.size() == 0 ) {
-                            response.push_back("<UNDEFINED>");
-                        } else {
-                            response.push_back(string(row["state"] +"\n")); 
-                        }
+                        if( row["io_type"] == "mqtt" ) {
+                            cout << "I'm MQTT" << endl;
+                            row = getFromMqttQuery(conn, cmd[1]) ;
 
-                    } else if( row["io_type"] == "internal" ) {
-                        cout << "I'm Internal" << endl;
-                        row = getFromInternalQuery(conn, cmd[1]) ;
-                        if( row.size() == 0 ) {
-                            response.push_back("<UNDEFINED>");
-                        } else {
-                            response.push_back(string(row["state"] +"\n")); 
-                        }
-                    } else if( row["io_type"] == "snmp" ) {
-                        cout << "I'm SNMP" << endl;
-                        row = getFromSnmpQuery(conn, cmd[1]) ;
-                        if( row.size() == 0 ) {
-                            response.push_back("<UNDEFINED>");
-                        } else {
-                            response.push_back(string(row["state"] +"\n")); 
-                        }
-                    } 
+                            if( row.size() == 0 ) {
+                                response.push_back("<UNDEFINED>\n");
+                            } else {
+                                response.push_back(string(row["state"] +"\n")); 
+                            }
+
+                        } else if( row["io_type"] == "internal" ) {
+                            cout << "I'm Internal" << endl;
+                            row = getFromInternalQuery(conn, cmd[1]) ;
+                            if( row.size() == 0 ) {
+                                response.push_back("<UNDEFINED>");
+                            } else {
+                                response.push_back(string(row["state"] +"\n")); 
+                            }
+                        } else if( row["io_type"] == "snmp" ) {
+                            cout << "I'm SNMP" << endl;
+                            row = getFromSnmpQuery(conn, cmd[1]) ;
+                            if( row.size() == 0 ) {
+                                response.push_back("<UNDEFINED>");
+                            } else {
+                                response.push_back(string(row["state"] +"\n")); 
+                            }
+                        } 
+                    }
                 }
             }
             break;
@@ -497,10 +507,12 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                     if( row.size() > 0 ) {
                         row["state"] = cmd[2];
                         updateIO(conn, row);
-//                        response.push_back(string(row["state"] +"\n")); 
+                        response.push_back(string(row["state"] +"\n")); 
+                    } else {
+                        response.push_back(string("<UNDEFINED>\n")); 
                     }
                 }
-                response.push_back(string(cmd[2] +"\n")); 
+                //                response.push_back(string(cmd[2] +"\n")); 
             }
             break;
     }
@@ -521,8 +533,8 @@ void *handleConnection(void *xfer) {
     MYSQL *conn;
 
     /*
-    ifstream cfgStream( ptr->cfgFile );
-//    json config = json::parse(cfgStream);
+       ifstream cfgStream( ptr->cfgFile );
+    //    json config = json::parse(cfgStream);
     config = json::parse(cfgStream);
     */
 
@@ -640,7 +652,7 @@ int main(int argc,  char *argv[]) {
         fg=true;
 
         iamRoot = true;
-//        verbose = true;
+        //        verbose = true;
     }
 
 
