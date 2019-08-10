@@ -58,7 +58,7 @@ class MySocket:
         val = False
         res = self.get(name)
 
-        if res in ['ON','TRUE']:
+        if res in ['ON','TRUE','YES']:
             val = True
 
         return val
@@ -78,6 +78,7 @@ if __name__ == "__main__" :
     tst = MySocket()
 
     tst.connect("127.0.0.1", 9191)
+#    tst.connect("192.168.10.124", 9191)
 
     tst.setBoolean("START",True)
 
