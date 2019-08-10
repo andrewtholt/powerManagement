@@ -3,5 +3,5 @@ Section: misc
 Priority: extra
 Maintainer: Andrew Holt
 Architecture: arm64
-Version: 0.25
+Version: 0.26
 Description: Home Automation..
