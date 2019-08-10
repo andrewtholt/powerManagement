@@ -27,6 +27,15 @@ update io_point,mqtt set io_point.io_idx=mqtt.idx where io_point.name = mqtt.nam
 replace into mqtt(name, topic, data_type ) values ('SUNSET','/test/SUNSET','STRING');
 replace into io_point (name,direction,io_type ) values ('SUNSET','IN','MQTT');
 update io_point,mqtt set io_point.io_idx=mqtt.idx where io_point.name = mqtt.name;
+
+replace into mqtt (name,topic) values ('PORCH_LIGHTS','/home/outside/PorchLight_1/cmnd/power');
+replace into io_point (name,direction,io_type) values ('PORCH_LIGHTS','OUT','MQTT');
+update io_point,mqtt set io_point.io_idx=mqtt.idx where io_point.name = mqtt.name;
+
+replace into mqtt (name,topic) values ('BACK_FLOODLIGHTS','/home/outside/BackFloodlight/cmnd/power');
+replace into io_point (name,direction,io_type) values ('BACK_FLOODLIGHTS','OUT','MQTT');
+update io_point,mqtt set io_point.io_idx=mqtt.idx where io_point.name = mqtt.name;
+
 -- 
 -- SNMP table
 --
