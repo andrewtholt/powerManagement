@@ -75,8 +75,11 @@ def on_message(client, userData,msg):
             client.publish(topic, dbState, qos=0, retain=True)
     elif dbDirection == "IN":
         db = sql.connect(database, "automation","automation","automation")
-        sqlCmd = "update mqtt set state = '" + devState + "' where topic = '" + topic + "';"
-        print("+++++" +  sqlCmd )
+
+#        sqlCmd = "update mqtt set state = '" + devState + "' where topic = '" + topic + "';"
+        sqlCmd = "update mqtt,io_point set io_point.state = '"+devState+"' where mqtt.topic = '/test/start' and mqtt.name=io_point.name ;"
+
+        print( sqlCmd )
         cursor = db.cursor()
         cursor.execute( sqlCmd );
         db.commit()
