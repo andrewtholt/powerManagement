@@ -118,6 +118,21 @@ create rpi3 #192 c, #168 c, #10 c, #124 c,
 \    close-socket                    ( )
 ;
 
+: t3
+    s" START" cmd-get to-boolean
+    s" FANS" cmd-get to-boolean
+    or
+
+    s" STOP" cmd-get to-boolean
+    invert and if
+        s" ON"
+    else
+        s" OFF"
+    then
+
+    s" FANS" cmd-set
+;
+
 
 \  Usage example:
 \ 
