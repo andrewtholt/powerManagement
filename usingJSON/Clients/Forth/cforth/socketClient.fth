@@ -62,26 +62,60 @@ create rpi3 #192 c, #168 c, #10 c, #124 c,
     output-buffer swap
 ;
 
+: cmd-get ( addr len -- )
+    socket-fd 0> if
+        s" GET %s\n" sprintf socket-fd h-write-file drop
+        input-buffer /general-buffer erase
+ 
+        input-buffer /general-buffer socket-fd h-read-file  ( actual )
+        dup ?posix-err                  ( actual )
+        drop
+    then
+;
+
+: cmd-set ( value len name len -- )
+    socket-fd 0> if
+        s" SET %s %s\n" sprintf socket-fd h-write-file drop
+        input-buffer /general-buffer erase
+ 
+        input-buffer /general-buffer socket-fd h-read-file  ( actual )
+        dup ?posix-err                  ( actual )
+        drop
+    then
+;
+
+: cmd-close
+    socket-fd 0> if
+        s" CLOSE" s" %s\n" sprintf socket-fd h-write-file drop
+
+        input-buffer /general-buffer socket-fd h-read-file  ( actual )
+        dup ?posix-err                  ( actual )
+        drop
+        close-socket                    ( )
+    then
+;
+
+: to-boolean ( -- t|f )
+    input-buffer 2 s" ON" compare 0= if
+        true
+    else
+        false
+    then
+;
+
 : my-server
     open-socket
  
     rpi3 server-port connect-socket
- 
-    s" GET FANS" add-cr socket-fd h-write-file
- 
-    input-buffer /general-buffer erase
- 
-    input-buffer /general-buffer socket-fd h-read-file  ( actual )
-    dup ?posix-err                  ( actual )
- 
-    input-buffer swap type                   ( )
 
-    input-buffer 2 s" ON" compare 0= if
+    s" FANS" cmd-get
+ 
+    to-boolean if
         ." It's ON" cr 
     else 
         ." It's OFF" cr 
     then
-    close-socket                    ( )
+\    close-socket                    ( )
 ;
 
 
