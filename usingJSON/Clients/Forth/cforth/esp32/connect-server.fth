@@ -84,6 +84,11 @@ create host #192 c, #168 c, #10 c, #124 c,
    close-socket                    ( )
 ;
 
+: input-flag ( -- flag )
+    " ON" input-buffer 2 $=
+;
+
+
 : client-init
     socket-fd 0< if
         open-socket
@@ -95,10 +100,11 @@ create host #192 c, #168 c, #10 c, #124 c,
     client-init
 
     s" PING\n" sprintf socket-fd lwip-write ( actual )
+    drop
 
     pad $100 socket-fd lwip-read    ( actual )
     dup ?posix-err                  ( actual )
-\    pad swap type                   ( )
+
     pad swap input-buffer swap move
 ;
 
@@ -106,6 +112,7 @@ create host #192 c, #168 c, #10 c, #124 c,
     client-init
 
     s" GET %s\n" sprintf socket-fd lwip-write ( actual )
+    drop
 
     pad $100 socket-fd lwip-read    ( actual )
     dup ?posix-err                  ( actual )
@@ -118,6 +125,7 @@ create host #192 c, #168 c, #10 c, #124 c,
     client-init
 
     s" SET %s %s\n" sprintf socket-fd lwip-write ( actual )
+    drop
 
     pad $100 socket-fd lwip-read    ( actual )
     dup ?posix-err                  ( actual )
@@ -130,6 +138,7 @@ create host #192 c, #168 c, #10 c, #124 c,
     socket-fd 0> if
 
         s" CLOSE\n" sprintf socket-fd lwip-write ( actual )
+        drop
 
         pad $100 socket-fd lwip-read    ( actual )
         dup ?posix-err                  ( actual )
