@@ -1,0 +1,15 @@
+cmd       Response
+PING    Pong!
+CLOSE   CLOSED
+RESET   RESET
+
+RESET   <name>  RESET
+TOGGLE  <name>  New state
+GET     <name>  state|<UNDEFINED>
+
+SET <name> <value>  <value>
+
+If a command is not one of the above respond with:
+<UNIMPLEMENTED_CMD>
+
+

@@ -392,27 +392,36 @@ vector<string> handleRequest(MYSQL *conn, string request) {
     string name;
     string value;
 
+    bool validCmd = false;
+
     //    string cmd = trim(request);
     cmd = split( (trim(request).c_str())) ;
     int cmdLen = cmd.size();
 
     cout << ">" + cmd[0]  + "<" << endl;
 
+    validCmd = false;
     switch( cmdLen ) {
         case 1:
             if( cmd[0] == "PING" ) {
+                validCmd = true;
                 response.push_back(string("Pong!\n")); // Respond with "Pong!" 
             } else if( cmd[0] == "CLOSE" ) {
-                response.push_back(string("CLOSE\n")); 
+                validCmd = true;
+                response.push_back(string("CLOSED\n")); 
             } else if(cmd[0] == "RESET" ) {
+                validCmd = true;
                 dbReset(conn);
                 response.push_back(string("RESET\n")); 
-            }
+            } 
             break;
         case 2:
             if( cmd[0] == "RESET" ) {
+                validCmd = true;
                 dbReset(conn, cmd[1]);
+                response.push_back(string("RESET\n")); 
             } else if( cmd[0] == "TOGGLE" ) {
+                validCmd = true;
                 row=getFromIoPoint(conn, cmd[1]);
 
                 if( row.size() == 0) {
@@ -444,6 +453,7 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                 }
 
             } else if( cmd[0] == "GET" ) {
+                validCmd = true;
                 cout << "GET " << cmd[1] << endl;
 
                 if( cmd[1].at(0) == '$' ) {
@@ -465,44 +475,13 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                         response.push_back("<UNDEFINED>\n");
                     } else {
                         response.push_back(string(row["state"] +"\n")); 
-
-                        /*
-                        transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
-
-                        if( row["io_type"] == "mqtt" ) {
-                            cout << "I'm MQTT" << endl;
-                            row = getFromMqttQuery(conn, cmd[1]) ;
-
-                            if( row.size() == 0 ) {
-                                response.push_back("<UNDEFINED>\n");
-                            } else {
-                                response.push_back(string(row["state"] +"\n")); 
-                            }
-
-                        } else if( row["io_type"] == "internal" ) {
-                            cout << "I'm Internal" << endl;
-                            row = getFromInternalQuery(conn, cmd[1]) ;
-                            if( row.size() == 0 ) {
-                                response.push_back("<UNDEFINED>");
-                            } else {
-                                response.push_back(string(row["state"] +"\n")); 
-                            }
-                        } else if( row["io_type"] == "snmp" ) {
-                            cout << "I'm SNMP" << endl;
-                            row = getFromSnmpQuery(conn, cmd[1]) ;
-                            if( row.size() == 0 ) {
-                                response.push_back("<UNDEFINED>");
-                            } else {
-                                response.push_back(string(row["state"] +"\n")); 
-                            }
-                        } 
-                        */
                     }
                 }
             }
             break;
         case 3:
             if( cmd[0] == "SET" ) {
+                validCmd = true;
                 cout << "SET " << cmd[1] + " to " + cmd[2] << endl;
 
                 if( cmd[1].at(0) == '$') {
@@ -522,6 +501,10 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                 //                response.push_back(string(cmd[2] +"\n")); 
             }
             break;
+    }
+
+    if (validCmd == false ) {
+        response.push_back(string("<UNIMPLEMENTED_CMD>\n")); 
     }
 
     return response;
@@ -588,7 +571,7 @@ void *handleConnection(void *xfer) {
                     if (n < 0) {
                         cerr << "ERROR writing to socket" << endl;
                     }
-                    if (output == "CLOSE\n") {
+                    if (output == "CLOSED\n") {
                         close(newsockfd); // Close the connection if response line == "CLOSE"
                         cout << inet_ntoa(cli_addr->sin_addr) << ":" << ntohs(cli_addr->sin_port)
                             << " connection terminated" << endl;
