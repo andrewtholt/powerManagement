@@ -292,7 +292,7 @@ void dbReset(MYSQL *conn, string name) {
     transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
     string dataType = row["io_type"];
 
-//    string sqlCmd = "update " + dataType + " set old_state = state where name='" + name + "';";
+    //    string sqlCmd = "update " + dataType + " set old_state = state where name='" + name + "';";
     string sqlCmd = "update io_point set old_state = state where name='" + name + "';";
     int rc = mysql_query(conn, sqlCmd.c_str());
 }
@@ -307,15 +307,15 @@ void dbReset(MYSQL *conn) {
     rc = mysql_query(conn, sqlCmd.c_str());
 
     /*
-    sqlCmd = "update modbus set old_state = state;";
-    rc = mysql_query(conn, sqlCmd.c_str());
+       sqlCmd = "update modbus set old_state = state;";
+       rc = mysql_query(conn, sqlCmd.c_str());
 
-    sqlCmd = "update mqtt set old_state = state;";
-    rc = mysql_query(conn, sqlCmd.c_str());
+       sqlCmd = "update mqtt set old_state = state;";
+       rc = mysql_query(conn, sqlCmd.c_str());
 
-    sqlCmd = "update snmp set old_state = state;";
-    rc = mysql_query(conn, sqlCmd.c_str());
-    */
+       sqlCmd = "update snmp set old_state = state;";
+       rc = mysql_query(conn, sqlCmd.c_str());
+       */
 
 }
 
@@ -328,7 +328,7 @@ void updateIO(MYSQL *conn, map<string, string>row) {
 
     transform((row["io_type"]).begin(), (row["io_type"]).end(), (row["io_type"]).begin(), ::tolower);
 
-//    sqlCmd = "update "+ row["io_type"] +" set old_state=state, state = '" + row["state"] + "' where name='" + name + "';";
+    //    sqlCmd = "update "+ row["io_type"] +" set old_state=state, state = '" + row["state"] + "' where name='" + name + "';";
     sqlCmd = "update io_point set old_state=state, state = '" + row["state"] + "' where name='" + name + "';";
 
     int rc = mysql_query(conn, sqlCmd.c_str());
@@ -543,7 +543,13 @@ void *handleConnection(void *xfer) {
 
 
     bool runFlag = true ;
+
+    char *token=NULL;
+    char *rest ;
+
     while (runFlag) {
+
+        bzero(buffer, sizeof(buffer));
         int n = read(newsockfd, buffer, 255);
         if (n == 0) {
             cout << inet_ntoa(cli_addr->sin_addr) << ":" << ntohs(cli_addr->sin_port)
@@ -553,32 +559,23 @@ void *handleConnection(void *xfer) {
             cerr << "ERROR reading from socket" << endl;
         }
 
-        stringstream stream;
-        stream << buffer << flush;
+        rest = buffer;
+        token = strtok_r(rest, "\r\n", &rest);
+        printf("%s\n", token);
+        vector<string> response = handleRequest(conn, token); // Get the response
 
-        while ( stream.good() && runFlag ) {
-            string request;
-            getline(stream, request); // Get and print request by lines
-            if (request.length() > 0) {
-                cout << inet_ntoa(cli_addr->sin_addr) << ":" << ntohs(cli_addr->sin_port)
-                    << ": " << request << endl;
-
-                vector<string> response = handleRequest(conn, request); // Get the response
-
-                for (int i = 0; i < response.size(); i++) {
-                    string output = response[i];
-                    n = write(newsockfd, output.c_str(), output.length()); // Write response by line
-                    if (n < 0) {
-                        cerr << "ERROR writing to socket" << endl;
-                    }
-                    if (output == "CLOSED\n") {
-                        close(newsockfd); // Close the connection if response line == "CLOSE"
-                        cout << inet_ntoa(cli_addr->sin_addr) << ":" << ntohs(cli_addr->sin_port)
-                            << " connection terminated" << endl;
-                        runFlag = false;
-                    }
-                }
+        for (int i = 0; i < response.size(); i++) {
+            cout << i << ":" << response[i] << endl;
+            n = write(newsockfd, response[i].c_str(), response[i].length()); // Write response by line
+            if (n < 0) {
+                cerr << "ERROR writing to socket" << endl;
             }
+            if (response[i] == "CLOSED\n") {
+                close(newsockfd); // Close the connection if response line == "CLOSE"
+                cout << inet_ntoa(cli_addr->sin_addr) << ":" << ntohs(cli_addr->sin_port)
+                    << " connection terminated" << endl;
+                runFlag = false;
+            } 
         }
     }
     cout << "Bye" << endl;
