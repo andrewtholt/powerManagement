@@ -1,12 +1,21 @@
 #include <plcBase.h>
 #include <plcSocket.h>
 #include <time.h>
+#include <signal.h>
 
 #include "alarmBase.h"
 
 #include <iostream>
 
 using namespace std;
+
+void sig_handler(int signo) {
+    cerr << "signal number " << signo << endl;
+    if (signo == SIGPIPE) {
+        printf("received SIGPIPE\n");
+    }
+    exit(signo);
+}
 
 void displayTime () {
     time_t rawtime;
@@ -19,6 +28,17 @@ void displayTime () {
 
 int main() {
     bool verbose=true;
+
+    signal(SIGPIPE, sig_handler);
+
+    plcSocket *plc = new plcSocket();
+
+    if(plc->getStatus()) {
+        // If true we FAILED.
+        //
+        cerr << "FATAL ERROR: Connect Failed." << endl;
+        exit(1);
+    }
 
     alarmBase *sunState = new alarmBase();
     alarmBase *lightsMorning = new alarmBase();
@@ -36,7 +56,6 @@ int main() {
     lightsEvening->setEndTime("23:30");
 
 
-    plcSocket *plc = new plcSocket();
 
     string sunRise ;
     string sunSet ;
@@ -54,7 +73,6 @@ int main() {
      *  04:30-07:30     |
      * ----] [----------+
      */
-
 
     cout << endl;
 

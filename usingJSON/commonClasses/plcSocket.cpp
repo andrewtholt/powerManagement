@@ -170,11 +170,20 @@ void plcSocket::setValue(string shortName, string value) {
     string cmd = "SET " + shortName + " " + value + "\r" ;
 
     int len = write(serverSock, cmd.c_str(), cmd.length() );
+    if( len < 0 ) {
+        cerr << "plcSocket::setValue read: Returned an error" << endl;
+        perror("WRITE");
+    }
     fsync( serverSock );
     //
     //  This read could be used to verify that the write took place.
     //
     len = read(serverSock, buffer, sizeof(buffer));
+
+    if( len < 0 ) {
+        cerr << "plcSocket::setValue read: Returned an error" << endl;
+        perror("READ");
+    }
 }
 
 void plcSocket::setBoolValue(string shortName, bool flag) {
