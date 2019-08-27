@@ -29,6 +29,8 @@ using json = nlohmann::json;
 json config;
 using namespace std;
 bool verbose=false;
+time_t startTime = 0;
+uint clientCount=0;
 
 mqd_t toDispatcher = 0;
 fstream toLog;
@@ -392,7 +394,15 @@ vector<string> handleRequest(MYSQL *conn, string request) {
     string name;
     string value;
 
+    static uint64_t uptime=0;
+
     bool validCmd = false;
+    time_t now = time(NULL);
+
+    uptime = now - startTime;
+
+    localVariable["$UPTIME"] = to_string( uptime );
+    localVariable["$CLIENTS"] = to_string( clientCount );
 
     //    string cmd = trim(request);
     cmd = split( (trim(request).c_str())) ;
@@ -547,6 +557,7 @@ void *handleConnection(void *xfer) {
     char *token=NULL;
     char *rest ;
 
+    clientCount++;
     while (runFlag) {
 
         bzero(buffer, sizeof(buffer));
@@ -580,6 +591,10 @@ void *handleConnection(void *xfer) {
             }
         }
     }
+
+    if( clientCount > 0) {
+        clientCount--;
+    }
     cout << "Bye" << endl;
     return (void *)NULL;
 }
@@ -599,6 +614,7 @@ void usage(string svcName){
     cout << "\tDefault is equivalent to:" << endl;
     cout << "\t\t Server -c /etc/mqtt/bridge.json -p 9191" << endl << endl ;
 }
+
 
 int main(int argc,  char *argv[]) {
     int sockfd; // Socket file descriptor
@@ -717,6 +733,7 @@ int main(int argc,  char *argv[]) {
     unsigned int clilen; // Client address size
     sockaddr_in cli_addr; // Client address
 
+    startTime = time(NULL);
     while (true) {
         clilen = sizeof(sockaddr_in);
         newsockfd = accept(sockfd, (sockaddr *) &cli_addr, &clilen); // Block until a client connects
