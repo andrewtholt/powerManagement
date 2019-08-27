@@ -25,6 +25,7 @@ class plcSocket : public plcBase {
 
         void setValue(string shortName, string value);
         void setBoolValue(string shortName, bool flag);
+        bool getStatus();
 
         void dump();
         // 

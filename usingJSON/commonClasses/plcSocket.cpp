@@ -1,6 +1,6 @@
 /***********************************************************************
  * AUTHOR: Andrew Holt <andrewh>
- *   FILE: .//plcSocket.cpp
+ *   FILE: plcSocket.cpp
  *   DATE: Wed May 15 18:04:49 2019
  *  DESCR: 
  ***********************************************************************/
@@ -121,6 +121,10 @@ const void plcSocket::plcSetup(string cfgFile) {
             }
         }
     }
+}
+
+bool plcSocket::getStatus() {
+    return instanceFailed;
 }
 
 /***********************************************************************

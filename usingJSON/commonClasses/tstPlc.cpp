@@ -8,8 +8,15 @@ using namespace std;
 
 int main() {
 
-    alarmBase *t = new alarmBase();
     plcSocket *plc = new plcSocket();
+
+    bool failFlag = plc->getStatus();
+
+    if(failFlag) {
+        cerr << "FATAL ERROR: Instanciation of PLC socket failed." << endl;
+        exit(1);
+    }
+    alarmBase *t = new alarmBase();
 
     cout << t->checkTime();
 
