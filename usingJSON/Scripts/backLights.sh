@@ -20,7 +20,7 @@ getPid() {
 
 pubStatus() {
     if [ ! -z "$TOPIC" ]; then
-        mosquitto_pub -r -h ${MQTT} -t $TOPIC -m $1
+        mosquitto_pub -r -h ${MQTT} -t $TOPIC -m $1 2> /dev/null
     fi
 }
 

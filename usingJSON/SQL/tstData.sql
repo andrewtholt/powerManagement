@@ -20,12 +20,12 @@ replace into io_point (name,direction,io_type ) values ('TEST_LOCAL','INTERNAL',
 update io_point,internal set io_point.io_idx=internal.idx where io_point.name = internal.name;
 
 replace into mqtt(name, topic, data_type ) values ('SUNRISE','/test/SUNRISE','STRING');
-replace into io_point (name,direction,io_type ) values ('SUNRISE','IN','MQTT');
+replace into io_point (name,direction,io_type,state ) values ('SUNRISE','IN','MQTT','08:00');
 update io_point,mqtt set io_point.io_idx=mqtt.idx where io_point.name = mqtt.name;
 
 
 replace into mqtt(name, topic, data_type ) values ('SUNSET','/test/SUNSET','STRING');
-replace into io_point (name,direction,io_type ) values ('SUNSET','IN','MQTT');
+replace into io_point (name,direction,io_type,state ) values ('SUNSET','IN','MQTT','21:00');
 update io_point,mqtt set io_point.io_idx=mqtt.idx where io_point.name = mqtt.name;
 
 replace into mqtt (name,topic) values ('PORCH_LIGHTS','/home/outside/PorchLight_1/cmnd/power');
