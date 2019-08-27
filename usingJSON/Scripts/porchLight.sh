@@ -72,10 +72,10 @@ case "$1" in
                 echo "Already running with pid $TPID"
             fi
         else
-            $NAME $ARGS
-#            nohup $NAME $ARGS > /dev/null 2>&1 &
-#            echo $!
-#            echo $! > $PIDFILE
+#            $NAME $ARGS
+            nohup $NAME $ARGS > /dev/null 2>&1 &
+            echo $!
+            echo $! > $PIDFILE
 
             sleep 1
         fi
