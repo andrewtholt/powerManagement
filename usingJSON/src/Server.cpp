@@ -557,25 +557,27 @@ void *handleConnection(void *xfer) {
             runFlag=false;
         } else if (n < 0) {
             cerr << "ERROR reading from socket" << endl;
-        }
+        } else if( n > 0 ) {
+            rest = buffer;
+            token = strtok_r(rest, "\r\n", &rest);
+            if( token != NULL) {
+                printf("%s\n", token);
+                vector<string> response = handleRequest(conn, token); // Get the response
 
-        rest = buffer;
-        token = strtok_r(rest, "\r\n", &rest);
-        printf("%s\n", token);
-        vector<string> response = handleRequest(conn, token); // Get the response
-
-        for (int i = 0; i < response.size(); i++) {
-            cout << i << ":" << response[i] << endl;
-            n = write(newsockfd, response[i].c_str(), response[i].length()); // Write response by line
-            if (n < 0) {
-                cerr << "ERROR writing to socket" << endl;
+                for (int i = 0; i < response.size(); i++) {
+                    cout << i << ":" << response[i] << endl;
+                    n = write(newsockfd, response[i].c_str(), response[i].length()); // Write response by line
+                    if (n < 0) {
+                        cerr << "ERROR writing to socket" << endl;
+                    }
+                    if (response[i] == "CLOSED\n") {
+                        close(newsockfd); // Close the connection if response line == "CLOSE"
+                        cout << inet_ntoa(cli_addr->sin_addr) << ":" << ntohs(cli_addr->sin_port)
+                            << " connection terminated" << endl;
+                        runFlag = false;
+                    } 
+                }
             }
-            if (response[i] == "CLOSED\n") {
-                close(newsockfd); // Close the connection if response line == "CLOSE"
-                cout << inet_ntoa(cli_addr->sin_addr) << ":" << ntohs(cli_addr->sin_port)
-                    << " connection terminated" << endl;
-                runFlag = false;
-            } 
         }
     }
     cout << "Bye" << endl;
