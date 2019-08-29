@@ -522,7 +522,7 @@ vector<string> handleRequest(MYSQL *conn, string request, bool localHost, map<st
                     if ( localVariable["$PROTOCOL"] == "JSON" ) {
                         cout << "JSON" << endl;
 
-                        out = "{\"" + cmd[1] + "\":\"" + row["state"] + "\"}";
+                        out = "{\"name\":\"" + cmd[1] + "\",\"value\":\"" + row["state"] + "\"}";
                     } else {
 
                         if(  row.size() == 0) {
@@ -559,7 +559,8 @@ vector<string> handleRequest(MYSQL *conn, string request, bool localHost, map<st
 
                 if ( localVariable["$PROTOCOL"] == "JSON" ) {
                     cout << "JSON" << endl;
-                    out = "{\"" + cmd[1] + "\":\"" + cmd[2] + "\"}";
+//                    out = "{\"" + cmd[1] + "\":\"" + cmd[2] + "\"}";
+                    out = "{\"name\":\"" + cmd[1] + "\",\"value\":\"" + cmd[2] + "\"}";
                 }
                 response.push_back(out +"\n"); 
             }
