@@ -408,17 +408,14 @@ void coldStart(MYSQL *conn) {
 
 }
 
-vector<string> handleRequest(MYSQL *conn, string request, bool localHost) {
+vector<string> handleRequest(MYSQL *conn, string request, bool localHost, map<string,string> &localVariable) {
     vector<string> response;
     vector<string> cmd;
 
     map<string,ioDetail> cache ;
     map<string, string>row;
 
-    thread_local map<string, string> localVariable;
-
-    localVariable["$TEST"] = "default";
-    localVariable["$PROTOCOL"] = "default";  // Set protocol.
+    //    thread_local map<string, string> localVariable;
 
     string name;
     string value;
@@ -515,15 +512,26 @@ vector<string> handleRequest(MYSQL *conn, string request, bool localHost) {
                     } else {
                         out = localVariable[ tmp ];
                     }
+
                     response.push_back( out + "\n");
                 } else {
+                    cout << localVariable["$PROTOCOL"] << endl;
+                    string out;
                     row=getFromIoPoint(conn, cmd[1]);
 
-                    if(  row.size() == 0) {
-                        response.push_back("<UNDEFINED>\n");
+                    if ( localVariable["$PROTOCOL"] == "JSON" ) {
+                        cout << "JSON" << endl;
+
+                        out = "{\"" + cmd[1] + "\":\"" + row["state"] + "\"}";
                     } else {
-                        response.push_back(string(row["state"] +"\n")); 
+
+                        if(  row.size() == 0) {
+                            out = "<UNDEFINED>";
+                        } else {
+                            out = string(row["state"]); 
+                        }
                     }
+                    response.push_back(out + "\n");
                 }
             }
             break;
@@ -531,22 +539,29 @@ vector<string> handleRequest(MYSQL *conn, string request, bool localHost) {
             if( cmd[0] == "SET" ) {
                 validCmd = true;
                 cout << "SET " << cmd[1] + " to " + cmd[2] << endl;
+                string out;
 
                 if( cmd[1].at(0) == '$') {
                     string tmp = cmd[1];
                     localVariable[tmp ] = cmd[2];
+                    out = cmd[2];
                 } else {
                     row=getFromIoPoint(conn, cmd[1]);
 
                     if( row.size() > 0 ) {
                         row["state"] = cmd[2];
                         updateIO(conn, row);
-                        response.push_back(string(row["state"] +"\n")); 
+                        out = string(row["state"]);
                     } else {
-                        response.push_back(string("<UNDEFINED>\n")); 
+                        out=string("<UNDEFINED>"); 
                     }
                 }
-                //                response.push_back(string(cmd[2] +"\n")); 
+
+                if ( localVariable["$PROTOCOL"] == "JSON" ) {
+                    cout << "JSON" << endl;
+                    out = "{\"" + cmd[1] + "\":\"" + cmd[2] + "\"}";
+                }
+                response.push_back(out +"\n"); 
             }
             break;
     }
@@ -599,6 +614,10 @@ void *handleConnection(void *xfer) {
     char *rest ;
 
     clientCount++;
+    thread_local map<string, string> localVariable;
+    localVariable["$TEST"] = "DEFAULT";
+    localVariable["$PROTOCOL"] = "DEFAULT";  // Set protocol.
+
     while (runFlag) {
 
         bzero(buffer, sizeof(buffer));
@@ -614,7 +633,7 @@ void *handleConnection(void *xfer) {
             token = strtok_r(rest, "\r\n", &rest);
             if( token != NULL) {
                 printf("%s\n", token);
-                vector<string> response = handleRequest(conn, token, localHost); // Get the response
+                vector<string> response = handleRequest(conn, token, localHost, localVariable); // Get the response
 
                 for (int i = 0; i < response.size(); i++) {
                     cout << i << ":" << response[i] << endl;
