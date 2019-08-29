@@ -284,6 +284,7 @@ void mqttPublish(string topic, string msg) {
         perror("mq_send");
     }
 }
+
 //
 // Set old=new for given value
 //
@@ -379,7 +380,35 @@ void updateIO(MYSQL *conn, map<string, string>row) {
 
 }
 
-vector<string> handleRequest(MYSQL *conn, string request) {
+void coldStart(MYSQL *conn) {
+
+    string name;
+    string sql = "select name from io_point where state = 'OFF' or state = 'ON';";
+
+    mysql_query(conn, sql.c_str());
+
+    MYSQL_RES *confres = mysql_store_result(conn);
+    int totalrows = mysql_num_rows(confres);
+    int numfields = mysql_num_fields(confres);
+    MYSQL_FIELD *mfield;
+    MYSQL_ROW row;
+
+    while((row = mysql_fetch_row(confres))) {
+
+        cout << row[0] << endl;
+        name = row[0];
+
+        map<string,string> dataRow=getFromIoPoint(conn, name);
+
+        dataRow["state"] = "OFF";
+        dataRow["old_state"] = "OFF";
+
+        updateIO(conn, dataRow);
+    }
+
+}
+
+vector<string> handleRequest(MYSQL *conn, string request, bool localHost) {
     vector<string> response;
     vector<string> cmd;
 
@@ -404,7 +433,6 @@ vector<string> handleRequest(MYSQL *conn, string request) {
     localVariable["$UPTIME"] = to_string( uptime );
     localVariable["$CLIENTS"] = to_string( clientCount );
 
-    //    string cmd = trim(request);
     cmd = split( (trim(request).c_str())) ;
     int cmdLen = cmd.size();
 
@@ -413,6 +441,16 @@ vector<string> handleRequest(MYSQL *conn, string request) {
     validCmd = false;
     switch( cmdLen ) {
         case 1:
+            // A small measure of security.
+            // Global commands can only be executed from the same host.
+            //
+            if( localHost ) {
+                if( cmd[0] == "COLD" ) {
+                    validCmd = true;
+                    coldStart(conn);
+                    response.push_back(string("COLD\n")); // Respond with "Pong!" 
+                }
+            } 
             if( cmd[0] == "PING" ) {
                 validCmd = true;
                 response.push_back(string("Pong!\n")); // Respond with "Pong!" 
@@ -423,7 +461,7 @@ vector<string> handleRequest(MYSQL *conn, string request) {
                 validCmd = true;
                 dbReset(conn);
                 response.push_back(string("RESET\n")); 
-            } 
+            }
             break;
         case 2:
             if( cmd[0] == "RESET" ) {
@@ -522,21 +560,25 @@ vector<string> handleRequest(MYSQL *conn, string request) {
 
 void *handleConnection(void *xfer) {
     struct toThread *ptr = (struct toThread *)xfer ;
+
+    bool localHost = false;
+
+    char ipAddrBuffer[INET_ADDRSTRLEN];
+
     int newsockfd; 
     sockaddr_in *cli_addr;
 
     newsockfd = ptr->newsockfd;
     cli_addr = ptr->cli_addr;
 
+    struct in_addr ipAddr= cli_addr->sin_addr;
+    inet_ntop( AF_INET, &ipAddr, ipAddrBuffer,  INET_ADDRSTRLEN);
+
+    localHost = (!strcmp(ipAddrBuffer,"127.0.0.1")) ? true : false ;
+
     char buffer[256]; // Initialize buffer to zeros
     bzero(buffer, 256);
     MYSQL *conn;
-
-    /*
-       ifstream cfgStream( ptr->cfgFile );
-    //    json config = json::parse(cfgStream);
-    config = json::parse(cfgStream);
-    */
 
     string dbName = config["database"]["name"];
     string db     = config["database"]["db"];
@@ -550,7 +592,6 @@ void *handleConnection(void *xfer) {
         fprintf(stderr, "%s\n", mysql_error(conn));
         return (void*)NULL;
     }
-
 
     bool runFlag = true ;
 
@@ -573,7 +614,7 @@ void *handleConnection(void *xfer) {
             token = strtok_r(rest, "\r\n", &rest);
             if( token != NULL) {
                 printf("%s\n", token);
-                vector<string> response = handleRequest(conn, token); // Get the response
+                vector<string> response = handleRequest(conn, token, localHost); // Get the response
 
                 for (int i = 0; i < response.size(); i++) {
                     cout << i << ":" << response[i] << endl;

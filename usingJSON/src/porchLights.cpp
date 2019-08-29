@@ -88,8 +88,8 @@ int main() {
             sunSet = plc->getValue("SUNSET");
 
             displayTime();
-            cout << "Sunrise : " << sunRise ;
-            cout << "Sunset  : " << sunSet ;
+            cout << "Sunrise : " << sunRise << endl;
+            cout << "Sunset  : " << sunSet << endl;
 
             sunState->setStartTime(sunRise);
             sunState->setEndTime(sunSet);
