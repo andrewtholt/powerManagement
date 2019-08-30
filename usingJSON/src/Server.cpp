@@ -382,30 +382,31 @@ void updateIO(MYSQL *conn, map<string, string>row) {
 
 void coldStart(MYSQL *conn) {
 
-    string name;
-    string sql = "select name from io_point where state = 'OFF' or state = 'ON';";
+    if(clientCount == 1) {
+        string name;
+        string sql = "select name from io_point where state = 'OFF' or state = 'ON';";
 
-    mysql_query(conn, sql.c_str());
+        mysql_query(conn, sql.c_str());
 
-    MYSQL_RES *confres = mysql_store_result(conn);
-    int totalrows = mysql_num_rows(confres);
-    int numfields = mysql_num_fields(confres);
-    MYSQL_FIELD *mfield;
-    MYSQL_ROW row;
+        MYSQL_RES *confres = mysql_store_result(conn);
+        int totalrows = mysql_num_rows(confres);
+        int numfields = mysql_num_fields(confres);
+        MYSQL_FIELD *mfield;
+        MYSQL_ROW row;
 
-    while((row = mysql_fetch_row(confres))) {
+        while((row = mysql_fetch_row(confres))) {
 
-        cout << row[0] << endl;
-        name = row[0];
+            cout << row[0] << endl;
+            name = row[0];
 
-        map<string,string> dataRow=getFromIoPoint(conn, name);
+            map<string,string> dataRow=getFromIoPoint(conn, name);
 
-        dataRow["state"] = "OFF";
-        dataRow["old_state"] = "OFF";
+            dataRow["state"] = "OFF";
+            dataRow["old_state"] = "OFF";
 
-        updateIO(conn, dataRow);
+            updateIO(conn, dataRow);
+        }
     }
-
 }
 
 vector<string> handleRequest(MYSQL *conn, string request, bool localHost, map<string,string> &localVariable) {
@@ -559,7 +560,7 @@ vector<string> handleRequest(MYSQL *conn, string request, bool localHost, map<st
 
                 if ( localVariable["$PROTOCOL"] == "JSON" ) {
                     cout << "JSON" << endl;
-//                    out = "{\"" + cmd[1] + "\":\"" + cmd[2] + "\"}";
+                    //                    out = "{\"" + cmd[1] + "\":\"" + cmd[2] + "\"}";
                     out = "{\"name\":\"" + cmd[1] + "\",\"value\":\"" + cmd[2] + "\"}";
                 }
                 response.push_back(out +"\n"); 
