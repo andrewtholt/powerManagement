@@ -46,6 +46,11 @@ struct ioDetail {
     string direction;
 };
 
+struct connectionFlags {
+    bool localHost;     // If true the client has connected to localhost.
+    bool quietLocals;   // If true setting a local variable does not reply.
+};
+
 map<string,string> getFromInternalQuery(MYSQL *conn, string name) {
     map<string,string> data;
 
@@ -409,7 +414,7 @@ void coldStart(MYSQL *conn) {
     }
 }
 
-vector<string> handleRequest(MYSQL *conn, string request, bool localHost, map<string,string> &localVariable) {
+vector<string> handleRequest(MYSQL *conn, string request, struct connectionFlags *cFlags, map<string,string> &localVariable) {
     vector<string> response;
     vector<string> cmd;
 
@@ -442,7 +447,7 @@ vector<string> handleRequest(MYSQL *conn, string request, bool localHost, map<st
             // A small measure of security.
             // Global commands can only be executed from the same host.
             //
-            if( localHost ) {
+            if( cFlags->localHost ) {
                 if( cmd[0] == "COLD" ) {
                     validCmd = true;
                     coldStart(conn);
@@ -459,6 +464,10 @@ vector<string> handleRequest(MYSQL *conn, string request, bool localHost, map<st
                 validCmd = true;
                 dbReset(conn);
                 response.push_back(string("RESET\n")); 
+            } else if (cmd[0] == "SILENT") {
+                validCmd = true;
+                cFlags->quietLocals =true;
+                cout << "SSSHHHH" << endl;
             }
             break;
         case 2:
@@ -545,7 +554,12 @@ vector<string> handleRequest(MYSQL *conn, string request, bool localHost, map<st
                 if( cmd[1].at(0) == '$') {
                     string tmp = cmd[1];
                     localVariable[tmp ] = cmd[2];
-                    out = cmd[2];
+                    if( cFlags->quietLocals) {
+                        cout << "More SSSSHHHH" << endl;
+                        out="";
+                    } else {
+                        out = cmd[2];
+                    }
                 } else {
                     row=getFromIoPoint(conn, cmd[1]);
 
@@ -558,12 +572,14 @@ vector<string> handleRequest(MYSQL *conn, string request, bool localHost, map<st
                     }
                 }
 
-                if ( localVariable["$PROTOCOL"] == "JSON" ) {
-                    cout << "JSON" << endl;
-                    //                    out = "{\"" + cmd[1] + "\":\"" + cmd[2] + "\"}";
-                    out = "{\"name\":\"" + cmd[1] + "\",\"value\":\"" + cmd[2] + "\"}";
+                if( out.length() > 0) {
+                    if ( localVariable["$PROTOCOL"] == "JSON" ) {
+                        cout << "JSON" << endl;
+                        //                    out = "{\"" + cmd[1] + "\":\"" + cmd[2] + "\"}";
+                        out = "{\"name\":\"" + cmd[1] + "\",\"value\":\"" + cmd[2] + "\"}";
+                    }
+                    response.push_back(out +"\n"); 
                 }
-                response.push_back(out +"\n"); 
             }
             break;
     }
@@ -578,7 +594,12 @@ vector<string> handleRequest(MYSQL *conn, string request, bool localHost, map<st
 void *handleConnection(void *xfer) {
     struct toThread *ptr = (struct toThread *)xfer ;
 
-    bool localHost = false;
+    //    bool localHost = false;
+    //
+    thread_local struct connectionFlags cFlags;
+
+    cFlags.localHost = false;
+    cFlags.quietLocals = false;
 
     char ipAddrBuffer[INET_ADDRSTRLEN];
 
@@ -591,7 +612,7 @@ void *handleConnection(void *xfer) {
     struct in_addr ipAddr= cli_addr->sin_addr;
     inet_ntop( AF_INET, &ipAddr, ipAddrBuffer,  INET_ADDRSTRLEN);
 
-    localHost = (!strcmp(ipAddrBuffer,"127.0.0.1")) ? true : false ;
+    cFlags.localHost = (!strcmp(ipAddrBuffer,"127.0.0.1")) ? true : false ;
 
     char buffer[256]; // Initialize buffer to zeros
     bzero(buffer, 256);
@@ -635,7 +656,7 @@ void *handleConnection(void *xfer) {
             token = strtok_r(rest, "\r\n", &rest);
             if( token != NULL) {
                 printf("%s\n", token);
-                vector<string> response = handleRequest(conn, token, localHost, localVariable); // Get the response
+                vector<string> response = handleRequest(conn, token, &cFlags, localVariable); // Get the response
 
                 for (int i = 0; i < response.size(); i++) {
                     cout << i << ":" << response[i] << endl;
