@@ -8,14 +8,17 @@ import time
 import getopt
 
 def usage(name):
-    print("Usage:" + name + " -c <file>|--config <file> -n <name>|--name <name> -d <value>|--def <value> -v|--verbose")
+    print("Usage:" + name + " -c <file>|--config <file> -n <name>|--name <name> -d <value>|")
+    print("\t--def <value> -v|--verbose -j|--json\n")
     print("\t-c <file>\tConfig file, default is /etc/mqtt/bridge.json")
     print("\t-n <name>\tThe name of tha data to read.")
     print("\t-d <value>\tThe value to set.")
     print("\t-v\t\tVerbose.")
+    print("\t-j\t\tJSON Formatted output.")
 
 def main():
-    verbose=False
+    verbose = False
+    jsonOut = False
     data=None
 
     HOST, PORT = "localhost", 9191
@@ -25,7 +28,7 @@ def main():
     dataValue=""
 
     try:
-        opts,args = getopt.getopt(sys.argv[1:],"c:d:hn:v", ["config=","def=","help","name=","verbose"])
+        opts,args = getopt.getopt(sys.argv[1:],"c:d:hn:vj", ["config=","def=","help","name=","verbose","json"])
 
         for o,a in opts:
             if o in ["-h","--help" ]:
@@ -39,6 +42,8 @@ def main():
                 dataName = a 
             elif o in ["-v","--verbose"]:
                 verbose=True
+            elif o in ["-j","--json"]:
+                jsonOut = True
 
     except getopt.GetoptError as err:
         print(err)
@@ -72,6 +77,13 @@ def main():
         # Connect to server and send data
         sock.connect((HOST, PORT))
         sock.sendall(bytes(cmd + "\n", "utf-8"))
-    
+
+        received = str(sock.recv(1024), "utf-8") 
+
+    if jsonOut: 
+        print('{ "name":"' + dataName + '","value":"' + dataValue + '" }')
+    else:
+        print("{}".format(received),end="")
+
 main()
 
