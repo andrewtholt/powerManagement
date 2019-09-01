@@ -476,9 +476,24 @@ vector<string> handleRequest(MYSQL *conn, string request, struct connectionFlags
                 dbReset(conn, cmd[1]);
                 response.push_back(string("RESET\n")); 
             } else if( cmd[0] == "TOGGLE" ) {
+                string out;
                 validCmd = true;
                 row=getFromIoPoint(conn, cmd[1]);
 
+                if( row.size() > 0) {
+                    if( row["state"] == "ON" ) {
+                        row["state"] = "OFF";
+                    } else {
+                        row["state"] = "ON";
+                    }
+                    out = row["state"];
+                } else {
+                    out = "<UNDEFINED>";
+                }
+                updateIO(conn, row);
+                response.push_back(out +"\n");
+
+                /* 
                 if( row.size() == 0) {
                     response.push_back( "<UNDEFINED>\n");
                 } else {
@@ -506,6 +521,7 @@ vector<string> handleRequest(MYSQL *conn, string request, struct connectionFlags
                         response.push_back( row["state"]+ "\n");
                     }
                 }
+                */
 
             } else if( cmd[0] == "GET" ) {
                 validCmd = true;
