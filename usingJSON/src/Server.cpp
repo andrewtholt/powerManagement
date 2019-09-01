@@ -466,8 +466,10 @@ vector<string> handleRequest(MYSQL *conn, string request, struct connectionFlags
                 response.push_back(string("RESET\n")); 
             } else if (cmd[0] == "SILENT") {
                 validCmd = true;
-                cFlags->quietLocals =true;
-                cout << "SSSHHHH" << endl;
+                cFlags->quietLocals = true;
+            } else if (cmd[0] == "VERBOSE") {
+                validCmd = true;
+                cFlags->quietLocals = false;
             }
             break;
         case 2:
