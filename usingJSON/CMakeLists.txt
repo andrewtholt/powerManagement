@@ -13,4 +13,3 @@ execute_process(COMMAND mysql_config --libs
 
 add_subdirectory(src)
 add_subdirectory(Server2)
-add_subdirectory(commonClasses)

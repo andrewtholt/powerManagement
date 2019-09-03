@@ -7,12 +7,19 @@
 #include <algorithm>
 #include <vector>
 #include <nlohmann/json.hpp>
+#include <time.h>
 
 #include "interp.h"
 
 using json = nlohmann::json;
 
 using namespace std;
+
+extern uint64_t startTime;  // system start time.
+
+void interp::setLocal(string key, string value) {
+    localVariable[key] = value;
+}
 
 map<string, string> interp::sqlQuery(string table, string key){
     map<string,string> data;
@@ -50,7 +57,8 @@ void interp::setDestQ( string qName ) {
         mq_close(dest);
     }
 
-    dest = mq_open(destQ.c_str(), O_WRONLY|O_CREAT,0664, &attr);
+//    dest = mq_open(destQ.c_str(), O_WRONLY|O_CREAT,0664, &attr);
+    dest = mq_open(destQ.c_str(), O_WRONLY|O_CREAT,0664, NULL);
     if( dest == -1) {
         perror("mq_open");
         exit(2);
@@ -62,6 +70,10 @@ string interp::setRemoteVariable(string name, string value) {
     map<string,string> pointData;
 
     string ret="<NOT FOUND>";
+
+    string sqlCmd = "update io_point set old_state=state, state = '" + value + "' where name='" + name + "';";
+    cout << sqlCmd << endl;
+    int rc = mysql_query(conn, sqlCmd.c_str());
 
     data = sqlQuery( "io_point",name);
 
@@ -84,12 +96,11 @@ string interp::setRemoteVariable(string name, string value) {
             perror("setRemoteVariable:mq:send ");
         }
     }
-    // 
-    // Write string toDispatch to the message Q
-    //
+    /* 
     string sqlCmd = "update io_point set old_state=state, state = '" + value + "' where name='" + name + "';";
     cout << sqlCmd << endl;
     int rc = mysql_query(conn, sqlCmd.c_str());
+    */
 
     return value;
 }
@@ -139,6 +150,12 @@ std::string interp::Set(std::vector<string> c) {
 std::string interp::Get(std::vector<string> c) {
     string ret="<UNKNOWN>";
 
+    uint64_t uptime;
+
+    time_t now = time(NULL);
+    uptime = now - startTime;
+    localVariable["UPTIME"] = to_string( uptime );
+
     cout << "GET:" << endl;
     cout << c.size() << endl;
 
@@ -174,6 +191,8 @@ std::string interp::undefinedCmd(std::vector<string>) {
  ***********************************************************************/
 interp::interp(MYSQL *c) {
     conn = c;
+
+    localVariable["VERSION"] = VERSION;
 }
 interp::interp() {
     /*
@@ -208,6 +227,10 @@ string interp::runCmd(vector<string> c) {
         out=Get(c);
     } else if ( c[0] == "SET" ) {
         out=Set(c);
+    } else if ( c[0] == "RESET" ) {
+        out="<UNIMPLEMENTED>";
+    } else if ( c[0] == "TOGGLE" ) {
+        out="<UNIMPLEMENTED>";
     } else {
         out = "<UNKNOWN>";
     }

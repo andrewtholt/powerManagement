@@ -105,7 +105,7 @@ fi
 mkdir -p ${BASE}/etc/mqtt
 cp ${CFG}/*.json ${BASE}/etc/mqtt
 
-BINS="porchLights backLights tDispatch pubSunRiset Server"
+BINS="porchLights backLights tDispatch pubSunRiset Server ../Server2/Server2"
 
 for B in $BINS; do
     cp $PLACE/${B} $DEST

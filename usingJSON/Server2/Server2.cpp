@@ -19,10 +19,14 @@
 
 #include "interp.h"
 #include "utils.h"
+#include "incCounter.h"
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 json config;
+
+incCounter clients;
+time_t startTime = 0;
 
 using namespace std;
 
@@ -74,6 +78,9 @@ int main(int argc, char* argv[]) {
     string cfgFile = "/etc/mqtt/bridge.json";
     string logFile = "";
 
+    clients.reset();
+
+    startTime = time(NULL);
     while( (opt = getopt(argc, argv, "c:fhp:vl:")) != -1) {
         switch(opt) {
             case 'c':
@@ -195,8 +202,26 @@ int main(int argc, char* argv[]) {
     }
 }
 
+struct isBlank {
+    bool operator()(const string &s) {
+        static int i=0;
+        int n=0;
+
+        cout << i << endl;
+        cout << ">" +  s + "<" << endl;
+        n=i;
+        i++;
+
+        if ( s == "" ) {
+            return n;
+        }
+    }
+};
+
 void *handleConnection (void *xfer) {
     cout << "Thread No: " << pthread_self() << endl;
+
+    clients.increment();
 
     struct toThread *ptr = (struct toThread *)xfer ;
     thread_local struct connectionFlags cFlags;
@@ -213,7 +238,6 @@ void *handleConnection (void *xfer) {
 
     vector<string> cmd;
     int len=0;
-
 
     char ipAddrBuffer[INET_ADDRSTRLEN];
 
@@ -238,12 +262,14 @@ void *handleConnection (void *xfer) {
 
     interp myInterp(conn);
 
+    myInterp.setLocal("CLIENTS", to_string( clients.get() ));
+
     myInterp.setDestQ( msgQ );
 
     while(runFlag) {    
         bzero(buffer, sizeof(buffer));
 
-        len = read(connFd, buffer, sizeof(buffer));
+        len = read(newsockfd, buffer, sizeof(buffer));
         if ( len == 0) {
             cout << inet_ntoa(cli_addr->sin_addr) << ":" << ntohs(cli_addr->sin_port)
                 << " connection closed by client" << endl;
@@ -256,6 +282,8 @@ void *handleConnection (void *xfer) {
             cmd = split( (trim(request).c_str())) ;
             cmdLen = cmd.size();
 
+            cmd.erase(remove_if(cmd.begin(), cmd.end(), isBlank()), cmd.end());
+
             cout << buffer << endl;
             response = myInterp.runCmd( cmd );
 
@@ -267,11 +295,11 @@ void *handleConnection (void *xfer) {
             cout << response  << endl;
             response += "\n";
 
-            write(connFd, response.c_str(),response.length());
+            write(newsockfd, response.c_str(),response.length());
         }
     }
     cout << "\nClosing thread and conn" << endl;
     mysql_close(conn);
-    close(connFd);
+    close(newsockfd);
     return(void *)NULL;
 }

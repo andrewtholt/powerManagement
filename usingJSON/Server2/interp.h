@@ -9,6 +9,8 @@
 #include <sys/stat.h>        /* For mode constants */
 #include <mqueue.h>
 
+#define VERSION "V2.00"
+
 // typedef  std::string (*methodPtr)(std::vector<std::string> c);
 typedef  std::string (*methodPtr)(std::vector<std::string> c);
 enum opTypeDef { JSON, SIMPLE };
@@ -36,6 +38,7 @@ class interp {
 
         std::string Get(std::vector<std::string>);
         std::string Set(std::vector<std::string>);
+        void setLocal(std::string, std::string);
 
         std::string runCmd(std::vector<std::string>);
 
