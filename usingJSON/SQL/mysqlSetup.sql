@@ -8,7 +8,7 @@ use  automation;
 
 
 drop table if exists io_point;
-drop table if exists io_type;
+-- drop table if exists io_type;
 drop table if exists mqtt;
 drop table if exists modbus;
 drop table if exists snmp;
@@ -102,21 +102,21 @@ CREATE TABLE IF NOT EXISTS modbus (
 
 CREATE VIEW mqttQuery AS
     SELECT 
-        io_point.name, mqtt.topic,io_point.state,io_point.old_state,io_point.direction,mqtt.data_type,io_point.logtime
+        io_point.name,io_point.io_type, mqtt.topic,io_point.state,io_point.old_state,io_point.direction,mqtt.data_type,io_point.logtime
     FROM
         io_point,mqtt
 	WHERE io_point.name = mqtt.name;
 
 CREATE VIEW internalQuery AS
     SELECT 
-        io_point.name, io_point.state,io_point.old_state, io_point.direction, internal.data_type, io_point.logtime
+        io_point.name,io_point.io_type, io_point.state,io_point.old_state, io_point.direction, internal.data_type, io_point.logtime
     FROM
         io_point,internal
 	WHERE io_point.name = internal.name;
 
 CREATE VIEW snmpQuery AS
     SELECT 
-        io_point.name, snmp.ipAddress, snmp.port,
+        io_point.name, io_point.io_type,snmp.ipAddress, snmp.port,
         snmp.oid, value, on_value, off_value, 
         snmp.ro_community, snmp.rw_community,
         io_point.state,io_point.old_state,io_point.direction,snmp.data_type,io_point.logtime
