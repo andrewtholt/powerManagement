@@ -6,14 +6,87 @@
  ***********************************************************************/
 #include <algorithm>
 #include <vector>
+#include <nlohmann/json.hpp>
+
 #include "interp.h"
 
+using json = nlohmann::json;
 
 using namespace std;
 
+map<string, string> interp::sqlQuery(string table, string key){
+    map<string,string> data;
+    MYSQL_FIELD *field;
+
+    string sqlCmd = "select * from " + table + " where name='" + key + "';";
+
+    cout << sqlCmd << endl;
+
+    int rc = mysql_query(conn, sqlCmd.c_str());
+
+    MYSQL_RES *result = mysql_store_result( conn );
+    MYSQL_ROW row = mysql_fetch_row(result);
+
+    unsigned int num_fields = mysql_num_fields(result);
+    unsigned int num_rows   = mysql_num_rows(result);
+
+    if( num_rows  > 0 ) {
+        char *headers[num_fields];
+        for(unsigned int i = 0; (field = mysql_fetch_field(result)); i++) {
+            data[ field->name ] = row[i];
+        }
+    }
+    mysql_free_result( result );
+
+    return data;
+}
+
+void interp::setDestQ( string qName ) {
+    struct mq_attr attr;
+
+    destQ = qName;
+
+    if( dest >=0 ) {
+        mq_close(dest);
+    }
+
+    dest = mq_open(destQ.c_str(), O_WRONLY|O_CREAT,0664, &attr);
+    if( dest == -1) {
+        perror("mq_open");
+        exit(2);
+    }
+}
+
 string interp::setRemoteVariable(string name, string value) {
+    map<string,string> data;
+    map<string,string> pointData;
+
     string ret="<NOT FOUND>";
 
+    data = sqlQuery( "io_point",name);
+
+    string dataType = data["io_type"];
+
+    transform(dataType.begin(), dataType.end(), dataType.begin(), ::tolower);
+
+    pointData = sqlQuery( dataType + "Query", name );
+
+    if( dest > -1) {
+        char outBuffer[512];
+        bzero(outBuffer,sizeof(outBuffer));
+
+        json outMap(pointData);
+        string toDispatch = outMap.dump() ;
+
+        strncpy(outBuffer, toDispatch.c_str(), toDispatch.length());
+
+        if (mq_send(dest, outBuffer, strlen(outBuffer), 0) < 0) {
+            perror("setRemoteVariable:mq:send ");
+        }
+    }
+    // 
+    // Write string toDispatch to the message Q
+    //
     string sqlCmd = "update io_point set old_state=state, state = '" + value + "' where name='" + name + "';";
     cout << sqlCmd << endl;
     int rc = mysql_query(conn, sqlCmd.c_str());
@@ -21,19 +94,13 @@ string interp::setRemoteVariable(string name, string value) {
     return value;
 }
 
-string interp::getRemoteVariable(string name) {
-    string ret="<NOT FOUND>";
+map<string,string> interp::getRemoteVariable(string name) {
+    map<string,string> data;
+    MYSQL_FIELD *field;
 
-    string sqlCmd = "select state from io_point where name='" + name + "';";
+    data = sqlQuery( "io_point",name);
 
-    int rc = mysql_query(conn, sqlCmd.c_str());
-
-    MYSQL_RES *result = mysql_store_result( conn );
-    MYSQL_ROW row = mysql_fetch_row(result);
-
-    ret = row[0];
-
-    return ret;
+    return data;
 }
 
 /***********************************************************************
@@ -86,7 +153,8 @@ std::string interp::Get(std::vector<string> c) {
             cout << tmp << endl;
             ret = localVariable[tmp];
         } else {
-            ret = getRemoteVariable(tmp);
+            map<string,string> data = getRemoteVariable(tmp);
+            ret = data["state"];
         }
     }
     cout << "===" << endl;

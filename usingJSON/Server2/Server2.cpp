@@ -227,6 +227,7 @@ void *handleConnection (void *xfer) {
     string db     = config["database"]["db"];
     string user   = config["database"]["user"];
     string passwd = config["database"]["passwd"];
+    string msgQ   = config["socket"]["dispatch"];
 
     MYSQL *conn=mysql_init(NULL);
 
@@ -236,6 +237,8 @@ void *handleConnection (void *xfer) {
     }
 
     interp myInterp(conn);
+
+    myInterp.setDestQ( msgQ );
 
     while(runFlag) {    
         bzero(buffer, sizeof(buffer));
