@@ -10,6 +10,7 @@
 #include <mqueue.h>
 
 #define VERSION "V2.00"
+extern std::map<std::string, std::string> globalVariable;
 
 // typedef  std::string (*methodPtr)(std::vector<std::string> c);
 typedef  std::string (*methodPtr)(std::vector<std::string> c);
@@ -23,11 +24,12 @@ class interp {
         std::string destQ="";
         mqd_t dest=-1;
 
+        std::string clientIP;
+
         std::map<std::string, std::string> localVariable;
         std::map<std::string, std::string> getRemoteVariable(std::string);
         std::string setRemoteVariable(std::string, std::string);
         std::map<std::string, std::string> sqlQuery(std::string table, std::string key);
-
 
     public:
         interp();
@@ -36,14 +38,23 @@ class interp {
         std::string Close(std::vector<std::string>);
         std::string undefinedCmd(std::vector<std::string>);
 
-        std::string Get(std::vector<std::string>);
         std::string Set(std::vector<std::string>);
+        std::string Get(std::vector<std::string>);
+        std::string Toggle(std::vector<std::string>);
+        std::string Reset(std::vector<std::string>);
+        std::string Cold(std::vector<std::string>);
+
         void setLocal(std::string, std::string);
 
         std::string runCmd(std::vector<std::string>);
 
         void setDestQ(std::string);
         std::string getDestQ();
+
+        void setClientIP(std::string);
+        std::string getClientIP();
+
+        void dump();
 
 };
 

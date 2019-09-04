@@ -19,6 +19,7 @@ getPid() {
 }
 
 pubStatus() {
+    echo "$1" >&2
     if [ ! -z "$TOPIC" ]; then
         mosquitto_pub -r -h ${MQTT} -t $TOPIC -m $1 2> /dev/null
     fi
@@ -35,6 +36,7 @@ status() {
             pubStatus "UP"
             RET=0
         else
+#            rm -f $PIDFILE
             pubStatus "DOWN"
             RET=1
         fi
@@ -72,7 +74,6 @@ case "$1" in
                 echo "Already running with pid $TPID"
             fi
         else
-#            $NAME $ARGS
             nohup $NAME $ARGS > /dev/null 2>&1 &
             echo $!
             echo $! > $PIDFILE

@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
+#include <map>
+
 #include <pthread.h>
 #include <mysql/mysql.h>
 
@@ -28,7 +30,9 @@ json config;
 incCounter clients;
 time_t startTime = 0;
 
+
 using namespace std;
+map<string, string> globalVariable;
 
 void *handleConnection(void *);
 
@@ -223,6 +227,8 @@ void *handleConnection (void *xfer) {
 
     clients.increment();
 
+    globalVariable["CLIENTS"]=to_string(clients.get()) ;
+
     struct toThread *ptr = (struct toThread *)xfer ;
     thread_local struct connectionFlags cFlags;
 
@@ -262,9 +268,13 @@ void *handleConnection (void *xfer) {
 
     interp myInterp(conn);
 
-    myInterp.setLocal("CLIENTS", to_string( clients.get() ));
-
     myInterp.setDestQ( msgQ );
+
+    cout << inet_ntoa(cli_addr->sin_addr) << ":" << ntohs(cli_addr->sin_port) << endl;
+
+    myInterp.setClientIP( inet_ntoa(cli_addr->sin_addr) );
+
+    myInterp.dump();
 
     while(runFlag) {    
         bzero(buffer, sizeof(buffer));
@@ -301,5 +311,7 @@ void *handleConnection (void *xfer) {
     cout << "\nClosing thread and conn" << endl;
     mysql_close(conn);
     close(newsockfd);
+    clients.decrement();
+    globalVariable["CLIENTS"]=to_string(clients.get()) ;
     return(void *)NULL;
 }

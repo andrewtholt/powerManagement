@@ -21,6 +21,21 @@ void interp::setLocal(string key, string value) {
     localVariable[key] = value;
 }
 
+void interp::setClientIP(string ip) {
+    clientIP=ip;
+}
+
+string interp::getClientIP() {
+    return clientIP;
+}
+
+void interp::dump() {
+    cout << "Client IP   : " << clientIP << endl;
+    cout << "Locals " << endl;
+
+    //    cout << localVariable << endl;
+}
+
 map<string, string> interp::sqlQuery(string table, string key){
     map<string,string> data;
     MYSQL_FIELD *field;
@@ -57,7 +72,7 @@ void interp::setDestQ( string qName ) {
         mq_close(dest);
     }
 
-//    dest = mq_open(destQ.c_str(), O_WRONLY|O_CREAT,0664, &attr);
+    //    dest = mq_open(destQ.c_str(), O_WRONLY|O_CREAT,0664, &attr);
     dest = mq_open(destQ.c_str(), O_WRONLY|O_CREAT,0664, NULL);
     if( dest == -1) {
         perror("mq_open");
@@ -97,10 +112,10 @@ string interp::setRemoteVariable(string name, string value) {
         }
     }
     /* 
-    string sqlCmd = "update io_point set old_state=state, state = '" + value + "' where name='" + name + "';";
-    cout << sqlCmd << endl;
-    int rc = mysql_query(conn, sqlCmd.c_str());
-    */
+       string sqlCmd = "update io_point set old_state=state, state = '" + value + "' where name='" + name + "';";
+       cout << sqlCmd << endl;
+       int rc = mysql_query(conn, sqlCmd.c_str());
+       */
 
     return value;
 }
@@ -164,11 +179,17 @@ std::string interp::Get(std::vector<string> c) {
         cout << "\t[1]:" + c[1] << endl;
 
         string tmp = c[1];
+        tmp.erase(tmp.begin());
+        cout << tmp << endl;
+
         if ( c[1].at(0) == '$' ) {
+            // Local variable
             cout << "Local" << endl;
-            tmp.erase(tmp.begin());
-            cout << tmp << endl;
             ret = localVariable[tmp];
+        } else if ( c[1].at(0) == '^' ) {
+            // Global variable
+            cout << "Global" << endl;
+            ret = globalVariable[tmp];
         } else {
             map<string,string> data = getRemoteVariable(tmp);
             ret = data["state"];
@@ -178,7 +199,70 @@ std::string interp::Get(std::vector<string> c) {
     return ret;
 }
 
-std::string interp::undefinedCmd(std::vector<string>) {
+string interp::Toggle(vector<string> c) {
+    string state = Get( c );
+
+    if( state == "ON" ) {
+        state = "OFF";
+    } else if( state == "OFF" ) {
+        state = "ON";
+    }
+
+    c.push_back( state );
+
+    return Set( c );
+}
+
+string interp::Reset(vector<string> c) {
+    string ret = "<NOTHING>";
+
+    int cLen = c.size();
+
+    string sqlCmd;
+
+    if( cLen == 1 ) {
+        sqlCmd = "update io_point set old_state=state ;";
+    } else if (cLen == 2 ) {
+        sqlCmd = "update io_point set old_state=state where name='" + c[1] + "';";
+    }
+
+    cout << sqlCmd << endl;
+
+    int rc = mysql_query(conn, sqlCmd.c_str());
+    if( rc == 0) {
+        ret = "OK";
+    } else {
+        ret="ERROR:SQL";
+    }
+
+    return ret;
+}
+
+string interp::Cold(vector<string> c) {
+    string ret = "<NOTHING>";
+
+    if ( clientIP == "127.0.0.1") {
+        int clientCnt = stoi(globalVariable["CLIENTS"]);
+        if( clientCnt == 1) {
+            string sqlCmd = "update io_point set state='OFF', old_state='OFF' where state = 'ON' or state='OFF';";
+            int rc = mysql_query(conn, sqlCmd.c_str());
+            if( rc == 0) {
+                ret = "OK";
+            } else {
+                ret="ERROR:SQL";
+            }
+        } else {
+            ret = "BUSY";
+        }
+    } else {
+        ret = "NO_PERM";
+    }
+
+    return ret;
+}
+
+
+std::string interp::undefinedCmd(std::vector<string> c) {
     string ret="<UNIMPLEMENTED>";
     return ret;
 }
@@ -196,16 +280,16 @@ interp::interp(MYSQL *c) {
 }
 interp::interp() {
     /*
-    cmd["PING"] = &Ping; 
-    cmd["CLOSE"] = &Close; 
-    cmd["COLD"] = &undefinedCmd; 
-    cmd["RESET"] = &undefinedCmd; 
+       cmd["PING"] = &Ping; 
+       cmd["CLOSE"] = &Close; 
+       cmd["COLD"] = &undefinedCmd; 
+       cmd["RESET"] = &undefinedCmd; 
 
-    cmd["GET"] = &interp::Get;
-    cmd["TOGGLE"] = &undefinedCmd; 
+       cmd["GET"] = &interp::Get;
+       cmd["TOGGLE"] = &undefinedCmd; 
 
-    cmd["SET"] = &undefinedCmd; 
-    */
+       cmd["SET"] = &undefinedCmd; 
+       */
 }
 
 
@@ -228,9 +312,11 @@ string interp::runCmd(vector<string> c) {
     } else if ( c[0] == "SET" ) {
         out=Set(c);
     } else if ( c[0] == "RESET" ) {
-        out="<UNIMPLEMENTED>";
+        out=Reset(c);
     } else if ( c[0] == "TOGGLE" ) {
-        out="<UNIMPLEMENTED>";
+        out=Toggle(c);
+    } else if ( c[0] == "COLD" ) {
+        out=Cold( c );
     } else {
         out = "<UNKNOWN>";
     }
