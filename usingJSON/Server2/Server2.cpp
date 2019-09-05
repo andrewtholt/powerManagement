@@ -299,9 +299,10 @@ void *handleConnection (void *xfer) {
 
             if( response == "CLOSED" ) {
                 runFlag = false;
-            } else if ( response == "" ) {
-                response = "<UNKNOWN>";
             }
+        }
+
+        if( response.size() > 0 ) {
             cout << response  << endl;
             response += "\n";
 

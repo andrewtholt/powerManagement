@@ -36,6 +36,22 @@ void interp::dump() {
     //    cout << localVariable << endl;
 }
 
+string interp::toJson(vector<string> c) {
+    string cmd=c[0];
+    string name=c[1];
+    string value=c[2];
+
+    string ret;
+
+    if( opType == JSON ) {
+        ret = "{ \"name\":\"" + name + "\",\"value\":\"" + value +"\" } ";
+    } else {
+        ret =  value;
+    }
+
+    return ret;
+}
+
 map<string, string> interp::sqlQuery(string table, string key){
     map<string,string> data;
     MYSQL_FIELD *field;
@@ -148,22 +164,28 @@ std::string interp::Close(std::vector<string>) {
 std::string interp::Set(std::vector<string> c) {
     string ret="<UNKNOWN>";
 
+    string cmd   = c[0];
+    string name  = c[1];
+    string value = c[2];
+
     if (c.size() == 3 ) {
-        if ( c[1].at(0) == '$' ) {
-            string tmp = c[1];
+        if ( name.at(0) == '$' ) {
+            string tmp = name;
             tmp.erase(tmp.begin());
 
-            localVariable[tmp] = c[2];
-            ret=c[2];
+            localVariable[tmp] = value;
+            ret=value;
         } else {
-            ret = setRemoteVariable(c[1], c[2]);
+            ret = setRemoteVariable(name, value);
         }
     }
+    ret = toJson( c );
+
     return ret;
 }
 
 std::string interp::Get(std::vector<string> c) {
-    string ret="<UNKNOWN>";
+    string out="<UNKNOWN>";
 
     uint64_t uptime;
 
@@ -174,33 +196,50 @@ std::string interp::Get(std::vector<string> c) {
     cout << "GET:" << endl;
     cout << c.size() << endl;
 
+    string cmd = c[0];
+    string name = c[1];
+
     if ( c.size() >= 2 ) { 
-        cout << "\t[0]:" + c[0] << endl;
-        cout << "\t[1]:" + c[1] << endl;
+        cout << "\t[0]:" + cmd << endl;
+        cout << "\t[1]:" + name << endl;
 
-        string tmp = c[1];
-        tmp.erase(tmp.begin());
-        cout << tmp << endl;
+        string tmp = name;
+        if ( name.at(0) == '$' ) {
 
-        if ( c[1].at(0) == '$' ) {
+            tmp.erase(tmp.begin());
+            cout << tmp << endl;
             // Local variable
             cout << "Local" << endl;
-            ret = localVariable[tmp];
-        } else if ( c[1].at(0) == '^' ) {
+            out = localVariable[tmp];
+        } else if ( name.at(0) == '^' ) {
+
+            string tmp = name;
+            tmp.erase(tmp.begin());
+            cout << tmp << endl;
             // Global variable
             cout << "Global" << endl;
-            ret = globalVariable[tmp];
+            out = globalVariable[tmp];
         } else {
             map<string,string> data = getRemoteVariable(tmp);
-            ret = data["state"];
+            out = data["state"];
         }
     }
     cout << "===" << endl;
+
+    c.push_back(out);
+    string ret = toJson( c );
+
     return ret;
 }
 
 string interp::Toggle(vector<string> c) {
-    string state = Get( c );
+//    string state = Get( c );
+
+    string cmd  = c[0];
+    string name = c[1];
+    map<string,string>  data = getRemoteVariable( name );
+
+    string state = data["state"];
 
     if( state == "ON" ) {
         state = "OFF";
@@ -261,6 +300,19 @@ string interp::Cold(vector<string> c) {
     return ret;
 }
 
+string interp::Protocol(vector<string> c) {
+    string ret = "";
+
+    if( c.size() == 2) {
+        if( c[1] == "SIMPLE") {
+            opType=SIMPLE;
+        } else if( c[1] == "JSON") {
+            opType=JSON;
+        } 
+    }
+    return ret;
+}
+
 
 std::string interp::undefinedCmd(std::vector<string> c) {
     string ret="<UNIMPLEMENTED>";
@@ -317,6 +369,8 @@ string interp::runCmd(vector<string> c) {
         out=Toggle(c);
     } else if ( c[0] == "COLD" ) {
         out=Cold( c );
+    } else if ( c[0] == "PROTOCOL" ) {
+        out=Protocol( c );
     } else {
         out = "<UNKNOWN>";
     }
