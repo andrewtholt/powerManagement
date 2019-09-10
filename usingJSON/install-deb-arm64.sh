@@ -105,7 +105,7 @@ fi
 mkdir -p ${BASE}/etc/mqtt
 cp ${CFG}/*.json ${BASE}/etc/mqtt
 
-BINS="porchLights backLights tDispatch pubSunRiset Server"
+BINS="porchLights backLights tDispatch pubSunRiset Server ../Server2/Server2"
 
 for B in $BINS; do
     cp $PLACE/${B} $DEST
@@ -131,7 +131,7 @@ mkdir -p $CLIENTS/Forth/ficl
 mkdir -p $CLIENTS/Forth/atlast
 
 cp $PLACE/../../Clients/Forth/ficl/*.fth $CLIENTS/Forth/ficl
-cp $PLACE/../../Clients/Forth/atlast/*.fth $CLIENTS/Forth/atlast
+cp $PLACE/../../Clients/Forth/atlast/*.atl $CLIENTS/Forth/atlast
 
 MONIT_CFG="dispatch.monitrc Server.monitrc  syncMQTT.monitrc snmp.monitrc mqtt.monitrc backLights.monitrc porchLight.monitrc"
 pwd
