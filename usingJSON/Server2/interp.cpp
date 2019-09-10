@@ -205,20 +205,28 @@ std::string interp::Get(std::vector<string> c) {
 
         string tmp = name;
         if ( name.at(0) == '$' ) {
-
             tmp.erase(tmp.begin());
             cout << tmp << endl;
             // Local variable
             cout << "Local" << endl;
-            out = localVariable[tmp];
+            int n = localVariable.count(tmp);
+            if( n == 0) {
+                out = "<UNDEFINED>";
+            } else {
+                out = localVariable[tmp];
+            }
         } else if ( name.at(0) == '^' ) {
-
             string tmp = name;
             tmp.erase(tmp.begin());
             cout << tmp << endl;
             // Global variable
             cout << "Global" << endl;
-            out = globalVariable[tmp];
+            int n = globalVariable.count(tmp);
+            if( n == 0) {
+                out = "<UNDEFINED>";
+            } else {
+                out = globalVariable[tmp];
+            }
         } else {
             map<string,string> data = getRemoteVariable(tmp);
             out = data["state"];
