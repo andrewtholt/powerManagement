@@ -1,7 +1,0 @@
-Package: home-control
-Section: misc
-Priority: extra
-Maintainer: Andrew Holt
-Architecture: arm64
-Version: 2.04
-Description: Home Automation..
