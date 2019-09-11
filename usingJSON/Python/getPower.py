@@ -90,7 +90,7 @@ def main():
     if jsonOut:
         print('{ "name":"' + dataName + '","value":"' + dataValue + '" }')
     else:
-        print("{}".format(dataValue),end="")
+        print("{}".format(dataValue))
 
 main()
 
