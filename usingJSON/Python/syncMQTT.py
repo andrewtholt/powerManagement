@@ -77,7 +77,7 @@ def on_message(client, userData,msg):
         db = sql.connect(database, "automation","automation","automation")
 
 #        sqlCmd = "update mqtt set state = '" + devState + "' where topic = '" + topic + "';"
-        sqlCmd = "update mqtt,io_point set io_point.state = '"+devState+"' where mqtt.topic = '"+topic+"' and mqtt.name=io_point.name ;"
+        sqlCmd = "update mqtt,io_point set io_point.old_state = io_point.state,io_point.state = '"+devState+"' where mqtt.topic = '"+topic+"' and mqtt.name=io_point.name ;"
 
         print( sqlCmd )
         cursor = db.cursor()
