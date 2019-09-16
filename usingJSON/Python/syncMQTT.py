@@ -101,16 +101,22 @@ def on_connect(client, userdata, flags, rc):
     db = sql.connect(database, "automation","automation","automation")
     cursor = db.cursor()
 #    cursor.execute("select name,direction,topic,state from mqttQuery where direction = 'OUT';")
-    cursor.execute("select name,direction,topic,state from mqttQuery ;")
+    cursor.execute("select name,direction,topic,state, enabled from mqttQuery ;")
 
     data = cursor.fetchall()
     for row in data:
+        if row[4] == "YES":
+            print("Subscribing")
+            client.subscribe( row[2] )
+        else:
+            print("Not Subscribing")
+
         print("Name      :", row[0], )
         print("Direction :", row[1])
         print("Topic     :", row[2])
-        print("State     :", row[3], "\n")
+        print("State     :", row[3])
+        print("Enabled   :", row[4], "\n")
 
-        client.subscribe( row[2] )
 
     cursor.close()
     db.close()
