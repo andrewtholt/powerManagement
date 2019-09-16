@@ -72,6 +72,10 @@ def on_message(client, userData,msg):
             print("OK")
         else:
             print("Publish:" + dbState)
+            # 
+            # If I have receieved a message from something I believe I am controlling
+            # Then set it it to what I say it should be.
+            # 
             client.publish(topic, dbState, qos=0, retain=True)
     elif dbDirection == "IN":
         db = sql.connect(database, "automation","automation","automation")
