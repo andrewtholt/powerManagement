@@ -212,11 +212,13 @@ int main(int argc, char *argv[]) {
     lat = stod( latString );
 
     if( verbose ) {
-        cout << "Config File : " << cfgFile << endl;
-        cout << "MQTT Broker : " << mosquittoHost << endl;
-        cout << "MQTT Port   : " << mosquittoPort << endl;
-        cout << "Longtitude  : " << longString << endl;
-        cout << "Latitude    : " << latString << endl;
+        cout << "Config File  : " << cfgFile << endl;
+        cout << "MQTT Broker  : " << mosquittoHost << endl;
+        cout << "MQTT Port    : " << mosquittoPort << endl;
+        cout << "Longtitude   : " << longString << endl;
+        cout << "Latitude     : " << latString << endl;
+        cout << "Sunrise topic:" << sunriseTopic << endl;
+        cout << "Sunset  topic:" << sunsetTopic << endl;
     }
 
     int rc=-1;
