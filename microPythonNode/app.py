@@ -3,7 +3,9 @@
 #
 
 
-accessPoint = {'password': 'anthony050192', 'mqtt': '192.168.10.124'}
+accessPoint='HoltAtHome4'
+password='anthony050192'
+mqtt='192.168.10.124'
 
 
 #
