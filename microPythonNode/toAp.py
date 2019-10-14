@@ -20,9 +20,16 @@ def main():
             tst={}
             tst[apName] = cfg[apName]
 
+            password = cfg[apName]['password']
+            mqtt = cfg[apName]['mqtt']
+            
+            print("accessPoint='" + apName + "'")
+            print("password='" + password + "'")
+            print("mqtt='" + mqtt + "'")
+
 #            print(tst)
 #            print("accessPoint =",cfg[apName])
-            print("accessPoint =",tst)
+#            print("accessPoint =",tst)
         else:
             print('No access point named "' + apName + '"')
 
