@@ -5,10 +5,15 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-cat head.py > app.py
+OUT="app.py"
 
-./toAp.py $1 >> app.py
+cat head.py > $OUT
 
-cat  body.py >> app.py
+./toAp.py $1 >> $OUT
 
-cat  tail.py >> app.py
+cat  body.py >> $OUT
+
+cat  tail.py >> $OUT
+
+echo "Output in $OUT"
+
