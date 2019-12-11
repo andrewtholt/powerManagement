@@ -5,10 +5,9 @@ head.py
 body.py
 tail.py
 
-head.py will contain any import etc
+head.py will contain any imports etc
 body.py contains the code
 tail.py contains startup and parameters
-
 
 
 Modify the file app.json:
@@ -24,10 +23,10 @@ tstApp is the name of the router.
 mqtt is the name/address of the MQTT server
 password is the router password.
 
-then, to use thje example above:
+then, to use the example above:
 
 ./build tstApp
 
-It will use the roure defined and output app.py
+It will use the router defined and output to app.py
 
 
