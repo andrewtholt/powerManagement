@@ -11,6 +11,7 @@ import paho.mqtt.client as mqtt
 
 import time
 import daemon 
+import getopt
 
 from datetime import datetime # datetime object containing current date and time
 
@@ -130,7 +131,8 @@ def main():
         
         signal.alarm(0)          # Disable the alarm
 
-with daemon.DaemonContext():
-    main()
+# with daemon.DaemonContext():
+#    main()
+main()
 
 
