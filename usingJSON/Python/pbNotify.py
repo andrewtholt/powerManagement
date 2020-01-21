@@ -11,7 +11,7 @@ def main():
     if tokenFile.mode =="r":
         token=(tokenFile.read()).rstrip("\n\r")
 
-    print(">" + token + "<")
+#    print(">" + token + "<")
 
     tokenFile.close()
 
