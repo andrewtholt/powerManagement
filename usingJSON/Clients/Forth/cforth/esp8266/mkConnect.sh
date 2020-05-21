@@ -9,4 +9,4 @@ if [ $# -ne 2 ]; then
 fi
 
 printf "\" %s\" \" %s\" station-connect \n" $1 $2
-printf "ipaddr@ .ipaddr\n"
+printf "ipaddr@ .ipaddr cr\n"
