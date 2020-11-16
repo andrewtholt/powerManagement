@@ -22,7 +22,10 @@ using json = nlohmann::json;
 #define MSG_SIZE (512)
 
 void usage() {
-    printf("Usage : \n");
+    printf("Usage : tDispatch -h| -v -f\n");
+    printf("\t-h\t\tHelp.\n");
+    printf("\t-v\t\tVerbose.\n");
+    printf("\t-f\t\tRun in foreground.\n");
 }
 
 mqd_t mkQueue(string name, int dir) {
