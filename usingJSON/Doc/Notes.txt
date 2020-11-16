@@ -3,3 +3,14 @@ Dependencies:
     C++ json : https://github.com/nlohmann/json.git
     mqUtils  : Package from Tools
 
+Run the following:
+
+Server2
+tDispatch
+mqtt.py
+
+In that order.
+
+Then connect your client(s)
+
+
