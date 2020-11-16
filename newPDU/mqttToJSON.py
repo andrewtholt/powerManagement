@@ -42,10 +42,21 @@ def on_message(client, userdata, msg):
         print("Msg   : " + m )
         print("=======")
 
+    # 
+    # Assumes 
+    # 1. MQTT topic has leading /
+    # 2. First part is the general locatio (default is home)
+    # 3. Second is more specific, house, garden, office, shed ...
+    # 4. Third part is the device name.
+    # 5. ANything after that is specific to the device.
+    #
     tmp=t.split('/')
     base=tmp[1]
     location=tmp[2]
     device=tmp[3]
+
+    if verbose:
+        print(tmp)
 
     if len(tmp) > 4:
         parameter=tmp[4]
