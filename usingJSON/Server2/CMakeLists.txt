@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.10)
 
 find_program(LSB_RELEASE_EXEC lsb_release)
 
+execute_process(COMMAND mysql_config --cflags
+    OUTPUT_VARIABLE MYSQL_CFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND mysql_config --libs
+    OUTPUT_VARIABLE MYSQL_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+
 execute_process(COMMAND ${LSB_RELEASE_EXEC} -is 
     OUTPUT_VARIABLE LSB_RELEASE_ID_SHORT
     OUTPUT_STRIP_TRAILING_WHITESPACE
