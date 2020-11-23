@@ -8,7 +8,7 @@ Server2:	Server2.cpp interp.o utils.o
 	$(CPP) -g Server2.cpp interp.o utils.o -o Server2 -lpthread
 
 interpTest:	interpTest.cpp interp.o
-	$(CPP) -g interpTest.cpp interp.o -o interpTest
+	$(CPP) -g interpTest.cpp interp.o -o interpTest -lrt -lmysql
 
 interp.o:	interp.cpp interp.h
 	$(CPP) -c -g interp.cpp -o interp.o

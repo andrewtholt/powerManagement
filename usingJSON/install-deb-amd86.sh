@@ -15,7 +15,7 @@ TEST="NO"
 
 while getopts ":hdpt" opt; do
   case ${opt} in
-    h ) echo "Usage: cmd [-h] [-t]"
+    h ) echo "Usage: cmd [-h] [-t] -p|-d"
       ;;
     d ) DEBUG="YES"
         PRODUCTION="NO"

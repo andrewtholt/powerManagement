@@ -17,6 +17,10 @@ message( ${LSB_RELEASE_ID_SHORT} )
 
 set(CMAKE_CXX_STANDARD 14) 
 add_executable(Server2 Server2.cpp utils.cpp interp.cpp incCounter.cpp)
+add_executable(interpTest interpTest.cpp utils.cpp interp.cpp incCounter.cpp)
 target_compile_options(Server2 PUBLIC ${MYSQL_CFLAGS})
+
 target_link_libraries(Server2 ${MYSQL_LIBS} -lrt -lpthread )
+target_link_libraries(interpTest ${MYSQL_LIBS} -lrt -lpthread )
+
 include_directories("${CMAKE_SOURCE_DIR}/commonClasses")

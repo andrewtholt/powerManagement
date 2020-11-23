@@ -1,9 +1,13 @@
 #include <iostream>
 #include <string>
+#include <map>
 
 #include "interp.h"
 
 using namespace std;
+
+time_t startTime = 0;
+map<string, string> globalVariable;
 
 int main () {
     interp first;

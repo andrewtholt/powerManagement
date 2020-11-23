@@ -1,0 +1,4 @@
+/home/andrewh/Source/powerManagement/usingJSON/Server2/build/CMakeFiles/rebuild_cache.dir
+/home/andrewh/Source/powerManagement/usingJSON/Server2/build/CMakeFiles/Server2.dir
+/home/andrewh/Source/powerManagement/usingJSON/Server2/build/CMakeFiles/edit_cache.dir
+/home/andrewh/Source/powerManagement/usingJSON/Server2/build/CMakeFiles/interpTest.dir
