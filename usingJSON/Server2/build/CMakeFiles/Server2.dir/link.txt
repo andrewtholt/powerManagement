@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/Server2.dir/Server2.cpp.o CMakeFiles/Server2.dir/utils.cpp.o CMakeFiles/Server2.dir/interp.cpp.o CMakeFiles/Server2.dir/incCounter.cpp.o -o Server2  -L/usr/lib/x86_64-linux-gnu -lmysqlclient -lpthread -lz -lm -lrt -lssl -lcrypto -ldl -lresolv -lrt -lpthread 

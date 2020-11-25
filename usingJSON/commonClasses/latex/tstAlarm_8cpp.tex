@@ -1,0 +1,169 @@
+\hypertarget{tstAlarm_8cpp}{}\doxysection{tst\+Alarm.\+cpp File Reference}
+\label{tstAlarm_8cpp}\index{tstAlarm.cpp@{tstAlarm.cpp}}
+{\ttfamily \#include \char`\"{}alarm\+Base.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+Include dependency graph for tst\+Alarm.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{tstAlarm_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{tstAlarm_8cpp_a2ef30c42cbc289d899a8be5d2d8f77d0}{usage}} ()
+\item 
+int \mbox{\hyperlink{tstAlarm_8cpp_a0ddf1224851353fc92bfbff6f499fa97}{main}} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{tstAlarm_8cpp_a0ddf1224851353fc92bfbff6f499fa97}\label{tstAlarm_8cpp_a0ddf1224851353fc92bfbff6f499fa97}} 
+\index{tstAlarm.cpp@{tstAlarm.cpp}!main@{main}}
+\index{main@{main}!tstAlarm.cpp@{tstAlarm.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 19 of file tst\+Alarm.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{19                                  \{}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{21     \textcolor{keywordtype}{string} alarmTime;}
+\DoxyCodeLine{22     \textcolor{keywordtype}{int} duration=0;}
+\DoxyCodeLine{23     }
+\DoxyCodeLine{24     \textcolor{keywordtype}{bool} verbose;}
+\DoxyCodeLine{25     \textcolor{keywordtype}{bool} invert=\textcolor{keyword}{false};}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{27     \textcolor{keywordtype}{string} startTime=\textcolor{stringliteral}{""};}
+\DoxyCodeLine{28     \textcolor{keywordtype}{string} endTime=\textcolor{stringliteral}{""};}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30     \textcolor{keywordtype}{int} opt;}
+\DoxyCodeLine{31 }
+\DoxyCodeLine{32     \textcolor{keywordflow}{while}((opt = getopt(argc, argv, \textcolor{stringliteral}{"d:hvis:e:"})) != -\/1) \{}
+\DoxyCodeLine{33         \textcolor{keywordflow}{switch}( opt ) \{}
+\DoxyCodeLine{34             \textcolor{keywordflow}{case} \textcolor{charliteral}{'d'}:}
+\DoxyCodeLine{35                 duration = atoi(optarg);}
+\DoxyCodeLine{36                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{37             \textcolor{keywordflow}{case} \textcolor{charliteral}{'h'}:}
+\DoxyCodeLine{38                 \mbox{\hyperlink{tstAlarm_8cpp_a2ef30c42cbc289d899a8be5d2d8f77d0}{usage}}();}
+\DoxyCodeLine{39                 exit(1);}
+\DoxyCodeLine{40                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{41             \textcolor{keywordflow}{case} \textcolor{charliteral}{'v'}:}
+\DoxyCodeLine{42                 verbose=\textcolor{keyword}{false};}
+\DoxyCodeLine{43                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{44             \textcolor{keywordflow}{case} \textcolor{charliteral}{'s'}:}
+\DoxyCodeLine{45                 startTime=optarg;}
+\DoxyCodeLine{46                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{47             \textcolor{keywordflow}{case} \textcolor{charliteral}{'e'}:}
+\DoxyCodeLine{48                 endTime=optarg;}
+\DoxyCodeLine{49                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{50             \textcolor{keywordflow}{case} \textcolor{charliteral}{'i'}:}
+\DoxyCodeLine{51                 invert=\textcolor{keyword}{true};}
+\DoxyCodeLine{52                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{53         \}}
+\DoxyCodeLine{54     \}}
+\DoxyCodeLine{55 }
+\DoxyCodeLine{56     \textcolor{keywordflow}{if}( startTime == \textcolor{stringliteral}{""} ) \{}
+\DoxyCodeLine{57         cerr << \textcolor{stringliteral}{"Need start time."} << endl;}
+\DoxyCodeLine{58         \mbox{\hyperlink{tstAlarm_8cpp_a2ef30c42cbc289d899a8be5d2d8f77d0}{usage}}();}
+\DoxyCodeLine{59         exit(1);}
+\DoxyCodeLine{60     \}}
+\DoxyCodeLine{61 }
+\DoxyCodeLine{62     \mbox{\hyperlink{classalarmBase}{alarmBase}} *t = \textcolor{keyword}{new} \mbox{\hyperlink{classalarmBase}{alarmBase}}();}
+\DoxyCodeLine{63 }
+\DoxyCodeLine{64     cout << \textcolor{stringliteral}{"Unset "} << t-\/>\mbox{\hyperlink{classalarmBase_ab4108e3a49cd9903b0061982b8374fa8}{checkTime}}() << endl;;}
+\DoxyCodeLine{65 }
+\DoxyCodeLine{66     t-\/>\mbox{\hyperlink{classalarmBase_a016581d1482af2fa51b717ec5da7b968}{setStartTime}}(startTime);}
+\DoxyCodeLine{67 }
+\DoxyCodeLine{68     cout << \textcolor{stringliteral}{"Set time "} + startTime + \textcolor{stringliteral}{"\(\backslash\)t"} << t-\/>\mbox{\hyperlink{classalarmBase_ab4108e3a49cd9903b0061982b8374fa8}{checkTime}}() << endl;;}
+\DoxyCodeLine{69 }
+\DoxyCodeLine{70     \textcolor{keywordflow}{if}( endTime == \textcolor{stringliteral}{""} ) \{}
+\DoxyCodeLine{71         t-\/>\mbox{\hyperlink{classalarmBase_a9e4c714a5ac6ef1ddeb48f210518d9de}{setDuration}}(duration);}
+\DoxyCodeLine{72         cout << \textcolor{stringliteral}{"Set duration "} + to\_string(duration) << endl;;}
+\DoxyCodeLine{73     \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{74         endTime = endTime ;}
+\DoxyCodeLine{75         t-\/>\mbox{\hyperlink{classalarmBase_afa74814e3158ea44dba4df34ad59fb15}{setEndTime}}(endTime);}
+\DoxyCodeLine{76 }
+\DoxyCodeLine{77         cout << \textcolor{stringliteral}{"Set end time "} + endTime + \textcolor{stringliteral}{"\(\backslash\)t"} << t-\/>\mbox{\hyperlink{classalarmBase_ab4108e3a49cd9903b0061982b8374fa8}{checkTime}}() << endl;;}
+\DoxyCodeLine{78     \}}
+\DoxyCodeLine{79 }
+\DoxyCodeLine{80     t-\/>\mbox{\hyperlink{classalarmBase_a00594286f53c44557bac76e9417cab98}{setDow}}(\mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21cab1d5eac4b1dca480c8056eaea7663b7a}{ALL}});}
+\DoxyCodeLine{81 }
+\DoxyCodeLine{82     t-\/>\mbox{\hyperlink{classalarmBase_a0e4641dd0d32a4741cf1152efb4ee0da}{dump}}();}
+\DoxyCodeLine{83     cout << \textcolor{stringliteral}{"Set dow "} + endTime + \textcolor{stringliteral}{"\(\backslash\)t"} << t-\/>\mbox{\hyperlink{classalarmBase_ab4108e3a49cd9903b0061982b8374fa8}{checkTime}}() << endl;;}
+\DoxyCodeLine{84 }
+\DoxyCodeLine{85     \textcolor{keywordtype}{int} count=0;}
+\DoxyCodeLine{86     \textcolor{keywordtype}{bool} state=\textcolor{keyword}{false};}
+\DoxyCodeLine{87 }
+\DoxyCodeLine{88     \textcolor{keywordflow}{while}( \textcolor{keyword}{true} ) \{}
+\DoxyCodeLine{89 }
+\DoxyCodeLine{90         cout << endl << \textcolor{stringliteral}{"================="} << endl;}
+\DoxyCodeLine{91         count++;}
+\DoxyCodeLine{92         cout << \textcolor{stringliteral}{"Count      "} << count << endl;}
+\DoxyCodeLine{93         cout << \textcolor{stringliteral}{"Start time "} + startTime + \textcolor{stringliteral}{"\(\backslash\)t"} << endl;;}
+\DoxyCodeLine{94         cout << \textcolor{stringliteral}{"End   time "} + endTime + \textcolor{stringliteral}{"\(\backslash\)t"} << endl;}
+\DoxyCodeLine{95 }
+\DoxyCodeLine{96         state = t-\/>\mbox{\hyperlink{classalarmBase_ab4108e3a49cd9903b0061982b8374fa8}{checkTime}}() ;}
+\DoxyCodeLine{97         \textcolor{keywordflow}{if}(invert) \{}
+\DoxyCodeLine{98             state = (state == \textcolor{keyword}{true}) ? \textcolor{keyword}{false} : \textcolor{keyword}{true};}
+\DoxyCodeLine{99         \}}
+\DoxyCodeLine{100         cout << \textcolor{stringliteral}{"\(\backslash\)tState "} << state << endl;}
+\DoxyCodeLine{101 }
+\DoxyCodeLine{102         sleep(15);}
+\DoxyCodeLine{103     \}}
+\DoxyCodeLine{104 }
+\DoxyCodeLine{105 \}}
+
+\end{DoxyCode}
+
+
+References A\+LL, alarm\+Base\+::check\+Time(), alarm\+Base\+::dump(), alarm\+Base\+::set\+Dow(), alarm\+Base\+::set\+Duration(), alarm\+Base\+::set\+End\+Time(), alarm\+Base\+::set\+Start\+Time(), and usage().
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=279pt]{tstAlarm_8cpp_a0ddf1224851353fc92bfbff6f499fa97_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{tstAlarm_8cpp_a2ef30c42cbc289d899a8be5d2d8f77d0}\label{tstAlarm_8cpp_a2ef30c42cbc289d899a8be5d2d8f77d0}} 
+\index{tstAlarm.cpp@{tstAlarm.cpp}!usage@{usage}}
+\index{usage@{usage}!tstAlarm.cpp@{tstAlarm.cpp}}
+\doxysubsubsection{\texorpdfstring{usage()}{usage()}}
+{\footnotesize\ttfamily void usage (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 8 of file tst\+Alarm.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{8              \{}
+\DoxyCodeLine{9     cout << \textcolor{stringliteral}{"Usage: tstAlarm -\/h| -\/d <duration> -\/v -\/i -\/s <start time> -\/e <end-\/time>"} << endl;}
+\DoxyCodeLine{10     cout <<\textcolor{stringliteral}{"\(\backslash\)t-\/h\(\backslash\)t\(\backslash\)tHelp"} << endl;}
+\DoxyCodeLine{11     cout <<\textcolor{stringliteral}{"\(\backslash\)t-\/d <duration>\(\backslash\)tDuration, in minutes.  If 0 output is true first time it's checked."} << endl;}
+\DoxyCodeLine{12     cout <<\textcolor{stringliteral}{"\(\backslash\)t-\/v\(\backslash\)t\(\backslash\)tVerbose."} << endl;}
+\DoxyCodeLine{13     cout <<\textcolor{stringliteral}{"\(\backslash\)t-\/i\(\backslash\)t\(\backslash\)tInvert.  State goes false between start and end time."} << endl;}
+\DoxyCodeLine{14     cout <<\textcolor{stringliteral}{"\(\backslash\)t-\/s <start>\(\backslash\)tStart time, format hh:mm"} << endl;}
+\DoxyCodeLine{15     cout <<\textcolor{stringliteral}{"\(\backslash\)t-\/e <end>\(\backslash\)tEnd time, format hh:mm"} << endl;}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 \}}
+
+\end{DoxyCode}
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=197pt]{tstAlarm_8cpp_a2ef30c42cbc289d899a8be5d2d8f77d0_icgraph}
+\end{center}
+\end{figure}

@@ -1,0 +1,260 @@
+\hypertarget{classedge}{}\doxysection{edge Class Reference}
+\label{classedge}\index{edge@{edge}}
+
+
+{\ttfamily \#include $<$edge.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classedge_a866c277925a37498ee3f36eb9595a05e}{edge}} (\mbox{\hyperlink{edge_8h_a031ceda83d144811bf209020a0cf69ff}{T\+R\+A\+N\+S\+I\+T\+I\+ON}} t)
+\item 
+bool \mbox{\hyperlink{classedge_af5acb6c4388186172587fe94652f6faf}{run}} (bool in)
+\end{DoxyCompactItemize}
+\doxysubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classedge_a6065ad159d787bdd3b439f1834e64cb4}{positive}} (bool in)
+\item 
+bool \mbox{\hyperlink{classedge_a66ef9c6a7dae5e62f23f941b3eaede9a}{negative}} (bool in)
+\end{DoxyCompactItemize}
+\doxysubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classedge_a50a92117bf1091a17068bb702862f964}{output}} =false
+\item 
+bool \mbox{\hyperlink{classedge_a47ec0963098e5d20404b582808b797d3}{flag}} =false
+\item 
+\mbox{\hyperlink{edge_8h_a031ceda83d144811bf209020a0cf69ff}{T\+R\+A\+N\+S\+I\+T\+I\+ON}} \mbox{\hyperlink{classedge_a0080159b69dbea8afa23c0d126ca6db8}{which\+Edge}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line 9 of file edge.\+h.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classedge_a866c277925a37498ee3f36eb9595a05e}\label{classedge_a866c277925a37498ee3f36eb9595a05e}} 
+\index{edge@{edge}!edge@{edge}}
+\index{edge@{edge}!edge@{edge}}
+\doxysubsubsection{\texorpdfstring{edge()}{edge()}}
+{\footnotesize\ttfamily edge\+::edge (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{edge_8h_a031ceda83d144811bf209020a0cf69ff}{T\+R\+A\+N\+S\+I\+T\+I\+ON}}}]{t }\end{DoxyParamCaption})}
+
+
+
+Definition at line 34 of file edge.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{34                        \{}
+\DoxyCodeLine{35     \mbox{\hyperlink{classedge_a0080159b69dbea8afa23c0d126ca6db8}{whichEdge}} = t;}
+\DoxyCodeLine{36 \}}
+
+\end{DoxyCode}
+
+
+References which\+Edge.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classedge_a66ef9c6a7dae5e62f23f941b3eaede9a}\label{classedge_a66ef9c6a7dae5e62f23f941b3eaede9a}} 
+\index{edge@{edge}!negative@{negative}}
+\index{negative@{negative}!edge@{edge}}
+\doxysubsubsection{\texorpdfstring{negative()}{negative()}}
+{\footnotesize\ttfamily bool edge\+::negative (\begin{DoxyParamCaption}\item[{bool}]{in }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 70 of file edge.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{70                            \{}
+\DoxyCodeLine{71     \textcolor{keywordflow}{if}( (in == \textcolor{keyword}{false}) \&\& (\mbox{\hyperlink{classedge_a47ec0963098e5d20404b582808b797d3}{flag}} == \textcolor{keyword}{false}) ) \{}
+\DoxyCodeLine{72         \mbox{\hyperlink{classedge_a47ec0963098e5d20404b582808b797d3}{flag}} = in;}
+\DoxyCodeLine{73         \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{74     \}}
+\DoxyCodeLine{75 }
+\DoxyCodeLine{76     \textcolor{keywordflow}{if}( (in == \textcolor{keyword}{false}) \&\& (\mbox{\hyperlink{classedge_a47ec0963098e5d20404b582808b797d3}{flag}} == \textcolor{keyword}{true}) ) \{}
+\DoxyCodeLine{77         \mbox{\hyperlink{classedge_a47ec0963098e5d20404b582808b797d3}{flag}} = in;}
+\DoxyCodeLine{78         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{79     \}}
+\DoxyCodeLine{80 }
+\DoxyCodeLine{81     \textcolor{keywordflow}{if}( (in == \textcolor{keyword}{true}) \&\& (\mbox{\hyperlink{classedge_a47ec0963098e5d20404b582808b797d3}{flag}} == \textcolor{keyword}{false} )) \{}
+\DoxyCodeLine{82         \mbox{\hyperlink{classedge_a47ec0963098e5d20404b582808b797d3}{flag}} = in;}
+\DoxyCodeLine{83         \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{84     \}}
+\DoxyCodeLine{85 }
+\DoxyCodeLine{86     \textcolor{keywordflow}{if}( (in == \textcolor{keyword}{true}) \&\& (\mbox{\hyperlink{classedge_a47ec0963098e5d20404b582808b797d3}{flag}} == \textcolor{keyword}{true}) ) \{}
+\DoxyCodeLine{87         \mbox{\hyperlink{classedge_a47ec0963098e5d20404b582808b797d3}{flag}} = in;}
+\DoxyCodeLine{88         \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{89     \}}
+\DoxyCodeLine{90 \}}
+
+\end{DoxyCode}
+
+
+References flag.
+
+
+
+Referenced by run().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=327pt]{classedge_a66ef9c6a7dae5e62f23f941b3eaede9a_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classedge_a6065ad159d787bdd3b439f1834e64cb4}\label{classedge_a6065ad159d787bdd3b439f1834e64cb4}} 
+\index{edge@{edge}!positive@{positive}}
+\index{positive@{positive}!edge@{edge}}
+\doxysubsubsection{\texorpdfstring{positive()}{positive()}}
+{\footnotesize\ttfamily bool edge\+::positive (\begin{DoxyParamCaption}\item[{bool}]{in }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 43 of file edge.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{43                            \{}
+\DoxyCodeLine{44 }
+\DoxyCodeLine{45     \textcolor{keywordflow}{if}( (in == \textcolor{keyword}{false}) \&\& (\mbox{\hyperlink{classedge_a47ec0963098e5d20404b582808b797d3}{flag}} == \textcolor{keyword}{false}) ) \{}
+\DoxyCodeLine{46         \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{47     \}}
+\DoxyCodeLine{48 }
+\DoxyCodeLine{49     \textcolor{keywordflow}{if}( (in == \textcolor{keyword}{false}) \&\& (\mbox{\hyperlink{classedge_a47ec0963098e5d20404b582808b797d3}{flag}} == \textcolor{keyword}{true}) ) \{}
+\DoxyCodeLine{50         \mbox{\hyperlink{classedge_a47ec0963098e5d20404b582808b797d3}{flag}} = \textcolor{keyword}{false};}
+\DoxyCodeLine{51         \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{52     \}}
+\DoxyCodeLine{53 }
+\DoxyCodeLine{54     \textcolor{keywordflow}{if}( (in == \textcolor{keyword}{true}) \&\& (\mbox{\hyperlink{classedge_a47ec0963098e5d20404b582808b797d3}{flag}} == \textcolor{keyword}{false} )) \{}
+\DoxyCodeLine{55         \mbox{\hyperlink{classedge_a47ec0963098e5d20404b582808b797d3}{flag}} = \textcolor{keyword}{true};}
+\DoxyCodeLine{56         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{57     \}}
+\DoxyCodeLine{58 }
+\DoxyCodeLine{59     \textcolor{keywordflow}{if}( (in == \textcolor{keyword}{true}) \&\& (\mbox{\hyperlink{classedge_a47ec0963098e5d20404b582808b797d3}{flag}} == \textcolor{keyword}{true}) ) \{}
+\DoxyCodeLine{60         \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{61     \}}
+\DoxyCodeLine{62 \}}
+
+\end{DoxyCode}
+
+
+References flag.
+
+
+
+Referenced by run().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=324pt]{classedge_a6065ad159d787bdd3b439f1834e64cb4_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classedge_af5acb6c4388186172587fe94652f6faf}\label{classedge_af5acb6c4388186172587fe94652f6faf}} 
+\index{edge@{edge}!run@{run}}
+\index{run@{run}!edge@{edge}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily bool edge\+::run (\begin{DoxyParamCaption}\item[{bool}]{in }\end{DoxyParamCaption})}
+
+
+
+Definition at line 16 of file edge.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{16                       \{}
+\DoxyCodeLine{17     \textcolor{keywordflow}{switch}( \mbox{\hyperlink{classedge_a0080159b69dbea8afa23c0d126ca6db8}{whichEdge}}) \{}
+\DoxyCodeLine{18         \textcolor{keywordflow}{case} \mbox{\hyperlink{edge_8h_a031ceda83d144811bf209020a0cf69ffad93abe7aced82e9a4fcac4127a36ece3}{RISING}}:}
+\DoxyCodeLine{19             \mbox{\hyperlink{classedge_a50a92117bf1091a17068bb702862f964}{output}}=\mbox{\hyperlink{classedge_a6065ad159d787bdd3b439f1834e64cb4}{positive}}(in);}
+\DoxyCodeLine{20             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{21         \textcolor{keywordflow}{case} \mbox{\hyperlink{edge_8h_a031ceda83d144811bf209020a0cf69ffad24712a6a30c1d431b927d1ba2f84b66}{FALLING}}:}
+\DoxyCodeLine{22             \mbox{\hyperlink{classedge_a50a92117bf1091a17068bb702862f964}{output}}=\mbox{\hyperlink{classedge_a66ef9c6a7dae5e62f23f941b3eaede9a}{negative}}(in);}
+\DoxyCodeLine{23             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{24     \}}
+\DoxyCodeLine{25     \textcolor{keywordflow}{return} \mbox{\hyperlink{classedge_a50a92117bf1091a17068bb702862f964}{output}};}
+\DoxyCodeLine{26 \}}
+
+\end{DoxyCode}
+
+
+References F\+A\+L\+L\+I\+NG, negative(), output, positive(), R\+I\+S\+I\+NG, and which\+Edge.
+
+
+
+Referenced by main().
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=253pt]{classedge_af5acb6c4388186172587fe94652f6faf_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=211pt]{classedge_af5acb6c4388186172587fe94652f6faf_icgraph}
+\end{center}
+\end{figure}
+
+
+\doxysubsection{Field Documentation}
+\mbox{\Hypertarget{classedge_a47ec0963098e5d20404b582808b797d3}\label{classedge_a47ec0963098e5d20404b582808b797d3}} 
+\index{edge@{edge}!flag@{flag}}
+\index{flag@{flag}!edge@{edge}}
+\doxysubsubsection{\texorpdfstring{flag}{flag}}
+{\footnotesize\ttfamily bool edge\+::flag =false\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 12 of file edge.\+h.
+
+
+
+Referenced by negative(), and positive().
+
+\mbox{\Hypertarget{classedge_a50a92117bf1091a17068bb702862f964}\label{classedge_a50a92117bf1091a17068bb702862f964}} 
+\index{edge@{edge}!output@{output}}
+\index{output@{output}!edge@{edge}}
+\doxysubsubsection{\texorpdfstring{output}{output}}
+{\footnotesize\ttfamily bool edge\+::output =false\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 11 of file edge.\+h.
+
+
+
+Referenced by run().
+
+\mbox{\Hypertarget{classedge_a0080159b69dbea8afa23c0d126ca6db8}\label{classedge_a0080159b69dbea8afa23c0d126ca6db8}} 
+\index{edge@{edge}!whichEdge@{whichEdge}}
+\index{whichEdge@{whichEdge}!edge@{edge}}
+\doxysubsubsection{\texorpdfstring{whichEdge}{whichEdge}}
+{\footnotesize\ttfamily \mbox{\hyperlink{edge_8h_a031ceda83d144811bf209020a0cf69ff}{T\+R\+A\+N\+S\+I\+T\+I\+ON}} edge\+::which\+Edge\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 14 of file edge.\+h.
+
+
+
+Referenced by edge(), and run().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{edge_8h}{edge.\+h}}\item 
+\mbox{\hyperlink{edge_8cpp}{edge.\+cpp}}\end{DoxyCompactItemize}

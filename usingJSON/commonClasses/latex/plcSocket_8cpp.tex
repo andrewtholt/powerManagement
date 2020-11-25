@@ -1,0 +1,122 @@
+\hypertarget{plcSocket_8cpp}{}\doxysection{plc\+Socket.\+cpp File Reference}
+\label{plcSocket_8cpp}\index{plcSocket.cpp@{plcSocket.cpp}}
+{\ttfamily \#include \char`\"{}plc\+Base.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}plc\+Socket.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$arpa/inet.\+h$>$}\newline
+{\ttfamily \#include $<$sys/socket.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include $<$strings.\+h$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
+Include dependency graph for plc\+Socket.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{plcSocket_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{plcSocket_8cpp_ab701e3ac61a85b337ec5c1abaad6742d}{json}} = nlohmann\+::json
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+string \& \mbox{\hyperlink{plcSocket_8cpp_a96263191dc2c3949628af8c6ec74b44a}{ltrim}} (string \&s, const char $\ast$t=\char`\"{} \textbackslash{}t\textbackslash{}n\textbackslash{}r\textbackslash{}f\textbackslash{}v\char`\"{})
+\item 
+string \& \mbox{\hyperlink{plcSocket_8cpp_a0ee050c43395d69260a397fba132f00d}{rtrim}} (string \&s, const char $\ast$t=\char`\"{} \textbackslash{}t\textbackslash{}n\textbackslash{}r\textbackslash{}f\textbackslash{}v\char`\"{})
+\item 
+string \& \mbox{\hyperlink{plcSocket_8cpp_adaa7a047f5796ed997e39a0941a88101}{trim}} (string \&s, const char $\ast$t=\char`\"{} \textbackslash{}t\textbackslash{}n\textbackslash{}r\textbackslash{}f\textbackslash{}v\char`\"{})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{plcSocket_8cpp_ab701e3ac61a85b337ec5c1abaad6742d}\label{plcSocket_8cpp_ab701e3ac61a85b337ec5c1abaad6742d}} 
+\index{plcSocket.cpp@{plcSocket.cpp}!json@{json}}
+\index{json@{json}!plcSocket.cpp@{plcSocket.cpp}}
+\doxysubsubsection{\texorpdfstring{json}{json}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{plcBase_8h_ab701e3ac61a85b337ec5c1abaad6742d}{json}} =  nlohmann\+::json}
+
+
+
+Definition at line 17 of file plc\+Socket.\+cpp.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{plcSocket_8cpp_a96263191dc2c3949628af8c6ec74b44a}\label{plcSocket_8cpp_a96263191dc2c3949628af8c6ec74b44a}} 
+\index{plcSocket.cpp@{plcSocket.cpp}!ltrim@{ltrim}}
+\index{ltrim@{ltrim}!plcSocket.cpp@{plcSocket.cpp}}
+\doxysubsubsection{\texorpdfstring{ltrim()}{ltrim()}}
+{\footnotesize\ttfamily string\& ltrim (\begin{DoxyParamCaption}\item[{string \&}]{s,  }\item[{const char $\ast$}]{t = {\ttfamily \char`\"{}~\textbackslash{}t\textbackslash{}n\textbackslash{}r\textbackslash{}f\textbackslash{}v\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 21 of file plc\+Socket.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{21                                                                \{}
+\DoxyCodeLine{22     s.erase(0, s.find\_first\_not\_of(t));}
+\DoxyCodeLine{23     \textcolor{keywordflow}{return} s;}
+\DoxyCodeLine{24 \}}
+
+\end{DoxyCode}
+
+
+Referenced by trim().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=184pt]{plcSocket_8cpp_a96263191dc2c3949628af8c6ec74b44a_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{plcSocket_8cpp_a0ee050c43395d69260a397fba132f00d}\label{plcSocket_8cpp_a0ee050c43395d69260a397fba132f00d}} 
+\index{plcSocket.cpp@{plcSocket.cpp}!rtrim@{rtrim}}
+\index{rtrim@{rtrim}!plcSocket.cpp@{plcSocket.cpp}}
+\doxysubsubsection{\texorpdfstring{rtrim()}{rtrim()}}
+{\footnotesize\ttfamily string\& rtrim (\begin{DoxyParamCaption}\item[{string \&}]{s,  }\item[{const char $\ast$}]{t = {\ttfamily \char`\"{}~\textbackslash{}t\textbackslash{}n\textbackslash{}r\textbackslash{}f\textbackslash{}v\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 26 of file plc\+Socket.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{26                                                                \{}
+\DoxyCodeLine{27     s.erase(s.find\_last\_not\_of(t) + 1);}
+\DoxyCodeLine{28     \textcolor{keywordflow}{return} s;}
+\DoxyCodeLine{29 \}}
+
+\end{DoxyCode}
+
+
+Referenced by plc\+Socket\+::get\+Bool\+Value(), plc\+Socket\+::get\+Value(), and trim().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=275pt]{plcSocket_8cpp_a0ee050c43395d69260a397fba132f00d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{plcSocket_8cpp_adaa7a047f5796ed997e39a0941a88101}\label{plcSocket_8cpp_adaa7a047f5796ed997e39a0941a88101}} 
+\index{plcSocket.cpp@{plcSocket.cpp}!trim@{trim}}
+\index{trim@{trim}!plcSocket.cpp@{plcSocket.cpp}}
+\doxysubsubsection{\texorpdfstring{trim()}{trim()}}
+{\footnotesize\ttfamily string\& trim (\begin{DoxyParamCaption}\item[{string \&}]{s,  }\item[{const char $\ast$}]{t = {\ttfamily \char`\"{}~\textbackslash{}t\textbackslash{}n\textbackslash{}r\textbackslash{}f\textbackslash{}v\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 31 of file plc\+Socket.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{31                                                               \{}
+\DoxyCodeLine{32     \textcolor{keywordflow}{return} \mbox{\hyperlink{plcSocket_8cpp_a96263191dc2c3949628af8c6ec74b44a}{ltrim}}(\mbox{\hyperlink{plcSocket_8cpp_a0ee050c43395d69260a397fba132f00d}{rtrim}}(s, t), t);}
+\DoxyCodeLine{33 \}}
+
+\end{DoxyCode}

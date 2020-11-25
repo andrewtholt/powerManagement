@@ -42,6 +42,7 @@ struct toThread {
     int newsockfd;
     sockaddr_in* cli_addr;
     string cfgFile;
+    bool outRedis;
 };
 
 struct connectionFlags {
@@ -84,8 +85,10 @@ int main(int argc, char* argv[]) {
 
     clients.reset();
 
+    bool toRedis = false;
+
     startTime = time(NULL);
-    while( (opt = getopt(argc, argv, "c:fhp:vl:")) != -1) {
+    while( (opt = getopt(argc, argv, "c:fhp:vl:r")) != -1) {
         switch(opt) {
             case 'c':
                 cfgFile = optarg;
@@ -106,6 +109,9 @@ int main(int argc, char* argv[]) {
             case 'l':
                 logFile = optarg;
                 break;
+            case 'r':
+                toRedis = true;
+                break;
         }
     }
 
@@ -114,6 +120,7 @@ int main(int argc, char* argv[]) {
 
     if( verbose ) {
         cout << "Using config file : " << cfgFile << endl;
+        cout << "Listening on port : " << portNo << endl;
     }
 
     if( getuid() !=0) {
@@ -197,6 +204,7 @@ int main(int argc, char* argv[]) {
             ptr->newsockfd = connFd;
             ptr->cli_addr = &clntAdd;
             ptr->cfgFile = cfgFile ;
+            ptr->outRedis = toRedis ;
 
             if(pthread_create(&thread_id, NULL, handleConnection, (void *)ptr) < 0)  {
                 perror("could not create thread");
@@ -267,6 +275,10 @@ void *handleConnection (void *xfer) {
     }
 
     interp myInterp(conn);
+
+    if( ptr->outRedis) {
+        myInterp.setRedis();
+    }
 
     myInterp.setDestQ( msgQ );
 

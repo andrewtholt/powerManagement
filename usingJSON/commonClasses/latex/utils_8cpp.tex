@@ -1,0 +1,265 @@
+\hypertarget{utils_8cpp}{}\doxysection{utils.\+cpp File Reference}
+\label{utils_8cpp}\index{utils.cpp@{utils.cpp}}
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$nlohmann/json.\+hpp$>$}\newline
+{\ttfamily \#include $<$sys/types.\+h$>$}\newline
+{\ttfamily \#include $<$pwd.\+h$>$}\newline
+Include dependency graph for utils.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{utils_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{utils_8cpp_ab701e3ac61a85b337ec5c1abaad6742d}{json}} = nlohmann\+::json
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+string \mbox{\hyperlink{utils_8cpp_ae8e8015f65d00afb54904a194e99d3d9}{get\+From\+Json}} (\mbox{\hyperlink{plcBase_8h_ab701e3ac61a85b337ec5c1abaad6742d}{json}} j, vector$<$ string $>$ p, string default\+Value)
+\item 
+string \mbox{\hyperlink{utils_8cpp_ab770a9685b765977dee2f46e2c0bfd70}{add\+Offset}} (int hh, int mm, int off)
+\item 
+uid\+\_\+t \mbox{\hyperlink{utils_8cpp_a3af87242f6dcacbdb55c835bae5ac450}{get\+User\+Id\+By\+Name}} (const char $\ast$name)
+\item 
+vector$<$ string $>$ \mbox{\hyperlink{utils_8cpp_ab49941d09a07223a1da7c098a9c770a1}{split}} (const char $\ast$str, char c=\textquotesingle{} \textquotesingle{})
+\item 
+string \& \mbox{\hyperlink{utils_8cpp_a96263191dc2c3949628af8c6ec74b44a}{ltrim}} (string \&s, const char $\ast$t=\char`\"{} \textbackslash{}t\textbackslash{}n\textbackslash{}r\textbackslash{}f\textbackslash{}v\char`\"{})
+\item 
+string \& \mbox{\hyperlink{utils_8cpp_a0ee050c43395d69260a397fba132f00d}{rtrim}} (string \&s, const char $\ast$t=\char`\"{} \textbackslash{}t\textbackslash{}n\textbackslash{}r\textbackslash{}f\textbackslash{}v\char`\"{})
+\item 
+string \& \mbox{\hyperlink{utils_8cpp_adaa7a047f5796ed997e39a0941a88101}{trim}} (string \&s, const char $\ast$t=\char`\"{} \textbackslash{}t\textbackslash{}n\textbackslash{}r\textbackslash{}f\textbackslash{}v\char`\"{})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{utils_8cpp_ab701e3ac61a85b337ec5c1abaad6742d}\label{utils_8cpp_ab701e3ac61a85b337ec5c1abaad6742d}} 
+\index{utils.cpp@{utils.cpp}!json@{json}}
+\index{json@{json}!utils.cpp@{utils.cpp}}
+\doxysubsubsection{\texorpdfstring{json}{json}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{plcBase_8h_ab701e3ac61a85b337ec5c1abaad6742d}{json}} =  nlohmann\+::json}
+
+
+
+Definition at line 9 of file utils.\+cpp.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{utils_8cpp_ab770a9685b765977dee2f46e2c0bfd70}\label{utils_8cpp_ab770a9685b765977dee2f46e2c0bfd70}} 
+\index{utils.cpp@{utils.cpp}!addOffset@{addOffset}}
+\index{addOffset@{addOffset}!utils.cpp@{utils.cpp}}
+\doxysubsubsection{\texorpdfstring{addOffset()}{addOffset()}}
+{\footnotesize\ttfamily string add\+Offset (\begin{DoxyParamCaption}\item[{int}]{hh,  }\item[{int}]{mm,  }\item[{int}]{off }\end{DoxyParamCaption})}
+
+
+
+Definition at line 49 of file utils.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{49                                           \{}
+\DoxyCodeLine{50 }
+\DoxyCodeLine{51     \textcolor{keywordtype}{int} ahh, amm;}
+\DoxyCodeLine{52 }
+\DoxyCodeLine{53     \textcolor{keywordtype}{int} minutes = (hh * 60) + mm;}
+\DoxyCodeLine{54 }
+\DoxyCodeLine{55     minutes += off;}
+\DoxyCodeLine{56 }
+\DoxyCodeLine{57     ahh = minutes / 60;}
+\DoxyCodeLine{58     amm = minutes \% 60;}
+\DoxyCodeLine{59 }
+\DoxyCodeLine{60     \textcolor{keywordtype}{string} res = to\_string(ahh) + \textcolor{stringliteral}{":"} + to\_string(amm);}
+\DoxyCodeLine{61 }
+\DoxyCodeLine{62     \textcolor{keywordflow}{return} res;}
+\DoxyCodeLine{63 \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{utils_8cpp_ae8e8015f65d00afb54904a194e99d3d9}\label{utils_8cpp_ae8e8015f65d00afb54904a194e99d3d9}} 
+\index{utils.cpp@{utils.cpp}!getFromJson@{getFromJson}}
+\index{getFromJson@{getFromJson}!utils.cpp@{utils.cpp}}
+\doxysubsubsection{\texorpdfstring{getFromJson()}{getFromJson()}}
+{\footnotesize\ttfamily string get\+From\+Json (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{plcBase_8h_ab701e3ac61a85b337ec5c1abaad6742d}{json}}}]{j,  }\item[{vector$<$ string $>$}]{p,  }\item[{string}]{default\+Value }\end{DoxyParamCaption})}
+
+
+
+Definition at line 13 of file utils.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{13                                                                   \{}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15     \textcolor{keywordtype}{string} v;}
+\DoxyCodeLine{16     \textcolor{keywordtype}{string} t;}
+\DoxyCodeLine{17     \textcolor{keywordtype}{int} len = p.size();}
+\DoxyCodeLine{18 }
+\DoxyCodeLine{19     \textcolor{keywordflow}{try} \{}
+\DoxyCodeLine{20         \textcolor{keywordflow}{switch}(len) \{}
+\DoxyCodeLine{21             \textcolor{keywordflow}{case} 0:}
+\DoxyCodeLine{22                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{23             \textcolor{keywordflow}{case} 1:}
+\DoxyCodeLine{24                 v=j[ p[0]  ];}
+\DoxyCodeLine{25                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{26             \textcolor{keywordflow}{case} 2:}
+\DoxyCodeLine{27                 \{}
+\DoxyCodeLine{28                     \textcolor{keywordtype}{string} a = p[0];}
+\DoxyCodeLine{29                     \textcolor{keywordtype}{string} b = p[1];}
+\DoxyCodeLine{30 }
+\DoxyCodeLine{31                     v=j[a][b];}
+\DoxyCodeLine{32                 \}}
+\DoxyCodeLine{33                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{34             \textcolor{keywordflow}{case} 3:}
+\DoxyCodeLine{35                 v=j[p[0]] [p[1]] [p[2]];}
+\DoxyCodeLine{36                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{37             \textcolor{keywordflow}{default}: }
+\DoxyCodeLine{38                 cerr << \textcolor{stringliteral}{"getFromJson:FATAL Error, too many parameters, Max is 3"} << endl;}
+\DoxyCodeLine{39                 exit(4);}
+\DoxyCodeLine{40                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{41         \}}
+\DoxyCodeLine{42     \} \textcolor{keywordflow}{catch} (json::type\_error \&e) \{}
+\DoxyCodeLine{43         v = defaultValue;}
+\DoxyCodeLine{44     \}}
+\DoxyCodeLine{45 }
+\DoxyCodeLine{46     \textcolor{keywordflow}{return} v;}
+\DoxyCodeLine{47 \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{utils_8cpp_a3af87242f6dcacbdb55c835bae5ac450}\label{utils_8cpp_a3af87242f6dcacbdb55c835bae5ac450}} 
+\index{utils.cpp@{utils.cpp}!getUserIdByName@{getUserIdByName}}
+\index{getUserIdByName@{getUserIdByName}!utils.cpp@{utils.cpp}}
+\doxysubsubsection{\texorpdfstring{getUserIdByName()}{getUserIdByName()}}
+{\footnotesize\ttfamily uid\+\_\+t get\+User\+Id\+By\+Name (\begin{DoxyParamCaption}\item[{const char $\ast$}]{name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 65 of file utils.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{65                                         \{}
+\DoxyCodeLine{66     \textcolor{keyword}{struct }passwd *pwd = getpwnam(name); \textcolor{comment}{/* don't free, see getpwnam() for details */}}
+\DoxyCodeLine{67     \textcolor{keywordflow}{if}(pwd == NULL) \{}
+\DoxyCodeLine{68         \textcolor{keywordflow}{throw} runtime\_error(\textcolor{keywordtype}{string}(\textcolor{stringliteral}{"Failed to get userId from username : "}) + name);}
+\DoxyCodeLine{69     \}}
+\DoxyCodeLine{70     \textcolor{keywordflow}{return} pwd-\/>pw\_uid;}
+\DoxyCodeLine{71 \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{utils_8cpp_a96263191dc2c3949628af8c6ec74b44a}\label{utils_8cpp_a96263191dc2c3949628af8c6ec74b44a}} 
+\index{utils.cpp@{utils.cpp}!ltrim@{ltrim}}
+\index{ltrim@{ltrim}!utils.cpp@{utils.cpp}}
+\doxysubsubsection{\texorpdfstring{ltrim()}{ltrim()}}
+{\footnotesize\ttfamily string\& ltrim (\begin{DoxyParamCaption}\item[{string \&}]{s,  }\item[{const char $\ast$}]{t = {\ttfamily \char`\"{}~\textbackslash{}t\textbackslash{}n\textbackslash{}r\textbackslash{}f\textbackslash{}v\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 88 of file utils.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{88                                                                \{}
+\DoxyCodeLine{89     s.erase(0, s.find\_first\_not\_of(t));}
+\DoxyCodeLine{90     \textcolor{keywordflow}{return} s;}
+\DoxyCodeLine{91 \}}
+
+\end{DoxyCode}
+
+
+Referenced by trim().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=184pt]{utils_8cpp_a96263191dc2c3949628af8c6ec74b44a_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{utils_8cpp_a0ee050c43395d69260a397fba132f00d}\label{utils_8cpp_a0ee050c43395d69260a397fba132f00d}} 
+\index{utils.cpp@{utils.cpp}!rtrim@{rtrim}}
+\index{rtrim@{rtrim}!utils.cpp@{utils.cpp}}
+\doxysubsubsection{\texorpdfstring{rtrim()}{rtrim()}}
+{\footnotesize\ttfamily string\& rtrim (\begin{DoxyParamCaption}\item[{string \&}]{s,  }\item[{const char $\ast$}]{t = {\ttfamily \char`\"{}~\textbackslash{}t\textbackslash{}n\textbackslash{}r\textbackslash{}f\textbackslash{}v\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 93 of file utils.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{93                                                                \{}
+\DoxyCodeLine{94     s.erase(s.find\_last\_not\_of(t) + 1); }
+\DoxyCodeLine{95     \textcolor{keywordflow}{return} s;}
+\DoxyCodeLine{96 \}}
+
+\end{DoxyCode}
+
+
+Referenced by trim().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=185pt]{utils_8cpp_a0ee050c43395d69260a397fba132f00d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{utils_8cpp_ab49941d09a07223a1da7c098a9c770a1}\label{utils_8cpp_ab49941d09a07223a1da7c098a9c770a1}} 
+\index{utils.cpp@{utils.cpp}!split@{split}}
+\index{split@{split}!utils.cpp@{utils.cpp}}
+\doxysubsubsection{\texorpdfstring{split()}{split()}}
+{\footnotesize\ttfamily vector$<$string$>$ split (\begin{DoxyParamCaption}\item[{const char $\ast$}]{str,  }\item[{char}]{c = {\ttfamily \textquotesingle{}~\textquotesingle{}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 73 of file utils.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{73                                                     \{}
+\DoxyCodeLine{74     vector<string> result;}
+\DoxyCodeLine{75 }
+\DoxyCodeLine{76     \textcolor{keywordflow}{do} \{}
+\DoxyCodeLine{77         \textcolor{keyword}{const} \textcolor{keywordtype}{char} *begin = str;}
+\DoxyCodeLine{78 }
+\DoxyCodeLine{79         \textcolor{keywordflow}{while}(*str != c \&\& *str)}
+\DoxyCodeLine{80             str++;}
+\DoxyCodeLine{81 }
+\DoxyCodeLine{82         result.push\_back(\textcolor{keywordtype}{string}(begin, str));}
+\DoxyCodeLine{83     \} \textcolor{keywordflow}{while} (0 != *str++);}
+\DoxyCodeLine{84 }
+\DoxyCodeLine{85     \textcolor{keywordflow}{return} result;}
+\DoxyCodeLine{86 \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{utils_8cpp_adaa7a047f5796ed997e39a0941a88101}\label{utils_8cpp_adaa7a047f5796ed997e39a0941a88101}} 
+\index{utils.cpp@{utils.cpp}!trim@{trim}}
+\index{trim@{trim}!utils.cpp@{utils.cpp}}
+\doxysubsubsection{\texorpdfstring{trim()}{trim()}}
+{\footnotesize\ttfamily string\& trim (\begin{DoxyParamCaption}\item[{string \&}]{s,  }\item[{const char $\ast$}]{t = {\ttfamily \char`\"{}~\textbackslash{}t\textbackslash{}n\textbackslash{}r\textbackslash{}f\textbackslash{}v\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 98 of file utils.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{98                                                        \{}
+\DoxyCodeLine{99     \textcolor{keywordflow}{return} \mbox{\hyperlink{utils_8cpp_a96263191dc2c3949628af8c6ec74b44a}{ltrim}}(\mbox{\hyperlink{utils_8cpp_a0ee050c43395d69260a397fba132f00d}{rtrim}}(s, t), t); }
+\DoxyCodeLine{100 \}}
+
+\end{DoxyCode}
+
+
+References ltrim(), and rtrim().
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=185pt]{utils_8cpp_adaa7a047f5796ed997e39a0941a88101_cgraph}
+\end{center}
+\end{figure}

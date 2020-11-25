@@ -1,0 +1,220 @@
+\hypertarget{classtQueue}{}\doxysection{t\+Queue Class Reference}
+\label{classtQueue}\index{tQueue@{tQueue}}
+
+
+{\ttfamily \#include $<$t\+Queue.\+h$>$}
+
+
+
+Collaboration diagram for t\+Queue\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=286pt]{classtQueue__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classtQueue_a27fdebfd041aa52d3bf4286c63f7d9ae}{push}} (std\+::string msg)
+\item 
+std\+::string \mbox{\hyperlink{classtQueue_ae1f022577b2bb64f908e82286465d80f}{pop}} ()
+\item 
+std\+::string \mbox{\hyperlink{classtQueue_ab9501a8b81a54df16ab1518411dbc6ce}{get}} ()
+\item 
+int \mbox{\hyperlink{classtQueue_a9499aec0402e9e9fcd2a2e083bcd0cd7}{depth}} ()
+\item 
+void \mbox{\hyperlink{classtQueue_acaa9b6e3a7451c5844df44cfc453cf23}{discard}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::mutex \mbox{\hyperlink{classtQueue_a95d52a12e5ac9c5a919e2403a7d57f67}{mtx}}
+\item 
+std\+::queue$<$ std\+::string $>$ \mbox{\hyperlink{classtQueue_a2cbfc33d872bda6898f7813fda121f96}{msg\+Queue}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line 10 of file t\+Queue.\+h.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classtQueue_a9499aec0402e9e9fcd2a2e083bcd0cd7}\label{classtQueue_a9499aec0402e9e9fcd2a2e083bcd0cd7}} 
+\index{tQueue@{tQueue}!depth@{depth}}
+\index{depth@{depth}!tQueue@{tQueue}}
+\doxysubsubsection{\texorpdfstring{depth()}{depth()}}
+{\footnotesize\ttfamily int t\+Queue\+::depth (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 60 of file t\+Queue.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{60                   \{}
+\DoxyCodeLine{61     \textcolor{keywordtype}{int} s=0;}
+\DoxyCodeLine{62     \mbox{\hyperlink{classtQueue_a95d52a12e5ac9c5a919e2403a7d57f67}{mtx}}.lock();}
+\DoxyCodeLine{63     s=\mbox{\hyperlink{classtQueue_a2cbfc33d872bda6898f7813fda121f96}{msgQueue}}.size();}
+\DoxyCodeLine{64     \mbox{\hyperlink{classtQueue_a95d52a12e5ac9c5a919e2403a7d57f67}{mtx}}.unlock();}
+\DoxyCodeLine{65     \textcolor{keywordflow}{return} s;}
+\DoxyCodeLine{66 \}}
+
+\end{DoxyCode}
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=232pt]{classtQueue_a9499aec0402e9e9fcd2a2e083bcd0cd7_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtQueue_acaa9b6e3a7451c5844df44cfc453cf23}\label{classtQueue_acaa9b6e3a7451c5844df44cfc453cf23}} 
+\index{tQueue@{tQueue}!discard@{discard}}
+\index{discard@{discard}!tQueue@{tQueue}}
+\doxysubsubsection{\texorpdfstring{discard()}{discard()}}
+{\footnotesize\ttfamily void t\+Queue\+::discard (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 74 of file t\+Queue.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{74                      \{}
+\DoxyCodeLine{75     \mbox{\hyperlink{classtQueue_a95d52a12e5ac9c5a919e2403a7d57f67}{mtx}}.lock();}
+\DoxyCodeLine{76     \mbox{\hyperlink{classtQueue_a2cbfc33d872bda6898f7813fda121f96}{msgQueue}}.pop();}
+\DoxyCodeLine{77     \mbox{\hyperlink{classtQueue_a95d52a12e5ac9c5a919e2403a7d57f67}{mtx}}.unlock();}
+\DoxyCodeLine{78 \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{classtQueue_ab9501a8b81a54df16ab1518411dbc6ce}\label{classtQueue_ab9501a8b81a54df16ab1518411dbc6ce}} 
+\index{tQueue@{tQueue}!get@{get}}
+\index{get@{get}!tQueue@{tQueue}}
+\doxysubsubsection{\texorpdfstring{get()}{get()}}
+{\footnotesize\ttfamily string t\+Queue\+::get (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 45 of file t\+Queue.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{45                    \{}
+\DoxyCodeLine{46     \textcolor{keywordtype}{string} out;}
+\DoxyCodeLine{47     \mbox{\hyperlink{classtQueue_a95d52a12e5ac9c5a919e2403a7d57f67}{mtx}}.lock();}
+\DoxyCodeLine{48     out = \mbox{\hyperlink{classtQueue_a2cbfc33d872bda6898f7813fda121f96}{msgQueue}}.front();}
+\DoxyCodeLine{49     \mbox{\hyperlink{classtQueue_a95d52a12e5ac9c5a919e2403a7d57f67}{mtx}}.unlock();}
+\DoxyCodeLine{50     \textcolor{keywordflow}{return} out;}
+\DoxyCodeLine{51 \}}
+
+\end{DoxyCode}
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=222pt]{classtQueue_ab9501a8b81a54df16ab1518411dbc6ce_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtQueue_ae1f022577b2bb64f908e82286465d80f}\label{classtQueue_ae1f022577b2bb64f908e82286465d80f}} 
+\index{tQueue@{tQueue}!pop@{pop}}
+\index{pop@{pop}!tQueue@{tQueue}}
+\doxysubsubsection{\texorpdfstring{pop()}{pop()}}
+{\footnotesize\ttfamily string t\+Queue\+::pop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 29 of file t\+Queue.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{29                    \{}
+\DoxyCodeLine{30     \textcolor{keywordtype}{string} out;}
+\DoxyCodeLine{31     \mbox{\hyperlink{classtQueue_a95d52a12e5ac9c5a919e2403a7d57f67}{mtx}}.lock();}
+\DoxyCodeLine{32     out = \mbox{\hyperlink{classtQueue_a2cbfc33d872bda6898f7813fda121f96}{msgQueue}}.front();}
+\DoxyCodeLine{33     \mbox{\hyperlink{classtQueue_a2cbfc33d872bda6898f7813fda121f96}{msgQueue}}.pop();}
+\DoxyCodeLine{34     \mbox{\hyperlink{classtQueue_a95d52a12e5ac9c5a919e2403a7d57f67}{mtx}}.unlock();}
+\DoxyCodeLine{35     \textcolor{keywordflow}{return} out;}
+\DoxyCodeLine{36 \}}
+
+\end{DoxyCode}
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=224pt]{classtQueue_ae1f022577b2bb64f908e82286465d80f_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtQueue_a27fdebfd041aa52d3bf4286c63f7d9ae}\label{classtQueue_a27fdebfd041aa52d3bf4286c63f7d9ae}} 
+\index{tQueue@{tQueue}!push@{push}}
+\index{push@{push}!tQueue@{tQueue}}
+\doxysubsubsection{\texorpdfstring{push()}{push()}}
+{\footnotesize\ttfamily void t\+Queue\+::push (\begin{DoxyParamCaption}\item[{std\+::string}]{msg }\end{DoxyParamCaption})}
+
+
+
+Definition at line 16 of file t\+Queue.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{16                             \{}
+\DoxyCodeLine{17     \mbox{\hyperlink{classtQueue_a95d52a12e5ac9c5a919e2403a7d57f67}{mtx}}.lock();}
+\DoxyCodeLine{18     \mbox{\hyperlink{classtQueue_a2cbfc33d872bda6898f7813fda121f96}{msgQueue}}.push(msg);}
+\DoxyCodeLine{19     \mbox{\hyperlink{classtQueue_a95d52a12e5ac9c5a919e2403a7d57f67}{mtx}}.unlock();}
+\DoxyCodeLine{20 \}}
+
+\end{DoxyCode}
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=229pt]{classtQueue_a27fdebfd041aa52d3bf4286c63f7d9ae_icgraph}
+\end{center}
+\end{figure}
+
+
+\doxysubsection{Field Documentation}
+\mbox{\Hypertarget{classtQueue_a2cbfc33d872bda6898f7813fda121f96}\label{classtQueue_a2cbfc33d872bda6898f7813fda121f96}} 
+\index{tQueue@{tQueue}!msgQueue@{msgQueue}}
+\index{msgQueue@{msgQueue}!tQueue@{tQueue}}
+\doxysubsubsection{\texorpdfstring{msgQueue}{msgQueue}}
+{\footnotesize\ttfamily std\+::queue$<$std\+::string$>$ t\+Queue\+::msg\+Queue\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 13 of file t\+Queue.\+h.
+
+\mbox{\Hypertarget{classtQueue_a95d52a12e5ac9c5a919e2403a7d57f67}\label{classtQueue_a95d52a12e5ac9c5a919e2403a7d57f67}} 
+\index{tQueue@{tQueue}!mtx@{mtx}}
+\index{mtx@{mtx}!tQueue@{tQueue}}
+\doxysubsubsection{\texorpdfstring{mtx}{mtx}}
+{\footnotesize\ttfamily std\+::mutex t\+Queue\+::mtx\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 12 of file t\+Queue.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{tQueue_8h}{t\+Queue.\+h}}\item 
+\mbox{\hyperlink{tQueue_8cpp}{t\+Queue.\+cpp}}\end{DoxyCompactItemize}

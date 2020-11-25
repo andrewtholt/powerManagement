@@ -1,0 +1,352 @@
+\hypertarget{classmsTimer}{}\doxysection{ms\+Timer Class Reference}
+\label{classmsTimer}\index{msTimer@{msTimer}}
+
+
+{\ttfamily \#include $<$timer\+Base.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classmsTimer_a4a263b853f836029c3ec21c933770b01}{ms\+Timer}} (int ms)
+\item 
+void \mbox{\hyperlink{classmsTimer_a33be4e4b7fcd73a8821f67405f1ff12a}{timer\+Start}} (void)
+\item 
+int32\+\_\+t \mbox{\hyperlink{classmsTimer_aa4df4c89ee5df5c3b687bc213bfbf4c6}{read}} ()
+\item 
+bool \mbox{\hyperlink{classmsTimer_ae5f4a158bb45c309ff52e59aefbf5e6b}{run}} (bool flag)
+\item 
+void \mbox{\hyperlink{classmsTimer_a3d0fb74b706566a8537a4f13103817ac}{set\+One\+Shot}} (bool flag)
+\end{DoxyCompactItemize}
+\doxysubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{classmsTimer_abb5b2bc58c2e45f3cff8813921f05beb}{start\+Time}} =0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{classmsTimer_aa7fd45897bdee015cd3be9039fb650da}{elapsed\+Time}} =0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{classmsTimer_a136b5bdf8130a2ce411b566ac93c70ab}{duration}}
+\item 
+bool \mbox{\hyperlink{classmsTimer_a9ec72a1fc813bd2e91fabcecb8e39a54}{output}} =false
+\item 
+bool \mbox{\hyperlink{classmsTimer_af96bb6b045ae373931728e521042bdf7}{running}} =false
+\item 
+bool \mbox{\hyperlink{classmsTimer_a94494d263e611a1ac0853d662a6827b4}{one\+Shot}} = false
+\item 
+bool \mbox{\hyperlink{classmsTimer_adb3b1fa18e0aea7329059b6bc0fa0b4d}{triggered}} = false
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line 7 of file timer\+Base.\+h.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classmsTimer_a4a263b853f836029c3ec21c933770b01}\label{classmsTimer_a4a263b853f836029c3ec21c933770b01}} 
+\index{msTimer@{msTimer}!msTimer@{msTimer}}
+\index{msTimer@{msTimer}!msTimer@{msTimer}}
+\doxysubsubsection{\texorpdfstring{msTimer()}{msTimer()}}
+{\footnotesize\ttfamily ms\+Timer\+::ms\+Timer (\begin{DoxyParamCaption}\item[{int}]{ms }\end{DoxyParamCaption})}
+
+
+
+Definition at line 11 of file timer\+Base.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{11                        \{}
+\DoxyCodeLine{12     \mbox{\hyperlink{classmsTimer_a136b5bdf8130a2ce411b566ac93c70ab}{duration}} = ms;}
+\DoxyCodeLine{13 \}}
+
+\end{DoxyCode}
+
+
+References duration.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classmsTimer_aa4df4c89ee5df5c3b687bc213bfbf4c6}\label{classmsTimer_aa4df4c89ee5df5c3b687bc213bfbf4c6}} 
+\index{msTimer@{msTimer}!read@{read}}
+\index{read@{read}!msTimer@{msTimer}}
+\doxysubsubsection{\texorpdfstring{read()}{read()}}
+{\footnotesize\ttfamily int32\+\_\+t ms\+Timer\+::read (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 71 of file timer\+Base.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{71                       \{}
+\DoxyCodeLine{72     \textcolor{keyword}{struct }timeval nowTV;}
+\DoxyCodeLine{73 }
+\DoxyCodeLine{74     gettimeofday(\&nowTV, NULL);}
+\DoxyCodeLine{75 }
+\DoxyCodeLine{76     \textcolor{keywordtype}{int} nowTime = (nowTV.tv\_sec * 1000) + (nowTV.tv\_usec / 1000);}
+\DoxyCodeLine{77 }
+\DoxyCodeLine{78     \textcolor{keywordflow}{return}( nowTime -\/ \mbox{\hyperlink{classmsTimer_abb5b2bc58c2e45f3cff8813921f05beb}{startTime}} );}
+\DoxyCodeLine{79 }
+\DoxyCodeLine{80 \}}
+
+\end{DoxyCode}
+
+
+References start\+Time.
+
+
+
+Referenced by run().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=344pt]{classmsTimer_aa4df4c89ee5df5c3b687bc213bfbf4c6_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classmsTimer_ae5f4a158bb45c309ff52e59aefbf5e6b}\label{classmsTimer_ae5f4a158bb45c309ff52e59aefbf5e6b}} 
+\index{msTimer@{msTimer}!run@{run}}
+\index{run@{run}!msTimer@{msTimer}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily bool ms\+Timer\+::run (\begin{DoxyParamCaption}\item[{bool}]{flag }\end{DoxyParamCaption})}
+
+
+
+Definition at line 28 of file timer\+Base.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{28                               \{}
+\DoxyCodeLine{29     \textcolor{keywordflow}{if}(runFlag == \textcolor{keyword}{false}) \{}
+\DoxyCodeLine{30         \mbox{\hyperlink{classmsTimer_af96bb6b045ae373931728e521042bdf7}{running}}=\textcolor{keyword}{false};}
+\DoxyCodeLine{31         \mbox{\hyperlink{classmsTimer_a9ec72a1fc813bd2e91fabcecb8e39a54}{output}} = \textcolor{keyword}{false};}
+\DoxyCodeLine{32     \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{33         \textcolor{keywordflow}{if}( \mbox{\hyperlink{classmsTimer_af96bb6b045ae373931728e521042bdf7}{running}} == \textcolor{keyword}{true}) \{}
+\DoxyCodeLine{34             \textcolor{keywordtype}{int} time = \mbox{\hyperlink{classmsTimer_aa4df4c89ee5df5c3b687bc213bfbf4c6}{read}}();}
+\DoxyCodeLine{35             \textcolor{keywordflow}{if}( time > \mbox{\hyperlink{classmsTimer_a136b5bdf8130a2ce411b566ac93c70ab}{duration}} ) \{}
+\DoxyCodeLine{36                 \mbox{\hyperlink{classmsTimer_a9ec72a1fc813bd2e91fabcecb8e39a54}{output}}=\textcolor{keyword}{true};}
+\DoxyCodeLine{37             \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{38                 \mbox{\hyperlink{classmsTimer_a9ec72a1fc813bd2e91fabcecb8e39a54}{output}}=\textcolor{keyword}{false};}
+\DoxyCodeLine{39                 \mbox{\hyperlink{classmsTimer_adb3b1fa18e0aea7329059b6bc0fa0b4d}{triggered}}=\textcolor{keyword}{false};}
+\DoxyCodeLine{40             \}}
+\DoxyCodeLine{41         \} \textcolor{keywordflow}{else} \{ }
+\DoxyCodeLine{42             \textcolor{comment}{// Running is false}}
+\DoxyCodeLine{43             \textcolor{comment}{// }}
+\DoxyCodeLine{44             \mbox{\hyperlink{classmsTimer_a33be4e4b7fcd73a8821f67405f1ff12a}{timerStart}}();}
+\DoxyCodeLine{45             \mbox{\hyperlink{classmsTimer_af96bb6b045ae373931728e521042bdf7}{running}} = \textcolor{keyword}{true};}
+\DoxyCodeLine{46             \mbox{\hyperlink{classmsTimer_a9ec72a1fc813bd2e91fabcecb8e39a54}{output}}=\textcolor{keyword}{false};}
+\DoxyCodeLine{47             \mbox{\hyperlink{classmsTimer_adb3b1fa18e0aea7329059b6bc0fa0b4d}{triggered}}=\textcolor{keyword}{false};}
+\DoxyCodeLine{48         \}}
+\DoxyCodeLine{49 }
+\DoxyCodeLine{50         \textcolor{keywordflow}{if}(\mbox{\hyperlink{classmsTimer_a9ec72a1fc813bd2e91fabcecb8e39a54}{output}}) \{}
+\DoxyCodeLine{51             \textcolor{keywordflow}{if}( \mbox{\hyperlink{classmsTimer_a94494d263e611a1ac0853d662a6827b4}{oneShot}}) \{}
+\DoxyCodeLine{52                 \textcolor{keywordflow}{if}(\mbox{\hyperlink{classmsTimer_adb3b1fa18e0aea7329059b6bc0fa0b4d}{triggered}}) \{}
+\DoxyCodeLine{53                     \mbox{\hyperlink{classmsTimer_a9ec72a1fc813bd2e91fabcecb8e39a54}{output}}=\textcolor{keyword}{false};}
+\DoxyCodeLine{54                 \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{55                     \mbox{\hyperlink{classmsTimer_adb3b1fa18e0aea7329059b6bc0fa0b4d}{triggered}} = \textcolor{keyword}{true};}
+\DoxyCodeLine{56                 \}}
+\DoxyCodeLine{57             \}}
+\DoxyCodeLine{58         \}}
+\DoxyCodeLine{59     \}}
+\DoxyCodeLine{60 }
+\DoxyCodeLine{61     cout << \textcolor{stringliteral}{"Flag : "} << \mbox{\hyperlink{classmsTimer_a9ec72a1fc813bd2e91fabcecb8e39a54}{output}} << endl;}
+\DoxyCodeLine{62     \textcolor{keywordflow}{return} \mbox{\hyperlink{classmsTimer_a9ec72a1fc813bd2e91fabcecb8e39a54}{output}};}
+\DoxyCodeLine{63 \}}
+
+\end{DoxyCode}
+
+
+References duration, one\+Shot, output, read(), running, timer\+Start(), and triggered.
+
+
+
+Referenced by main().
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=294pt]{classmsTimer_ae5f4a158bb45c309ff52e59aefbf5e6b_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=228pt]{classmsTimer_ae5f4a158bb45c309ff52e59aefbf5e6b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classmsTimer_a3d0fb74b706566a8537a4f13103817ac}\label{classmsTimer_a3d0fb74b706566a8537a4f13103817ac}} 
+\index{msTimer@{msTimer}!setOneShot@{setOneShot}}
+\index{setOneShot@{setOneShot}!msTimer@{msTimer}}
+\doxysubsubsection{\texorpdfstring{setOneShot()}{setOneShot()}}
+{\footnotesize\ttfamily void ms\+Timer\+::set\+One\+Shot (\begin{DoxyParamCaption}\item[{bool}]{flag }\end{DoxyParamCaption})}
+
+
+
+Definition at line 87 of file timer\+Base.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{87                                   \{}
+\DoxyCodeLine{88     \mbox{\hyperlink{classmsTimer_a94494d263e611a1ac0853d662a6827b4}{oneShot}} = flag;}
+\DoxyCodeLine{89     \mbox{\hyperlink{classmsTimer_adb3b1fa18e0aea7329059b6bc0fa0b4d}{triggered}} = \textcolor{keyword}{false};}
+\DoxyCodeLine{90 \}}
+
+\end{DoxyCode}
+
+
+References one\+Shot, and triggered.
+
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=267pt]{classmsTimer_a3d0fb74b706566a8537a4f13103817ac_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classmsTimer_a33be4e4b7fcd73a8821f67405f1ff12a}\label{classmsTimer_a33be4e4b7fcd73a8821f67405f1ff12a}} 
+\index{msTimer@{msTimer}!timerStart@{timerStart}}
+\index{timerStart@{timerStart}!msTimer@{msTimer}}
+\doxysubsubsection{\texorpdfstring{timerStart()}{timerStart()}}
+{\footnotesize\ttfamily void ms\+Timer\+::timer\+Start (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 21 of file timer\+Base.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{21                              \{}
+\DoxyCodeLine{22     \textcolor{keyword}{struct }timeval startTV;}
+\DoxyCodeLine{23     gettimeofday(\&startTV, NULL);}
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25     \mbox{\hyperlink{classmsTimer_abb5b2bc58c2e45f3cff8813921f05beb}{startTime}} = (startTV.tv\_sec * 1000) + (startTV.tv\_usec / 1000);}
+\DoxyCodeLine{26 \}}
+
+\end{DoxyCode}
+
+
+References start\+Time.
+
+
+
+Referenced by run().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmsTimer_a33be4e4b7fcd73a8821f67405f1ff12a_icgraph}
+\end{center}
+\end{figure}
+
+
+\doxysubsection{Field Documentation}
+\mbox{\Hypertarget{classmsTimer_a136b5bdf8130a2ce411b566ac93c70ab}\label{classmsTimer_a136b5bdf8130a2ce411b566ac93c70ab}} 
+\index{msTimer@{msTimer}!duration@{duration}}
+\index{duration@{duration}!msTimer@{msTimer}}
+\doxysubsubsection{\texorpdfstring{duration}{duration}}
+{\footnotesize\ttfamily uint32\+\_\+t ms\+Timer\+::duration\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 11 of file timer\+Base.\+h.
+
+
+
+Referenced by ms\+Timer(), and run().
+
+\mbox{\Hypertarget{classmsTimer_aa7fd45897bdee015cd3be9039fb650da}\label{classmsTimer_aa7fd45897bdee015cd3be9039fb650da}} 
+\index{msTimer@{msTimer}!elapsedTime@{elapsedTime}}
+\index{elapsedTime@{elapsedTime}!msTimer@{msTimer}}
+\doxysubsubsection{\texorpdfstring{elapsedTime}{elapsedTime}}
+{\footnotesize\ttfamily uint32\+\_\+t ms\+Timer\+::elapsed\+Time =0\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 10 of file timer\+Base.\+h.
+
+\mbox{\Hypertarget{classmsTimer_a94494d263e611a1ac0853d662a6827b4}\label{classmsTimer_a94494d263e611a1ac0853d662a6827b4}} 
+\index{msTimer@{msTimer}!oneShot@{oneShot}}
+\index{oneShot@{oneShot}!msTimer@{msTimer}}
+\doxysubsubsection{\texorpdfstring{oneShot}{oneShot}}
+{\footnotesize\ttfamily bool ms\+Timer\+::one\+Shot = false\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 15 of file timer\+Base.\+h.
+
+
+
+Referenced by run(), and set\+One\+Shot().
+
+\mbox{\Hypertarget{classmsTimer_a9ec72a1fc813bd2e91fabcecb8e39a54}\label{classmsTimer_a9ec72a1fc813bd2e91fabcecb8e39a54}} 
+\index{msTimer@{msTimer}!output@{output}}
+\index{output@{output}!msTimer@{msTimer}}
+\doxysubsubsection{\texorpdfstring{output}{output}}
+{\footnotesize\ttfamily bool ms\+Timer\+::output =false\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 13 of file timer\+Base.\+h.
+
+
+
+Referenced by run().
+
+\mbox{\Hypertarget{classmsTimer_af96bb6b045ae373931728e521042bdf7}\label{classmsTimer_af96bb6b045ae373931728e521042bdf7}} 
+\index{msTimer@{msTimer}!running@{running}}
+\index{running@{running}!msTimer@{msTimer}}
+\doxysubsubsection{\texorpdfstring{running}{running}}
+{\footnotesize\ttfamily bool ms\+Timer\+::running =false\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 14 of file timer\+Base.\+h.
+
+
+
+Referenced by run().
+
+\mbox{\Hypertarget{classmsTimer_abb5b2bc58c2e45f3cff8813921f05beb}\label{classmsTimer_abb5b2bc58c2e45f3cff8813921f05beb}} 
+\index{msTimer@{msTimer}!startTime@{startTime}}
+\index{startTime@{startTime}!msTimer@{msTimer}}
+\doxysubsubsection{\texorpdfstring{startTime}{startTime}}
+{\footnotesize\ttfamily uint32\+\_\+t ms\+Timer\+::start\+Time =0\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 9 of file timer\+Base.\+h.
+
+
+
+Referenced by read(), and timer\+Start().
+
+\mbox{\Hypertarget{classmsTimer_adb3b1fa18e0aea7329059b6bc0fa0b4d}\label{classmsTimer_adb3b1fa18e0aea7329059b6bc0fa0b4d}} 
+\index{msTimer@{msTimer}!triggered@{triggered}}
+\index{triggered@{triggered}!msTimer@{msTimer}}
+\doxysubsubsection{\texorpdfstring{triggered}{triggered}}
+{\footnotesize\ttfamily bool ms\+Timer\+::triggered = false\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 16 of file timer\+Base.\+h.
+
+
+
+Referenced by run(), and set\+One\+Shot().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{timerBase_8h}{timer\+Base.\+h}}\item 
+\mbox{\hyperlink{timerBase_8cpp}{timer\+Base.\+cpp}}\end{DoxyCompactItemize}

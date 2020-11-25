@@ -1,0 +1,79 @@
+\hypertarget{tstToggle_8cpp}{}\doxysection{tst\+Toggle.\+cpp File Reference}
+\label{tstToggle_8cpp}\index{tstToggle.cpp@{tstToggle.cpp}}
+{\ttfamily \#include \char`\"{}toggle.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+Include dependency graph for tst\+Toggle.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=202pt]{tstToggle_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{tstToggle_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{tstToggle_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{tstToggle_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}} 
+\index{tstToggle.cpp@{tstToggle.cpp}!main@{main}}
+\index{main@{main}!tstToggle.cpp@{tstToggle.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 7 of file tst\+Toggle.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{7            \{}
+\DoxyCodeLine{8     \textcolor{keywordtype}{bool} in=\textcolor{keyword}{false};}
+\DoxyCodeLine{9     \textcolor{keywordtype}{bool} out=\textcolor{keyword}{false};}
+\DoxyCodeLine{10     \mbox{\hyperlink{classtoggle}{toggle}} *t = \textcolor{keyword}{new} \mbox{\hyperlink{classtoggle}{toggle}}();}
+\DoxyCodeLine{11 }
+\DoxyCodeLine{12 }
+\DoxyCodeLine{13     out=t-\/>\mbox{\hyperlink{classtoggle_ab882aac0dd37fc2d327b9568a592a351}{run}}( in ) ;}
+\DoxyCodeLine{14     cout << \textcolor{stringliteral}{"In  : "} << in  << endl;}
+\DoxyCodeLine{15     cout << \textcolor{stringliteral}{"Out : "} << out << endl;}
+\DoxyCodeLine{16     cout << \textcolor{stringliteral}{"======"} <<endl;}
+\DoxyCodeLine{17 }
+\DoxyCodeLine{18     in = \textcolor{keyword}{true};}
+\DoxyCodeLine{19     out=t-\/>\mbox{\hyperlink{classtoggle_ab882aac0dd37fc2d327b9568a592a351}{run}}( in ) ;}
+\DoxyCodeLine{20     cout << \textcolor{stringliteral}{"In  : "} << in  << endl;}
+\DoxyCodeLine{21     cout << \textcolor{stringliteral}{"Out : "} << out << endl;}
+\DoxyCodeLine{22     cout << \textcolor{stringliteral}{"======"} <<endl;}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{24     in = \textcolor{keyword}{false};}
+\DoxyCodeLine{25     out=t-\/>\mbox{\hyperlink{classtoggle_ab882aac0dd37fc2d327b9568a592a351}{run}}( in ) ;}
+\DoxyCodeLine{26     cout << \textcolor{stringliteral}{"In  : "} << in  << endl;}
+\DoxyCodeLine{27     cout << \textcolor{stringliteral}{"Out : "} << out << endl;}
+\DoxyCodeLine{28     cout << \textcolor{stringliteral}{"======"} <<endl;}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30     in = \textcolor{keyword}{true};}
+\DoxyCodeLine{31     out=t-\/>\mbox{\hyperlink{classtoggle_ab882aac0dd37fc2d327b9568a592a351}{run}}( in ) ;}
+\DoxyCodeLine{32     cout << \textcolor{stringliteral}{"In  : "} << in  << endl;}
+\DoxyCodeLine{33     cout << \textcolor{stringliteral}{"Out : "} << out << endl;}
+\DoxyCodeLine{34     cout << \textcolor{stringliteral}{"======"} <<endl;}
+\DoxyCodeLine{35 }
+\DoxyCodeLine{36     in = \textcolor{keyword}{false};}
+\DoxyCodeLine{37     out=t-\/>\mbox{\hyperlink{classtoggle_ab882aac0dd37fc2d327b9568a592a351}{run}}( in ) ;}
+\DoxyCodeLine{38     cout << \textcolor{stringliteral}{"In  : "} << in  << endl;}
+\DoxyCodeLine{39     cout << \textcolor{stringliteral}{"Out : "} << out << endl;}
+\DoxyCodeLine{40     cout << \textcolor{stringliteral}{"======"} <<endl;}
+\DoxyCodeLine{41 \}}
+
+\end{DoxyCode}
+
+
+References toggle\+::run().
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=216pt]{tstToggle_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4_cgraph}
+\end{center}
+\end{figure}

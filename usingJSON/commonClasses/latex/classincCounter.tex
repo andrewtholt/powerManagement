@@ -1,0 +1,209 @@
+\hypertarget{classincCounter}{}\doxysection{inc\+Counter Class Reference}
+\label{classincCounter}\index{incCounter@{incCounter}}
+
+
+{\ttfamily \#include $<$inc\+Counter.\+h$>$}
+
+
+
+Collaboration diagram for inc\+Counter\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=144pt]{classincCounter__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classincCounter_a0245293040a518c76b530bee43024808}{increment}} ()
+\item 
+void \mbox{\hyperlink{classincCounter_a3830decd76aec512769ec4197b9dca53}{decrement}} ()
+\item 
+long \mbox{\hyperlink{classincCounter_aa9e488493bfea49c3a853e9a54e16d26}{get}} ()
+\item 
+void \mbox{\hyperlink{classincCounter_adc2cfa5b45f4f5a7ab4a3b7a38e0a417}{reset}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+long \mbox{\hyperlink{classincCounter_a9050d3d2620b97c16c74cd385a03fd0f}{count}} =0
+\item 
+std\+::mutex \mbox{\hyperlink{classincCounter_a3454ab04008547c4fc9fa8fb676f09c7}{mtx}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line 5 of file inc\+Counter.\+h.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classincCounter_a3830decd76aec512769ec4197b9dca53}\label{classincCounter_a3830decd76aec512769ec4197b9dca53}} 
+\index{incCounter@{incCounter}!decrement@{decrement}}
+\index{decrement@{decrement}!incCounter@{incCounter}}
+\doxysubsubsection{\texorpdfstring{decrement()}{decrement()}}
+{\footnotesize\ttfamily void inc\+Counter\+::decrement (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 28 of file inc\+Counter.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{28                            \{}
+\DoxyCodeLine{29     \mbox{\hyperlink{classincCounter_a3454ab04008547c4fc9fa8fb676f09c7}{mtx}}.lock();}
+\DoxyCodeLine{30     \textcolor{keywordflow}{if}(\mbox{\hyperlink{classincCounter_a9050d3d2620b97c16c74cd385a03fd0f}{count}} > 0) \{}
+\DoxyCodeLine{31         \mbox{\hyperlink{classincCounter_a9050d3d2620b97c16c74cd385a03fd0f}{count}}-\/-\/;}
+\DoxyCodeLine{32     \}}
+\DoxyCodeLine{33     \mbox{\hyperlink{classincCounter_a3454ab04008547c4fc9fa8fb676f09c7}{mtx}}.unlock();}
+\DoxyCodeLine{34 \}}
+
+\end{DoxyCode}
+
+
+References count, and mtx.
+
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=270pt]{classincCounter_a3830decd76aec512769ec4197b9dca53_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classincCounter_aa9e488493bfea49c3a853e9a54e16d26}\label{classincCounter_aa9e488493bfea49c3a853e9a54e16d26}} 
+\index{incCounter@{incCounter}!get@{get}}
+\index{get@{get}!incCounter@{incCounter}}
+\doxysubsubsection{\texorpdfstring{get()}{get()}}
+{\footnotesize\ttfamily long inc\+Counter\+::get (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 43 of file inc\+Counter.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{43                      \{}
+\DoxyCodeLine{44     \textcolor{keywordtype}{long} ret;}
+\DoxyCodeLine{45     \mbox{\hyperlink{classincCounter_a3454ab04008547c4fc9fa8fb676f09c7}{mtx}}.lock();}
+\DoxyCodeLine{46     ret=\mbox{\hyperlink{classincCounter_a9050d3d2620b97c16c74cd385a03fd0f}{count}};}
+\DoxyCodeLine{47     \mbox{\hyperlink{classincCounter_a3454ab04008547c4fc9fa8fb676f09c7}{mtx}}.unlock();}
+\DoxyCodeLine{48     \textcolor{keywordflow}{return} \mbox{\hyperlink{classincCounter_a9050d3d2620b97c16c74cd385a03fd0f}{count}};}
+\DoxyCodeLine{49 \}}
+
+\end{DoxyCode}
+
+
+References count, and mtx.
+
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=237pt]{classincCounter_aa9e488493bfea49c3a853e9a54e16d26_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classincCounter_a0245293040a518c76b530bee43024808}\label{classincCounter_a0245293040a518c76b530bee43024808}} 
+\index{incCounter@{incCounter}!increment@{increment}}
+\index{increment@{increment}!incCounter@{incCounter}}
+\doxysubsubsection{\texorpdfstring{increment()}{increment()}}
+{\footnotesize\ttfamily void inc\+Counter\+::increment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 15 of file inc\+Counter.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{15                            \{}
+\DoxyCodeLine{16     \mbox{\hyperlink{classincCounter_a3454ab04008547c4fc9fa8fb676f09c7}{mtx}}.lock();}
+\DoxyCodeLine{17     \mbox{\hyperlink{classincCounter_a9050d3d2620b97c16c74cd385a03fd0f}{count}}++;}
+\DoxyCodeLine{18     \mbox{\hyperlink{classincCounter_a3454ab04008547c4fc9fa8fb676f09c7}{mtx}}.unlock();}
+\DoxyCodeLine{19 \}}
+
+\end{DoxyCode}
+
+
+References count, and mtx.
+
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=267pt]{classincCounter_a0245293040a518c76b530bee43024808_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classincCounter_adc2cfa5b45f4f5a7ab4a3b7a38e0a417}\label{classincCounter_adc2cfa5b45f4f5a7ab4a3b7a38e0a417}} 
+\index{incCounter@{incCounter}!reset@{reset}}
+\index{reset@{reset}!incCounter@{incCounter}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily void inc\+Counter\+::reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 58 of file inc\+Counter.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{58                        \{}
+\DoxyCodeLine{59     \mbox{\hyperlink{classincCounter_a3454ab04008547c4fc9fa8fb676f09c7}{mtx}}.lock();}
+\DoxyCodeLine{60     \mbox{\hyperlink{classincCounter_a9050d3d2620b97c16c74cd385a03fd0f}{count}}=0;}
+\DoxyCodeLine{61     \mbox{\hyperlink{classincCounter_a3454ab04008547c4fc9fa8fb676f09c7}{mtx}}.unlock();}
+\DoxyCodeLine{62 \}}
+
+\end{DoxyCode}
+
+
+References count, and mtx.
+
+
+
+\doxysubsection{Field Documentation}
+\mbox{\Hypertarget{classincCounter_a9050d3d2620b97c16c74cd385a03fd0f}\label{classincCounter_a9050d3d2620b97c16c74cd385a03fd0f}} 
+\index{incCounter@{incCounter}!count@{count}}
+\index{count@{count}!incCounter@{incCounter}}
+\doxysubsubsection{\texorpdfstring{count}{count}}
+{\footnotesize\ttfamily long inc\+Counter\+::count =0\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 7 of file inc\+Counter.\+h.
+
+
+
+Referenced by decrement(), get(), increment(), and reset().
+
+\mbox{\Hypertarget{classincCounter_a3454ab04008547c4fc9fa8fb676f09c7}\label{classincCounter_a3454ab04008547c4fc9fa8fb676f09c7}} 
+\index{incCounter@{incCounter}!mtx@{mtx}}
+\index{mtx@{mtx}!incCounter@{incCounter}}
+\doxysubsubsection{\texorpdfstring{mtx}{mtx}}
+{\footnotesize\ttfamily std\+::mutex inc\+Counter\+::mtx\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 8 of file inc\+Counter.\+h.
+
+
+
+Referenced by decrement(), get(), increment(), and reset().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{incCounter_8h}{inc\+Counter.\+h}}\item 
+\mbox{\hyperlink{incCounter_8cpp}{inc\+Counter.\+cpp}}\end{DoxyCompactItemize}

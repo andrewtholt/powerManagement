@@ -35,6 +35,11 @@ class interp {
         std::map<std::string, std::string> sqlQuery(std::string table, std::string key);
 
         std::string toJson(std::vector<std::string>);
+        std::string runRedis(std::string);
+
+        bool outRedisFlag=false;
+        std::string outRedisFormat(std::string);
+
 
     public:
         interp();
@@ -61,6 +66,9 @@ class interp {
         std::string getClientIP();
 
         void dump();
+
+        void setRedis();
+        bool getRedis();
 
 };
 

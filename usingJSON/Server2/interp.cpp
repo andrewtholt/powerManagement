@@ -152,7 +152,8 @@ map<string,string> interp::getRemoteVariable(string name) {
  * Effects: 
  ***********************************************************************/
 std::string interp::Ping(std::vector<string>) {
-    string ret="Pong!";
+//    string ret="Pong!";
+    string ret="+PONG";
     return ret;
 }
 
@@ -241,7 +242,7 @@ std::string interp::Get(std::vector<string> c) {
 }
 
 string interp::Toggle(vector<string> c) {
-//    string state = Get( c );
+    //    string state = Get( c );
 
     string cmd  = c[0];
     string name = c[1];
@@ -353,6 +354,76 @@ interp::interp() {
 }
 
 
+std::string interp::outRedisFormat(std::string data) {
+    std::string retValue = "<UNKNOWN>";
+
+    std::string o = "$" + std::to_string( data.length() ) + "\r\n";
+    retValue = o + data + "\r\n";
+
+    return retValue;
+}
+
+std::string interp::runRedis(std::string redisCmd) {
+    char *data = strdup(redisCmd.c_str());
+
+    std::string retValue = "<UNKNOWN>";
+
+    printf("%s\n", data);
+
+    char *tmp = strtok( &data[1],"\n\r");
+    printf("tmp 0 %s\n", tmp);
+
+    uint8_t elementCount = atoi(tmp);
+
+    switch( elementCount) {
+        case 2:
+            {
+                char *tmp1 = strtok( NULL, "\n\r");
+                printf("tmp 1 %s\n", tmp1);
+
+                uint8_t cmdLen = atoi( &tmp1[1] );
+                printf("cmdLen %d\n", cmdLen);
+                char *cmd = strtok( NULL, "\n\r");
+
+                switch( cmdLen ) {
+                    case 3:
+                        if ( !strcmp( cmd, "GET")) {
+                            printf("%s\n",cmd);
+
+                            char *tmp2 = strtok( NULL, "\n\r");
+                            uint8_t nameLen = atoi( &tmp2[1] );
+
+                            printf("nameLen %d\n", nameLen);
+
+                            char *name = strtok( NULL, "\n\r");
+                            printf("name    %s\n", name );
+
+                            std::string c(cmd);
+                            std::string n(name);
+
+                            std::vector<std::string> completeCmd={ c, n };
+
+                            std::string tmp = Get(completeCmd);
+
+                            if( outRedisFlag) {
+                                retValue=outRedisFormat(tmp);
+
+                                /*
+                                std::string o = "$" + std::to_string( retValue.length() ) + "\r\n";
+                                retValue = o + retValue + "\r\n";
+                                */
+                            } else {
+                                retValue = tmp;
+                            }
+                        }
+                        break;
+                }
+            }
+            break;
+    }
+    return retValue;
+}
+
 /***********************************************************************
  *  Method: interp::runCmd
  *  Params: string
@@ -362,28 +433,49 @@ interp::interp() {
 string interp::runCmd(vector<string> c) {
     string r="";
     string out;
+    bool ff = true;
 
-    if( c[0] == "PING" ) {
-        out=Ping(c);
-    } else if ( c[0] == "CLOSE" ) {
-        out=Close(c);
-    } else if ( c[0] == "GET" ) {
-        out=Get(c);
-    } else if ( c[0] == "SET" ) {
-        out=Set(c);
-    } else if ( c[0] == "RESET" ) {
-        out=Reset(c);
-    } else if ( c[0] == "TOGGLE" ) {
-        out=Toggle(c);
-    } else if ( c[0] == "COLD" ) {
-        out=Cold( c );
-    } else if ( c[0] == "PROTOCOL" ) {
-        out=Protocol( c );
-    } else {
-        out = "<UNKNOWN>";
+
+    if( c[0].at(0) == '*') {
+        cout << "RESP\n";
+        out = runRedis(c[0]);
+
+    } else if(isalpha( c[0].at(0))) {
+        cout << "Short cmd\n";
+
+        if( c[0] == "PING" ) {
+            out=Ping(c);
+        } else if ( c[0] == "CLOSE" ) {
+            out=Close(c);
+        } else if ( c[0] == "GET" ) {
+            out=Get(c);
+        } else if ( c[0] == "SET" ) {
+            out=Set(c);
+        } else if ( c[0] == "RESET" ) {
+            out=Reset(c);
+        } else if ( c[0] == "TOGGLE" ) {
+            out=Toggle(c);
+        } else if ( c[0] == "COLD" ) {
+            out=Cold( c );
+        } else if ( c[0] == "PROTOCOL" ) {
+            out=Protocol( c );
+        } else {
+            out = "<UNKNOWN>";
+        }
+
+        if (outRedisFlag) {
+            out = outRedisFormat(out);
+        }
     }
 
     return out;
 }
 
+void interp::setRedis() {
+    outRedisFlag = true;
+}
+
+bool interp::getRedis() {
+    return outRedisFlag;
+}
 
