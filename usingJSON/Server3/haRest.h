@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <vector>
 
 struct MemoryStruct {
     char *memory;
@@ -13,12 +14,19 @@ class haRest {
         int port = 0;
 
         bool returnStateOnly = true;   // If true return the state only, on, off etc
-                                        // if false return the entire dtat received 
 
         std::string haTokenFilename = "/etc/mqtt/haToken.txt";
         std::string haToken = "";
 
+        bool verbose = false;
+
         void commonInit();
+
+        std::vector<std::string> logicalTrue  = { "on","ON","true","TRUE","yes","YES" };
+        std::vector<std::string> logicalFalse = { "off","OFF","false","FALSE","no","NO" };
+
+        bool isOn(std::string);
+        bool isOff(std::string);
 
         static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp) {
             size_t realsize = size * nmemb;    
@@ -49,6 +57,12 @@ class haRest {
 
         std::string get(std::string entityId);
         std::string set(std::string entityId, std::string state);
+
+        void setReturnStateOnly();
+        void clrReturnStateOnly();
+
+        void setVerbose();
+        void clrVerbose();
 
         void dump();
 };

@@ -10,8 +10,15 @@ int main() {
 
     rest->dump();
 
+    rest->setReturnStateOnly();
+    rest->setVerbose();
+
     result = rest->get("switch.test_start");
 
-    std::cout << "Result : " << result << std::endl;
+    std::cout << "Get Result : " << result << std::endl;
+
+    result = rest->set("switch.christmas_lights","on");
+
+    std::cout << "Get Result : " << result << std::endl;
 }
 
