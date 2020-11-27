@@ -8,8 +8,9 @@
 #include <fstream>
 
 #include <curl/curl.h>
+#include <nlohmann/json.hpp>
 
-
+using json = nlohmann::json;
 
 /***********************************************************************
  *  Method: haRest::haRest
@@ -51,6 +52,10 @@ std::string haRest::get(std::string entityId) {
     std::string result = "EMPTY";
     std::string url;
     std::string tmp;
+    struct MemoryStruct chunk;
+    
+    chunk.memory = (char *)malloc(1);  /* will be grown as needed by the realloc above */ 
+    chunk.size = 0;    /* no data at this point */
 
     url = "http://" + haHostIp + ":" + std::to_string(port) + "/api/states/" + entityId;
 
@@ -61,13 +66,19 @@ std::string haRest::get(std::string entityId) {
     curl_global_init(CURL_GLOBAL_ALL);
 
     slist1 = NULL;    
-    slist1 = curl_slist_append(slist1, "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIxZjJlZGVmYWJiYTY0ZjAxOTc4YmM4YWI3ZWFmZjQzZSIsImlhdCI6MTU2ODY0OTExMiwiZXhwIjoxODg0MDA5MTEyfQ.XLFUZQD6BJAQpydjoSkvke8vhpQZ40mAS6YyAnISNOQ");             
+
+    std::string bearer = "Authorization: Bearer " + haToken;
+
+    slist1 = curl_slist_append(slist1, bearer.c_str());
     slist1 = curl_slist_append(slist1, "Content-Type: application/json");    
 
     hnd = curl_easy_init();    
     curl_easy_setopt(hnd, CURLOPT_BUFFERSIZE, 102400L);    
-//  curl_easy_setopt(hnd, CURLOPT_URL, "http://192.168.10.124:8123/api/states/switch.test_start");                                                    
+    //  curl_easy_setopt(hnd, CURLOPT_URL, "http://192.168.10.124:8123/api/states/switch.test_start");                                                    
     printf("URL >%s<\n", url.c_str());
+    curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+    curl_easy_setopt(hnd, CURLOPT_WRITEDATA, (void *)&chunk);
+
     curl_easy_setopt(hnd, CURLOPT_URL, url.c_str());
     curl_easy_setopt(hnd, CURLOPT_NOPROGRESS, 1L);        
     curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, slist1);    
@@ -78,9 +89,23 @@ std::string haRest::get(std::string entityId) {
     curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "GET");    
     curl_easy_setopt(hnd, CURLOPT_TCP_KEEPALIVE, 1L);    
 
-    ret = curl_easy_perform(hnd);    
+    ret = curl_easy_perform(hnd);
+
+    if( chunk.size > 0) {
+        printf("\n%s\n", chunk.memory);
+    }
+
+    if( returnStateOnly == true ) {
+        json jsonMsg = json::parse( chunk.memory );
+
+        result = jsonMsg["state"];
+    } else {
+        result = chunk.memory;
+    }
 
     std::cout << "Ret code " << ret << std::endl;
+
+    free(chunk.memory);
 
     curl_easy_cleanup(hnd);    
     hnd = NULL;    
@@ -161,5 +186,35 @@ void haRest::commonInit() {
 
     tokenValue.close();
 }
+
+
+/***********************************************************************
+ *  Method: haRest::WriteMemoryCallback
+ *  Params: void *contents, size_t size, size_t nmemb, void *userp
+ * Returns: size_t
+ * Effects: 
+ ***********************************************************************/
+/*
+static size_t haRest::WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp) {
+
+    size_t realsize = size * nmemb;
+    struct MemoryStruct *mem = (struct MemoryStruct *)userp;
+
+    char *ptr = (char *)realloc(mem->memory, mem->size + realsize + 1);
+    if(ptr == NULL) {
+        // out of memory!
+        printf("not enough memory (realloc returned NULL)\n");
+        return 0;
+    }
+
+    mem->memory = ptr;
+    memcpy(&(mem->memory[mem->size]), contents, realsize);
+    mem->size += realsize;
+    mem->memory[mem->size] = 0;
+
+    return realsize;
+
+}
+*/
 
 
