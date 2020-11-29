@@ -20,7 +20,7 @@ message( ${LSB_RELEASE_ID_SHORT} )
 
 set(CMAKE_CXX_STANDARD 14) 
 
-add_executable(Server3 Server3.cpp )
+add_executable(Server3 Server3.cpp haRest.cpp )
 target_link_libraries(Server3 ${CURL_LIBRARIES})
 
 add_executable(haTest haTest.cpp haRest.cpp)

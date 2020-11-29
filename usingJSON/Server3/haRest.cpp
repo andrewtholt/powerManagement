@@ -17,8 +17,10 @@ using json = nlohmann::json;
  *  Params: 
  * Effects: 
  ***********************************************************************/
-haRest::haRest()
-{
+haRest::haRest() {
+    haHostIp = "127.0.0.1";
+    haPort = 6379;
+
 }
 
 /***********************************************************************
@@ -28,18 +30,19 @@ haRest::haRest()
  ***********************************************************************/
 haRest::haRest(std::string haHost) {
     haHostIp = haHost;
+    haPort = 6379;
 }
 
 /***********************************************************************
  *  Method: haRest::haRest
- *  Params: std::string haHost, int port
+ *  Params: std::string haHost, int p
  * Effects: 
  ***********************************************************************/
 haRest::haRest(std::string haHost, int p) {
 
     commonInit();
     haHostIp = haHost;
-    port = p;
+    haPort = p;
 }
 
 /***********************************************************************
@@ -49,8 +52,8 @@ haRest::haRest(std::string haHost, int p) {
  * Effects: 
  ***********************************************************************/
 void haRest::setHaPort(int p) {
-    if( port == 0) {
-        port = p;
+    if( haPort == 0) {
+        haPort = p;
     }
 }
 
@@ -70,7 +73,7 @@ std::string haRest::get(std::string entityId) {
     chunk.memory = (char *)malloc(1);  /* will be grown as needed by the realloc above */ 
     chunk.size = 0;    /* no data at this point */
 
-    url = "http://" + haHostIp + ":" + std::to_string(port) + "/api/states/" + entityId;
+    url = "http://" + haHostIp + ":" + std::to_string(haPort) + "/api/states/" + entityId;
 
     CURLcode ret;    
     CURL *hnd;    
@@ -108,7 +111,9 @@ std::string haRest::get(std::string entityId) {
     ret = curl_easy_perform(hnd);
 
     if( chunk.size > 0) {
-        printf("\n%s\n", chunk.memory);
+        if(verbose) {
+            printf("\n%s\n", chunk.memory);
+        }
     }
 
     if( returnStateOnly == true ) {
@@ -159,11 +164,14 @@ bool haRest::set(std::string entityId, std::string state) {
     CURL *hnd;    
     struct curl_slist *slist1;    
 
-    std::string url = "http://" + haHostIp + ":" + std::to_string(port) + "/api/services/switch/" + toState;
+    std::string url = "http://" + haHostIp + ":" + std::to_string(haPort) + "/api/services/switch/" + toState;
 
     if (verbose) {
         std::cout << "URL >" + url + "<\n";
     }
+
+    struct WriteThis wt;
+ 
 
     curl_global_init(CURL_GLOBAL_ALL);
 
@@ -174,34 +182,46 @@ bool haRest::set(std::string entityId, std::string state) {
     slist1 = curl_slist_append(slist1, bearer.c_str());
     slist1 = curl_slist_append(slist1, "Content-Type: application/json");    
 
+
+    std::string ei = "{\"entity_id\": \"" + entityId + "\"}";
+    if(verbose) {
+        std::cout << "Entity Id\n" + ei + "\n" ;
+    }
+
+    char eiBuffer[512];
+    memset(eiBuffer,0,512);
+
+    strcpy(eiBuffer, ei.c_str());
+
+    wt.readptr = eiBuffer;
+    wt.sizeleft = strlen(eiBuffer);
+
     hnd = curl_easy_init();    
     curl_easy_setopt(hnd, CURLOPT_BUFFERSIZE, 102400L);    
     curl_easy_setopt(hnd, CURLOPT_URL,url.c_str());
     curl_easy_setopt(hnd, CURLOPT_NOPROGRESS, 1L);    
-
-    std::string ei = "{\"entity_id\": \"" + entityId + "\"}";
-    if(verbose) {
-        std::cout << entityId <<std::endl ;
-        std::cout << "Entity Id\n" + ei + "\n" ;
-    }
-
-    char eiBuffer[255];
-    strcpy(eiBuffer, ei.c_str());
     curl_easy_setopt(hnd, CURLOPT_POSTFIELDS, eiBuffer);
 
-    curl_easy_setopt(hnd, CURLOPT_POSTFIELDSIZE_LARGE, (curl_off_t)40);    
+//    curl_easy_setopt(hnd, CURLOPT_POSTFIELDSIZE_LARGE, (curl_off_t)40);    
+    curl_easy_setopt(hnd, CURLOPT_POSTFIELDSIZE_LARGE, strlen(eiBuffer));
     curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, slist1);    
     curl_easy_setopt(hnd, CURLOPT_USERAGENT, "curl/7.73.0");    
     curl_easy_setopt(hnd, CURLOPT_MAXREDIRS, 50L);    
     curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "POST");    
     curl_easy_setopt(hnd, CURLOPT_TCP_KEEPALIVE, 1L);
 
+    curl_easy_setopt(hnd, CURLOPT_READFUNCTION, read_callback);
+    curl_easy_setopt(hnd, CURLOPT_READDATA, &wt);
+    curl_easy_setopt(hnd, CURLOPT_VERBOSE, 1L);
+
     ret = curl_easy_perform(hnd);
 
     curl_easy_cleanup(hnd);
+
     hnd = NULL;
     curl_slist_free_all(slist1);
     slist1 = NULL;
+    failFlag = false;
 
     return failFlag;
 }
@@ -232,7 +252,7 @@ void haRest::setHaHost(std::string ip) {
 void haRest::dump() {
     std::cout << "\n============================\n";
     std::cout << "HA Host IP  : " << haHostIp   << std::endl;
-    std::cout << "HA Host port: " << port       << std::endl;
+    std::cout << "HA Host port: " << haPort       << std::endl;
     std::cout << "HA Token    : " << haToken    << std::endl;
 }
 
@@ -355,8 +375,15 @@ bool haRest::isOn(std::string inState) {
  * Returns: bool
  * Effects: 
  ***********************************************************************/
-bool haRest::isOff(std::string) {
+bool haRest::isOff(std::string inState) {
     bool state = false;
+
+    for(auto & elem : logicalFalse ) {
+        if( inState.compare(elem) == 0 ) {
+            state = true;
+            break;
+        }
+    }
 
     return state;
 }

@@ -4,6 +4,9 @@ struct globalDefinitions {
     bool debug;
     bool verbose;
     bool redis;
+    bool raw;
 
-    std::string baseUrl;
+    std::string haIP;
+    int haPort;
+    int myPort;
 };

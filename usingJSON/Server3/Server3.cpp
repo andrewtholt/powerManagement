@@ -17,6 +17,7 @@
 #include <iostream>
 
 #include "Server3.h"
+#include "haRest.h"
 using namespace std;
 
 //
@@ -24,11 +25,13 @@ using namespace std;
 //
 void *connection_handler(void *);
 
+haRest *connection = nullptr;
+
 map<string,string> cache;
 struct globalDefinitions global;
 
 void usage() {
-    printf("Usage: Server3 -h| -v -p <port>\n");
+    printf("Usage: Server3 -h| -v -i <HA address> -p <port> -c <cache file>\n");
     exit(2);
 }
 
@@ -43,24 +46,35 @@ int main(int argc , char *argv[]) {
     struct sockaddr_in server , client;
 
     int opt;    
-    int port  = 6379;    
+
     string cacheFileName("cache.txt");
     global.verbose = false;
     global.debug   = false;
-    global.verbose = true;
-    global.baseUrl = "http://192.168.10.124:8123/api/";
+    global.verbose = false;
+    global.haIP = "127.0.0.1";
+    global.haPort = 8123;
+    global.redis = false;
+    global.myPort = 9292;
 
+    bool stateOnly = true;
 
-    while ((opt = getopt(argc, argv, "c:vhp:")) != -1) {    
+    while ((opt = getopt(argc, argv, "di:c:vhp:")) != -1) {    
         switch(opt) {
             case 'c':
                 cacheFileName = optarg;
+                break;
+            case 'd':
+                // return state, complete data from HA
+                stateOnly = false;
                 break;
             case 'h':    
                 usage();    
                 break;    
             case 'p':    
-                port = atoi(optarg);    
+                global.myPort = atoi(optarg);    
+                break;
+            case 'i':
+                global.haIP = std::string(optarg);
                 break;
             case 'v':
                 global.verbose = true;
@@ -70,7 +84,23 @@ int main(int argc , char *argv[]) {
 
     if( global.verbose ) {
         cout << "Cache Load File :" << cacheFileName <<  endl;
-        cout << "Port            :" << port << endl;
+        cout << "HA Server IP    :" << global.haIP << endl;
+        cout << "HA Server Port  :" << global.haPort << endl;
+        cout << "My Port         :" << global.myPort << endl;
+    }
+
+    // instantiate haRest
+
+    connection = new  haRest(global.haIP, global.haPort);
+
+    if(stateOnly) {
+        connection->setReturnStateOnly();
+    } else {
+        connection->clrReturnStateOnly();
+    }
+
+    if( global.verbose) {
+        connection->setVerbose();
     }
     //
     // Create socket
@@ -86,7 +116,7 @@ int main(int argc , char *argv[]) {
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;
     //    server.sin_addr.s_addr = inet_addr("127.0.0.1");  // Bind to localhost
-    server.sin_port = htons( port );
+    server.sin_port = htons( global.myPort );
     //
     // Bind
     //
@@ -105,17 +135,20 @@ int main(int argc , char *argv[]) {
     //
     string name, url;
     ifstream cacheData( cacheFileName );
-    
-    while (!cacheData.eof()) {
-        cacheData >> name >> url;
 
-        cout << name << "-" << url << endl;
+    if(cacheData.is_open()) {
 
-        cache[ name ] = url;
-    }
+        while (!cacheData.eof()) {
+            cacheData >> name >> url;
 
-    if ( global.verbose ) {
-        dumpCache();
+            cout << name << "-" << url << endl;
+
+            cache[ name ] = url;
+        }
+
+        if ( global.verbose ) {
+            dumpCache();
+        }
     }
 
 
@@ -191,7 +224,7 @@ void dump(void *ptr, int len ) {
 
     int i=0;
     for( i = 0; i<len;i+=16) {
-        printf("%08x:", (uintptr_t)address);
+        printf("%08lx:", (long unsigned int)address);
         displayLineHex( address );
         displayLineAscii( address );
         address +=16;
@@ -206,40 +239,47 @@ bool shortCmd(int sock,char *line, char *r) {
 
     bool failFlag = true;
 
-    char *cmd=NULL;
-//    char *key = NULL;
-    char *value = NULL;
-
     printf("Short command >%s<\n",buffer);
 
-    cmd = (char *)strtok(buffer," \n\r");
-    printf("cmd is %s\n",cmd);
+    std::string cmd((char *)strtok(buffer," \n\r"));
 
-    string key((char *)strtok(NULL," \n\r"));
-//    printf("key is %s\n",key);
+    std::cout << "cmd is " << cmd << std::endl;
 
-    cout << "URL is " << cache[key] << endl;
+    if( cmd.compare("SET") == 0) {
+        string key((char *)strtok(NULL," \n\r"));
+        cout << "URL is " << cache[key] << endl;
 
-    if(!strcmp(cmd,"SET")) {
-        value = (char *)strtok(NULL," \n\r");
-        printf("val is %s\n",value);
+        std::string state((char *)strtok(NULL," \n\r"));
 
-        cout << "get URL\n" ;
         if (cache.count( key )) {
-            string url;
-
-            url = global.baseUrl + "services/switch/" ;
-
-            if( value == "on" || value == "ON") {
-                url += "turn_on";
+            failFlag = connection->set(cache[key], state);
+            if(failFlag == false) {
+                strcpy(r,"OK\n");
             } else {
-                url += "turn_off";
+                strcpy(r,"FAILED\n");
             }
-            cout << "\t" << url << endl;
         } else {
             cout << "\tNot Found\n";
         }
+    } else if(cmd.compare("GET") == 0) {
+
+        string key((char *)strtok(NULL," \n\r"));
+        cout << "URL is " << cache[key] << endl;
+        cout << "Key is " << key << endl;
+
+        std::string res =  connection->get(cache[key]) ;
+        cout << "Res " << res  << endl;
+
+        res += "\n";
+
+        strcpy(r, res.c_str());
+
+        failFlag = false;
+    } else {
+        failFlag = true;
+        strcpy(r,"FAILED\n");
     }
+
 
     return failFlag;
 }
@@ -264,26 +304,27 @@ void *connection_handler(void *socket_desc) {
     int len=80;
 
     char reply[255];
+    bool failFlag = true;
 
     while (loopFlag) {
         read_size = recv(sock , client_message , 2000 , 0);
 
         if( read_size > 0) {
             printf("read_size is %d\n",read_size);
-    
+
             if(global.verbose) {
                 dump( client_message, read_size) ;
             }
 
             if( isalpha( client_message[0] )) {
-                shortCmd(sock,client_message, reply);
+                failFlag = shortCmd(sock,client_message, reply);
             } else if (client_message[0] == '*') {
                 printf("RESP\n");
             }
             //
             // Send the message back to client
             //
-            write(sock , client_message , strlen(client_message));
+            write(sock , reply , strlen(reply));
             //
             // clear the message buffer
             //
@@ -301,5 +342,5 @@ void *connection_handler(void *socket_desc) {
     }
 
     return 0;
-    } 
+} 
 
