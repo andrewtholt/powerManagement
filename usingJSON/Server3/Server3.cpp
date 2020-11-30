@@ -31,7 +31,7 @@ map<string,string> cache;
 struct globalDefinitions global;
 
 void usage() {
-    printf("Usage: Server3 -h| -v -i <HA address> -p <port> -c <cache file>\n");
+    printf("Usage: Server3 -h| -r -v -i <HA address> -p <port> -c <cache file>\n");
     exit(2);
 }
 
@@ -58,7 +58,7 @@ int main(int argc , char *argv[]) {
 
     bool stateOnly = true;
 
-    while ((opt = getopt(argc, argv, "di:c:vhp:")) != -1) {    
+    while ((opt = getopt(argc, argv, "di:c:vhp:r")) != -1) {    
         switch(opt) {
             case 'c':
                 cacheFileName = optarg;
@@ -72,6 +72,9 @@ int main(int argc , char *argv[]) {
                 break;    
             case 'p':    
                 global.myPort = atoi(optarg);    
+                break;
+            case 'r':
+                global.redis = true;
                 break;
             case 'i':
                 global.haIP = std::string(optarg);
@@ -91,17 +94,11 @@ int main(int argc , char *argv[]) {
 
     // instantiate haRest
 
-    connection = new  haRest(global.haIP, global.haPort);
+    connection = new haRest(global.haIP, global.haPort);
+    connection->setReturnStateOnly(stateOnly);
 
-    if(stateOnly) {
-        connection->setReturnStateOnly();
-    } else {
-        connection->clrReturnStateOnly();
-    }
-
-    if( global.verbose) {
-        connection->setVerbose();
-    }
+    connection->setRedis(global.redis);
+    connection->setVerbose(global.verbose);
     //
     // Create socket
     //
@@ -270,8 +267,6 @@ bool shortCmd(int sock,char *line, char *r) {
         std::string res =  connection->get(cache[key]) ;
         cout << "Res " << res  << endl;
 
-        res += "\n";
-
         strcpy(r, res.c_str());
 
         failFlag = false;
@@ -279,7 +274,6 @@ bool shortCmd(int sock,char *line, char *r) {
         failFlag = true;
         strcpy(r,"FAILED\n");
     }
-
 
     return failFlag;
 }

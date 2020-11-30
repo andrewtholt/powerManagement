@@ -90,10 +90,9 @@ std::string haRest::get(std::string entityId) {
 
     hnd = curl_easy_init();    
     curl_easy_setopt(hnd, CURLOPT_BUFFERSIZE, 102400L);    
-    //  curl_easy_setopt(hnd, CURLOPT_URL, "http://192.168.10.124:8123/api/states/switch.test_start");                                                    
+
     if (verbose) {
         std::cout << "URL >" + url + "<\n";
-        //        printf("URL >%s<\n", url.c_str());
     }
     curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
     curl_easy_setopt(hnd, CURLOPT_WRITEDATA, (void *)&chunk);
@@ -120,6 +119,13 @@ std::string haRest::get(std::string entityId) {
         json jsonMsg = json::parse( chunk.memory );
 
         result = jsonMsg["state"];
+
+        if (redis == true ) {
+            result = toRedis(result);
+        } else {
+            result += '\n';
+        }
+
     } else {
         result = chunk.memory;
     }
@@ -311,21 +317,9 @@ return realsize;
  * Returns: void
  * Effects: 
  ***********************************************************************/
-void haRest::setReturnStateOnly() {
-    returnStateOnly = true;
+void haRest::setReturnStateOnly(bool s) {
+    returnStateOnly = s;
 }
-
-
-/***********************************************************************
- *  Method: haRest::clrReturnStateOnly
- *  Params: 
- * Returns: void
- * Effects: 
- ***********************************************************************/
-void haRest::clrReturnStateOnly() {
-    returnStateOnly = false;
-}
-
 
 /***********************************************************************
  *  Method: haRest::setVerbose
@@ -333,19 +327,8 @@ void haRest::clrReturnStateOnly() {
  * Returns: void
  * Effects: 
  ***********************************************************************/
-void haRest::setVerbose() {
-    verbose = true;
-}
-
-
-/***********************************************************************
- *  Method: haRest::clrVerbose
- *  Params: 
- * Returns: void
- * Effects: 
- ***********************************************************************/
-void haRest::clrVerbose() {
-    verbose = false;
+void haRest::setVerbose(bool s) {
+    verbose = s;
 }
 
 
@@ -386,6 +369,34 @@ bool haRest::isOff(std::string inState) {
     }
 
     return state;
+}
+
+
+/***********************************************************************
+ *  Method: haRest::toRedis
+ *  Params: std::string data
+ * Returns: std::string
+ * Effects: 
+ ***********************************************************************/
+std::string haRest::toRedis(std::string data) {
+    std::string result = "";
+
+    result = "$";
+
+    result += std::to_string(data.length()) + "\r\n";
+    result += data + "\r\n";
+    return result;
+}
+
+
+/***********************************************************************
+ *  Method: haRest::setRedis
+ *  Params: bool state
+ * Returns: void
+ * Effects: 
+ ***********************************************************************/
+void haRest::setRedis(bool state) {
+    redis = state;
 }
 
 

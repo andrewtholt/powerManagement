@@ -10,8 +10,8 @@ int main() {
 
     rest->dump();
 
-    rest->setReturnStateOnly();
-    rest->setVerbose();
+    rest->setReturnStateOnly(true);
+    rest->setVerbose(true);
 
     result = rest->get("switch.test_start");
 

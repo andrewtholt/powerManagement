@@ -14,12 +14,16 @@ class haRest {
         int haPort = 0;
 
         bool returnStateOnly = false;   // If true return the state only, on, off etc
+                                        // If false return a json fragment e.g.
+                                        // { 'state':'off'} 
+        bool redis = false;
 
         std::string haTokenFilename = "/etc/mqtt/haToken.txt";
         std::string haToken = "";
 
         bool verbose = false;
 
+        std::string toRedis(std::string data);
         void commonInit();
 
         std::vector<std::string> logicalTrue  = { "on","ON","true","TRUE","yes","YES" };
@@ -27,6 +31,7 @@ class haRest {
 
         bool isOn(std::string);
         bool isOff(std::string);
+
 
         static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp) {
             size_t realsize = size * nmemb;    
@@ -82,11 +87,10 @@ class haRest {
         std::string get(std::string entityId);
         bool set(std::string entityId, std::string state);
 
-        void setReturnStateOnly();
-        void clrReturnStateOnly();
+        void setReturnStateOnly(bool state);
 
-        void setVerbose();
-        void clrVerbose();
+        void setVerbose(bool state);
+        void setRedis(bool state);
 
         void dump();
 };
