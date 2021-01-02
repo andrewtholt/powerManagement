@@ -212,11 +212,13 @@ int main(int argc, char *argv[]) {
     lat = stod( latString );
 
     if( verbose ) {
-        cout << "Config File : " << cfgFile << endl;
-        cout << "MQTT Broker : " << mosquittoHost << endl;
-        cout << "MQTT Port   : " << mosquittoPort << endl;
-        cout << "Longtitude  : " << longString << endl;
-        cout << "Latitude    : " << latString << endl;
+        cout << "Config File  : " << cfgFile << endl;
+        cout << "MQTT Broker  : " << mosquittoHost << endl;
+        cout << "MQTT Port    : " << mosquittoPort << endl;
+        cout << "Longtitude   : " << longString << endl;
+        cout << "Latitude     : " << latString << endl;
+        cout << "Sunrise topic:" << sunriseTopic << endl;
+        cout << "Sunset  topic:" << sunsetTopic << endl;
     }
 
     int rc=-1;
@@ -280,6 +282,12 @@ int main(int argc, char *argv[]) {
         sunSet  = to_string(setHH) + ":" + to_string(setMM) ;
     }
 
+    char sunriseBuffer[8];
+    char sunsetBuffer[8];
+
+    sprintf(sunriseBuffer,"%02d:%02d", riseHH, riseMM);
+    sprintf(sunsetBuffer,"%02d:%02d", setHH, setMM);
+
     if(verbose) {
         printf("====================\n");
         printf("Day     %02d\n", day);
@@ -290,16 +298,25 @@ int main(int argc, char *argv[]) {
         cout <<"Sunrise :" << sunRise << endl; 
         cout <<"Sunset  :" << sunSet  << endl; 
 
-                printf("Sunrise %02d:%02d\n", riseHH, riseMM);
-                printf("Sunset  %02d:%02d\n", setHH, setMM);
+        printf("Sunrise %02d:%02d\n", riseHH, riseMM);
+        printf("Sunset  %02d:%02d\n", setHH, setMM);
         printf("====================\n");
     }
 
+    /*
     mosquitto_publish(mosq, NULL, (char *)sunriseTopic.c_str(), sunRise.length(),
             (char *)sunRise.c_str(), 1,true) ;
 
     mosquitto_publish(mosq, NULL, (char *)sunsetTopic.c_str(), sunSet.length(),
             (char *)sunSet.c_str(), 1,true) ;
+
+    */
+
+    mosquitto_publish(mosq, NULL, (char *)sunriseTopic.c_str(), strlen(sunriseBuffer),
+            (char *)sunriseBuffer, 1,true) ;
+
+    mosquitto_publish(mosq, NULL, (char *)sunsetTopic.c_str(), strlen(sunsetBuffer),
+            (char *)sunsetBuffer, 1,true) ;
 
     rc=mosquitto_loop(mosq,-1,1);
 

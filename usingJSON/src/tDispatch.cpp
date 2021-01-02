@@ -19,10 +19,13 @@ using json = nlohmann::json;
 #define TO_MQTT "/toMQTT"
 #define TO_SNMP "/toSNMP"
 
-#define MSG_SIZE (255)
+#define MSG_SIZE (512)
 
 void usage() {
-    printf("Usage : \n");
+    printf("Usage : tDispatch -h| -v -f\n");
+    printf("\t-h\t\tHelp.\n");
+    printf("\t-v\t\tVerbose.\n");
+    printf("\t-f\t\tRun in foreground.\n");
 }
 
 mqd_t mkQueue(string name, int dir) {
@@ -143,15 +146,15 @@ int main(int argc,char *argv[]) {
             }
             inJson = json::parse( msg );
 
-            type = inJson["type"];
+            type = inJson["io_type"];
 
-            if( type == "snmp" ) {
+            if( type == "SNMP" ) {
                 rc=mq_send(mqSNMP, msg, strlen(msg), 0);
                 if(rc < 0) {
                     perror("SNMP");
                     cout << mqSNMP << endl;
                 }
-            } else if ( type == "mqtt" ) {
+            } else if ( type == "MQTT" ) {
                 rc=mq_send(mqMQTT, msg, strlen(msg), 0);
                 if(rc < 0) {
                     perror("MQTT");

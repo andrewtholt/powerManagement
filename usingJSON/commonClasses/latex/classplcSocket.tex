@@ -1,0 +1,518 @@
+\hypertarget{classplcSocket}{}\doxysection{plc\+Socket Class Reference}
+\label{classplcSocket}\index{plcSocket@{plcSocket}}
+
+
+{\ttfamily \#include $<$plc\+Socket.\+h$>$}
+
+
+
+Inheritance diagram for plc\+Socket\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=140pt]{classplcSocket__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for plc\+Socket\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=324pt]{classplcSocket__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classplcSocket_ac23ac6422e92017ed4bcb7662b23da02}{plc\+Socket}} ()
+\item 
+\mbox{\hyperlink{classplcSocket_a1e68e9d26bce06a6e83f3969df9efb5d}{plc\+Socket}} (string \mbox{\hyperlink{classplcSocket_aa2c041a7e2ac222efc6f67232a7e1120}{cfg\+File}})
+\item 
+void \mbox{\hyperlink{classplcSocket_aebb8a19cd492f6f8d1c0067d5f6d0bc1}{set\+Server\+Sock}} (int)
+\item 
+string \mbox{\hyperlink{classplcSocket_a468d7049c3b11450f4c5ec585819d5ea}{get\+Value}} (string short\+Name)
+\item 
+bool \mbox{\hyperlink{classplcSocket_a9a2e059d148853ab827e34563a81ffbd}{get\+Bool\+Value}} (string name)
+\item 
+void \mbox{\hyperlink{classplcSocket_a691d381665c01740ff58cdbd9da5753d}{set\+Value}} (string short\+Name, string value)
+\item 
+void \mbox{\hyperlink{classplcSocket_a0e09c2c4903fe6dc03b56e8af1895565}{set\+Bool\+Value}} (string short\+Name, bool flag)
+\item 
+bool \mbox{\hyperlink{classplcSocket_a64002aa98ffb184a40ae50715ff62a71}{get\+Status}} ()
+\item 
+void \mbox{\hyperlink{classplcSocket_a3c52c0c728a56d68fa495dde67c75100}{dump}} ()
+\item 
+void \mbox{\hyperlink{classplcSocket_aa37f2ea198603907aceebcdfe9079584}{Ld}} (string symbol)
+\item 
+void \mbox{\hyperlink{classplcSocket_a91137133cea33f762b3f2c2bc776b197}{Out}} (string symbol)
+\end{DoxyCompactItemize}
+\doxysubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+const void \mbox{\hyperlink{classplcSocket_a24551e0f05ca134f94fb27d2de98c2ab}{plc\+Setup}} (string cfg)
+\end{DoxyCompactItemize}
+\doxysubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+string \mbox{\hyperlink{classplcSocket_aa2c041a7e2ac222efc6f67232a7e1120}{cfg\+File}} = \char`\"{}/etc/mqtt/\mbox{\hyperlink{utils_8cpp_ab701e3ac61a85b337ec5c1abaad6742d}{bridge.\+json}}\char`\"{}
+\item 
+string \mbox{\hyperlink{classplcSocket_a320856cde3dfdba6e065754e92cf7b18}{socket\+Server}} = \char`\"{}localhost\char`\"{}
+\item 
+int \mbox{\hyperlink{classplcSocket_a80ce105a3c053f677780eb1c7bc988b4}{port\+No}} = 9191
+\item 
+bool \mbox{\hyperlink{classplcSocket_a102fd0f8f1332d059f105189466ce6ac}{instance\+Failed}} = true
+\item 
+\mbox{\hyperlink{plcBase_8h_ab701e3ac61a85b337ec5c1abaad6742d}{json}} \mbox{\hyperlink{classplcSocket_a93fc8e3ec15eee008176e6cffe546cc8}{config}}
+\item 
+int \mbox{\hyperlink{classplcSocket_a1c5f2cdd8973bef894b2fb7f91fc262f}{server\+Sock}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Additional Inherited Members}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line 4 of file plc\+Socket.\+h.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classplcSocket_ac23ac6422e92017ed4bcb7662b23da02}\label{classplcSocket_ac23ac6422e92017ed4bcb7662b23da02}} 
+\index{plcSocket@{plcSocket}!plcSocket@{plcSocket}}
+\index{plcSocket@{plcSocket}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{plcSocket()}{plcSocket()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily plc\+Socket\+::plc\+Socket (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 135 of file plc\+Socket.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{135                      \{}
+\DoxyCodeLine{136     \mbox{\hyperlink{classplcSocket_a24551e0f05ca134f94fb27d2de98c2ab}{plcSetup}}(\textcolor{stringliteral}{"/etc/mqtt/bridge.json"});}
+\DoxyCodeLine{137 \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{classplcSocket_a1e68e9d26bce06a6e83f3969df9efb5d}\label{classplcSocket_a1e68e9d26bce06a6e83f3969df9efb5d}} 
+\index{plcSocket@{plcSocket}!plcSocket@{plcSocket}}
+\index{plcSocket@{plcSocket}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{plcSocket()}{plcSocket()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily plc\+Socket\+::plc\+Socket (\begin{DoxyParamCaption}\item[{string}]{cfg\+File }\end{DoxyParamCaption})}
+
+
+
+Definition at line 145 of file plc\+Socket.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{145                                    \{}
+\DoxyCodeLine{146     \mbox{\hyperlink{classplcSocket_a24551e0f05ca134f94fb27d2de98c2ab}{plcSetup}}(\mbox{\hyperlink{classplcSocket_aa2c041a7e2ac222efc6f67232a7e1120}{cfgFile}});}
+\DoxyCodeLine{147 \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classplcSocket_a3c52c0c728a56d68fa495dde67c75100}\label{classplcSocket_a3c52c0c728a56d68fa495dde67c75100}} 
+\index{plcSocket@{plcSocket}!dump@{dump}}
+\index{dump@{dump}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{dump()}{dump()}}
+{\footnotesize\ttfamily void plc\+Socket\+::dump (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 196 of file plc\+Socket.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{196                      \{}
+\DoxyCodeLine{197     cout << \textcolor{stringliteral}{"Socket Server:"} + \mbox{\hyperlink{classplcSocket_a320856cde3dfdba6e065754e92cf7b18}{socketServer}} << endl;}
+\DoxyCodeLine{198     cout << \textcolor{stringliteral}{"Socket Fd    :"} << \mbox{\hyperlink{classplcSocket_a1c5f2cdd8973bef894b2fb7f91fc262f}{serverSock}} << endl;}
+\DoxyCodeLine{199     cout << \textcolor{stringliteral}{"Port         :"} << \mbox{\hyperlink{classplcSocket_a80ce105a3c053f677780eb1c7bc988b4}{portNo}} << endl;}
+\DoxyCodeLine{200 \}}
+
+\end{DoxyCode}
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=244pt]{classplcSocket_a3c52c0c728a56d68fa495dde67c75100_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classplcSocket_a9a2e059d148853ab827e34563a81ffbd}\label{classplcSocket_a9a2e059d148853ab827e34563a81ffbd}} 
+\index{plcSocket@{plcSocket}!getBoolValue@{getBoolValue}}
+\index{getBoolValue@{getBoolValue}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{getBoolValue()}{getBoolValue()}}
+{\footnotesize\ttfamily bool plc\+Socket\+::get\+Bool\+Value (\begin{DoxyParamCaption}\item[{string}]{name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 67 of file plc\+Socket.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{67                                              \{}
+\DoxyCodeLine{68     \textcolor{keywordtype}{string} tmp = \mbox{\hyperlink{classplcSocket_a468d7049c3b11450f4c5ec585819d5ea}{getValue}}(shortName);}
+\DoxyCodeLine{69 }
+\DoxyCodeLine{70     \textcolor{keywordtype}{string} res = \mbox{\hyperlink{plcSocket_8cpp_a0ee050c43395d69260a397fba132f00d}{rtrim}}(tmp);}
+\DoxyCodeLine{71     \textcolor{keywordtype}{bool} v = false ;}
+\DoxyCodeLine{72 }
+\DoxyCodeLine{73     \textcolor{keywordflow}{if} ( res == \textcolor{stringliteral}{"ON"} || res == \textcolor{stringliteral}{"TRUE"} ) \{}
+\DoxyCodeLine{74         v = \textcolor{keyword}{true};}
+\DoxyCodeLine{75     \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{76         v = false ;}
+\DoxyCodeLine{77     \}}
+\DoxyCodeLine{78 }
+\DoxyCodeLine{79     \textcolor{keywordflow}{return} v;}
+\DoxyCodeLine{80 \}}
+
+\end{DoxyCode}
+
+
+References rtrim().
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=275pt]{classplcSocket_a9a2e059d148853ab827e34563a81ffbd_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classplcSocket_a64002aa98ffb184a40ae50715ff62a71}\label{classplcSocket_a64002aa98ffb184a40ae50715ff62a71}} 
+\index{plcSocket@{plcSocket}!getStatus@{getStatus}}
+\index{getStatus@{getStatus}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{getStatus()}{getStatus()}}
+{\footnotesize\ttfamily bool plc\+Socket\+::get\+Status (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 126 of file plc\+Socket.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{126                           \{}
+\DoxyCodeLine{127     \textcolor{keywordflow}{return} \mbox{\hyperlink{classplcSocket_a102fd0f8f1332d059f105189466ce6ac}{instanceFailed}};}
+\DoxyCodeLine{128 \}}
+
+\end{DoxyCode}
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=262pt]{classplcSocket_a64002aa98ffb184a40ae50715ff62a71_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classplcSocket_a468d7049c3b11450f4c5ec585819d5ea}\label{classplcSocket_a468d7049c3b11450f4c5ec585819d5ea}} 
+\index{plcSocket@{plcSocket}!getValue@{getValue}}
+\index{getValue@{getValue}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{getValue()}{getValue()}}
+{\footnotesize\ttfamily string plc\+Socket\+::get\+Value (\begin{DoxyParamCaption}\item[{string}]{short\+Name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 42 of file plc\+Socket.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{42                                            \{}
+\DoxyCodeLine{43     \textcolor{keywordtype}{string} res = \textcolor{stringliteral}{"UNKNOWN"};}
+\DoxyCodeLine{44     \textcolor{keywordtype}{string} tmp;}
+\DoxyCodeLine{45     \textcolor{keywordtype}{char} buffer[64];}
+\DoxyCodeLine{46 }
+\DoxyCodeLine{47     bzero(buffer, \textcolor{keyword}{sizeof}(buffer));}
+\DoxyCodeLine{48 }
+\DoxyCodeLine{49     \textcolor{keywordtype}{string} cmd = \textcolor{stringliteral}{"GET "} + shortName + \textcolor{stringliteral}{"\(\backslash\)r\(\backslash\)n"};}
+\DoxyCodeLine{50 }
+\DoxyCodeLine{51     \textcolor{keywordflow}{if}( \mbox{\hyperlink{classplcSocket_a1c5f2cdd8973bef894b2fb7f91fc262f}{serverSock}} > 0) \{}
+\DoxyCodeLine{52         \textcolor{keywordtype}{int} len  = write(\mbox{\hyperlink{classplcSocket_a1c5f2cdd8973bef894b2fb7f91fc262f}{serverSock}}, (\textcolor{keywordtype}{char} *)cmd.c\_str(), (\textcolor{keywordtype}{int})cmd.length());}
+\DoxyCodeLine{53 }
+\DoxyCodeLine{54         errno = 0;}
+\DoxyCodeLine{55         len = read(\mbox{\hyperlink{classplcSocket_a1c5f2cdd8973bef894b2fb7f91fc262f}{serverSock}}, buffer, \textcolor{keyword}{sizeof}(buffer));}
+\DoxyCodeLine{56         \textcolor{keywordflow}{if}( len > 0) \{}
+\DoxyCodeLine{57             tmp=buffer;}
+\DoxyCodeLine{58             res = \mbox{\hyperlink{plcSocket_8cpp_a0ee050c43395d69260a397fba132f00d}{rtrim}}(tmp);}
+\DoxyCodeLine{59         \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{60             perror( \textcolor{stringliteral}{"plcSocket::getValue"});}
+\DoxyCodeLine{61         \}}
+\DoxyCodeLine{62     \}}
+\DoxyCodeLine{63 }
+\DoxyCodeLine{64     \textcolor{keywordflow}{return} res;}
+\DoxyCodeLine{65 \}}
+
+\end{DoxyCode}
+
+
+References rtrim().
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=256pt]{classplcSocket_a468d7049c3b11450f4c5ec585819d5ea_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classplcSocket_aa37f2ea198603907aceebcdfe9079584}\label{classplcSocket_aa37f2ea198603907aceebcdfe9079584}} 
+\index{plcSocket@{plcSocket}!Ld@{Ld}}
+\index{Ld@{Ld}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{Ld()}{Ld()}}
+{\footnotesize\ttfamily void plc\+Socket\+::\+Ld (\begin{DoxyParamCaption}\item[{string}]{symbol }\end{DoxyParamCaption})}
+
+
+
+Definition at line 206 of file plc\+Socket.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{206                                 \{}
+\DoxyCodeLine{207     \textcolor{keywordflow}{if}(\mbox{\hyperlink{classplcBase_afd6ca4f139bedad192fdf1017e62ebbe}{verbose}}) \{}
+\DoxyCodeLine{208         cout << \textcolor{stringliteral}{"plcBase::Ld "} << symbol ;}
+\DoxyCodeLine{209     \}}
+\DoxyCodeLine{210 }
+\DoxyCodeLine{211     \mbox{\hyperlink{classplcBase_aed964cddf76f4ca0f2485fa757065c3f}{Push}}( \mbox{\hyperlink{classplcSocket_a9a2e059d148853ab827e34563a81ffbd}{getBoolValue}}(symbol));}
+\DoxyCodeLine{212 }
+\DoxyCodeLine{213     \textcolor{keywordflow}{if}(\mbox{\hyperlink{classplcBase_afd6ca4f139bedad192fdf1017e62ebbe}{verbose}}) \{}
+\DoxyCodeLine{214         cout << \textcolor{stringliteral}{"   TOS: "} << \mbox{\hyperlink{classplcBase_ae4d9133fb80897c0ef0faee48d60aad0}{logicStack}}.back() << endl;}
+\DoxyCodeLine{215     \}}
+\DoxyCodeLine{216 \}}
+
+\end{DoxyCode}
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=231pt]{classplcSocket_aa37f2ea198603907aceebcdfe9079584_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classplcSocket_a91137133cea33f762b3f2c2bc776b197}\label{classplcSocket_a91137133cea33f762b3f2c2bc776b197}} 
+\index{plcSocket@{plcSocket}!Out@{Out}}
+\index{Out@{Out}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{Out()}{Out()}}
+{\footnotesize\ttfamily void plc\+Socket\+::\+Out (\begin{DoxyParamCaption}\item[{string}]{symbol }\end{DoxyParamCaption})}
+
+
+
+Definition at line 218 of file plc\+Socket.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{218                                  \{}
+\DoxyCodeLine{219 }
+\DoxyCodeLine{220     \mbox{\hyperlink{classplcSocket_a0e09c2c4903fe6dc03b56e8af1895565}{setBoolValue}}(symbol, \mbox{\hyperlink{classplcBase_a6d87a3641e463df996f307d3e491c334}{Pop}}());}
+\DoxyCodeLine{221 \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{classplcSocket_a24551e0f05ca134f94fb27d2de98c2ab}\label{classplcSocket_a24551e0f05ca134f94fb27d2de98c2ab}} 
+\index{plcSocket@{plcSocket}!plcSetup@{plcSetup}}
+\index{plcSetup@{plcSetup}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{plcSetup()}{plcSetup()}}
+{\footnotesize\ttfamily const void plc\+Socket\+::plc\+Setup (\begin{DoxyParamCaption}\item[{string}]{cfg }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 82 of file plc\+Socket.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{82                                              \{}
+\DoxyCodeLine{83     \mbox{\hyperlink{classplcBase_afd6ca4f139bedad192fdf1017e62ebbe}{plcBase::verbose}} = \textcolor{keyword}{false};}
+\DoxyCodeLine{84     \textcolor{keyword}{struct }sockaddr\_in si\_other;}
+\DoxyCodeLine{85     socklen\_t slen=\textcolor{keyword}{sizeof}(si\_other);}
+\DoxyCodeLine{86     \textcolor{keywordtype}{int} sock;}
+\DoxyCodeLine{87 }
+\DoxyCodeLine{88     cout << \textcolor{stringliteral}{"Config :"} + \mbox{\hyperlink{classplcSocket_aa2c041a7e2ac222efc6f67232a7e1120}{cfgFile}} << endl;}
+\DoxyCodeLine{89 }
+\DoxyCodeLine{90     \textcolor{keywordflow}{if}(access(\mbox{\hyperlink{classplcSocket_aa2c041a7e2ac222efc6f67232a7e1120}{cfgFile}}.c\_str(), R\_OK) < 0) \{}
+\DoxyCodeLine{91         cerr << \textcolor{stringliteral}{"FATAL: Cannot access config file "} + \mbox{\hyperlink{classplcSocket_aa2c041a7e2ac222efc6f67232a7e1120}{cfgFile}} << endl;}
+\DoxyCodeLine{92 }
+\DoxyCodeLine{93         \mbox{\hyperlink{classplcSocket_a102fd0f8f1332d059f105189466ce6ac}{instanceFailed}} = \textcolor{keyword}{true};}
+\DoxyCodeLine{94 }
+\DoxyCodeLine{95     \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{96         \textcolor{keywordtype}{int} status=-\/1;}
+\DoxyCodeLine{97         ifstream cfgStream( \mbox{\hyperlink{classplcSocket_aa2c041a7e2ac222efc6f67232a7e1120}{cfgFile}} );}
+\DoxyCodeLine{98 }
+\DoxyCodeLine{99         \mbox{\hyperlink{classplcSocket_a93fc8e3ec15eee008176e6cffe546cc8}{config}} = json::parse(cfgStream);}
+\DoxyCodeLine{100 }
+\DoxyCodeLine{101         \mbox{\hyperlink{classplcSocket_a320856cde3dfdba6e065754e92cf7b18}{socketServer}} = \mbox{\hyperlink{classplcSocket_a93fc8e3ec15eee008176e6cffe546cc8}{config}}[\textcolor{stringliteral}{"socket"}][\textcolor{stringliteral}{"name"}];}
+\DoxyCodeLine{102         \textcolor{keywordtype}{string} portNoString =  \mbox{\hyperlink{classplcSocket_a93fc8e3ec15eee008176e6cffe546cc8}{config}}[\textcolor{stringliteral}{"socket"}][\textcolor{stringliteral}{"port"}] ;}
+\DoxyCodeLine{103 }
+\DoxyCodeLine{104         \mbox{\hyperlink{classplcSocket_a80ce105a3c053f677780eb1c7bc988b4}{portNo}} = stoi( portNoString );}
+\DoxyCodeLine{105 }
+\DoxyCodeLine{106         sock = socket(AF\_INET , SOCK\_STREAM , 0);}
+\DoxyCodeLine{107         \textcolor{keywordflow}{if} ( sock == -\/1) \{}
+\DoxyCodeLine{108             \mbox{\hyperlink{classplcSocket_a102fd0f8f1332d059f105189466ce6ac}{instanceFailed}} = \textcolor{keyword}{true};}
+\DoxyCodeLine{109         \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{110             memset((\textcolor{keywordtype}{char} *) \&si\_other, 0, \textcolor{keyword}{sizeof}(si\_other));}
+\DoxyCodeLine{111             si\_other.sin\_addr.s\_addr = inet\_addr( (\textcolor{keywordtype}{char} *)\mbox{\hyperlink{classplcSocket_a320856cde3dfdba6e065754e92cf7b18}{socketServer}}.c\_str() );}
+\DoxyCodeLine{112             si\_other.sin\_family = AF\_INET;}
+\DoxyCodeLine{113             si\_other.sin\_port = htons(\mbox{\hyperlink{classplcSocket_a80ce105a3c053f677780eb1c7bc988b4}{portNo}});}
+\DoxyCodeLine{114 }
+\DoxyCodeLine{115             \textcolor{keywordflow}{if} ( connect(sock , (\textcolor{keyword}{struct} sockaddr *)\&si\_other , \textcolor{keyword}{sizeof}(si\_other)) < 0) \{}
+\DoxyCodeLine{116                 cerr << \textcolor{stringliteral}{"Connect failed"} << endl;}
+\DoxyCodeLine{117                 \mbox{\hyperlink{classplcSocket_a102fd0f8f1332d059f105189466ce6ac}{instanceFailed}} = \textcolor{keyword}{true};}
+\DoxyCodeLine{118             \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{119                 \mbox{\hyperlink{classplcSocket_a102fd0f8f1332d059f105189466ce6ac}{instanceFailed}} = \textcolor{keyword}{false};}
+\DoxyCodeLine{120                 \mbox{\hyperlink{classplcSocket_a1c5f2cdd8973bef894b2fb7f91fc262f}{serverSock}}=sock;}
+\DoxyCodeLine{121             \}}
+\DoxyCodeLine{122         \}}
+\DoxyCodeLine{123     \}}
+\DoxyCodeLine{124 \}}
+
+\end{DoxyCode}
+
+
+References plc\+Base\+::verbose.
+
+\mbox{\Hypertarget{classplcSocket_a0e09c2c4903fe6dc03b56e8af1895565}\label{classplcSocket_a0e09c2c4903fe6dc03b56e8af1895565}} 
+\index{plcSocket@{plcSocket}!setBoolValue@{setBoolValue}}
+\index{setBoolValue@{setBoolValue}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{setBoolValue()}{setBoolValue()}}
+{\footnotesize\ttfamily void plc\+Socket\+::set\+Bool\+Value (\begin{DoxyParamCaption}\item[{string}]{short\+Name,  }\item[{bool}]{flag }\end{DoxyParamCaption})}
+
+
+
+Definition at line 189 of file plc\+Socket.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{189                                                         \{}
+\DoxyCodeLine{190     \textcolor{keywordtype}{string} value = (flag) ? \textcolor{stringliteral}{"ON"} : \textcolor{stringliteral}{"OFF"};}
+\DoxyCodeLine{191 }
+\DoxyCodeLine{192     \mbox{\hyperlink{classplcSocket_a691d381665c01740ff58cdbd9da5753d}{setValue}}(shortName, value);}
+\DoxyCodeLine{193 }
+\DoxyCodeLine{194 \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{classplcSocket_aebb8a19cd492f6f8d1c0067d5f6d0bc1}\label{classplcSocket_aebb8a19cd492f6f8d1c0067d5f6d0bc1}} 
+\index{plcSocket@{plcSocket}!setServerSock@{setServerSock}}
+\index{setServerSock@{setServerSock}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{setServerSock()}{setServerSock()}}
+{\footnotesize\ttfamily void plc\+Socket\+::set\+Server\+Sock (\begin{DoxyParamCaption}\item[{int}]{fd }\end{DoxyParamCaption})}
+
+
+
+Definition at line 202 of file plc\+Socket.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{202                                     \{}
+\DoxyCodeLine{203     \mbox{\hyperlink{classplcSocket_a1c5f2cdd8973bef894b2fb7f91fc262f}{serverSock}} = \mbox{\hyperlink{classplcBase_a017e65d33a10cdbab3727a20bd0db0b7}{fd}};}
+\DoxyCodeLine{204 \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{classplcSocket_a691d381665c01740ff58cdbd9da5753d}\label{classplcSocket_a691d381665c01740ff58cdbd9da5753d}} 
+\index{plcSocket@{plcSocket}!setValue@{setValue}}
+\index{setValue@{setValue}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{setValue()}{setValue()}}
+{\footnotesize\ttfamily void plc\+Socket\+::set\+Value (\begin{DoxyParamCaption}\item[{string}]{short\+Name,  }\item[{string}]{value }\end{DoxyParamCaption})}
+
+
+
+Definition at line 168 of file plc\+Socket.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{168                                                        \{}
+\DoxyCodeLine{169     \textcolor{keywordtype}{char} buffer[64];}
+\DoxyCodeLine{170     \textcolor{keywordtype}{string} cmd = \textcolor{stringliteral}{"SET "} + shortName + \textcolor{stringliteral}{" "} + value + \textcolor{stringliteral}{"\(\backslash\)r"} ;}
+\DoxyCodeLine{171 }
+\DoxyCodeLine{172     \textcolor{keywordtype}{int} len = write(\mbox{\hyperlink{classplcSocket_a1c5f2cdd8973bef894b2fb7f91fc262f}{serverSock}}, cmd.c\_str(), cmd.length() );}
+\DoxyCodeLine{173     \textcolor{keywordflow}{if}( len < 0 ) \{}
+\DoxyCodeLine{174         cerr << \textcolor{stringliteral}{"plcSocket::setValue read: Returned an error"} << endl;}
+\DoxyCodeLine{175         perror(\textcolor{stringliteral}{"WRITE"});}
+\DoxyCodeLine{176     \}}
+\DoxyCodeLine{177     fsync( \mbox{\hyperlink{classplcSocket_a1c5f2cdd8973bef894b2fb7f91fc262f}{serverSock}} );}
+\DoxyCodeLine{178     \textcolor{comment}{//}}
+\DoxyCodeLine{179     \textcolor{comment}{//  This read could be used to verify that the write took place.}}
+\DoxyCodeLine{180     \textcolor{comment}{//}}
+\DoxyCodeLine{181     len = read(\mbox{\hyperlink{classplcSocket_a1c5f2cdd8973bef894b2fb7f91fc262f}{serverSock}}, buffer, \textcolor{keyword}{sizeof}(buffer));}
+\DoxyCodeLine{182 }
+\DoxyCodeLine{183     \textcolor{keywordflow}{if}( len < 0 ) \{}
+\DoxyCodeLine{184         cerr << \textcolor{stringliteral}{"plcSocket::setValue read: Returned an error"} << endl;}
+\DoxyCodeLine{185         perror(\textcolor{stringliteral}{"READ"});}
+\DoxyCodeLine{186     \}}
+\DoxyCodeLine{187 \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Field Documentation}
+\mbox{\Hypertarget{classplcSocket_aa2c041a7e2ac222efc6f67232a7e1120}\label{classplcSocket_aa2c041a7e2ac222efc6f67232a7e1120}} 
+\index{plcSocket@{plcSocket}!cfgFile@{cfgFile}}
+\index{cfgFile@{cfgFile}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{cfgFile}{cfgFile}}
+{\footnotesize\ttfamily string plc\+Socket\+::cfg\+File = \char`\"{}/etc/mqtt/\mbox{\hyperlink{utils_8cpp_ab701e3ac61a85b337ec5c1abaad6742d}{bridge.\+json}}\char`\"{}\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 6 of file plc\+Socket.\+h.
+
+\mbox{\Hypertarget{classplcSocket_a93fc8e3ec15eee008176e6cffe546cc8}\label{classplcSocket_a93fc8e3ec15eee008176e6cffe546cc8}} 
+\index{plcSocket@{plcSocket}!config@{config}}
+\index{config@{config}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{config}{config}}
+{\footnotesize\ttfamily \mbox{\hyperlink{plcBase_8h_ab701e3ac61a85b337ec5c1abaad6742d}{json}} plc\+Socket\+::config\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 11 of file plc\+Socket.\+h.
+
+\mbox{\Hypertarget{classplcSocket_a102fd0f8f1332d059f105189466ce6ac}\label{classplcSocket_a102fd0f8f1332d059f105189466ce6ac}} 
+\index{plcSocket@{plcSocket}!instanceFailed@{instanceFailed}}
+\index{instanceFailed@{instanceFailed}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{instanceFailed}{instanceFailed}}
+{\footnotesize\ttfamily bool plc\+Socket\+::instance\+Failed = true\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 10 of file plc\+Socket.\+h.
+
+\mbox{\Hypertarget{classplcSocket_a80ce105a3c053f677780eb1c7bc988b4}\label{classplcSocket_a80ce105a3c053f677780eb1c7bc988b4}} 
+\index{plcSocket@{plcSocket}!portNo@{portNo}}
+\index{portNo@{portNo}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{portNo}{portNo}}
+{\footnotesize\ttfamily int plc\+Socket\+::port\+No = 9191\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 8 of file plc\+Socket.\+h.
+
+\mbox{\Hypertarget{classplcSocket_a1c5f2cdd8973bef894b2fb7f91fc262f}\label{classplcSocket_a1c5f2cdd8973bef894b2fb7f91fc262f}} 
+\index{plcSocket@{plcSocket}!serverSock@{serverSock}}
+\index{serverSock@{serverSock}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{serverSock}{serverSock}}
+{\footnotesize\ttfamily int plc\+Socket\+::server\+Sock\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 12 of file plc\+Socket.\+h.
+
+\mbox{\Hypertarget{classplcSocket_a320856cde3dfdba6e065754e92cf7b18}\label{classplcSocket_a320856cde3dfdba6e065754e92cf7b18}} 
+\index{plcSocket@{plcSocket}!socketServer@{socketServer}}
+\index{socketServer@{socketServer}!plcSocket@{plcSocket}}
+\doxysubsubsection{\texorpdfstring{socketServer}{socketServer}}
+{\footnotesize\ttfamily string plc\+Socket\+::socket\+Server = \char`\"{}localhost\char`\"{}\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 7 of file plc\+Socket.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{plcSocket_8h}{plc\+Socket.\+h}}\item 
+\mbox{\hyperlink{plcSocket_8cpp}{plc\+Socket.\+cpp}}\end{DoxyCompactItemize}

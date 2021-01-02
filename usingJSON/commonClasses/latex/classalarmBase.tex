@@ -1,0 +1,594 @@
+\hypertarget{classalarmBase}{}\doxysection{alarm\+Base Class Reference}
+\label{classalarmBase}\index{alarmBase@{alarmBase}}
+
+
+{\ttfamily \#include $<$alarm\+Base.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classalarmBase_a1caa901e529b4adfdfc1bf0ea3f9f17f}{alarm\+Base}} ()
+\item 
+bool \mbox{\hyperlink{classalarmBase_a00594286f53c44557bac76e9417cab98}{set\+Dow}} (\mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21c}{dow\+\_\+t}} day)
+\item 
+bool \mbox{\hyperlink{classalarmBase_a016581d1482af2fa51b717ec5da7b968}{set\+Start\+Time}} (string Time)
+\item 
+bool \mbox{\hyperlink{classalarmBase_afa74814e3158ea44dba4df34ad59fb15}{set\+End\+Time}} (string Time)
+\item 
+bool \mbox{\hyperlink{classalarmBase_a9e4c714a5ac6ef1ddeb48f210518d9de}{set\+Duration}} (uint32\+\_\+t \mbox{\hyperlink{classalarmBase_af04569b7fb1fbc8cbc3a33b5bdfb7bbb}{duration}})
+\item 
+void \mbox{\hyperlink{classalarmBase_a3c1069f156e293613fdc10d1546c7ab3}{adj\+Start\+Time}} (int d)
+\item 
+void \mbox{\hyperlink{classalarmBase_a63def7e0d362adae1d9ceae2f855cd86}{adj\+End\+Time}} (int d)
+\item 
+bool \mbox{\hyperlink{classalarmBase_ab4108e3a49cd9903b0061982b8374fa8}{check\+Time}} ()
+\item 
+void \mbox{\hyperlink{classalarmBase_a0e4641dd0d32a4741cf1152efb4ee0da}{dump}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int32\+\_\+t \mbox{\hyperlink{classalarmBase_ae73b7520b72b9e5bbd10448498c4c3ac}{start\+Time}} =-\/1
+\item 
+uint32\+\_\+t \mbox{\hyperlink{classalarmBase_af04569b7fb1fbc8cbc3a33b5bdfb7bbb}{duration}} =0
+\item 
+int32\+\_\+t \mbox{\hyperlink{classalarmBase_ad99ca0da026906529ac642c0d286c54e}{dom}} =-\/1
+\item 
+int32\+\_\+t \mbox{\hyperlink{classalarmBase_aa59214645a698756fab20ab8657d4757}{mon}} =-\/1
+\item 
+int32\+\_\+t \mbox{\hyperlink{classalarmBase_aa430d406e4d712661000e49a531c0efa}{year}} =-\/1
+\item 
+bool \mbox{\hyperlink{classalarmBase_a3ef9df71413c0a54771f8f1e3842fd46}{state}} = true
+\item 
+bool \mbox{\hyperlink{classalarmBase_a44a8ddcb835b0315540ccc918e9705bf}{triggered}} = false
+\item 
+\mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21c}{dow\+\_\+t}} \mbox{\hyperlink{classalarmBase_a26cbae2ec59db09da50f4bd980d412c2}{dow}} =\mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21cab1d5eac4b1dca480c8056eaea7663b7a}{A\+LL}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line 27 of file alarm\+Base.\+h.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classalarmBase_a1caa901e529b4adfdfc1bf0ea3f9f17f}\label{classalarmBase_a1caa901e529b4adfdfc1bf0ea3f9f17f}} 
+\index{alarmBase@{alarmBase}!alarmBase@{alarmBase}}
+\index{alarmBase@{alarmBase}!alarmBase@{alarmBase}}
+\doxysubsubsection{\texorpdfstring{alarmBase()}{alarmBase()}}
+{\footnotesize\ttfamily alarm\+Base\+::alarm\+Base (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 15 of file alarm\+Base.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{15                      \{}
+\DoxyCodeLine{16 \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classalarmBase_a63def7e0d362adae1d9ceae2f855cd86}\label{classalarmBase_a63def7e0d362adae1d9ceae2f855cd86}} 
+\index{alarmBase@{alarmBase}!adjEndTime@{adjEndTime}}
+\index{adjEndTime@{adjEndTime}!alarmBase@{alarmBase}}
+\doxysubsubsection{\texorpdfstring{adjEndTime()}{adjEndTime()}}
+{\footnotesize\ttfamily void alarm\+Base\+::adj\+End\+Time (\begin{DoxyParamCaption}\item[{int}]{d }\end{DoxyParamCaption})}
+
+
+
+Definition at line 270 of file alarm\+Base.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{270                                 \{}
+\DoxyCodeLine{271     \textcolor{keywordtype}{int} tmp = \mbox{\hyperlink{classalarmBase_af04569b7fb1fbc8cbc3a33b5bdfb7bbb}{duration}};}
+\DoxyCodeLine{272 }
+\DoxyCodeLine{273     tmp += d;}
+\DoxyCodeLine{274 }
+\DoxyCodeLine{275     \textcolor{keywordflow}{if} ( tmp < 0) \{}
+\DoxyCodeLine{276         tmp = 0;}
+\DoxyCodeLine{277     \}}
+\DoxyCodeLine{278 }
+\DoxyCodeLine{279     \mbox{\hyperlink{classalarmBase_af04569b7fb1fbc8cbc3a33b5bdfb7bbb}{duration}} = tmp;}
+\DoxyCodeLine{280 \}}
+
+\end{DoxyCode}
+
+
+References duration.
+
+\mbox{\Hypertarget{classalarmBase_a3c1069f156e293613fdc10d1546c7ab3}\label{classalarmBase_a3c1069f156e293613fdc10d1546c7ab3}} 
+\index{alarmBase@{alarmBase}!adjStartTime@{adjStartTime}}
+\index{adjStartTime@{adjStartTime}!alarmBase@{alarmBase}}
+\doxysubsubsection{\texorpdfstring{adjStartTime()}{adjStartTime()}}
+{\footnotesize\ttfamily void alarm\+Base\+::adj\+Start\+Time (\begin{DoxyParamCaption}\item[{int}]{d }\end{DoxyParamCaption})}
+
+
+
+Definition at line 250 of file alarm\+Base.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{250                                   \{}
+\DoxyCodeLine{251     \textcolor{keywordtype}{int} tmp = \mbox{\hyperlink{classalarmBase_ae73b7520b72b9e5bbd10448498c4c3ac}{startTime}} ;}
+\DoxyCodeLine{252     tmp += d;}
+\DoxyCodeLine{253 }
+\DoxyCodeLine{254     \textcolor{keywordflow}{if}( d < 0 ) \{}
+\DoxyCodeLine{255         d = 0;}
+\DoxyCodeLine{256     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} ( d > (( 23 *60 ) + 59 ) ) \{}
+\DoxyCodeLine{257         d = (( 23 *60 ) + 59 ) ;}
+\DoxyCodeLine{258     \}}
+\DoxyCodeLine{259 }
+\DoxyCodeLine{260     \mbox{\hyperlink{classalarmBase_ae73b7520b72b9e5bbd10448498c4c3ac}{startTime}} = d;}
+\DoxyCodeLine{261 \}}
+
+\end{DoxyCode}
+
+
+References start\+Time.
+
+\mbox{\Hypertarget{classalarmBase_ab4108e3a49cd9903b0061982b8374fa8}\label{classalarmBase_ab4108e3a49cd9903b0061982b8374fa8}} 
+\index{alarmBase@{alarmBase}!checkTime@{checkTime}}
+\index{checkTime@{checkTime}!alarmBase@{alarmBase}}
+\doxysubsubsection{\texorpdfstring{checkTime()}{checkTime()}}
+{\footnotesize\ttfamily bool alarm\+Base\+::check\+Time (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 142 of file alarm\+Base.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{142                           \{}
+\DoxyCodeLine{143     \textcolor{keywordtype}{bool} run=\textcolor{keyword}{false};}
+\DoxyCodeLine{144     time\_t t = time(NULL);}
+\DoxyCodeLine{145     \textcolor{keyword}{struct }tm tm = *localtime(\&t);}
+\DoxyCodeLine{146     \textcolor{keywordtype}{int} now =( tm.tm\_hour * 60) + tm.tm\_min ;}
+\DoxyCodeLine{147 }
+\DoxyCodeLine{148     if ( \mbox{\hyperlink{classalarmBase_ae73b7520b72b9e5bbd10448498c4c3ac}{startTime}} < 0 \&\& \mbox{\hyperlink{classalarmBase_a26cbae2ec59db09da50f4bd980d412c2}{dow}} == \mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21cab1d5eac4b1dca480c8056eaea7663b7a}{ALL}} ) \{}
+\DoxyCodeLine{149         \mbox{\hyperlink{classalarmBase_a3ef9df71413c0a54771f8f1e3842fd46}{state}}=\textcolor{keyword}{true};}
+\DoxyCodeLine{150     \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{151         \textcolor{keywordtype}{int} today=tm.tm\_wday;}
+\DoxyCodeLine{152 }
+\DoxyCodeLine{153         \textcolor{keywordflow}{switch}( \mbox{\hyperlink{classalarmBase_a26cbae2ec59db09da50f4bd980d412c2}{dow}} ) \{}
+\DoxyCodeLine{154             \textcolor{keywordflow}{case} \mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21cad86a75e0b97510de54435996ae45b8d2}{SUNDAY}}:}
+\DoxyCodeLine{155                 \textcolor{keywordflow}{if}( today == 0) \{}
+\DoxyCodeLine{156                     run = \textcolor{keyword}{true};}
+\DoxyCodeLine{157                 \}}
+\DoxyCodeLine{158                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{159             \textcolor{keywordflow}{case} \mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21cac82db3248a96794aaefb922ea5fb293c}{MONDAY}}:}
+\DoxyCodeLine{160                 \textcolor{keywordflow}{if}( today == 1) \{}
+\DoxyCodeLine{161                     run = \textcolor{keyword}{true};}
+\DoxyCodeLine{162                 \}}
+\DoxyCodeLine{163                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{164             \textcolor{keywordflow}{case} \mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21ca347c4455723bb1bc2709647607a2b282}{TUESDAY}}:}
+\DoxyCodeLine{165                 \textcolor{keywordflow}{if}( today == 2) \{}
+\DoxyCodeLine{166                     run = \textcolor{keyword}{true};}
+\DoxyCodeLine{167                 \}}
+\DoxyCodeLine{168                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{169             \textcolor{keywordflow}{case} \mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21ca68288a23958cd9e1705fd81f0ee729c7}{WEDNESDAY}}:}
+\DoxyCodeLine{170                 \textcolor{keywordflow}{if}( today == 3) \{}
+\DoxyCodeLine{171                     run = \textcolor{keyword}{true};}
+\DoxyCodeLine{172                 \}}
+\DoxyCodeLine{173                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{174             \textcolor{keywordflow}{case} \mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21cab4bfd6f883437c6cf31486dcf03ce0ff}{THURSDAY}}:}
+\DoxyCodeLine{175                 \textcolor{keywordflow}{if}( today == 4) \{}
+\DoxyCodeLine{176                     run = \textcolor{keyword}{true};}
+\DoxyCodeLine{177                 \}}
+\DoxyCodeLine{178                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{179             \textcolor{keywordflow}{case} \mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21ca8f589731fd90a9890c0df9a9c3f96131}{FRIDAY}}:}
+\DoxyCodeLine{180                 \textcolor{keywordflow}{if}( today == 5) \{}
+\DoxyCodeLine{181                     run = \textcolor{keyword}{true};}
+\DoxyCodeLine{182                 \}}
+\DoxyCodeLine{183                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{184             \textcolor{keywordflow}{case} \mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21ca31bbcd6fa6a28095ef8de658126aa5ec}{SATURDAY}}:}
+\DoxyCodeLine{185                 \textcolor{keywordflow}{if}( today == 6) \{}
+\DoxyCodeLine{186                     run = \textcolor{keyword}{true};}
+\DoxyCodeLine{187                 \}}
+\DoxyCodeLine{188                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{189             \textcolor{keywordflow}{case} \mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21cad134b92fb7ff819955fded5062aaf9d5}{WORKDAY}}:}
+\DoxyCodeLine{190                 \textcolor{keywordflow}{if}( today == 0 || today == 6 ) \{}
+\DoxyCodeLine{191                     run = \textcolor{keyword}{true};}
+\DoxyCodeLine{192                 \}}
+\DoxyCodeLine{193                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{194             \textcolor{keywordflow}{case} \mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21ca3053b4facb35386406c44bc51caa24d2}{WEEKEND}}:}
+\DoxyCodeLine{195                 \textcolor{keywordflow}{if} (today > 0 \&\& today < 6) \{}
+\DoxyCodeLine{196                     run = \textcolor{keyword}{true};}
+\DoxyCodeLine{197                 \}}
+\DoxyCodeLine{198                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{199             \textcolor{keywordflow}{case} \mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21cab1d5eac4b1dca480c8056eaea7663b7a}{ALL}}:}
+\DoxyCodeLine{200                 run=\textcolor{keyword}{true};}
+\DoxyCodeLine{201                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{202             \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{203                 run=\textcolor{keyword}{false};}
+\DoxyCodeLine{204                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{205         \}}
+\DoxyCodeLine{206 }
+\DoxyCodeLine{207         \textcolor{keywordflow}{if}( run ) \{}
+\DoxyCodeLine{208             \textcolor{keywordflow}{if}( \mbox{\hyperlink{classalarmBase_af04569b7fb1fbc8cbc3a33b5bdfb7bbb}{duration}} == 0) \{}
+\DoxyCodeLine{209                 \mbox{\hyperlink{classalarmBase_a3ef9df71413c0a54771f8f1e3842fd46}{state}} = ( now == \mbox{\hyperlink{classalarmBase_ae73b7520b72b9e5bbd10448498c4c3ac}{startTime}} ) ? \textcolor{keyword}{true} : \textcolor{keyword}{false} ;}
+\DoxyCodeLine{210 }
+\DoxyCodeLine{211                 \textcolor{keywordflow}{if}( \mbox{\hyperlink{classalarmBase_a3ef9df71413c0a54771f8f1e3842fd46}{state}} == \textcolor{keyword}{true} ) \{}
+\DoxyCodeLine{212                     \textcolor{keywordflow}{if}( \mbox{\hyperlink{classalarmBase_a44a8ddcb835b0315540ccc918e9705bf}{triggered}} == \textcolor{keyword}{false} ) \{}
+\DoxyCodeLine{213                         \mbox{\hyperlink{classalarmBase_a44a8ddcb835b0315540ccc918e9705bf}{triggered}} = \textcolor{keyword}{true};}
+\DoxyCodeLine{214                     \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{215                         \mbox{\hyperlink{classalarmBase_a3ef9df71413c0a54771f8f1e3842fd46}{state}} = \textcolor{keyword}{false};}
+\DoxyCodeLine{216                     \}}
+\DoxyCodeLine{217                 \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{218                     \mbox{\hyperlink{classalarmBase_a44a8ddcb835b0315540ccc918e9705bf}{triggered}} = \textcolor{keyword}{false};}
+\DoxyCodeLine{219                 \}}
+\DoxyCodeLine{220             \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{221                 \mbox{\hyperlink{classalarmBase_a3ef9df71413c0a54771f8f1e3842fd46}{state}} = ( (now >= \mbox{\hyperlink{classalarmBase_ae73b7520b72b9e5bbd10448498c4c3ac}{startTime}}) \&\& ( now < (\mbox{\hyperlink{classalarmBase_ae73b7520b72b9e5bbd10448498c4c3ac}{startTime}} + \mbox{\hyperlink{classalarmBase_af04569b7fb1fbc8cbc3a33b5bdfb7bbb}{duration}}) ) );}
+\DoxyCodeLine{222             \}}
+\DoxyCodeLine{223         \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{224             \mbox{\hyperlink{classalarmBase_a3ef9df71413c0a54771f8f1e3842fd46}{state}}=\textcolor{keyword}{false};}
+\DoxyCodeLine{225         \}}
+\DoxyCodeLine{226     \}}
+\DoxyCodeLine{227     \textcolor{keywordflow}{return} \mbox{\hyperlink{classalarmBase_a3ef9df71413c0a54771f8f1e3842fd46}{state}};}
+\DoxyCodeLine{228 \}}
+
+\end{DoxyCode}
+
+
+References A\+LL, dow, duration, F\+R\+I\+D\+AY, M\+O\+N\+D\+AY, S\+A\+T\+U\+R\+D\+AY, start\+Time, state, S\+U\+N\+D\+AY, T\+H\+U\+R\+S\+D\+AY, triggered, T\+U\+E\+S\+D\+AY, W\+E\+D\+N\+E\+S\+D\+AY, W\+E\+E\+K\+E\+ND, and W\+O\+R\+K\+D\+AY.
+
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=271pt]{classalarmBase_ab4108e3a49cd9903b0061982b8374fa8_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classalarmBase_a0e4641dd0d32a4741cf1152efb4ee0da}\label{classalarmBase_a0e4641dd0d32a4741cf1152efb4ee0da}} 
+\index{alarmBase@{alarmBase}!dump@{dump}}
+\index{dump@{dump}!alarmBase@{alarmBase}}
+\doxysubsubsection{\texorpdfstring{dump()}{dump()}}
+{\footnotesize\ttfamily void alarm\+Base\+::dump (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 237 of file alarm\+Base.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{237                      \{}
+\DoxyCodeLine{238     cout << \textcolor{stringliteral}{"Start Time : "} + \mbox{\hyperlink{classalarmBase_ae73b7520b72b9e5bbd10448498c4c3ac}{startTime}} << endl;}
+\DoxyCodeLine{239     cout << \textcolor{stringliteral}{"Duration   : "} + to\_string(\mbox{\hyperlink{classalarmBase_af04569b7fb1fbc8cbc3a33b5bdfb7bbb}{duration}}) << endl;}
+\DoxyCodeLine{240     cout << \textcolor{stringliteral}{"State      : "} + to\_string(\mbox{\hyperlink{classalarmBase_a3ef9df71413c0a54771f8f1e3842fd46}{state}}) << endl;}
+\DoxyCodeLine{241 \}}
+
+\end{DoxyCode}
+
+
+References duration, start\+Time, and state.
+
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=247pt]{classalarmBase_a0e4641dd0d32a4741cf1152efb4ee0da_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classalarmBase_a00594286f53c44557bac76e9417cab98}\label{classalarmBase_a00594286f53c44557bac76e9417cab98}} 
+\index{alarmBase@{alarmBase}!setDow@{setDow}}
+\index{setDow@{setDow}!alarmBase@{alarmBase}}
+\doxysubsubsection{\texorpdfstring{setDow()}{setDow()}}
+{\footnotesize\ttfamily bool alarm\+Base\+::set\+Dow (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21c}{dow\+\_\+t}}}]{day }\end{DoxyParamCaption})}
+
+
+
+Definition at line 25 of file alarm\+Base.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{25                                 \{}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{27     \textcolor{keywordtype}{bool} failFlag=\textcolor{keyword}{true};}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{29     \textcolor{keywordflow}{if}( day >= \mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21cac82db3248a96794aaefb922ea5fb293c}{MONDAY}} \&\& day <= \mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21cab1d5eac4b1dca480c8056eaea7663b7a}{ALL}} ) \{}
+\DoxyCodeLine{30         failFlag = \textcolor{keyword}{false};}
+\DoxyCodeLine{31         \mbox{\hyperlink{classalarmBase_a26cbae2ec59db09da50f4bd980d412c2}{dow}} = day;}
+\DoxyCodeLine{32     \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{33         failFlag = \textcolor{keyword}{true};}
+\DoxyCodeLine{34     \}}
+\DoxyCodeLine{35 }
+\DoxyCodeLine{36     \textcolor{keywordflow}{return} failFlag;}
+\DoxyCodeLine{37 \}}
+
+\end{DoxyCode}
+
+
+References A\+LL, dow, and M\+O\+N\+D\+AY.
+
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=257pt]{classalarmBase_a00594286f53c44557bac76e9417cab98_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classalarmBase_a9e4c714a5ac6ef1ddeb48f210518d9de}\label{classalarmBase_a9e4c714a5ac6ef1ddeb48f210518d9de}} 
+\index{alarmBase@{alarmBase}!setDuration@{setDuration}}
+\index{setDuration@{setDuration}!alarmBase@{alarmBase}}
+\doxysubsubsection{\texorpdfstring{setDuration()}{setDuration()}}
+{\footnotesize\ttfamily bool alarm\+Base\+::set\+Duration (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{duration }\end{DoxyParamCaption})}
+
+
+
+Definition at line 125 of file alarm\+Base.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{125                                         \{}
+\DoxyCodeLine{126     \textcolor{keywordtype}{bool} failFlag=\textcolor{keyword}{true};}
+\DoxyCodeLine{127 }
+\DoxyCodeLine{128     \mbox{\hyperlink{classalarmBase_af04569b7fb1fbc8cbc3a33b5bdfb7bbb}{duration}} = dur;}
+\DoxyCodeLine{129 }
+\DoxyCodeLine{130     failFlag = \textcolor{keyword}{false};}
+\DoxyCodeLine{131 }
+\DoxyCodeLine{132     \textcolor{keywordflow}{return} failFlag;}
+\DoxyCodeLine{133 \}}
+
+\end{DoxyCode}
+
+
+References duration.
+
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=273pt]{classalarmBase_a9e4c714a5ac6ef1ddeb48f210518d9de_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classalarmBase_afa74814e3158ea44dba4df34ad59fb15}\label{classalarmBase_afa74814e3158ea44dba4df34ad59fb15}} 
+\index{alarmBase@{alarmBase}!setEndTime@{setEndTime}}
+\index{setEndTime@{setEndTime}!alarmBase@{alarmBase}}
+\doxysubsubsection{\texorpdfstring{setEndTime()}{setEndTime()}}
+{\footnotesize\ttfamily bool alarm\+Base\+::set\+End\+Time (\begin{DoxyParamCaption}\item[{string}]{Time }\end{DoxyParamCaption})}
+
+
+
+Definition at line 78 of file alarm\+Base.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{78                                       \{}
+\DoxyCodeLine{79     \textcolor{keywordtype}{bool} failFlag=\textcolor{keyword}{true};}
+\DoxyCodeLine{80 }
+\DoxyCodeLine{81     \textcolor{keywordtype}{char} buffer[16];}
+\DoxyCodeLine{82     \textcolor{keywordtype}{char} *ptr;}
+\DoxyCodeLine{83     \textcolor{keywordtype}{char} *tok;}
+\DoxyCodeLine{84     \textcolor{keywordtype}{char} *rest = buffer;}
+\DoxyCodeLine{85 }
+\DoxyCodeLine{86     bzero(buffer,\textcolor{keyword}{sizeof}(buffer));}
+\DoxyCodeLine{87 }
+\DoxyCodeLine{88     strcpy( buffer, Time.c\_str() ) ;}
+\DoxyCodeLine{89 }
+\DoxyCodeLine{90     tok = strtok\_r(rest,\textcolor{stringliteral}{":"}, \&rest);}
+\DoxyCodeLine{91     \textcolor{keywordtype}{int} hh = atoi(tok);}
+\DoxyCodeLine{92 }
+\DoxyCodeLine{93     tok = strtok\_r(rest,\textcolor{stringliteral}{":"}, \&rest);}
+\DoxyCodeLine{94     \textcolor{keywordtype}{int} mm = atoi(tok);}
+\DoxyCodeLine{95 }
+\DoxyCodeLine{96     \textcolor{comment}{/*}}
+\DoxyCodeLine{97 \textcolor{comment}{    vector<string> results;}}
+\DoxyCodeLine{98 \textcolor{comment}{    results=boost::split(results, Time, [](char c)\{return c == ':';\});}}
+\DoxyCodeLine{99 \textcolor{comment}{}}
+\DoxyCodeLine{100 \textcolor{comment}{    int hh = stoi(results[0]); }}
+\DoxyCodeLine{101 \textcolor{comment}{    int mm = stoi(results[1]);}}
+\DoxyCodeLine{102 \textcolor{comment}{    */}}
+\DoxyCodeLine{103 }
+\DoxyCodeLine{104     \textcolor{keywordtype}{int} et =  (hh*60) + mm;}
+\DoxyCodeLine{105 }
+\DoxyCodeLine{106     \textcolor{keywordflow}{if} ( et <= \mbox{\hyperlink{classalarmBase_ae73b7520b72b9e5bbd10448498c4c3ac}{startTime}}) \{}
+\DoxyCodeLine{107         \mbox{\hyperlink{classalarmBase_af04569b7fb1fbc8cbc3a33b5bdfb7bbb}{duration}} = 0;}
+\DoxyCodeLine{108         failFlag = \textcolor{keyword}{true};}
+\DoxyCodeLine{109     \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{110         \mbox{\hyperlink{classalarmBase_af04569b7fb1fbc8cbc3a33b5bdfb7bbb}{duration}} = et -\/ \mbox{\hyperlink{classalarmBase_ae73b7520b72b9e5bbd10448498c4c3ac}{startTime}};}
+\DoxyCodeLine{111         failFlag = \textcolor{keyword}{false};}
+\DoxyCodeLine{112     \}}
+\DoxyCodeLine{113 }
+\DoxyCodeLine{114 }
+\DoxyCodeLine{115     \textcolor{keywordflow}{return} failFlag;}
+\DoxyCodeLine{116 \}}
+
+\end{DoxyCode}
+
+
+References duration, and start\+Time.
+
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=276pt]{classalarmBase_afa74814e3158ea44dba4df34ad59fb15_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classalarmBase_a016581d1482af2fa51b717ec5da7b968}\label{classalarmBase_a016581d1482af2fa51b717ec5da7b968}} 
+\index{alarmBase@{alarmBase}!setStartTime@{setStartTime}}
+\index{setStartTime@{setStartTime}!alarmBase@{alarmBase}}
+\doxysubsubsection{\texorpdfstring{setStartTime()}{setStartTime()}}
+{\footnotesize\ttfamily bool alarm\+Base\+::set\+Start\+Time (\begin{DoxyParamCaption}\item[{string}]{Time }\end{DoxyParamCaption})}
+
+
+
+Definition at line 46 of file alarm\+Base.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{46                                         \{}
+\DoxyCodeLine{47     \textcolor{keywordtype}{bool} failFlag=\textcolor{keyword}{true};}
+\DoxyCodeLine{48 }
+\DoxyCodeLine{49     \textcolor{keywordtype}{char} buffer[16];}
+\DoxyCodeLine{50     \textcolor{keywordtype}{char} *ptr;}
+\DoxyCodeLine{51     \textcolor{keywordtype}{char} *tok;}
+\DoxyCodeLine{52     \textcolor{keywordtype}{char} *rest = buffer;}
+\DoxyCodeLine{53 }
+\DoxyCodeLine{54     \textcolor{keywordtype}{int} hh, mm;}
+\DoxyCodeLine{55 }
+\DoxyCodeLine{56     bzero(buffer,\textcolor{keyword}{sizeof}(buffer));}
+\DoxyCodeLine{57 }
+\DoxyCodeLine{58     strcpy( buffer, Time.c\_str() ) ;}
+\DoxyCodeLine{59 }
+\DoxyCodeLine{60     tok = strtok\_r(rest,\textcolor{stringliteral}{":"}, \&rest);}
+\DoxyCodeLine{61     hh = atoi(tok);}
+\DoxyCodeLine{62 }
+\DoxyCodeLine{63     tok = strtok\_r(rest,\textcolor{stringliteral}{":"}, \&rest);}
+\DoxyCodeLine{64     mm = atoi(tok);}
+\DoxyCodeLine{65 }
+\DoxyCodeLine{66     \mbox{\hyperlink{classalarmBase_ae73b7520b72b9e5bbd10448498c4c3ac}{startTime}} =  (hh*60) + mm;}
+\DoxyCodeLine{67 }
+\DoxyCodeLine{68     \textcolor{keywordflow}{return} failFlag;}
+\DoxyCodeLine{69 \}}
+
+\end{DoxyCode}
+
+
+References start\+Time.
+
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=279pt]{classalarmBase_a016581d1482af2fa51b717ec5da7b968_icgraph}
+\end{center}
+\end{figure}
+
+
+\doxysubsection{Field Documentation}
+\mbox{\Hypertarget{classalarmBase_ad99ca0da026906529ac642c0d286c54e}\label{classalarmBase_ad99ca0da026906529ac642c0d286c54e}} 
+\index{alarmBase@{alarmBase}!dom@{dom}}
+\index{dom@{dom}!alarmBase@{alarmBase}}
+\doxysubsubsection{\texorpdfstring{dom}{dom}}
+{\footnotesize\ttfamily int32\+\_\+t alarm\+Base\+::dom =-\/1\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 31 of file alarm\+Base.\+h.
+
+\mbox{\Hypertarget{classalarmBase_a26cbae2ec59db09da50f4bd980d412c2}\label{classalarmBase_a26cbae2ec59db09da50f4bd980d412c2}} 
+\index{alarmBase@{alarmBase}!dow@{dow}}
+\index{dow@{dow}!alarmBase@{alarmBase}}
+\doxysubsubsection{\texorpdfstring{dow}{dow}}
+{\footnotesize\ttfamily \mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21c}{dow\+\_\+t}} alarm\+Base\+::dow =\mbox{\hyperlink{alarmBase_8h_aac3fb35b6af9989b8558efc84d4bd21cab1d5eac4b1dca480c8056eaea7663b7a}{A\+LL}}\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 41 of file alarm\+Base.\+h.
+
+
+
+Referenced by check\+Time(), and set\+Dow().
+
+\mbox{\Hypertarget{classalarmBase_af04569b7fb1fbc8cbc3a33b5bdfb7bbb}\label{classalarmBase_af04569b7fb1fbc8cbc3a33b5bdfb7bbb}} 
+\index{alarmBase@{alarmBase}!duration@{duration}}
+\index{duration@{duration}!alarmBase@{alarmBase}}
+\doxysubsubsection{\texorpdfstring{duration}{duration}}
+{\footnotesize\ttfamily uint32\+\_\+t alarm\+Base\+::duration =0\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 30 of file alarm\+Base.\+h.
+
+
+
+Referenced by adj\+End\+Time(), check\+Time(), dump(), set\+Duration(), and set\+End\+Time().
+
+\mbox{\Hypertarget{classalarmBase_aa59214645a698756fab20ab8657d4757}\label{classalarmBase_aa59214645a698756fab20ab8657d4757}} 
+\index{alarmBase@{alarmBase}!mon@{mon}}
+\index{mon@{mon}!alarmBase@{alarmBase}}
+\doxysubsubsection{\texorpdfstring{mon}{mon}}
+{\footnotesize\ttfamily int32\+\_\+t alarm\+Base\+::mon =-\/1\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 32 of file alarm\+Base.\+h.
+
+\mbox{\Hypertarget{classalarmBase_ae73b7520b72b9e5bbd10448498c4c3ac}\label{classalarmBase_ae73b7520b72b9e5bbd10448498c4c3ac}} 
+\index{alarmBase@{alarmBase}!startTime@{startTime}}
+\index{startTime@{startTime}!alarmBase@{alarmBase}}
+\doxysubsubsection{\texorpdfstring{startTime}{startTime}}
+{\footnotesize\ttfamily int32\+\_\+t alarm\+Base\+::start\+Time =-\/1\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 29 of file alarm\+Base.\+h.
+
+
+
+Referenced by adj\+Start\+Time(), check\+Time(), dump(), set\+End\+Time(), and set\+Start\+Time().
+
+\mbox{\Hypertarget{classalarmBase_a3ef9df71413c0a54771f8f1e3842fd46}\label{classalarmBase_a3ef9df71413c0a54771f8f1e3842fd46}} 
+\index{alarmBase@{alarmBase}!state@{state}}
+\index{state@{state}!alarmBase@{alarmBase}}
+\doxysubsubsection{\texorpdfstring{state}{state}}
+{\footnotesize\ttfamily bool alarm\+Base\+::state = true\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 34 of file alarm\+Base.\+h.
+
+
+
+Referenced by check\+Time(), and dump().
+
+\mbox{\Hypertarget{classalarmBase_a44a8ddcb835b0315540ccc918e9705bf}\label{classalarmBase_a44a8ddcb835b0315540ccc918e9705bf}} 
+\index{alarmBase@{alarmBase}!triggered@{triggered}}
+\index{triggered@{triggered}!alarmBase@{alarmBase}}
+\doxysubsubsection{\texorpdfstring{triggered}{triggered}}
+{\footnotesize\ttfamily bool alarm\+Base\+::triggered = false\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 36 of file alarm\+Base.\+h.
+
+
+
+Referenced by check\+Time().
+
+\mbox{\Hypertarget{classalarmBase_aa430d406e4d712661000e49a531c0efa}\label{classalarmBase_aa430d406e4d712661000e49a531c0efa}} 
+\index{alarmBase@{alarmBase}!year@{year}}
+\index{year@{year}!alarmBase@{alarmBase}}
+\doxysubsubsection{\texorpdfstring{year}{year}}
+{\footnotesize\ttfamily int32\+\_\+t alarm\+Base\+::year =-\/1\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 33 of file alarm\+Base.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{alarmBase_8h}{alarm\+Base.\+h}}\item 
+\mbox{\hyperlink{alarmBase_8cpp}{alarm\+Base.\+cpp}}\end{DoxyCompactItemize}

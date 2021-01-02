@@ -13,6 +13,9 @@ db = None
 
 connected=False
 
+def usage():
+    pass
+
 def getToMap(conn, sqlCmd):
     print("getToMap")
 

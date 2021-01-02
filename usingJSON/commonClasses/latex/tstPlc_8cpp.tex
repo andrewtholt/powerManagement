@@ -1,0 +1,71 @@
+\hypertarget{tstPlc_8cpp}{}\doxysection{tst\+Plc.\+cpp File Reference}
+\label{tstPlc_8cpp}\index{tstPlc.cpp@{tstPlc.cpp}}
+{\ttfamily \#include $<$plc\+Base.\+h$>$}\newline
+{\ttfamily \#include $<$plc\+Socket.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}alarm\+Base.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+Include dependency graph for tst\+Plc.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{tstPlc_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{tstPlc_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{tstPlc_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{tstPlc_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}} 
+\index{tstPlc.cpp@{tstPlc.cpp}!main@{main}}
+\index{main@{main}!tstPlc.cpp@{tstPlc.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 9 of file tst\+Plc.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{9            \{}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11     \mbox{\hyperlink{classplcSocket}{plcSocket}} *plc = \textcolor{keyword}{new} \mbox{\hyperlink{classplcSocket}{plcSocket}}();}
+\DoxyCodeLine{12 }
+\DoxyCodeLine{13     \textcolor{keywordtype}{bool} failFlag = plc-\/>\mbox{\hyperlink{classplcSocket_a64002aa98ffb184a40ae50715ff62a71}{getStatus}}();}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15     \textcolor{keywordflow}{if}(failFlag) \{}
+\DoxyCodeLine{16         cerr << \textcolor{stringliteral}{"FATAL ERROR: Instanciation of PLC socket failed."} << endl;}
+\DoxyCodeLine{17         exit(1);}
+\DoxyCodeLine{18     \}}
+\DoxyCodeLine{19     \mbox{\hyperlink{classalarmBase}{alarmBase}} *t = \textcolor{keyword}{new} \mbox{\hyperlink{classalarmBase}{alarmBase}}();}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{21     cout << t-\/>\mbox{\hyperlink{classalarmBase_ab4108e3a49cd9903b0061982b8374fa8}{checkTime}}();}
+\DoxyCodeLine{22 }
+\DoxyCodeLine{23     t-\/>\mbox{\hyperlink{classalarmBase_a016581d1482af2fa51b717ec5da7b968}{setStartTime}}(\textcolor{stringliteral}{"05:30"});}
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25     plc-\/>\mbox{\hyperlink{classplcSocket_a3c52c0c728a56d68fa495dde67c75100}{dump}}();}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{27     plc-\/>\mbox{\hyperlink{classplcSocket_aa37f2ea198603907aceebcdfe9079584}{Ld}}(\textcolor{stringliteral}{"START"});}
+\DoxyCodeLine{28     plc-\/>\mbox{\hyperlink{classplcSocket_aa37f2ea198603907aceebcdfe9079584}{Ld}}(\textcolor{stringliteral}{"MOTOR"});}
+\DoxyCodeLine{29     plc-\/>\mbox{\hyperlink{classplcBase_af667cd09d8df3f9252a1f5f1e6bde211}{Or}}();}
+\DoxyCodeLine{30     plc-\/>\mbox{\hyperlink{classplcSocket_aa37f2ea198603907aceebcdfe9079584}{Ld}}(\textcolor{stringliteral}{"STOP"});}
+\DoxyCodeLine{31     plc-\/>\mbox{\hyperlink{classplcBase_ab316e79cde73e9b7fe3faf7aa9a613bf}{Invert}}();}
+\DoxyCodeLine{32     plc-\/>\mbox{\hyperlink{classplcBase_af3bbaa56bc39a7409c0c9611afd0520b}{And}}();}
+\DoxyCodeLine{33 \}}
+
+\end{DoxyCode}
+
+
+References plc\+Base\+::\+And(), alarm\+Base\+::check\+Time(), plc\+Socket\+::dump(), plc\+Socket\+::get\+Status(), plc\+Base\+::\+Invert(), plc\+Socket\+::\+Ld(), plc\+Base\+::\+Or(), and alarm\+Base\+::set\+Start\+Time().
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=279pt]{tstPlc_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4_cgraph}
+\end{center}
+\end{figure}

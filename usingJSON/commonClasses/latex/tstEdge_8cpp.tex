@@ -1,0 +1,163 @@
+\hypertarget{tstEdge_8cpp}{}\doxysection{tst\+Edge.\+cpp File Reference}
+\label{tstEdge_8cpp}\index{tstEdge.cpp@{tstEdge.cpp}}
+{\ttfamily \#include \char`\"{}edge.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+Include dependency graph for tst\+Edge.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=202pt]{tstEdge_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{tstEdge_8cpp_ad88c6b54a800cbff682d9d6b436fab6b}{output\+Logic}} (bool i)
+\item 
+int \mbox{\hyperlink{tstEdge_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{tstEdge_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{tstEdge_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}} 
+\index{tstEdge.cpp@{tstEdge.cpp}!main@{main}}
+\index{main@{main}!tstEdge.cpp@{tstEdge.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 18 of file tst\+Edge.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{18            \{}
+\DoxyCodeLine{19     \textcolor{keywordtype}{bool} in=\textcolor{keyword}{false};}
+\DoxyCodeLine{20     \textcolor{keywordtype}{bool} out=\textcolor{keyword}{false};}
+\DoxyCodeLine{21     \mbox{\hyperlink{classedge}{edge}} *t = \textcolor{keyword}{new} \mbox{\hyperlink{classedge}{edge}}(\mbox{\hyperlink{edge_8h_a031ceda83d144811bf209020a0cf69ffad93abe7aced82e9a4fcac4127a36ece3}{RISING}});}
+\DoxyCodeLine{22     \mbox{\hyperlink{classedge}{edge}} *t1 = \textcolor{keyword}{new} \mbox{\hyperlink{classedge}{edge}}(\mbox{\hyperlink{edge_8h_a031ceda83d144811bf209020a0cf69ffad24712a6a30c1d431b927d1ba2f84b66}{FALLING}});}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25     cout << \textcolor{stringliteral}{"POSITIVE EDGE"} << endl;}
+\DoxyCodeLine{26     out=t-\/>\mbox{\hyperlink{classedge_af5acb6c4388186172587fe94652f6faf}{run}}( in ) ;}
+\DoxyCodeLine{27     cout << \textcolor{stringliteral}{"In   : "} << in  << endl;}
+\DoxyCodeLine{28     \mbox{\hyperlink{tstEdge_8cpp_ad88c6b54a800cbff682d9d6b436fab6b}{outputLogic}}(out) ;}
+\DoxyCodeLine{29     cout << \textcolor{stringliteral}{"======"} <<endl;}
+\DoxyCodeLine{30 }
+\DoxyCodeLine{31     in = \textcolor{keyword}{true};}
+\DoxyCodeLine{32     out=t-\/>\mbox{\hyperlink{classedge_af5acb6c4388186172587fe94652f6faf}{run}}( in ) ;}
+\DoxyCodeLine{33     cout << \textcolor{stringliteral}{"In   : "} << in  << endl;}
+\DoxyCodeLine{34     \mbox{\hyperlink{tstEdge_8cpp_ad88c6b54a800cbff682d9d6b436fab6b}{outputLogic}}(out) ;}
+\DoxyCodeLine{35     cout << \textcolor{stringliteral}{"======"} <<endl;}
+\DoxyCodeLine{36 }
+\DoxyCodeLine{37     in = \textcolor{keyword}{false};}
+\DoxyCodeLine{38     out=t-\/>\mbox{\hyperlink{classedge_af5acb6c4388186172587fe94652f6faf}{run}}( in ) ;}
+\DoxyCodeLine{39     cout << \textcolor{stringliteral}{"In   : "} << in  << endl;}
+\DoxyCodeLine{40     \mbox{\hyperlink{tstEdge_8cpp_ad88c6b54a800cbff682d9d6b436fab6b}{outputLogic}}(out) ;}
+\DoxyCodeLine{41     cout << \textcolor{stringliteral}{"======"} <<endl;}
+\DoxyCodeLine{42 }
+\DoxyCodeLine{43     in = \textcolor{keyword}{true};}
+\DoxyCodeLine{44     out=t-\/>\mbox{\hyperlink{classedge_af5acb6c4388186172587fe94652f6faf}{run}}( in ) ;}
+\DoxyCodeLine{45     cout << \textcolor{stringliteral}{"In   : "} << in  << endl;}
+\DoxyCodeLine{46     \mbox{\hyperlink{tstEdge_8cpp_ad88c6b54a800cbff682d9d6b436fab6b}{outputLogic}}(out) ;}
+\DoxyCodeLine{47     cout << \textcolor{stringliteral}{"======"} <<endl;}
+\DoxyCodeLine{48 }
+\DoxyCodeLine{49     in = \textcolor{keyword}{true};}
+\DoxyCodeLine{50     out=t-\/>\mbox{\hyperlink{classedge_af5acb6c4388186172587fe94652f6faf}{run}}( in ) ;}
+\DoxyCodeLine{51     cout << \textcolor{stringliteral}{"In   : "} << in  << endl;}
+\DoxyCodeLine{52     \mbox{\hyperlink{tstEdge_8cpp_ad88c6b54a800cbff682d9d6b436fab6b}{outputLogic}}(out) ;}
+\DoxyCodeLine{53     cout << \textcolor{stringliteral}{"======"} <<endl;}
+\DoxyCodeLine{54 }
+\DoxyCodeLine{55     in = \textcolor{keyword}{false};}
+\DoxyCodeLine{56     out=t-\/>\mbox{\hyperlink{classedge_af5acb6c4388186172587fe94652f6faf}{run}}( in ) ;}
+\DoxyCodeLine{57     cout << \textcolor{stringliteral}{"In   : "} << in  << endl;}
+\DoxyCodeLine{58     \mbox{\hyperlink{tstEdge_8cpp_ad88c6b54a800cbff682d9d6b436fab6b}{outputLogic}}(out) ;}
+\DoxyCodeLine{59     cout << \textcolor{stringliteral}{"======"} <<endl;}
+\DoxyCodeLine{60 }
+\DoxyCodeLine{61     cout << \textcolor{stringliteral}{"NEGATIVE EDGE"} << endl;}
+\DoxyCodeLine{62 }
+\DoxyCodeLine{63     in = \textcolor{keyword}{false};}
+\DoxyCodeLine{64     out=t1-\/>\mbox{\hyperlink{classedge_af5acb6c4388186172587fe94652f6faf}{run}}( in ) ;}
+\DoxyCodeLine{65     cout << \textcolor{stringliteral}{"In   : "} << in  << endl;}
+\DoxyCodeLine{66     \mbox{\hyperlink{tstEdge_8cpp_ad88c6b54a800cbff682d9d6b436fab6b}{outputLogic}}(out) ;}
+\DoxyCodeLine{67     cout << \textcolor{stringliteral}{"======"} <<endl;}
+\DoxyCodeLine{68 }
+\DoxyCodeLine{69     in = \textcolor{keyword}{true};}
+\DoxyCodeLine{70     out=t1-\/>\mbox{\hyperlink{classedge_af5acb6c4388186172587fe94652f6faf}{run}}( in ) ;}
+\DoxyCodeLine{71     cout << \textcolor{stringliteral}{"In   : "} << in  << endl;}
+\DoxyCodeLine{72     \mbox{\hyperlink{tstEdge_8cpp_ad88c6b54a800cbff682d9d6b436fab6b}{outputLogic}}(out) ;}
+\DoxyCodeLine{73     cout << \textcolor{stringliteral}{"======"} <<endl;}
+\DoxyCodeLine{74 }
+\DoxyCodeLine{75     in = \textcolor{keyword}{true};}
+\DoxyCodeLine{76     out=t1-\/>\mbox{\hyperlink{classedge_af5acb6c4388186172587fe94652f6faf}{run}}( in ) ;}
+\DoxyCodeLine{77     cout << \textcolor{stringliteral}{"In   : "} << in  << endl;}
+\DoxyCodeLine{78     \mbox{\hyperlink{tstEdge_8cpp_ad88c6b54a800cbff682d9d6b436fab6b}{outputLogic}}(out) ;}
+\DoxyCodeLine{79     cout << \textcolor{stringliteral}{"======"} <<endl;}
+\DoxyCodeLine{80 }
+\DoxyCodeLine{81     in = \textcolor{keyword}{false};}
+\DoxyCodeLine{82     out=t1-\/>\mbox{\hyperlink{classedge_af5acb6c4388186172587fe94652f6faf}{run}}( in ) ;}
+\DoxyCodeLine{83     cout << \textcolor{stringliteral}{"In   : "} << in  << endl;}
+\DoxyCodeLine{84     \mbox{\hyperlink{tstEdge_8cpp_ad88c6b54a800cbff682d9d6b436fab6b}{outputLogic}}(out) ;}
+\DoxyCodeLine{85     cout << \textcolor{stringliteral}{"======"} <<endl;}
+\DoxyCodeLine{86 }
+\DoxyCodeLine{87     in = \textcolor{keyword}{false};}
+\DoxyCodeLine{88     out=t1-\/>\mbox{\hyperlink{classedge_af5acb6c4388186172587fe94652f6faf}{run}}( in ) ;}
+\DoxyCodeLine{89     cout << \textcolor{stringliteral}{"In   : "} << in  << endl;}
+\DoxyCodeLine{90     \mbox{\hyperlink{tstEdge_8cpp_ad88c6b54a800cbff682d9d6b436fab6b}{outputLogic}}(out) ;}
+\DoxyCodeLine{91     cout << \textcolor{stringliteral}{"======"} <<endl;}
+\DoxyCodeLine{92 }
+\DoxyCodeLine{93     in = \textcolor{keyword}{true};}
+\DoxyCodeLine{94     out=t1-\/>\mbox{\hyperlink{classedge_af5acb6c4388186172587fe94652f6faf}{run}}( in ) ;}
+\DoxyCodeLine{95     cout << \textcolor{stringliteral}{"In   : "} << in  << endl;}
+\DoxyCodeLine{96     \mbox{\hyperlink{tstEdge_8cpp_ad88c6b54a800cbff682d9d6b436fab6b}{outputLogic}}(out) ;}
+\DoxyCodeLine{97     cout << \textcolor{stringliteral}{"======"} <<endl;}
+\DoxyCodeLine{98 }
+\DoxyCodeLine{99 \}}
+
+\end{DoxyCode}
+
+
+References F\+A\+L\+L\+I\+NG, output\+Logic(), R\+I\+S\+I\+NG, and edge\+::run().
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=337pt]{tstEdge_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{tstEdge_8cpp_ad88c6b54a800cbff682d9d6b436fab6b}\label{tstEdge_8cpp_ad88c6b54a800cbff682d9d6b436fab6b}} 
+\index{tstEdge.cpp@{tstEdge.cpp}!outputLogic@{outputLogic}}
+\index{outputLogic@{outputLogic}!tstEdge.cpp@{tstEdge.cpp}}
+\doxysubsubsection{\texorpdfstring{outputLogic()}{outputLogic()}}
+{\footnotesize\ttfamily void output\+Logic (\begin{DoxyParamCaption}\item[{bool}]{i }\end{DoxyParamCaption})}
+
+
+
+Definition at line 7 of file tst\+Edge.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{7                          \{}
+\DoxyCodeLine{8     cout << \textcolor{stringliteral}{"State:   "};}
+\DoxyCodeLine{9     \textcolor{keywordflow}{if}( i == \textcolor{keyword}{true}  ) \{}
+\DoxyCodeLine{10         cout << \textcolor{stringliteral}{"TRUE"};}
+\DoxyCodeLine{11     \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{12         cout << \textcolor{stringliteral}{"FALSE"};}
+\DoxyCodeLine{13     \}}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15     cout << endl;}
+\DoxyCodeLine{16 \}}
+
+\end{DoxyCode}
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=221pt]{tstEdge_8cpp_ad88c6b54a800cbff682d9d6b436fab6b_icgraph}
+\end{center}
+\end{figure}

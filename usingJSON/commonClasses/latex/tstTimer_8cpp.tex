@@ -1,0 +1,77 @@
+\hypertarget{tstTimer_8cpp}{}\doxysection{tst\+Timer.\+cpp File Reference}
+\label{tstTimer_8cpp}\index{tstTimer.cpp@{tstTimer.cpp}}
+{\ttfamily \#include \char`\"{}timer\+Base.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+Include dependency graph for tst\+Timer.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=243pt]{tstTimer_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{tstTimer_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{tstTimer_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{tstTimer_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}} 
+\index{tstTimer.cpp@{tstTimer.cpp}!main@{main}}
+\index{main@{main}!tstTimer.cpp@{tstTimer.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 5 of file tst\+Timer.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{5            \{}
+\DoxyCodeLine{6     \textcolor{keywordtype}{int} delay=1000;}
+\DoxyCodeLine{7     \mbox{\hyperlink{classmsTimer}{msTimer}} *t1 = \textcolor{keyword}{new} \mbox{\hyperlink{classmsTimer}{msTimer}}(delay);}
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9     t1-\/>\mbox{\hyperlink{classmsTimer_a3d0fb74b706566a8537a4f13103817ac}{setOneShot}}(\textcolor{keyword}{true});}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11     \textcolor{keywordtype}{bool} rf=\textcolor{keyword}{true};}
+\DoxyCodeLine{12 }
+\DoxyCodeLine{13     \textcolor{keywordtype}{bool} res=\textcolor{keyword}{false};}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15     \textcolor{keywordtype}{int} i=1;}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 \textcolor{comment}{//    while ( res == false) \{}}
+\DoxyCodeLine{18     \textcolor{keywordflow}{while} ( \textcolor{keyword}{true}) \{}
+\DoxyCodeLine{19         res = t1-\/>\mbox{\hyperlink{classmsTimer_ae5f4a158bb45c309ff52e59aefbf5e6b}{run}}( rf );}
+\DoxyCodeLine{20         printf(\textcolor{stringliteral}{"res = \%d\(\backslash\)n"}, res);}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{22         \textcolor{keywordflow}{if}( res ) \{}
+\DoxyCodeLine{23             printf(\textcolor{stringliteral}{"Time\(\backslash\)n"});}
+\DoxyCodeLine{24         \}}
+\DoxyCodeLine{25 }
+\DoxyCodeLine{26         usleep(4000) ;}
+\DoxyCodeLine{27         printf(\textcolor{stringliteral}{"i=\%d\(\backslash\)n"}, i++);}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{29         \textcolor{keywordflow}{if} ( i == 100 ) \{}
+\DoxyCodeLine{30             rf = \textcolor{keyword}{false};}
+\DoxyCodeLine{31         \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{32             rf = \textcolor{keyword}{true};}
+\DoxyCodeLine{33         \}}
+\DoxyCodeLine{34         printf(\textcolor{stringliteral}{"rf  = \%d\(\backslash\)n"}, rf);}
+\DoxyCodeLine{35     \}}
+\DoxyCodeLine{36 }
+\DoxyCodeLine{37 \}}
+
+\end{DoxyCode}
+
+
+References ms\+Timer\+::run(), and ms\+Timer\+::set\+One\+Shot().
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{tstTimer_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4_cgraph}
+\end{center}
+\end{figure}

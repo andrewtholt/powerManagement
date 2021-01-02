@@ -72,12 +72,16 @@ def on_message(client, userData,msg):
             print("OK")
         else:
             print("Publish:" + dbState)
+            # 
+            # If I have receieved a message from something I believe I am controlling
+            # Then set it it to what I say it should be.
+            # 
             client.publish(topic, dbState, qos=0, retain=True)
     elif dbDirection == "IN":
         db = sql.connect(database, "automation","automation","automation")
 
 #        sqlCmd = "update mqtt set state = '" + devState + "' where topic = '" + topic + "';"
-        sqlCmd = "update mqtt,io_point set io_point.state = '"+devState+"' where mqtt.topic = '"+topic+"' and mqtt.name=io_point.name ;"
+        sqlCmd = "update mqtt,io_point set io_point.old_state = io_point.state,io_point.state = '"+devState+"' where mqtt.topic = '"+topic+"' and mqtt.name=io_point.name ;"
 
         print( sqlCmd )
         cursor = db.cursor()
@@ -97,16 +101,22 @@ def on_connect(client, userdata, flags, rc):
     db = sql.connect(database, "automation","automation","automation")
     cursor = db.cursor()
 #    cursor.execute("select name,direction,topic,state from mqttQuery where direction = 'OUT';")
-    cursor.execute("select name,direction,topic,state from mqttQuery ;")
+    cursor.execute("select name,direction,topic,state, enabled from mqttQuery ;")
 
     data = cursor.fetchall()
     for row in data:
+        if row[4] == "YES":
+            print("Subscribing")
+            client.subscribe( row[2] )
+        else:
+            print("Not Subscribing")
+
         print("Name      :", row[0], )
         print("Direction :", row[1])
         print("Topic     :", row[2])
-        print("State     :", row[3], "\n")
+        print("State     :", row[3])
+        print("Enabled   :", row[4], "\n")
 
-        client.subscribe( row[2] )
 
     cursor.close()
     db.close()

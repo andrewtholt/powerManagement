@@ -8,23 +8,28 @@ import time
 import getopt
 
 def usage(name):
-    print("Usage: " + name + "  -c <file>|--config <file> -n <name>|--name <name> -v|--verbose")
+    print("Usage: " + name + "  -c <file>|--config <file> -n <name>|--name <name> -v|--verbose -j|--json")
     print("\t-c <file>\tConfig file, default is /etc/mqtt/bridge.json")
     print("\t-n <name>\tThe name of tha data to read.")
     print("\t-v\t\tVerbose.")
+    print("\t-j\t\tJSON Formatted output.")
+
 
 def main():
     verbose=False
+    jsonOut = False
     data=None
 
     portSet=False
     hostSet=False
+    dataName = ""
+    dataValue = ""
 
     HOST, PORT = "localhost", 9191
     configFile="/etc/mqtt/bridge.json"
 
     try:
-        opts,args = getopt.getopt(sys.argv[1:],"c:hn:v", ["config=","help","name=","verbose"])
+        opts,args = getopt.getopt(sys.argv[1:],"c:hn:vj", ["config=","help","name=","verbose","json"])
 
         for o,a in opts:
             if o in ["-h","--help" ]:
@@ -33,9 +38,12 @@ def main():
             elif o in ["-c", "--config"]:
                 configFile = a
             elif o in ["-n","--name"]:
-                data = "GET " + a
+                dataName = a
+                cmd = "GET " + dataName
             elif o in ["-v","--verbose"]:
                 verbose=True
+            elif o in ["-j","--json"]:
+                jsonOut=True
 
     except getopt.GetoptError as err:
         print(err)
@@ -50,7 +58,7 @@ def main():
 
     if verbose:
         print("Config file:" + configFile)
-        print("Data name  :" + data)
+        print("Data name  :" + dataName)
 
     if os.path.exists(configFile):
         with open( configFile, 'r') as f:
@@ -65,19 +73,24 @@ def main():
     if verbose:
         print("Host    : " + HOST)
         print("Port    : " , PORT)
-        print("Command : " + data)
+        print("Command : " + cmd)
 
 
     # Create a socket (SOCK_STREAM means a TCP socket)
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         # Connect to server and send data
         sock.connect((HOST, PORT))
-        sock.sendall(bytes(data + "\n", "utf-8"))
+        sock.sendall(bytes(cmd + "\n", "utf-8"))
     
         # Receive data from the server and shut down
-        received = str(sock.recv(1024), "utf-8")
+        dataValue = str(sock.recv(1024), "utf-8")
+
+        dataValue = dataValue.strip()
         
-    print("{}".format(received),end="")
+    if jsonOut:
+        print('{ "name":"' + dataName + '","value":"' + dataValue + '" }')
+    else:
+        print("{}".format(dataValue))
 
 main()
 

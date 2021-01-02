@@ -1,0 +1,37 @@
+{
+    "remote": {
+        "name": "test",
+        "port": "1883",
+        "prefix": "andrewtholt60@gmail.com"
+    },
+    "local": {
+        "name": "192.168.10.124",
+        "port": "1883"
+    },
+    "common": {
+        "topic": "/home/office/+/power"
+    },
+    "database" : {
+        "name"   : "127.0.0.1",
+        "db"     : "automation",
+        "user"   : "automation",
+        "passwd" : "automation"
+    },
+
+    "socket" : {
+        "name" : "127.0.0.1",
+        "port" : "9191",
+        "dispatch" : "/toDispatcher"
+
+    },
+    "topics" : {
+        "sunrise" : "/home/environment/SUNRISE",
+        "sunset"  : "/home/environment/SUNSET",
+        "time"    : "/home/environment/TIME",
+        "day"     : "/home/environment/DAY"
+    },
+    "location" : {
+        "long" : "-2.71315",
+        "lat"  : "53.664258"
+    }
+}

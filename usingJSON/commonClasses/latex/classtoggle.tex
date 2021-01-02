@@ -1,0 +1,110 @@
+\hypertarget{classtoggle}{}\doxysection{toggle Class Reference}
+\label{classtoggle}\index{toggle@{toggle}}
+
+
+{\ttfamily \#include $<$toggle.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classtoggle_ab882aac0dd37fc2d327b9568a592a351}{run}} (bool in)
+\end{DoxyCompactItemize}
+\doxysubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classtoggle_ae5f7c291b9c4c006fa7f64ff425090eb}{output}} =false
+\item 
+bool \mbox{\hyperlink{classtoggle_ad20126b92778735fef010aa29aa59d3b}{flag}} =false
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line 7 of file toggle.\+h.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classtoggle_ab882aac0dd37fc2d327b9568a592a351}\label{classtoggle_ab882aac0dd37fc2d327b9568a592a351}} 
+\index{toggle@{toggle}!run@{run}}
+\index{run@{run}!toggle@{toggle}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily bool toggle\+::run (\begin{DoxyParamCaption}\item[{bool}]{in }\end{DoxyParamCaption})}
+
+
+
+Definition at line 15 of file toggle.\+cpp.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{15                         \{}
+\DoxyCodeLine{16     \textcolor{keywordflow}{if} ( in == \textcolor{keyword}{false} \&\& \mbox{\hyperlink{classtoggle_ad20126b92778735fef010aa29aa59d3b}{flag}} == \textcolor{keyword}{false}) \{}
+\DoxyCodeLine{17         \mbox{\hyperlink{classtoggle_ae5f7c291b9c4c006fa7f64ff425090eb}{output}} = \textcolor{keyword}{false};}
+\DoxyCodeLine{18     \}}
+\DoxyCodeLine{19     }
+\DoxyCodeLine{20     \textcolor{keywordflow}{if}( in == \textcolor{keyword}{true} \&\& \mbox{\hyperlink{classtoggle_ad20126b92778735fef010aa29aa59d3b}{flag}} == \textcolor{keyword}{false} ) \{}
+\DoxyCodeLine{21         \mbox{\hyperlink{classtoggle_ae5f7c291b9c4c006fa7f64ff425090eb}{output}} = !\mbox{\hyperlink{classtoggle_ae5f7c291b9c4c006fa7f64ff425090eb}{output}};}
+\DoxyCodeLine{22         \mbox{\hyperlink{classtoggle_ad20126b92778735fef010aa29aa59d3b}{flag}}=\textcolor{keyword}{true};}
+\DoxyCodeLine{23     \}}
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25     \textcolor{keywordflow}{if}( in == \textcolor{keyword}{false} \&\& \mbox{\hyperlink{classtoggle_ad20126b92778735fef010aa29aa59d3b}{flag}} == \textcolor{keyword}{true} ) \{}
+\DoxyCodeLine{26         \mbox{\hyperlink{classtoggle_ad20126b92778735fef010aa29aa59d3b}{flag}}=\textcolor{keyword}{false};}
+\DoxyCodeLine{27     \}}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{29     \textcolor{keywordflow}{return} \mbox{\hyperlink{classtoggle_ae5f7c291b9c4c006fa7f64ff425090eb}{output}};}
+\DoxyCodeLine{30 \}}
+
+\end{DoxyCode}
+
+
+References flag, and output.
+
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=216pt]{classtoggle_ab882aac0dd37fc2d327b9568a592a351_icgraph}
+\end{center}
+\end{figure}
+
+
+\doxysubsection{Field Documentation}
+\mbox{\Hypertarget{classtoggle_ad20126b92778735fef010aa29aa59d3b}\label{classtoggle_ad20126b92778735fef010aa29aa59d3b}} 
+\index{toggle@{toggle}!flag@{flag}}
+\index{flag@{flag}!toggle@{toggle}}
+\doxysubsubsection{\texorpdfstring{flag}{flag}}
+{\footnotesize\ttfamily bool toggle\+::flag =false\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 10 of file toggle.\+h.
+
+
+
+Referenced by run().
+
+\mbox{\Hypertarget{classtoggle_ae5f7c291b9c4c006fa7f64ff425090eb}\label{classtoggle_ae5f7c291b9c4c006fa7f64ff425090eb}} 
+\index{toggle@{toggle}!output@{output}}
+\index{output@{output}!toggle@{toggle}}
+\doxysubsubsection{\texorpdfstring{output}{output}}
+{\footnotesize\ttfamily bool toggle\+::output =false\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line 9 of file toggle.\+h.
+
+
+
+Referenced by run().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{toggle_8h}{toggle.\+h}}\item 
+\mbox{\hyperlink{toggle_8cpp}{toggle.\+cpp}}\end{DoxyCompactItemize}

@@ -3,7 +3,7 @@
 PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 export PATH
 
-HOSTS="proliant acs1 acs4 beaglexm raspberrypi" 
+HOSTS="punch acs1 beaglexm raspberrypi acs4" 
 
 # set -x
 MQTT=$(cat /etc/mqtt/bridge.json | jq -r .local.name )

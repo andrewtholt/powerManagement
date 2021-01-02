@@ -20,7 +20,9 @@
 
     "socket" : {
         "name" : "127.0.0.1",
-        "port" : "9191"
+        "port" : "9191",
+        "dispatch" : "/toDispatcher"
+
     },
     "topics" : {
         "sunrise" : "/home/environment/SUNRISE",

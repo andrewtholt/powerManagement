@@ -93,7 +93,8 @@ def main():
     
         if ioType == "MQTT":
             win.addstr(13,5, "Topic          :")
-            topic = (win.getstr(13, inColumn)).decode("utf-8")
+            tmp = (win.getstr(13, inColumn)).decode("utf-8")
+            topic=tmp.strip()
 
         win.addstr(14,5, "OK [Y/n]       :")
     

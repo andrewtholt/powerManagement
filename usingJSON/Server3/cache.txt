@@ -1,0 +1,3 @@
+CHRISTMAS_LIGHTS switch.christmas_lights
+START switch.test_start
+STOP switch.test_stop

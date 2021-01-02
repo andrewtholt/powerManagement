@@ -47,11 +47,18 @@ def main():
         print( data['oid'])
         print( data['rw_community'])
         print( data['state'])
-        print( data['ip'])
+        print( data['ipAddress'])
     
         oid = data['oid']
-        state = data['state']
-        ip = data['ip']
+        dbState = data['state']
+
+        if dbState == 'ON':
+            state = data['on_value']
+        elif dbState == 'OFF':
+            state = data['off_value']
+
+
+        ip = data['ipAddress']
         community = data['rw_community']
         
         cmd='snmpset -m ALL -v1 -c ' + community + ' ' + ip + ' ' + oid +'  i ' + state

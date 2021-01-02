@@ -303,6 +303,6 @@ set httpd port 2812 and
 ## It is possible to include additional configuration parts from other files or
 ## directories.
 #
-   include /etc/monit/conf.d/*
-   include /etc/monit/conf-enabled/*
+   include /etc/monit/conf.d/*.monitrc
+   include /etc/monit/conf-enabled/*.monitrc
 #
